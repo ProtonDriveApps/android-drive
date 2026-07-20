@@ -38,12 +38,12 @@ android-tools = "1.1.5"
 # Coil
 coil = "2.4.0"
 # Core
-core = "36.4.2"
+core = "36.6.0"
 core-test-quark = "14.1.0"
 # Dagger
 dagger = "2.58"
 # Drive
-drive-sdk = "0.15.1"
+drive-sdk = "0.16.0"
 # Desugar
 desugar = "2.0.4"
 # Github
@@ -246,6 +246,7 @@ core-payment-domain = { module = "me.proton.core:payment-domain", version.ref = 
 core-payment-data = { module = "me.proton.core:payment-data", version.ref = "core" }
 core-payment-iap = { module = "me.proton.core:payment-iap", version.ref = "core" }
 # core-payment-iap-test = { module = "me.proton.core:payment-iap-test", version.ref = "core" }
+core-payment-presentation = { module = "me.proton.core:payment-presentation", version.ref = "core" }
 core-plan = { module = "me.proton.core:plan", version.ref = "core" }
 core-plan-presentation-compose = { module = "me.proton.core:plan-presentation-compose", version.ref = "core" }
 core-plan-test = { module = "me.proton.core:plan-test", version.ref = "core" }
@@ -355,7 +356,7 @@ protobuf-javalite = { group = "com.google.protobuf", name = "protobuf-javalite",
 
 [bundles]
 accompanist = ["accompanist-systemUiController", "accompanist-permissions", "accompanist-drawablepainter", "accompanist-placeholderMaterial"]
-core = ["core-account", "core-accountManager", "core-accountRecovery", "core-auth", "core-auth-fido", "core-biometric", "core-challenge", "core-contact", "core-country", "core-crypto", "core-cryptoValidator", "core-data", "core-dataRoom", "core-deviceMigration", "core-domain", "core-eventManager", "core-featureFlag", "core-humanVerification", "core-key", "core-keyTransparency", "core-label", "core-network", "core-notification", "core-observability", "core-passValidator", "core-payment", "core-payment-iap", "core-plan", "core-plan-presentation-compose", "core-report", "core-presentation", "core-presentation-compose", "core-proguard-rules", "core-push", "core-telemetry", "core-user", "core-userSettings", "core-utilAndroidDagger", "core-utilAndroidSentry", "core-utilKotlin", "core-config-data", "core-userRecovery"]
+core = ["core-account", "core-accountManager", "core-accountRecovery", "core-auth", "core-auth-fido", "core-biometric", "core-challenge", "core-contact", "core-country", "core-crypto", "core-cryptoValidator", "core-data", "core-dataRoom", "core-deviceMigration", "core-domain", "core-eventManager", "core-featureFlag", "core-humanVerification", "core-key", "core-keyTransparency", "core-label", "core-network", "core-notification", "core-observability", "core-passValidator", "core-payment", "core-payment-iap", "core-payment-presentation", "core-plan", "core-plan-presentation-compose", "core-report", "core-presentation", "core-presentation-compose", "core-proguard-rules", "core-push", "core-telemetry", "core-user", "core-userSettings", "core-utilAndroidDagger", "core-utilAndroidSentry", "core-utilKotlin", "core-config-data", "core-userRecovery"]
 core-test = ["core-accountManager-test", "core-auth-test", "core-accountRecovery-test", "core-humanVerification-test", "core-report-test", "core-plan-test", "core-userSettings-test"]
 test-android = ["junit", "mockk-android", "coroutines-test", "androidx-test-core-ktx", "androidx-test-runner", "androidx-test-rules", "androidx-compose-ui-test", "androidx-compose-ui-test-junit", "androidx-test-uiautomator", "core-test-android-instrumented"]
 test-jvm = ["junit", "mockk-jvm", "coroutines-test", "androidx-test-core-ktx", "androidx-work-testing", "core-test-kotlin", "core-test-quark", "robolectric", "mockwebserver"]

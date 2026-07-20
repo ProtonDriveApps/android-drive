@@ -40,6 +40,7 @@ import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailFile
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailInputStream
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailSdk
 import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
+import me.proton.core.util.kotlin.CoreLogger
 import okio.BufferedSource
 import okio.buffer
 import okio.source
@@ -189,6 +190,7 @@ class ThumbnailFetcher(
             cacheFile.outputStream().use { outputStream ->
                 inputStream.copyTo(outputStream)
             }
+            CoreLogger.d(THUMBNAIL, "Thumbnail cache file size: ${cacheFile.length()} bytes for ${data.thumbnailId.id}")
             cacheFile.inputStream()
         } else {
             inputStream

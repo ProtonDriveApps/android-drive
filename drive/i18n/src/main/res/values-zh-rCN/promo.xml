@@ -27,12 +27,14 @@
   <string name="promo_private_title">Private photo backup</string>
   <!-- tag(q1campaign) -->
   <string name="promo_claim_offer_button">Claim offer</string>
-  <!-- tag(q1campaign) -->
-  <string name="promo_spring_sale_drawer_title">Spring Sale</string>
   <!-- tag(q1campaign)
         Variable %1$s is price per month
         Example:
             "only $6.99"
     -->
   <string name="promo_offer_per_month_details">only %1$s</string>
+  <!-- tag(q2campaign2026) -->
+  <string name="promo_summer_sale_drawer_title">夏季大促</string>
+  <!-- tag(q2campaign2026) -->
+  <string name="promo_storage_200_GB_title">200 GB 存储空间：当前套餐的 40 倍</string>
 </resources>

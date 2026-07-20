@@ -215,4 +215,17 @@
     -->
   <string name="common_in_app_notification_activity_not_found">System nie znalazł aplikacji do %1$s</string>
   <!-- endregion -->
+  <!-- tag(q2campaign2026)
+        Variable %1$d is a number of months
+        Example:
+            "1 month"
+            "12 months"
+    -->
+  <plurals name="common_x_months">
+    <item quantity="one">%1$d miesiąc</item>
+    <item quantity="few">%1$d miesiąca</item>
+    <item quantity="many">%1$d miesiąca</item>
+    <item quantity="other">%1$d miesiąca</item>
+  </plurals>
+  <!-- endregion -->
 </resources>

@@ -31,7 +31,7 @@ class GetUploadBlock @Inject constructor(
         uploadBlockIndex: Long,
     ): Result<UploadBlock> = coRunCatching {
         linkUploadRepository.getUploadBlock(uploadFileLinkId, uploadBlockIndex)
-            ?: throw NoSuchElementException("")
+            ?: throw NoSuchElementException("Upload block not found")
     }
 
     suspend operator fun invoke(

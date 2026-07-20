@@ -311,6 +311,74 @@ sealed class Event {
         }
     }
 
+    sealed class Sentry : Event() {
+        abstract val message: String
+        abstract val tags: List<Pair<String, String>>
+        abstract val level: Level
+        override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
+        override val occurredAt: TimestampMs = TimestampMs()
+
+        data class SummerSale2026(
+            val action: Action? = null,
+            val result: Result? = null,
+            val failureReason: FailureReason? = null
+        ) : Sentry() {
+            override val message: String get() = "Summer Sale 2026"
+            override val level: Level get() = Level.INFO
+            override val tags: List<Pair<String, String>> get() =
+                listOfNotNull(
+                    Tags.EVENT_TYPE.value to EventType.PROMOTION.name.lowercase(),
+                    Tags.PROMO_ID.value to "summer_2026",
+                    action?.let { Tags.PROMO_ACTION.value to action.name.lowercase() },
+                    result?.let { Tags.PROMO_RESULT.value to result.name.lowercase() },
+                    failureReason?.let { Tags.PROMO_FAILURE_REASON.value to failureReason.name.lowercase() }
+                )
+
+            enum class Tags(val value: String) {
+                EVENT_TYPE("event.type"),
+                PROMO_ID("promo.id"),
+                PROMO_ACTION("promo.action"),
+                PROMO_RESULT("promo.result"),
+                PROMO_FAILURE_REASON("promo.failure.reason")
+            }
+
+            enum class Action {
+                SCREEN_SHOWN,
+                CLAIM_OFFER
+            }
+
+            enum class Result {
+                SUCCESS,
+                FAILURE
+            }
+
+            enum class FailureReason {
+                EmptyCustomerId,
+                Generic,
+                GiapUnredeemed,
+                SubscriptionManagedByOtherApp,
+                GoogleProductDetailsNotFound,
+                PurchaseNotFound,
+                RecoverableBillingError,
+                UnrecoverableBillingError,
+                UnsupportedPaymentProvider,
+                UserCancelled
+            }
+        }
+
+        enum class Level {
+            ERROR,
+            WARNING,
+            DEBUG,
+            INFO,
+            FATAL,
+        }
+
+        enum class EventType {
+            PROMOTION
+        }
+    }
+
     companion object {
         private const val EVENT_ID_PREFIX = "NOTIFICATION_EVENT_ID_"
     }

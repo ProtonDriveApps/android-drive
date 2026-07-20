@@ -67,5 +67,6 @@ class LogEventHandler @Inject constructor(
         is Event.Album -> toLog(userId)
         is Event.UploadSpeed -> toLog(userId)
         is Event.DownloadSpeed -> toLog(userId)
+        is Event.Sentry -> null
     }
 }

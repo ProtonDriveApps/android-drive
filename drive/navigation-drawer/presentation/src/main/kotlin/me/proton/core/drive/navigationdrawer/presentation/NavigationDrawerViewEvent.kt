@@ -26,5 +26,5 @@ interface NavigationDrawerViewEvent {
     val onSignOut: () -> Unit
     val onSubscription: () -> Unit
     val onGetFreeStorage: () -> Unit
-    val onSpringSalePromo: () -> Unit
+    val onSummerSalePromo: () -> Unit
 }

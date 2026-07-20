@@ -23,14 +23,28 @@ import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.base.data.extension.isErrno
 import me.proton.core.drive.base.domain.extension.toApiException
 import me.proton.core.network.domain.ApiException
+import me.proton.drive.sdk.OperationAbortedException
 import me.proton.drive.sdk.ProtonDriveSdkException
 
 fun Throwable.toBackupError(retryable: Boolean = true): BackupError = when (this) {
     is SecurityException -> BackupError.Permissions()
     is ApiException -> toBackupError(retryable)
+    is OperationAbortedException -> {
+        val errorCause = cause
+        if (errorCause is ProtonDriveSdkException) {
+            errorCause.toBackupError(retryable)
+        } else {
+            BackupError.Other(retryable)
+        }
+    }
+
     is ProtonDriveSdkException -> when (val error = toApiException()) {
         is ApiException -> error.toBackupError(retryable)
-        else -> BackupError.Other(retryable)
+        else -> if (message?.contains("No space left on device") == true) {
+            BackupError.LocalStorage()
+        } else {
+            BackupError.Other(retryable)
+        }
     }
 
     else -> if (isErrno(OsConstants.ENOSPC)) {

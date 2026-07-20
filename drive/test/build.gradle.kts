@@ -69,6 +69,7 @@ dependencies {
         exclude("me.proton.core", "presentation")
     }
     api(libs.core.observability.dagger)
+    api(libs.core.telemetry)
     api(libs.core.test.kotlin)
     api(libs.mockwebserver)
     api(libs.androidx.work.runtime.ktx)

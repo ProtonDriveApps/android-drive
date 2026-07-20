@@ -77,7 +77,7 @@ fun PhotosScreen(
     navigateToBackupSettings: () -> Unit,
     navigateToEnableBackupDialog: () -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
-    navigateToSpringSalePromo: () -> Unit,
+    navigateToSummerSalePromo: () -> Unit,
 ) {
     val viewModel = hiltViewModel<PhotosViewModel>()
     val viewState by viewModel.viewState.collectAsStateWithLifecycle(
@@ -92,7 +92,7 @@ fun PhotosScreen(
             navigateToSubscription = navigateToSubscription,
             navigateToPhotosIssues = navigateToPhotosIssues,
             navigateToPhotosUpsell = navigateToPhotosUpsell,
-            navigateToSpringSalePromo = navigateToSpringSalePromo,
+            navigateToSummerSalePromo = navigateToSummerSalePromo,
             navigateToBackupSettings = navigateToBackupSettings,
             navigateToEnableBackupDialog = navigateToEnableBackupDialog,
             lifecycle = lifecycle,

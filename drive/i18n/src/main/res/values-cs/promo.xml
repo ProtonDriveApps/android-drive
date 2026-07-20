@@ -27,12 +27,14 @@
   <string name="promo_private_title">Soukromé zálohování fotek</string>
   <!-- tag(q1campaign) -->
   <string name="promo_claim_offer_button">Využít nabídku</string>
-  <!-- tag(q1campaign) -->
-  <string name="promo_spring_sale_drawer_title">Jarní výprodej</string>
   <!-- tag(q1campaign)
         Variable %1$s is price per month
         Example:
             "only $6.99"
     -->
   <string name="promo_offer_per_month_details">pouze %1$s</string>
+  <!-- tag(q2campaign2026) -->
+  <string name="promo_summer_sale_drawer_title">Letní výprodej</string>
+  <!-- tag(q2campaign2026) -->
+  <string name="promo_storage_200_GB_title">200 GB úložiště: 40× více než u současného plánu</string>
 </resources>

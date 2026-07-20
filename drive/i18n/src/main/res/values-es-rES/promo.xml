@@ -27,12 +27,14 @@
   <string name="promo_private_title">Copia de seguridad de fotos privadas</string>
   <!-- tag(q1campaign) -->
   <string name="promo_claim_offer_button">Solicitar oferta</string>
-  <!-- tag(q1campaign) -->
-  <string name="promo_spring_sale_drawer_title">Oferta de primavera</string>
   <!-- tag(q1campaign)
         Variable %1$s is price per month
         Example:
             "only $6.99"
     -->
   <string name="promo_offer_per_month_details">solo %1$s</string>
+  <!-- tag(q2campaign2026) -->
+  <string name="promo_summer_sale_drawer_title">Descuento de verano</string>
+  <!-- tag(q2campaign2026) -->
+  <string name="promo_storage_200_GB_title">200 GB de almacenamiento: 40 veces tu plan actual</string>
 </resources>

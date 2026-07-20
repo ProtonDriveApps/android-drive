@@ -126,7 +126,7 @@ class CheckDuplicates @Inject constructor(
     private suspend fun BackupFile.getContentHash(
         folderId: FolderId,
         nodeKey: Key.Node,
-    ) = kotlin.runCatching {
+    ) = coRunCatching {
         uriResolver.useInputStream(uriString) { inputStream ->
             inputStream.getHexMessageDigest(
                 algorithm = configurationProvider.contentDigestAlgorithm

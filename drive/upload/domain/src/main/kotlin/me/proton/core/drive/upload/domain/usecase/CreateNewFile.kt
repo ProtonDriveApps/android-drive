@@ -68,7 +68,7 @@ class CreateNewFile @Inject constructor(
     private suspend fun checkFileExists(uriString: String) {
         val uploadFileExist = isUploadFileExist(uriString)
         if (!uploadFileExist) {
-            throw FileNotFoundException("File does not exist or is trashed $uriString")
+            throw FileNotFoundException("File does not exist or is trashed: $uriString")
         }
         uriResolver.useInputStream(uriString) {}
     }

@@ -32,7 +32,7 @@ class ShouldShowOverlay @Inject constructor(
     private val shouldShowWhatsNew: ShouldShowWhatsNew,
     private val shouldShowRatingBooster: ShouldShowRatingBooster,
     private val shouldShowSubscriptionPromo: ShouldShowSubscriptionPromo,
-    private val shouldShowSpringSalePromo: ShouldShowSpringSalePromo,
+    private val shouldShowSummerSalePromo: ShouldShowSummerSalePromo,
     private val repository: UiSettingsRepository,
 ) {
     suspend operator fun invoke(
@@ -45,8 +45,8 @@ class ShouldShowOverlay @Inject constructor(
         if (shouldShowOnboarding(userId).getOrThrow()) {
             return@coRunCatching UserOverlay.Onboarding
         }
-        if (shouldShowSpringSalePromo(userId).getOrThrow()) {
-            return@coRunCatching UserOverlay.SpringSalePromo
+        if (shouldShowSummerSalePromo(userId).getOrThrow()) {
+            return@coRunCatching UserOverlay.SummerSalePromo
         }
         val subscriptionPromo = shouldShowSubscriptionPromo(userId).getOrThrow()
         if (subscriptionPromo != null) {

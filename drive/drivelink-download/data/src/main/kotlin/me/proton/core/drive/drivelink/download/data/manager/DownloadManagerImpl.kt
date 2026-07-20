@@ -542,8 +542,10 @@ class DownloadManagerImpl @Inject constructor(
             volumeId = volumeId,
             linkId = fileId,
         ).onSuccess {
-            CoreLogger.d(fileId.logTag, "Download cleanup successful")
-        }.getOrNull(fileId.logTag, "Download cleanup failed")
+            CoreLogger.d(fileId.logTag, "File download cleanup successful")
+        }.onFailure { error ->
+            error.log(fileId.logTag, "File download cleanup failed")
+        }
     }
 
     private suspend fun cancelFolderDownload(
@@ -637,7 +639,7 @@ class DownloadManagerImpl @Inject constructor(
                                 CoreLogger.d(LogTag.DOWNLOAD, "Not all photos are downloaded for album ${parentId.id.logId()}")
                             }
                         }
-                    else -> error("Unexpected parent type: $parentId")
+                    else -> error("Unexpected parent type: ${parentId.javaClass.name}")
                 }
             }
     }

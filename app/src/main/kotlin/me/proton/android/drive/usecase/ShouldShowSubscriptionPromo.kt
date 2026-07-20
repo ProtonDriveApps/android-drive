@@ -41,7 +41,7 @@ class ShouldShowSubscriptionPromo @Inject constructor(
     private val getDynamicPlansAdjustedPrices: GetDynamicPlansAdjustedPrices,
     private val getUserDataStore: GetUserDataStore,
 ) {
-    suspend operator fun invoke(userId: UserId): Result<UserOverlay.Subcription?> = coRunCatching {
+    suspend operator fun invoke(userId: UserId): Result<UserOverlay.Subscription?> = coRunCatching {
         if (!paymentManager.isSubscriptionAvailable(userId)) {
             return@coRunCatching null
         }
@@ -64,13 +64,13 @@ class ShouldShowSubscriptionPromo @Inject constructor(
         userId: UserId,
         name: String,
         cycle: PlanCycle,
-    ): UserOverlay.Subcription? {
+    ): UserOverlay.Subscription? {
         val isFreeUser = getUser(userId, false).hasSubscription().not()
         val plans = getDynamicPlansAdjustedPrices(userId).plans
         val lastUpdate = getUserDataStore(userId).get(subscriptionLastUpdate(name))
         val hasPlan = plans.any { plan -> plan.name == name && cycle.value in plan.instances.keys }
         return if (isFreeUser && hasPlan && lastUpdate == null) {
-            UserOverlay.Subcription(name)
+            UserOverlay.Subscription(name)
         } else {
             null
         }

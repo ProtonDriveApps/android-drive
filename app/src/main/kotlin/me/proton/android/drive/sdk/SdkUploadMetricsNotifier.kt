@@ -24,7 +24,6 @@ import me.proton.core.drive.base.domain.log.LogTag.DRIVE_SDK
 import me.proton.core.drive.base.domain.usecase.ReportError
 import me.proton.core.drive.observability.data.extension.toType
 import me.proton.core.drive.observability.data.extension.toVolumeType
-import me.proton.core.drive.observability.domain.constraint.CountConstraint
 import me.proton.core.drive.observability.domain.constraint.MinimumIntervalConstraint
 import me.proton.core.drive.observability.domain.metrics.common.Plan
 import me.proton.core.drive.observability.domain.metrics.common.ResultStatus
@@ -44,7 +43,6 @@ import kotlin.time.Duration.Companion.minutes
 class SdkUploadMetricsNotifier @Inject constructor(
     private val enqueueObservabilityEvent: EnqueueObservabilityEvent,
     private val minimumIntervalConstraint: MinimumIntervalConstraint,
-    private val countConstraint: CountConstraint,
     private val getPrimaryUser: GetPrimaryUser,
     private val reportError: ReportError,
 ) {
@@ -52,7 +50,7 @@ class SdkUploadMetricsNotifier @Inject constructor(
     suspend operator fun invoke(uploadEvent: UploadEvent) {
         val volumeType = uploadEvent.volumeType.toVolumeType()
         val error = uploadEvent.error
-        if (error != UploadError.NETWORK_ERROR) {
+        if (error != UploadError.NETWORK_ERROR && error != UploadError.VALIDATION_ERROR) {
             notifyUploadSuccessRateTotalMetric(
                 volumeType = volumeType,
                 isSuccess = error == null,
@@ -66,11 +64,17 @@ class SdkUploadMetricsNotifier @Inject constructor(
                     message = "Unknown upload error: ${uploadEvent.originalError}",
                 )
             }
+            if (type == UploadErrorsTotal.Type.integrity_error) {
+                reportError(
+                    tag = DRIVE_SDK,
+                    message = "Integrity upload error: ${uploadEvent.originalError}",
+                )
+            }
             notifyUploadErrorsTotalMetric(
                 volumeType = volumeType,
                 type = type
             )
-            if (error != UploadError.NETWORK_ERROR) {
+            if (error != UploadError.NETWORK_ERROR && error != UploadError.VALIDATION_ERROR) {
                 notifyUploadErroringUsersTotalMetric(
                     volumeType = volumeType,
                 )
@@ -102,33 +106,13 @@ class SdkUploadMetricsNotifier @Inject constructor(
         volumeType: VolumeType,
         type: UploadErrorsTotal.Type,
     ) {
-        getPrimaryUser()?.let { user ->
-            notifyUploadErrorsTotalMetric(
-                userId = user.userId,
-                volumeType = volumeType,
-                type = type,
-            )
-        }
-    }
-
-    private suspend fun notifyUploadErrorsTotalMetric(
-        userId: UserId,
-        volumeType: VolumeType,
-        type: UploadErrorsTotal.Type,
-    ) {
-        //TODO: don't have file uid
         enqueueObservabilityEvent(
             UploadErrorsTotal(
                 Labels = UploadErrorsTotal.LabelsData(
                     volumeType = volumeType,
                     type = type,
                 )
-            ),
-            /*constraint = countConstraint(
-                userId = userId,
-                key = "$uid.$type",
-                maxCount = 1,
-            )*/
+            )
         )
     }
 

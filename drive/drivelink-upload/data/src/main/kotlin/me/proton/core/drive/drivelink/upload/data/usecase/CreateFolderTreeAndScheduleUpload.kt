@@ -31,10 +31,13 @@ import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
+import me.proton.core.drive.base.data.extension.detailsOrNull
 import me.proton.core.drive.base.data.extension.last
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.extension.getOrNull
+import me.proton.core.drive.base.domain.extension.onProtonHttpException
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.logId
@@ -44,6 +47,7 @@ import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.upload.data.provider.DocumentFileProvider
 import me.proton.core.drive.folder.create.domain.usecase.CreateFolder
+import me.proton.core.drive.link.data.api.response.AlreadyExistsErrorResponseDetails
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.GetLink
@@ -156,9 +160,10 @@ class CreateFolderTreeAndScheduleUpload @Inject constructor(
         shouldBroadcastMessage: Boolean,
     ): Result<List<UploadBulk>> = withContext(Dispatchers.IO) {
         coRunCatching {
-            val (_, rootFolderId) = createFolder(
+            val rootFolderId = getOrCreateFolder(
                 parentFolderId = folderId,
                 folderName = root.nameOrUnnamed,
+                shouldUpdateEvent = true,
             ).getOrThrow()
             coRunCatching {
                 val uploadBulks = mutableListOf<UploadBulk>()
@@ -175,7 +180,7 @@ class CreateFolderTreeAndScheduleUpload @Inject constructor(
                         .flatMap { chunk ->
                             chunk.map { documentFile ->
                                 async {
-                                    val (_, subFolderId) = createFolder(
+                                    val subFolderId = getOrCreateFolder(
                                         parentFolderId = parentFolderId,
                                         folderName = documentFile.nameOrUnnamed,
                                         shouldUpdateEvent = false,
@@ -279,6 +284,32 @@ class CreateFolderTreeAndScheduleUpload @Inject constructor(
 
     private suspend fun deleteRootFolder(volumeId: VolumeId, folderId: FolderId) = coRunCatching {
         sendToTrash(folderId.userId, volumeId, listOf(folderId))
+    }
+
+    private suspend fun getOrCreateFolder(
+        parentFolderId: FolderId,
+        folderName: String,
+        shouldUpdateEvent: Boolean,
+    ): Result<FolderId> = coRunCatching {
+        createFolder(
+            parentFolderId = parentFolderId,
+            folderName = folderName,
+            shouldUpdateEvent = shouldUpdateEvent,
+        ).recoverCatching { error ->
+            error.onProtonHttpException { protonData ->
+                if (protonData.code == ProtonApiCode.ALREADY_EXISTS) {
+                    protonData
+                        .detailsOrNull<AlreadyExistsErrorResponseDetails>()
+                        ?.conflictLinkId
+                        ?.let { conflictLinkId ->
+                            folderName to FolderId(parentFolderId.shareId, conflictLinkId)
+                        }
+                        ?: throw error
+                } else {
+                    throw error
+                }
+            } ?: throw error
+        }.getOrThrow().second
     }
 
     private val DocumentFile.nameOrUnnamed: String get() = name ?: uri.last ?: "unnamed"

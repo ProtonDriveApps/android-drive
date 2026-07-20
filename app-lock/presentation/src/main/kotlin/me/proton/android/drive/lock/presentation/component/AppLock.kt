@@ -18,17 +18,14 @@
 
 package me.proton.android.drive.lock.presentation.component
 
-import androidx.compose.animation.Crossfade
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import me.proton.core.account.domain.entity.Account
 import me.proton.core.domain.entity.UserId
 
@@ -38,28 +35,22 @@ fun AppLock(
     primaryAccount: Flow<Account?>,
     content: @Composable () -> Unit,
 ) {
-    var isLocked by remember { mutableStateOf(false) }
-    var userId by remember { mutableStateOf<UserId?>(null) }
-    LaunchedEffect(Unit) {
-        locked
-            .onEach { locked ->
-                isLocked = locked
+    val isLocked by locked.collectAsStateWithLifecycle(false)
+    val account by primaryAccount.collectAsStateWithLifecycle(null)
+    val lockedUserId: UserId? = if (isLocked) account?.userId else null
+
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        content()
+
+        AnimatedVisibility(lockedUserId != null) {
+            lockedUserId?.let{
+                Unlock(
+                    userId = lockedUserId,
+                    modifier = Modifier,
+                )
             }
-            .launchIn(this)
-        primaryAccount
-            .onEach {  account ->
-                userId = account?.userId
-            }
-            .launchIn(this)
-    }
-    Crossfade(targetState = isLocked to userId) { (appLocked, userId) ->
-        if (appLocked && userId != null) {
-            Unlock(
-                userId = userId,
-                modifier = Modifier,
-            )
-        } else {
-            content()
         }
     }
 }

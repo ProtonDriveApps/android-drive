@@ -74,8 +74,8 @@ import me.proton.android.drive.ui.dialog.ComputerOptions
 import me.proton.android.drive.ui.dialog.ConfirmDeleteAlbumDialog
 import me.proton.android.drive.ui.dialog.ConfirmDeletionDialog
 import me.proton.android.drive.ui.dialog.ConfirmEmptyTrashDialog
-import me.proton.android.drive.ui.dialog.ConfirmRemoveAllOfflineDialog
 import me.proton.android.drive.ui.dialog.ConfirmLeaveAlbumDialog
+import me.proton.android.drive.ui.dialog.ConfirmRemoveAllOfflineDialog
 import me.proton.android.drive.ui.dialog.ConfirmSkipIssuesDialog
 import me.proton.android.drive.ui.dialog.ConfirmStopAllSharingDialog
 import me.proton.android.drive.ui.dialog.ConfirmStopLinkSharingDialog
@@ -124,8 +124,8 @@ import me.proton.android.drive.ui.screen.ScanDocumentNameScreen
 import me.proton.android.drive.ui.screen.ScanDocumentScreen
 import me.proton.android.drive.ui.screen.SettingsScreen
 import me.proton.android.drive.ui.screen.SigningOutScreen
-import me.proton.android.drive.ui.screen.SpringSalePromoScreen
 import me.proton.android.drive.ui.screen.SubscriptionPromoScreen
+import me.proton.android.drive.ui.screen.SummerSalePromoScreen
 import me.proton.android.drive.ui.screen.TrashScreen
 import me.proton.android.drive.ui.screen.UploadToScreen
 import me.proton.android.drive.ui.screen.UserInvitationScreen
@@ -407,12 +407,12 @@ fun AppNavGraph(
         addPickerPhotos(navController)
         addPickerAlbum(navController)
         addSubscriptionPromoScreen(navigateToUpgradePlan)
-        addSpringSalePromoScreen(navController, navigateToSubscription)
         addConfirmLeaveAlbumDialog(navController)
         addShareMultiplePhotosOptions(navController)
         addAddToAlbumsOptions(navController)
         addScanDocument(navController)
         addScanDocumentName(navController)
+        addSummerSalePromoScreen(navController)
     }
 }
 
@@ -1073,8 +1073,8 @@ internal fun NavGraphBuilder.addHome(
         navigateToSubscriptionPromo = { key ->
             navController.navigate(Screen.Promo.Subscription(userId, key))
         },
-        navigateToSpringSalePromo = {
-            navController.navigate(Screen.Promo.SpringSale2026(userId))
+        navigateToSummerSalePromo = {
+            navController.navigate(Screen.Promo.SummerSale2026(userId))
         },
         modifier = Modifier.fillMaxSize(),
     )
@@ -2117,20 +2117,23 @@ fun NavGraphBuilder.addSubscriptionPromoScreen(
 }
 
 @OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.addSpringSalePromoScreen(
+fun NavGraphBuilder.addSummerSalePromoScreen(
     navController: NavHostController,
-    navigateToSubscription: () -> Unit,
 ) = composable(
-    route = Screen.Promo.SpringSale2026.route,
+    route = Screen.Promo.SummerSale2026.route,
     arguments = listOf(
-        navArgument(Screen.Promo.SpringSale2026.USER_ID) { type = NavType.StringType }
+        navArgument(Screen.Promo.SummerSale2026.USER_ID) { type = NavType.StringType }
     ),
     enterTransition = defaultEnterSlideTransition { true },
     popExitTransition = defaultPopExitSlideTransition { true },
 ) {
-    SpringSalePromoScreen(
-        navigateToSubscription = navigateToSubscription,
-        navigateBack = { navController.popBackStack() },
+    SummerSalePromoScreen(
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.Promo.SummerSale2026.route,
+                inclusive = true,
+            )
+        },
     )
 }
 

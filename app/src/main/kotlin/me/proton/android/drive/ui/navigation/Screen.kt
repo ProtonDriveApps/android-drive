@@ -25,7 +25,6 @@ import androidx.navigation.NavOptionsBuilder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.proton.android.drive.ui.viewmodel.AddToAlbumsOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.AlbumOptionsViewModel
@@ -45,8 +44,8 @@ import me.proton.android.drive.ui.viewmodel.ScanDocumentNameViewModel
 import me.proton.android.drive.ui.viewmodel.ScanDocumentViewModel
 import me.proton.android.drive.ui.viewmodel.ShareInvitationOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.ShareMemberOptionsViewModel
-import me.proton.android.drive.ui.viewmodel.SubscriptionPromoViewModel
 import me.proton.android.drive.ui.viewmodel.ShareMultiplePhotosOptionsViewModel
+import me.proton.android.drive.ui.viewmodel.SubscriptionPromoViewModel
 import me.proton.android.drive.ui.viewmodel.UploadToViewModel
 import me.proton.android.drive.ui.viewmodel.UserInvitationViewModel
 import me.proton.android.drive.ui.viewmodel.WhatsNewViewModel
@@ -905,8 +904,8 @@ sealed class Screen(val route: String) {
             operator fun invoke(userId: UserId, key: String) = "home/${userId.id}/promo/subscription?key=$key"
             const val PROMO_KEY = SubscriptionPromoViewModel.PROMO_KEY
         }
-        data object SpringSale2026 : Screen("promo/{userId}/springSale2026") {
-            operator fun invoke(userId: UserId) = "promo/${userId.id}/springSale2026"
+        data object SummerSale2026 : Screen("promo/{userId}/summerSale2026") {
+            operator fun invoke(userId: UserId) = "promo/${userId.id}/summerSale2026"
             const val USER_ID = Screen.USER_ID
         }
     }

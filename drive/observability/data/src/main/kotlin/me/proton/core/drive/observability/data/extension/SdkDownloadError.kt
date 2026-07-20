@@ -29,6 +29,7 @@ fun SdkDownloadError.toType(): DownloadErrorsTotal.Type = when (this) {
     SdkDownloadError.DECRYPTION_ERROR -> DownloadErrorsTotal.Type.decryption_error
     SdkDownloadError.INTEGRITY_ERROR -> DownloadErrorsTotal.Type.integrity_error
     SdkDownloadError.RATE_LIMITED -> DownloadErrorsTotal.Type.rate_limited
+    SdkDownloadError.VALIDATION_ERROR -> DownloadErrorsTotal.Type.validation_error
     SdkDownloadError.HTTP_CLIENT_SIDE_ERROR -> DownloadErrorsTotal.Type.`4xx`
     SdkDownloadError.UNKNOWN -> DownloadErrorsTotal.Type.unknown
 }

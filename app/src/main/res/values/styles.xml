@@ -21,4 +21,51 @@
     <style name="ProtonTheme.Splash.Drive.StatusBarFix">
         <item name="android:windowLightStatusBar">@bool/light_status_bar_splash</item>
     </style>
+
+    <!-- Shape -->
+    <style name="ShapeAppearance.Drive.PaymentButton"
+        parent="ShapeAppearance.MaterialComponents.MediumComponent">
+
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">100dp</item>
+    </style>
+
+    <!-- Actual MaterialButton style -->
+    <style name="Widget.Drive.PaymentButton"
+        parent="Widget.MaterialComponents.Button">
+
+        <!-- Background -->
+        <item name="backgroundTint">#6D4AFF</item>
+
+        <!-- Text -->
+        <item name="android:textColor">@android:color/white</item>
+
+        <!-- Roboto Medium (500) -->
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+
+        <!-- No elevation -->
+        <item name="elevation">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
+
+        <!-- No border -->
+        <item name="strokeWidth">0dp</item>
+
+        <!-- Shape -->
+        <item name="shapeAppearance">
+            @style/ShapeAppearance.Drive.PaymentButton
+        </item>
+
+        <!-- Optional: remove insets MaterialButton sometimes adds -->
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <!-- Theme overlay applied through ContextThemeWrapper -->
+    <style name="ThemeOverlay.Drive.PaymentButton"
+        parent="ThemeOverlay.MaterialComponents">
+        <item name="materialButtonStyle">
+            @style/Widget.Drive.PaymentButton
+        </item>
+    </style>
 </resources>

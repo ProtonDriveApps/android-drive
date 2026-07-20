@@ -36,6 +36,7 @@ import me.proton.core.drive.upload.domain.handler.UploadErrorHandler
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.network.domain.ApiException
 import me.proton.core.util.kotlin.CoreLogger
+import me.proton.drive.sdk.OperationAbortedException
 import me.proton.drive.sdk.ProtonDriveSdkException
 import me.proton.drive.sdk.ProtonSdkError
 import me.proton.drive.sdk.UploadAbortedException
@@ -122,7 +123,14 @@ private fun Throwable.hasEffectOnBackup(): Boolean {
         is VerifierException,
         -> true
 
-
+        is OperationAbortedException -> {
+            val errorCause = cause
+            if (errorCause is ProtonDriveSdkException) {
+                errorCause.hasEffectOnBackup()
+            } else {
+                true
+            }
+        }
         is ProtonDriveSdkException -> {
             error?.firstErrorDomainOrNull(ProtonSdkError.ErrorDomain.SuccessfulCancellation) == null
         }

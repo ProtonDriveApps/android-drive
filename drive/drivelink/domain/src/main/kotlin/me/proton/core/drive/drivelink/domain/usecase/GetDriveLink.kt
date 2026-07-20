@@ -41,6 +41,8 @@ import me.proton.core.drive.link.domain.extension.rootFolderId
 import me.proton.core.drive.link.domain.repository.LinkRepository
 import me.proton.core.drive.link.domain.usecase.HasLink
 import me.proton.core.drive.share.crypto.domain.usecase.GetOrCreateMainShare
+import me.proton.core.drive.share.domain.entity.Share
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class GetDriveLink @Inject constructor(
@@ -133,4 +135,22 @@ class GetDriveLink @Inject constructor(
                 }
         )
     }
+
+    operator fun invoke(
+        userId: UserId,
+        volumeId: VolumeId,
+        linkId: String,
+        excludedShareTypes: Set<Share.Type>,
+    ): Flow<List<DriveLink>> =
+        driveLinkRepository.getDriveLink(userId, volumeId, linkId, excludedShareTypes)
+            .map { driveLinks ->
+                driveLinks
+                    .map { driveLink ->
+                        driveLink
+                            .let { link -> updateDriveLinkDisplayName(link) }
+                            .let { link -> updateIsAnyAncestorMarkedAsOffline(listOf(link)).first() }
+                            .let { link -> updateSharePermissions(link) }
+                            .let { link -> updateShareUserDisplayName(link) }
+                    }
+            }
 }

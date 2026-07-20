@@ -52,7 +52,7 @@ class SdkDownloadMetricsNotifier @Inject constructor(
     suspend operator fun invoke(downloadEvent: DownloadEvent) {
         val volumeType = downloadEvent.volumeType.toVolumeType()
         val error = downloadEvent.error
-        if (error != DownloadError.NETWORK_ERROR) {
+        if (error != DownloadError.NETWORK_ERROR && error != DownloadError.VALIDATION_ERROR) {
             notifyDownloadSuccessRateTotalMetric(
                 volumeType = volumeType,
                 isSuccess = error == null,
@@ -66,12 +66,18 @@ class SdkDownloadMetricsNotifier @Inject constructor(
                     message = "Unknown download error: ${downloadEvent.originalError}",
                 )
             }
+            if (type == DownloadErrorsTotal.Type.integrity_error) {
+                reportError(
+                    tag = DRIVE_SDK,
+                    message = "Integrity download error: ${downloadEvent.originalError}",
+                )
+            }
             notifyDownloadErrorsTotalMetric(
                 volumeType = volumeType,
                 type = type
             )
 
-            if (error != DownloadError.NETWORK_ERROR) {
+            if (error != DownloadError.NETWORK_ERROR && error != DownloadError.VALIDATION_ERROR) {
                 notifyDownloadErroringUsersTotalMetric(
                     volumeType = volumeType,
                 )
@@ -103,33 +109,13 @@ class SdkDownloadMetricsNotifier @Inject constructor(
         volumeType: VolumeType,
         type: DownloadErrorsTotal.Type,
     ) {
-        getPrimaryUser()?.let { user ->
-            notifyDownloadErrorsTotalMetric(
-                userId = user.userId,
-                volumeType = volumeType,
-                type = type,
-            )
-        }
-    }
-
-    private suspend fun notifyDownloadErrorsTotalMetric(
-        userId: UserId,
-        volumeType: VolumeType,
-        type: DownloadErrorsTotal.Type,
-    ) {
-        //TODO: don't have file uid
         enqueueObservabilityEvent(
             DownloadErrorsTotal(
                 Labels = DownloadErrorsTotal.LabelsData(
                     volumeType = volumeType,
                     type = type,
                 )
-            ),
-            /*constraint = countConstraint(
-                userId = userId,
-                key = "$uid.$type",
-                maxCount = 1,
-            )*/
+            )
         )
     }
 

@@ -40,6 +40,7 @@ import me.proton.android.drive.ui.handler.FolderCreatedHandlerDelegate
 import me.proton.android.drive.ui.navigation.UploadParameters
 import me.proton.android.drive.ui.viewevent.UploadToViewEvent
 import me.proton.android.drive.ui.viewstate.UploadToViewState
+import me.proton.android.drive.usecase.ValidateExternalUri
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -75,6 +76,7 @@ class UploadToViewModel @Inject constructor(
     getPagedDriveLinks: GetPagedDriveLinksList,
     configurationProvider: ConfigurationProvider,
     private val folderCreatedHandlerDelegate: FolderCreatedHandlerDelegate,
+    private val validateExternalUri: ValidateExternalUri,
 ) : HostFilesViewModel(appContext, getDriveLink, getPagedDriveLinks, savedStateHandle, configurationProvider),
     FolderCreatedHandler by folderCreatedHandlerDelegate {
 
@@ -91,7 +93,13 @@ class UploadToViewModel @Inject constructor(
             }
         }
     }
-    private val uploadParameters = savedStateHandle.get<UploadParameters>(URIS)
+    private val uploadParameters = savedStateHandle.get<UploadParameters>(URIS)?.let { untrustedUploadParameters ->
+        with (validateExternalUri) {
+            UploadParameters(
+                uris = untrustedUploadParameters.uris.validate()
+            )
+        }
+    }
 
     val initialViewState = UploadToViewState(
         filesViewState = initialFilesViewState,

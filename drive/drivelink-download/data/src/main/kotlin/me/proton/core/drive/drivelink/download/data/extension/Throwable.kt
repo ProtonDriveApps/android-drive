@@ -30,10 +30,13 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.net.ssl.SSLHandshakeException
 import me.proton.android.drive.verifier.data.extension.log
+import me.proton.drive.sdk.OperationAbortedException
 import me.proton.core.drive.base.data.extension.log as baseLog
 
 fun Throwable.toDownloadErrorType(): DownloadErrorsTotal.Type = when(this) {
-    is ProtonDriveSdkException -> error("Wrong usage, this exception should be used only for SDK DownloadErrorsTotal.Type")
+    is ProtonDriveSdkException,
+    is OperationAbortedException
+         -> error("Wrong usage, this exception should be used only for SDK DownloadErrorsTotal.Type")
     is ApiException -> when {
         isHttpError(429) -> DownloadErrorsTotal.Type.rate_limited
         isHttpError(400..499) -> DownloadErrorsTotal.Type.`4xx`

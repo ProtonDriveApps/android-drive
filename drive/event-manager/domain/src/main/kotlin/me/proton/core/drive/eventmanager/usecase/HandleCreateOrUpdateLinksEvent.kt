@@ -18,6 +18,7 @@
 
 package me.proton.core.drive.eventmanager.usecase
 
+import kotlinx.coroutines.flow.firstOrNull
 import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.nullIfNotFound
@@ -25,13 +26,16 @@ import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.EVENTS
 import me.proton.core.drive.documentsprovider.domain.entity.DocumentId
 import me.proton.core.drive.documentsprovider.domain.usecase.NotifyDocumentChanged
+import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.drivelink.offline.domain.usecase.UpdateOfflineContent
 import me.proton.core.drive.eventmanager.entity.LinkEventVO
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.extension.ids
 import me.proton.core.drive.link.domain.extension.rootFolderId
+import me.proton.core.drive.link.domain.extension.shareId
 import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.link.domain.usecase.DeleteLinks
 import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.link.domain.usecase.InsertOrUpdateLinks
 import me.proton.core.drive.linktrash.domain.usecase.SetOrRemoveTrashState
@@ -39,7 +43,9 @@ import me.proton.core.drive.photo.domain.usecase.InsertOrDeleteAlbumListings
 import me.proton.core.drive.photo.domain.usecase.InsertOrDeleteAlbumPhotoListings
 import me.proton.core.drive.photo.domain.usecase.InsertOrDeletePhotoListings
 import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
+import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.upload.domain.usecase.CancelAllUpload
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
@@ -54,6 +60,8 @@ class HandleCreateOrUpdateLinksEvent @Inject constructor(
     private val getPhotoShare: GetPhotoShare,
     private val insertOrDeleteAlbumPhotoListings: InsertOrDeleteAlbumPhotoListings,
     private val notifyDocumentChanged: NotifyDocumentChanged,
+    private val getDriveLink: GetDriveLink,
+    private val deleteLinks: DeleteLinks,
 ) {
 
     suspend operator fun invoke(vos: List<LinkEventVO>) {
@@ -64,6 +72,7 @@ class HandleCreateOrUpdateLinksEvent @Inject constructor(
             vos
                 .groupBy({ vo -> vo.volumeId }) { vo -> vo.link }
                 .forEach { (volumeId, links) ->
+                    val staleLinksWithDifferentShare = links.staleLinksWithDifferentShare(volumeId)
                     val modifiedStateOrParentLinks = links.modifiedStateOrParentLinks()
                     insertOrUpdateLinks(links)
                     cancelAllUpload(links.filterFoldersTrashedOrDeleted())
@@ -76,7 +85,8 @@ class HandleCreateOrUpdateLinksEvent @Inject constructor(
                     insertOrDeletePhotoListings(volumeId, links.filterVolumePhotoListings(photoShare?.rootFolderId))
                     insertOrDeleteAlbumPhotoListings(volumeId, links.filterIsInstance<Link.File>())
                     insertOrDeleteAlbumListings(volumeId, links.filterIsInstance<Link.Album>())
-                    links.forEach { link ->
+                    deleteLinks(staleLinksWithDifferentShare.map { link -> link.id }).getOrNull(EVENTS, "Error handling on update metadata event")
+                    (links + staleLinksWithDifferentShare).forEach { link ->
                         notifyDocumentChanged(DocumentId(link.userId, link.id))
                     }
                 }
@@ -103,6 +113,26 @@ class HandleCreateOrUpdateLinksEvent @Inject constructor(
                 true
             }
         )
+    }
+
+    private suspend fun List<Link>.staleLinksWithDifferentShare(
+        volumeId: VolumeId,
+        excludedShareTypes: Set<Share.Type> = setOf(Share.Type.STANDARD),
+    ) = flatMap { link ->
+        getDriveLink(
+            userId = link.userId,
+            volumeId = volumeId,
+            linkId = link.id.id,
+            excludedShareTypes = excludedShareTypes,
+        )
+            .firstOrNull()
+            ?.map { driveLink -> driveLink.link }
+            ?.let { links ->
+                links.filterNot { staleLink ->
+                    staleLink.shareId.id == link.id.shareId.id
+                }
+            }
+            ?: emptyList()
     }
 
     private fun List<Link>.filterVolumePhotoListings(photoShareRootFolderId: FolderId?) =

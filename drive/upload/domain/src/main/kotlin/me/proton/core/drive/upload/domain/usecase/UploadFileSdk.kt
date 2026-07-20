@@ -133,7 +133,7 @@ class UploadFileSdk @Inject constructor(
     ): Pair<InputStream, List<MessageDigest>> {
         val killSwitch = getFeatureFlag(driveUploadVerificationDisabled(userId)).on
         val uriInputStream = uriResolver.inputStream(uriString)
-            ?: throw FileNotFoundException("Cannot open stream for upload${id}")
+            ?: throw FileNotFoundException("Cannot open stream for upload: $uriString")
         return if (killSwitch) {
             uriInputStream to emptyList()
         } else {

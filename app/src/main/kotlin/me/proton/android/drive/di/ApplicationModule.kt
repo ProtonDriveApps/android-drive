@@ -51,6 +51,7 @@ import me.proton.android.drive.provider.AppProtonPhotosClientProvider
 import me.proton.android.drive.provider.AppProtonSdkClientProvider
 import me.proton.android.drive.repository.BridgeFindDuplicatesRepository
 import me.proton.android.drive.repository.ClientUidRepositoryImpl
+import me.proton.android.drive.sentry.SentryEventHandler
 import me.proton.android.drive.settings.DebugSettings
 import me.proton.android.drive.stats.StatsEventHandler
 import me.proton.android.drive.telemetry.TelemetryEventHandler
@@ -197,7 +198,8 @@ object ApplicationModule {
         download: DownloadEventHandler,
         log: LogEventHandler,
         publicKeyEventHandler: PublicKeyEventHandler,
-    ) = setOf(notification, telemetry, upload, download, photos, stats, log, publicKeyEventHandler)
+        sentryEventHandler: SentryEventHandler,
+    ) = setOf(notification, telemetry, upload, download, photos, stats, log, publicKeyEventHandler, sentryEventHandler)
 
     @Provides
     @Singleton

@@ -209,4 +209,14 @@
     -->
   <string name="common_in_app_notification_activity_not_found">시스템이 %1$s 작업을 할 수 있는 어떠한 앱을 설치하고 있지 않습니다</string>
   <!-- endregion -->
+  <!-- tag(q2campaign2026)
+        Variable %1$d is a number of months
+        Example:
+            "1 month"
+            "12 months"
+    -->
+  <plurals name="common_x_months">
+    <item quantity="other">%1$d개월</item>
+  </plurals>
+  <!-- endregion -->
 </resources>

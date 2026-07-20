@@ -153,8 +153,7 @@ class UploadFileSdkWorker @AssistedInject constructor(
         }
 
         is UploadAbortedException -> {
-            val data = error?.additionalData
-            when (data) {
+            when (val data = error?.additionalData) {
                 is ProtonSdkError.Data.NodeNameConflict -> {
                     resolveNameConflict(uploadFileLink, data).fold(
                         onFailure = { error ->
@@ -167,27 +166,6 @@ class UploadFileSdkWorker @AssistedInject constructor(
                                 tag = uploadFileLink.logTag(),
                                 message = "Retrying upload after resolving name conflict",
                                 level = LoggerLevel.INFO,
-                            )
-                            uploadSdkManager.cancel(uploadFileLink)
-                            uploadFileLink.recreateFileSdk()
-                            true
-                        }
-                    )
-                }
-                is ProtonSdkError.Data.ContentSizeMismatch -> {
-                    resolveContentSizeMismatch(uploadFileLink, data).fold(
-                        onFailure = { error ->
-                            error.addSuppressed(this)
-                            error.log(
-                                tag = uploadFileLink.logTag(),
-                                message = "Failed to resolve content size mismatch, will not retry",
-                            )
-                            false
-                        },
-                        onSuccess = {
-                            CoreLogger.i(
-                                tag = uploadFileLink.logTag(),
-                                message = "Retrying upload after resolving content size mismatch",
                             )
                             uploadSdkManager.cancel(uploadFileLink)
                             uploadFileLink.recreateFileSdk()

@@ -31,7 +31,5 @@
     <item name="img_document_daynight_32" type="drawable" format="reference">@drawable/img_document_light_32</item>
     <item name="img_secure_daynight_32" type="drawable" format="reference">@drawable/img_secure_light_32</item>
     <item name="img_private_daynight_32" type="drawable" format="reference">@drawable/img_private_light_32</item>
-    <item name="img_spring_sale_promo_daynight" type="drawable" format="reference">@drawable/img_spring_sale_promo_light</item>
-    <item name="bg_spring_sale_promo_port_daynight" type="drawable" format="reference">@drawable/bg_spring_sale_promo_port_light</item>
-    <item name="bg_spring_sale_promo_land_daynight" type="drawable" format="reference">@drawable/bg_spring_sale_promo_land_light</item>
+    <item name="bg_summer_sale_promo_port_daynight" type="drawable" format="reference">@drawable/bg_summer_sale_promo_port_light</item>
 </resources>

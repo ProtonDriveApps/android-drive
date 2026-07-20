@@ -21,12 +21,19 @@ import android.content.Context
 import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.drive.sdk.OperationAbortedException
 import me.proton.drive.sdk.ProtonDriveSdkException
-import me.proton.drive.sdk.ProtonSdkError.ErrorDomain
 import me.proton.core.drive.i18n.R as I18N
 
 fun OperationAbortedException.getDefaultMessage(
-    context: Context
-): String = context.getString(I18N.string.common_error_internal)
+    context: Context,
+    useExceptionMessage: Boolean,
+): String {
+    val abortCause = cause
+    return if (abortCause is ProtonDriveSdkException) {
+        abortCause.getDefaultMessage(context, useExceptionMessage)
+    } else {
+        context.getString(I18N.string.common_error_internal)
+    }
+}
 
 fun OperationAbortedException.log(
     tag: String,

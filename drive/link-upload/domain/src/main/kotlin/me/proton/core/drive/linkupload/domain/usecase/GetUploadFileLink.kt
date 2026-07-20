@@ -30,11 +30,11 @@ class GetUploadFileLink @Inject constructor(
 ) {
     suspend operator fun invoke(uploadFileLinkId: Long): DataResult<UploadFileLink> = coRunCatching {
         linkUploadRepository.getUploadFileLink(uploadFileLinkId)
-            ?: throw NoSuchElementException("UploadFileLink with id $uploadFileLinkId is not found")
+            ?: throw NoSuchElementException("UploadFileLink is not found by upload id")
     }.toDataResult()
 
     suspend operator fun invoke(fileId: FileId): DataResult<UploadFileLink> = coRunCatching {
         linkUploadRepository.getUploadFileLink(fileId)
-            ?: throw NoSuchElementException("UploadFileLink with file id $fileId is not found")
+            ?: throw NoSuchElementException("UploadFileLink is not found by file id")
     }.toDataResult()
 }

@@ -22,6 +22,7 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -86,6 +87,7 @@ fun Unlock(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(ProtonTheme.colors.backgroundNorm)
             .conditional(isPortrait) {
                 navigationBarsPadding()
             }

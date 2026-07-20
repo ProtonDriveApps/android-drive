@@ -124,7 +124,7 @@ import me.proton.core.drive.drivelink.photo.domain.usecase.GetPhotoListingsPagin
 import me.proton.core.drive.drivelink.photo.domain.usecase.PhotoListingsLoader
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
-import me.proton.core.drive.feature.flag.domain.usecase.IsSpringSalePromoEnabled
+import me.proton.core.drive.feature.flag.domain.usecase.IsSummerSalePromoEnabled
 import me.proton.core.drive.files.domain.usecase.ToFirstItemMetricsNotifier
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -193,7 +193,7 @@ class PhotosViewModel @Inject constructor(
     private val checkMissingFolders: CheckMissingFolders,
     private val cancelUserMessage: CancelUserMessage,
     private val toFirstItemMetricsNotifier: ToFirstItemMetricsNotifier,
-    private val isSpringSalePromoEnabled: IsSpringSalePromoEnabled,
+    private val isSummerSalePromoEnabled: IsSummerSalePromoEnabled,
     private val photoListingsLoader: PhotoListingsLoader,
     val backupPermissionsViewModel: BackupPermissionsViewModel,
 ) : PhotosPickerAndSelectionViewModel(
@@ -210,8 +210,8 @@ class PhotosViewModel @Inject constructor(
     HomeTabViewModel,
     NotificationDotViewModel by NotificationDotViewModel(shouldUpgradeStorage) {
 
-    private val isSpringSalePromoEnabledFlow: Flow<Boolean> = flowOf {
-        isSpringSalePromoEnabled(userId)
+    private val isSummerSalePromoEnabledFlow: Flow<Boolean> = flowOf {
+        isSummerSalePromoEnabled(userId)
     }.stateIn(viewModelScope, Eagerly, false)
 
     override val driveLinkFilter = { driveLink: DriveLink -> driveLink !is DriveLink.Album }
@@ -482,8 +482,8 @@ class PhotosViewModel @Inject constructor(
         userManager.observeUser(userId),
         isFastScrollEnabled,
         photosFilters,
-        isSpringSalePromoEnabledFlow,
-    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand, notificationDotRequested, photoListingsFilter, hasPhotoVolume, user, isFastScrollEnabled, photosFilters, isSpringSalePromoEnabled ->
+        isSummerSalePromoEnabledFlow,
+    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand, notificationDotRequested, photoListingsFilter, hasPhotoVolume, user, isFastScrollEnabled, photosFilters, isSummerSalePromoEnabled ->
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
@@ -494,7 +494,7 @@ class PhotosViewModel @Inject constructor(
             topBarActions.value = setOfNotNull(
                 takeIf { user != null && user.isFree }
                     ?.let {
-                        getSubscriptionAction(isSpringSalePromoEnabled) {
+                        getSubscriptionAction(isSummerSalePromoEnabled) {
                             viewEvent?.onGetStorage?.invoke()
                         }
                     },
@@ -565,13 +565,13 @@ class PhotosViewModel @Inject constructor(
         )
     }.stateIn(viewModelScope, Eagerly, Unit)
 
-    private fun navigateToSubscriptionOrSpringSale(
+    private fun navigateToSubscriptionOrSummerSale(
         navigateToSubscription: () -> Unit,
-        navigateToSpringSalePromo: () -> Unit,
+        navigateToSummerSalePromo: () -> Unit,
     ) {
         viewModelScope.launch {
-            if (isSpringSalePromoEnabled(userId)) {
-                navigateToSpringSalePromo()
+            if (isSummerSalePromoEnabled(userId)) {
+                navigateToSummerSalePromo()
             } else {
                 navigateToSubscription()
             }
@@ -585,7 +585,7 @@ class PhotosViewModel @Inject constructor(
         navigateToSubscription: () -> Unit,
         navigateToPhotosIssues: (FolderId) -> Unit,
         navigateToPhotosUpsell: () -> Unit,
-        navigateToSpringSalePromo: () -> Unit,
+        navigateToSummerSalePromo: () -> Unit,
         navigateToBackupSettings: () -> Unit,
         navigateToEnableBackupDialog: () -> Unit,
         lifecycle: Lifecycle,
@@ -651,7 +651,7 @@ class PhotosViewModel @Inject constructor(
         override val onRetry = this@PhotosViewModel::onRetry
         override val onScroll = this@PhotosViewModel::onScroll
         override val onStatusClicked = this@PhotosViewModel::onStatusClicked
-        override val onGetStorage: () -> Unit = { navigateToSubscriptionOrSpringSale(navigateToSubscription, navigateToSpringSalePromo) }
+        override val onGetStorage: () -> Unit = { navigateToSubscriptionOrSummerSale(navigateToSubscription, navigateToSummerSalePromo) }
         override val onResolveMissingFolder: () -> Unit = navigateToBackupSettings
         override val onChangeNetwork: () -> Unit = navigateToBackupSettings
         override val onEnableBackupDialog: () -> Unit = navigateToEnableBackupDialog

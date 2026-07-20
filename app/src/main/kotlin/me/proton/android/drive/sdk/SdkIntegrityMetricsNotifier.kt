@@ -103,10 +103,9 @@ class SdkIntegrityMetricsNotifier @Inject constructor(
             isRetryHelped = blockVerificationErrorEvent.retryHelped
         )
         if (blockVerificationErrorEvent.retryHelped.not()) {
-            //TODO: Missing volumeType from BlockVerificationErrorEvent
-            /*notifyIntegrityErroringUsersTotalMetric(
-                volumeType = ?
-            )*/
+            notifyIntegrityErroringUsersTotalMetric(
+                volumeType = blockVerificationErrorEvent.volumeType.toVolumeType()
+            )
         }
     }
 

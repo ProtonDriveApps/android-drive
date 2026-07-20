@@ -27,6 +27,7 @@ fun SdkUploadError.toType(): UploadErrorsTotal.Type = when (this) {
     SdkUploadError.NETWORK_ERROR -> UploadErrorsTotal.Type.network_error
     SdkUploadError.INTEGRITY_ERROR -> UploadErrorsTotal.Type.integrity_error
     SdkUploadError.RATE_LIMITED -> UploadErrorsTotal.Type.rate_limited
+    SdkUploadError.VALIDATION_ERROR -> UploadErrorsTotal.Type.validation_error
     SdkUploadError.HTTP_CLIENT_SIDE_ERROR -> UploadErrorsTotal.Type.`4xx`
     SdkUploadError.UNKNOWN -> UploadErrorsTotal.Type.unknown
 }

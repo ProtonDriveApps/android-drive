@@ -31,6 +31,7 @@ driveModule(
     api(project(":drive:drivelink-crypto:domain"))
     api(project(":drive:drivelink-upload:domain"))
     api(project(":drive:folder-create:domain"))
+    api(project(":drive:link:data"))
     api(project(":drive:trash:domain"))
     api(project(":drive:upload:data"))
     api(project(":drive:worker:data"))

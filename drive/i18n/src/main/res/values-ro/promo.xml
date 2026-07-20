@@ -27,12 +27,14 @@
   <string name="promo_private_title">Conservare fotografii private</string>
   <!-- tag(q1campaign) -->
   <string name="promo_claim_offer_button">Revendicați oferta</string>
-  <!-- tag(q1campaign) -->
-  <string name="promo_spring_sale_drawer_title">Ofertă primăverii</string>
   <!-- tag(q1campaign)
         Variable %1$s is price per month
         Example:
             "only $6.99"
     -->
   <string name="promo_offer_per_month_details">la %1$s</string>
+  <!-- tag(q2campaign2026) -->
+  <string name="promo_summer_sale_drawer_title">Reduceri de vară</string>
+  <!-- tag(q2campaign2026) -->
+  <string name="promo_storage_200_GB_title">Stocare de 200 GB: de 40 de ori planul curent</string>
 </resources>

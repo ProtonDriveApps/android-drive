@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.drivelink.data.db.dao.DriveLinkDao
 import me.proton.core.drive.drivelink.data.extension.toDriveLinks
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -31,6 +32,8 @@ import me.proton.core.drive.link.data.extension.toLinkWithProperties
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.share.domain.entity.Share
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class DriveLinkRepositoryImpl @Inject constructor(
@@ -41,6 +44,16 @@ class DriveLinkRepositoryImpl @Inject constructor(
         driveLinkDao.getLink(linkId.userId, linkId.shareId.id, linkId.id)
             .distinctUntilChanged()
             .map { entities -> entities.toDriveLinks().firstOrNull() }
+
+    override fun getDriveLink(
+        userId: UserId,
+        volumeId: VolumeId,
+        linkId: String,
+        excludedShareTypes: Set<Share.Type>,
+    ): Flow<List<DriveLink>> =
+        driveLinkDao.getLink(userId, volumeId.id, linkId, excludedShareTypes)
+            .distinctUntilChanged()
+            .map { entities -> entities.toDriveLinks() }
 
     override fun getDriveLinksCount(parentId: ParentId): Flow<Int> =
         driveLinkDao.getLinksCountFlow(parentId.userId, parentId.shareId.id, parentId.id)

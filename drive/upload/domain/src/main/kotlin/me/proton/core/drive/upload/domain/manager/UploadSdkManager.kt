@@ -88,7 +88,7 @@ class UploadSdkManager @Inject constructor(
     ): UploadController = with(uploadFileLink.state()) {
         mutex.withLock {
             val uploader = uploader
-                ?: throw UploadNotFoundException("Upload was not enqueued or cancelled for ${uploadFileLink.id}")
+                ?: throw UploadNotFoundException("Upload was not enqueued or cancelled")
 
             suspend fun createController(): UploadController {
                 CoreLogger.i(

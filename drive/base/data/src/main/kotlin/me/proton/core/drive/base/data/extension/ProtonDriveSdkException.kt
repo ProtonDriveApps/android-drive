@@ -24,13 +24,25 @@ import me.proton.drive.sdk.ProtonSdkError
 import me.proton.core.drive.i18n.R as I18N
 
 fun ProtonDriveSdkException.getDefaultMessage(
-    context: Context
-): String = (error?.message ?: message)?.let { message ->
-    context.getString(
-        I18N.string.common_error_sdk_with_message,
-        message,
-    )
-} ?: context.getString(I18N.string.common_error_sdk)
+    context: Context,
+    useExceptionMessage: Boolean,
+): String {
+    val cause = error
+    return when (cause?.domain) {
+        ProtonSdkError.ErrorDomain.Serialization -> context.getString(I18N.string.common_error_internal)
+        ProtonSdkError.ErrorDomain.Network,
+        ProtonSdkError.ErrorDomain.Transport -> context.getString(I18N.string.common_error_no_internet)
+
+        ProtonSdkError.ErrorDomain.Api -> when (cause.secondaryCode?.toInt()) {
+            in 500..599 -> context.getString(I18N.string.common_error_http_5xx)
+            else -> cause.message
+        }
+
+        else -> (cause?.message ?: message)?.takeIf { useExceptionMessage }?.let { msg ->
+            context.getString(I18N.string.common_error_sdk_with_message, msg)
+        } ?: context.getString(I18N.string.common_error_sdk)
+    }
+}
 
 fun ProtonDriveSdkException.log(
     tag: String,

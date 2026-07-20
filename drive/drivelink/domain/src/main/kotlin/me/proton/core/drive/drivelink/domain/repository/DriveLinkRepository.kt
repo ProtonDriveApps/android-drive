@@ -19,13 +19,18 @@
 package me.proton.core.drive.drivelink.domain.repository
 
 import kotlinx.coroutines.flow.Flow
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.entity.ParentId
+import me.proton.core.drive.share.domain.entity.Share
+import me.proton.core.drive.volume.domain.entity.VolumeId
 
 interface DriveLinkRepository {
 
     fun getDriveLink(linkId: LinkId): Flow<DriveLink?>
+
+    fun getDriveLink(userId: UserId, volumeId: VolumeId, linkId: String, excludedShareTypes: Set<Share.Type>): Flow<List<DriveLink>>
 
     fun getDriveLinks(parentId: ParentId, fromIndex: Int, count: Int): Flow<List<DriveLink>>
 

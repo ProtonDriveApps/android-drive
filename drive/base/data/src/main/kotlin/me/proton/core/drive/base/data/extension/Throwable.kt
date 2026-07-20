@@ -67,8 +67,8 @@ fun Throwable.getDefaultMessage(
                 ?: getDefaultMessage(context)
         }
 
-        is ProtonDriveSdkException -> getDefaultMessage(context)
-        is OperationAbortedException -> getDefaultMessage(context)
+        is ProtonDriveSdkException -> getDefaultMessage(context, useExceptionMessage)
+        is OperationAbortedException -> getDefaultMessage(context, useExceptionMessage)
         else -> unhandled
     }
 }

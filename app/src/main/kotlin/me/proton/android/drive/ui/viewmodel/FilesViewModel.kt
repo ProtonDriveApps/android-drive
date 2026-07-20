@@ -87,7 +87,7 @@ import me.proton.core.drive.drivelink.download.domain.usecase.GetDownloadProgres
 import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
-import me.proton.core.drive.feature.flag.domain.usecase.IsSpringSalePromoEnabled
+import me.proton.core.drive.feature.flag.domain.usecase.IsSummerSalePromoEnabled
 import me.proton.core.drive.files.domain.usecase.ToFirstItemMetricsNotifier
 import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.files.presentation.state.FilesViewState
@@ -148,7 +148,7 @@ class FilesViewModel @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val toFirstItemMetricsNotifier: ToFirstItemMetricsNotifier,
     private val isScannerAvailable: IsScannerAvailable,
-    private val isSpringSalePromoEnabled: IsSpringSalePromoEnabled,
+    private val isSummerSalePromoEnabled: IsSummerSalePromoEnabled,
     private val openFolderActionProvider: OpenFolderActionProvider,
     private val folderCreatedHandlerDelegate: FolderCreatedHandlerDelegate,
 ) : SelectionViewModel(savedStateHandle, selectLinks, deselectLinks, selectAll, getSelectedDriveLinks),
@@ -196,8 +196,8 @@ class FilesViewModel @Inject constructor(
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, Unit)
 
-    private val isSpringSalePromoEnabledFlow: Flow<Boolean> = flowOf {
-        isSpringSalePromoEnabled(userId)
+    private val isSummerSalePromoEnabledFlow: Flow<Boolean> = flowOf {
+        isSummerSalePromoEnabled(userId)
     }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     val driveLinks: Flow<PagingData<DriveLink>> =
@@ -277,12 +277,12 @@ class FilesViewModel @Inject constructor(
         }
         if (selected.isEmpty()) {
             val permissions = driveLink?.sharePermissions ?: Permissions.owner
-            val isSpringSalePromoEnabled = isSpringSalePromoEnabled(userId)
+            val isSummerSalePromoEnabled = isSummerSalePromoEnabled(userId)
             topBarActions.value = if (permissions.canWrite) {
                 setOfNotNull(
-                    takeIf { ((user != null && user.isFree) || isSpringSalePromoEnabled) && isRootFolder }
+                    takeIf { ((user != null && user.isFree) || isSummerSalePromoEnabled) && isRootFolder }
                         ?.let {
-                            getSubscriptionAction(isSpringSalePromoEnabled) {
+                            getSubscriptionAction(isSummerSalePromoEnabled) {
                                 viewEvent?.onSubscription?.invoke()
                             }
                         },
@@ -371,13 +371,13 @@ class FilesViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, defaultEmptyState)
     private var viewEvent: FilesViewEvent? = null
 
-    private fun navigateToSubscriptionOrSpringSale(
+    private fun navigateToSubscriptionOrSummerSale(
         navigateToSubscription: () -> Unit,
-        navigateToSpringSalePromo: () -> Unit,
+        navigateToSummerSalePromo: () -> Unit,
     ) {
         viewModelScope.launch {
-            if (isSpringSalePromoEnabled(userId)) {
-                navigateToSpringSalePromo()
+            if (isSummerSalePromoEnabled(userId)) {
+                navigateToSummerSalePromo()
             } else {
                 navigateToSubscription()
             }
@@ -392,7 +392,7 @@ class FilesViewModel @Inject constructor(
         navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId) -> Unit,
         navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
         navigateToSubscription: () -> Unit,
-        navigateToSpringSalePromo: () -> Unit,
+        navigateToSummerSalePromo: () -> Unit,
         navigateBack: () -> Unit,
         lifecycle: Lifecycle,
     ): FilesViewEvent = object : FilesViewEvent {
@@ -454,7 +454,7 @@ class FilesViewModel @Inject constructor(
         override val onSelectDriveLink = { driveLink: DriveLink -> onSelectDriveLink(driveLink) }
         override val onDeselectDriveLink = { driveLink: DriveLink -> onDeselectDriveLink(driveLink) }
         override val onBack = { onBack() }
-        override val onSubscription = { navigateToSubscriptionOrSpringSale(navigateToSubscription, navigateToSpringSalePromo) }
+        override val onSubscription = { navigateToSubscriptionOrSummerSale(navigateToSubscription, navigateToSummerSalePromo) }
         override val onRenderThumbnail = { driveLink: DriveLink ->
             val stopTime = TimestampMs(SystemClock.elapsedRealtime())
             viewModelScope.launch {

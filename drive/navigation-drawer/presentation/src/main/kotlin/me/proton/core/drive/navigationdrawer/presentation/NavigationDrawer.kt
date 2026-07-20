@@ -118,8 +118,8 @@ fun NavigationDrawer(
                         .testTag(NavigationDrawerTestTag.content),
                     verticalArrangement = Arrangement.Top
                 ) {
-                    if (viewState.isSpringSalePromoEnabled) {
-                        SpringSalePromoListItem(closeDrawerAction, viewEvent)
+                    if (viewState.isSummerSalePromoEnabled) {
+                        SummerSalePromoListItem(closeDrawerAction, viewEvent)
                     } else {
                         UpgradeStorageInfo(
                             onUpgradeClicked = { viewEvent.onSubscription() },
@@ -314,19 +314,19 @@ private fun GetFreeStorageListItem(
 }
 
 @Composable
-private fun SpringSalePromoListItem(
+private fun SummerSalePromoListItem(
     closeDrawerAction: (() -> Unit) -> Unit,
     viewEvent: NavigationDrawerViewEvent,
     modifier: Modifier = Modifier,
 ) {
-    val springSalePromoColor = Color(0xFFFF4C81)
+    val summerSalePromoColor = Color(0xFFFF4C81)
     NavigationDrawerListItem(
-        imagePainter = painterResource(BasePresentation.drawable.drive_subscription_badge_spring_sale_2026),
-        title = stringResource(I18N.string.promo_spring_sale_drawer_title).uppercase(),
-        textStyle = ProtonTheme.typography.defaultStrongNorm.copy(color = springSalePromoColor),
+        imagePainter = painterResource(BasePresentation.drawable.drive_subscription_badge_summer_sale_2026),
+        title = stringResource(I18N.string.promo_summer_sale_drawer_title).uppercase(),
+        textStyle = ProtonTheme.typography.defaultStrongNorm.copy(color = summerSalePromoColor),
         closeDrawerAction = closeDrawerAction,
         modifier = modifier,
-        onClick = { viewEvent.onSpringSalePromo() },
+        onClick = { viewEvent.onSummerSalePromo() },
     )
 }
 
@@ -443,7 +443,7 @@ fun PreviewDrawerWithUser() {
                 override val onBugReport = {}
                 override val onSubscription = {}
                 override val onGetFreeStorage = {}
-                override val onSpringSalePromo = {}
+                override val onSummerSalePromo = {}
             }
         )
     }
@@ -465,7 +465,7 @@ private fun PreviewDrawerWithoutUser() {
                 override val onBugReport = {}
                 override val onSubscription = {}
                 override val onGetFreeStorage = {}
-                override val onSpringSalePromo = {}
+                override val onSummerSalePromo = {}
             }
         )
     }

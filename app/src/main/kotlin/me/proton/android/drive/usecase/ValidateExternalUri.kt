@@ -22,7 +22,9 @@ import android.content.ContentResolver.SCHEME_FILE
 import android.content.Context
 import android.net.Uri
 import androidx.core.net.toFile
+import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
+import me.proton.android.drive.ui.navigation.UriWithFileName
 import me.proton.core.drive.upload.data.resolver.AggregatedUriResolver
 import javax.inject.Inject
 
@@ -33,6 +35,11 @@ class ValidateExternalUri @Inject constructor(
     operator fun invoke(uri: Uri): Boolean = uri.isValid
 
     fun List<Uri>.validate(): List<Uri> = filter { uri -> uri.isValid }
+
+    @JvmName("validateUriWithFileName")
+    fun List<UriWithFileName>.validate(): List<UriWithFileName> = filter { uriWithFileName ->
+        uriWithFileName.uri.toUri().isValid
+    }
 
     private val Uri.isValid: Boolean get() =
         when (scheme) {

@@ -209,4 +209,14 @@
     -->
   <string name="common_in_app_notification_activity_not_found">系统找不到任何可以 %1$s 的应用程序</string>
   <!-- endregion -->
+  <!-- tag(q2campaign2026)
+        Variable %1$d is a number of months
+        Example:
+            "1 month"
+            "12 months"
+    -->
+  <plurals name="common_x_months">
+    <item quantity="other">%1$d 月</item>
+  </plurals>
+  <!-- endregion -->
 </resources>

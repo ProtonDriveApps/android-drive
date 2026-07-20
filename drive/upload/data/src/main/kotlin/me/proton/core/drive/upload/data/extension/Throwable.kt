@@ -37,6 +37,7 @@ import me.proton.core.drive.upload.domain.exception.UploadNotFoundException
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.hasProtonErrorCode
 import me.proton.core.network.domain.isHttpError
+import me.proton.drive.sdk.OperationAbortedException
 import me.proton.drive.sdk.ProtonDriveSdkException
 import me.proton.drive.sdk.ProtonSdkError
 import me.proton.core.drive.base.data.extension.getDefaultMessage as baseGetDefaultMessage
@@ -67,6 +68,14 @@ internal fun Throwable.toEventUploadReason(): Event.Upload.Reason = when (this) 
     is SecurityException -> Event.Upload.Reason.ERROR_PERMISSIONS
     is ApiException -> toEventUploadReason()
     is VerifierException, is VerificationException -> Event.Upload.Reason.ERROR_INTEGRITY
+    is OperationAbortedException -> {
+        val errorCause = cause
+        if (errorCause is ProtonDriveSdkException) {
+            errorCause.toEventUploadReason()
+        } else {
+            Event.Upload.Reason.ERROR_OTHER
+        }
+    }
     is ProtonDriveSdkException -> {
         val apiException = toApiException()
         val integrityError = error?.firstErrorDomainOrNull(ProtonSdkError.ErrorDomain.DataIntegrity)
@@ -83,8 +92,10 @@ internal fun Throwable.toEventUploadReason(): Event.Upload.Reason = when (this) 
     }
 }
 
-fun Throwable.toUploadErrorType(): UploadErrorsTotal.Type = when(this) {
-    is ProtonDriveSdkException -> error("Wrong usage, this exception should be used only for SDK UploadErrorsTotal.Type")
+fun Throwable.toUploadErrorType(): UploadErrorsTotal.Type = when (this) {
+    is ProtonDriveSdkException,
+    is OperationAbortedException
+        -> error("Wrong usage, this exception should be used only for SDK UploadErrorsTotal.Type")
     is ApiException -> when {
         hasProtonErrorCode(ProtonApiCode.EXCEEDED_QUOTA) -> UploadErrorsTotal.Type.free_space_exceeded
         hasProtonErrorCode(ProtonApiCode.TOO_MANY_CHILDREN) -> UploadErrorsTotal.Type.too_many_children

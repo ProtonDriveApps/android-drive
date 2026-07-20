@@ -35,6 +35,7 @@ import me.proton.core.drive.linkdownload.data.db.dao.LinkDownloadDao
 import me.proton.core.drive.linkoffline.data.db.LinkOfflineDao
 import me.proton.core.drive.linktrash.data.db.dao.LinkTrashDao
 import me.proton.core.drive.share.data.db.ShareMembershipDao
+import me.proton.core.drive.share.domain.entity.Share
 
 @Dao
 interface DriveLinkDao : LinkDao {
@@ -48,6 +49,17 @@ interface DriveLinkDao : LinkDao {
             LinkEntity.id = :linkId
     """)
     fun getLink(userId: UserId, shareId: String, linkId: String?): Flow<List<DriveLinkEntity>>
+
+    @Transaction
+    @Query("""
+        SELECT $DRIVE_LINK_SELECT FROM $DRIVE_LINK_ENTITY
+        WHERE
+            LinkEntity.user_id = :userId AND
+            ShareEntity.volume_id = :volumeId AND
+            LinkEntity.id = :linkId AND
+            ShareEntity.type NOT IN (:excludedShareTypes)
+    """)
+    fun getLink(userId: UserId, volumeId: String, linkId: String, excludedShareTypes: Set<Share.Type>): Flow<List<DriveLinkEntity>>
 
     @Transaction
     @Query("""
