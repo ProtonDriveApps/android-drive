@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">Dette er nødvendig for å sikre at alle bildene dine er sikkerhetskopiert og tilgjengelige på alle enhetene dine.\n%1$s tar personvernet ditt på alvor og får bare tilgang til bildene dine for synkronisering og sikkerhetskopiering.</string>
   <string name="photos_permission_rational_confirm_action">Innstillinger</string>
-  <string name="photos_permission_rational_dismiss_action">Ikke nå</string>
   <string name="photos_empty_loading_label_encrypted">Ende-til-ende-kryptert</string>
   <string name="photos_empty_loading_label_progress">Sikkerhetskopiering pågår.\nDet kan ta litt tid</string>
   <string name="photos_separator_current_month">Denne måneden</string>
@@ -116,7 +115,6 @@
   </plurals>
   <string name="photos_upsell_title">Aldri gå tom for lagringsplass</string>
   <string name="photos_upsell_description">Oppgrader nå og hold alle minnene dine kryptert og trygt.</string>
-  <string name="photos_upsell_dismiss_action">Ikke nå</string>
   <string name="photos_filter_favorite">Favoritter</string>
   <string name="photos_filter_screenshots">Skjermbilder</string>
   <string name="photos_filter_videos">Videoer</string>

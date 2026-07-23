@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">To je potrebno, da bodo vse vaše fotografije varnostno kopirane in na voljo v vseh vaših napravah.\n%1$s vašo zasebnost jemlje resno in bo do vaših fotografij dostopal samo za namene sinhronizacije in varnostnega kopiranja.</string>
   <string name="photos_permission_rational_confirm_action">Nastavitve</string>
-  <string name="photos_permission_rational_dismiss_action">Ne zdaj</string>
   <string name="photos_empty_loading_label_encrypted">Popolnoma šifrirano</string>
   <string name="photos_empty_loading_label_progress">Varnostno kopiranje poteka.\nLahko traja nekaj časa</string>
   <string name="photos_separator_current_month">Ta mesec</string>
@@ -122,7 +121,6 @@
   </plurals>
   <string name="photos_upsell_title">Naj vam nikoli ne zmanjka prostora</string>
   <string name="photos_upsell_description">Nadgradite in ohranite vse vaše spomine varno šifrirane</string>
-  <string name="photos_upsell_dismiss_action">Ne zdaj</string>
   <string name="photos_filter_favorite">Priljubljene</string>
   <string name="photos_filter_screenshots">Posnetki zaslona</string>
   <string name="photos_filter_videos">Videoposnetki</string>

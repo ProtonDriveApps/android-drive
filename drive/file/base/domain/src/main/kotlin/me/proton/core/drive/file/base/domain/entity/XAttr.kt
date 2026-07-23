@@ -34,7 +34,7 @@ data class XAttr(
     @Serializable
     data class Common(
         @SerialName("ModificationTime")
-        val modificationTime: String,
+        val modificationTime: String? = null,
         @SerialName("Size")
         val size: Long? = null,
         @SerialName("BlockSizes")

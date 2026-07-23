@@ -17,7 +17,6 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="onboarding_action_skip">Ikke nu</string>
   <string name="onboarding_title">Gem og krypter automatisk dine fotos og videoer</string>
   <string name="onboarding_description_part_one">Beskyt dine minder med</string>
   <string name="onboarding_description_part_two">end-to-end krypteret lagerplads</string>

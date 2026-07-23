@@ -120,17 +120,16 @@ class DecryptDriveLink @Inject constructor(
                         )
                         file.copy(link = updateLastModified(getLastModified(file)) as Link.File) as T
                     }
+                    // keep last modified as is for folders and albums
                     is DriveLink.Folder -> {
-                        val folder = copy(
+                        copy(
                             cryptoXAttr = CryptoProperty.Decrypted(decryptedXAttr.text, decryptedXAttr.status)
-                        )
-                        folder.copy(link = updateLastModified(getLastModified(folder)) as Link.Folder) as T
+                        ) as T
                     }
                     is DriveLink.Album -> {
-                        val album = copy(
+                        copy(
                             cryptoXAttr = CryptoProperty.Decrypted(decryptedXAttr.text, decryptedXAttr.status)
-                        )
-                        album.copy(link = updateLastModified(getLastModified(album)) as Link.Album) as T
+                        ) as T
                     }
                     else -> error("This should not happen")
                 }

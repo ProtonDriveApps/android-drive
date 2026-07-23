@@ -23,6 +23,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.toInstant
@@ -102,17 +103,20 @@ class CreateNewFileSdk @Inject constructor(
         size: Bytes,
         lastModified: Instant?,
     ) = uploadSdkManager.enqueue(this@enqueue) { client ->
-        client.uploader(
-            request = FileUploaderRequest(
-                parentFolderUid = parentLinkId.nodeUid(volumeId),
-                name = name,
-                mediaType = mimeType,
-                fileSize = size.value,
-                lastModificationTime = lastModified,
-                overrideExistingDraftByOtherClient = false,
-            ),
-            timeout = configurationProvider.sdkQueueTimeout,
-        )
+        // TODO implement enqueue without timeout and noWaiting = true
+        withTimeout(configurationProvider.sdkQueueTimeout) {
+            client.uploader(
+                FileUploaderRequest(
+                    parentFolderUid = parentLinkId.nodeUid(volumeId),
+                    name = name,
+                    mediaType = mimeType,
+                    fileSize = size.value,
+                    lastModificationTime = lastModified,
+                    overrideExistingDraftByOtherClient = false,
+                    noWaiting = false,
+                )
+            )
+        }
     }
 
     private suspend fun UploadFileLink.enqueuePhoto(
@@ -121,20 +125,23 @@ class CreateNewFileSdk @Inject constructor(
         lastModified: Instant?,
     ) = uploadSdkManager.enqueuePhoto(this@enqueuePhoto) { client ->
         val tags = getPhotoTags(this@enqueuePhoto.id).getOrThrow()
-        client.uploader(
-            request = PhotosUploaderRequest(
-                name = name,
-                mediaType = mimeType,
-                fileSize = size.value,
-                lastModificationTime = lastModified,
-                captureTime = fileCreationDateTime?.toInstant(),
-                mainPhotoUid = null,
-                overrideExistingDraftByOtherClient = false,
-                additionalMetadata = photoAdditionalMetadata(this),
-                tags = tags.map { photoTag -> photoTag.toSdkPhotoTag() },
-            ),
-            timeout = configurationProvider.sdkQueueTimeout,
-        )
+        // TODO implement enqueue without timeout and noWaiting = true
+        withTimeout(configurationProvider.sdkQueueTimeout) {
+            client.uploader(
+                request = PhotosUploaderRequest(
+                    name = name,
+                    mediaType = mimeType,
+                    fileSize = size.value,
+                    lastModificationTime = lastModified,
+                    captureTime = fileCreationDateTime?.toInstant(),
+                    mainPhotoUid = null,
+                    overrideExistingDraftByOtherClient = false,
+                    additionalMetadata = photoAdditionalMetadata(this@enqueuePhoto),
+                    tags = tags.map { photoTag -> photoTag.toSdkPhotoTag() },
+                    noWaiting = false,
+                ),
+            )
+        }
     }
 
     private suspend fun UploadFileLink.isPhoto(): Boolean {

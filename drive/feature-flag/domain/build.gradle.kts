@@ -27,6 +27,7 @@ driveModule(
     hilt = true,
     socialTest = true,
     enableTestFixtures = true,
+    serialization = true,
 ) {
     api(project(":drive:base:domain"))
     api(libs.core.domain)

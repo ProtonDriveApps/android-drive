@@ -26,16 +26,15 @@ class GetDescendants @Inject constructor(
 ) {
     suspend operator fun invoke(
         folderLink: Link.Folder,
-        refresh: Boolean,
+        refresh: Boolean? = null,
     ): Result<List<Link>> = coRunCatching {
         val folders = mutableListOf(folderLink)
         val descendants = mutableListOf<Link>()
-        val refreshFolderChildren = if (refresh) true else null
         while (folders.isNotEmpty()) {
             val parent = folders.removeAt(0)
             getAllFolderChildren(
                 parent.id,
-                refreshFolderChildren,
+                refresh,
             )
                 .getOrThrow()
                 .let { links ->

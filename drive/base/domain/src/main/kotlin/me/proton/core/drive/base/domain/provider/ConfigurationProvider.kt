@@ -123,8 +123,7 @@ interface ConfigurationProvider {
     val preferSdkForUpload: Boolean get() = true
     val preferSdkForDownload: Boolean get() = true
     val preferSdkForThumbnail: Boolean get() = true
-    val preferSdkForNodeOperation: Boolean get() = false
-    val preferSdkForTrash: Boolean get() = false
+    val preferSdkForDevices: Boolean get() = false
     val createFolderInParallel: Int get() = 16
     val sdkQueueTimeout: Duration get() = 30.seconds
     val tabsLoadTimeout: Duration get() = 3.seconds

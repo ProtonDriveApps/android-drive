@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">이는 사진이 백업되고 모든 기기 간에서 사용할 수 있도록 하기 위해 필요로 합니다. \n%1$s는 프라이버시를 중요시하게 생각하며, 이는 오직 사진을 백업 및 동기화하기 위해 사용됩니다.</string>
   <string name="photos_permission_rational_confirm_action">설정</string>
-  <string name="photos_permission_rational_dismiss_action">다음에</string>
   <string name="photos_empty_loading_label_encrypted">종단간 암호화됨</string>
   <string name="photos_empty_loading_label_progress">백업 진행 중.\n몇 분 소요될 수 있습니다.</string>
   <string name="photos_separator_current_month">이번 달</string>
@@ -113,7 +112,6 @@
   </plurals>
   <string name="photos_upsell_title">공간이 부족할 일 없도록</string>
   <string name="photos_upsell_description">지금 업그레이드하여 나의 모든 추억을 암호화하고 안전하게 보관하세요.</string>
-  <string name="photos_upsell_dismiss_action">다음에</string>
   <string name="photos_filter_favorite">즐겨찾기</string>
   <string name="photos_filter_screenshots">스크린샷</string>
   <string name="photos_filter_videos">동영상</string>

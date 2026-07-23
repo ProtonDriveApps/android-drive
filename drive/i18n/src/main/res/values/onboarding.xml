@@ -18,7 +18,7 @@
 
 <resources>
 
-    <string name="onboarding_action_skip">Not now</string>
+    <string name="onboarding_action_skip">@string/common_not_now</string>
     <string name="onboarding_title">Automatically save and encrypt your photos and videos</string>
     <string name="onboarding_description_part_one">Keep your memories safe with</string>
     <string name="onboarding_description_part_two">end-to-end encrypted storage</string>

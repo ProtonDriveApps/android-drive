@@ -22,6 +22,8 @@ import android.content.Context
 //import android.text.format.Formatter
 import me.proton.core.drive.base.domain.entity.Bytes
 import java.text.CharacterIterator
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.text.StringCharacterIterator
 import java.util.Locale
 import kotlin.math.abs
@@ -39,8 +41,9 @@ fun Bytes.asHumanReadableString(
     locale: Locale = Locale.getDefault(),
     numberOfDecimals: Int = 2,
 ): String {
+    val useOctet = locale.language.equals("fr", ignoreCase = true)
     val absB = if (value == Long.MIN_VALUE) Long.MAX_VALUE else abs(value)
-    if (absB < 1024) return "$value B"
+    if (absB < 1024) return "$value ${if (useOctet) "o" else "B"}"
     var value = absB
     val ci: CharacterIterator = StringCharacterIterator("KMGTPE")
     var i = 40
@@ -51,11 +54,18 @@ fun Bytes.asHumanReadableString(
     }
     value *= sign(value.toDouble()).toLong()
     val suffix = when (units) {
-        SizeUnits.BASE2_LEGACY -> "B"
-        SizeUnits.BASE2_IEC -> "iB"
+        SizeUnits.BASE2_LEGACY -> if (useOctet) "o" else "B"
+        SizeUnits.BASE2_IEC -> if (useOctet) "io" else "iB"
         SizeUnits.BASE10_SI -> throw IllegalArgumentException("Base 10 SI units are not supported")
     }
-    return String.format(locale, "%.${numberOfDecimals}f %c$suffix", value / 1024.0, ci.current())
+    val pattern = buildString {
+        append("#.")
+        repeat(numberOfDecimals) {
+            append("#")
+        }
+    }
+    val formatter = DecimalFormat(pattern, DecimalFormatSymbols(locale))
+    return "${formatter.format(value / 1024.0)} ${ci.current()}$suffix"
 }
 
 enum class SizeUnits {

@@ -17,7 +17,6 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="onboarding_action_skip">Jetzt nicht</string>
   <string name="onboarding_title">Speichere und verschlüssele deine Fotos und Videos automatisch</string>
   <string name="onboarding_description_part_one">Bewahre deine Erinnerungen sicher auf mit</string>
   <string name="onboarding_description_part_two">Ende-zu-Ende-verschlüsselter Speicher</string>

@@ -167,7 +167,6 @@
   <string name="notification_permission_rationale_title_backup">随时了解备份状态</string>
   <string name="notification_permission_rationale_description_backup">接收有关备份进度和状态的通知。</string>
   <string name="notification_permission_rationale_action_accept">启用通知</string>
-  <string name="notification_permission_rationale_action_reject">现在不要</string>
   <string name="notification_content_title_transferring">传输数据</string>
   <!-- endregion -->
   <string name="content_description_select_all">选择列表中的所有项目</string>
@@ -282,4 +281,7 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">升级到 %1$s</string>
+  <string name="support_contact_options_title">帮助我们提升您的体验</string>
+  <string name="support_contact_options_description">如果您遇到问题，我们的帮助文档和支持团队随时为您提供帮助！</string>
+  <string name="support_contact_options_action_button">联系我们</string>
 </resources>

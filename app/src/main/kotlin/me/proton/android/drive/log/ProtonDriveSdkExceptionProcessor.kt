@@ -28,7 +28,7 @@ import me.proton.drive.sdk.errorToString
 
 class ProtonDriveSdkExceptionProcessor : EventProcessor {
 
-    override fun process(event: SentryEvent, hint: Hint): SentryEvent? {
+    override fun process(event: SentryEvent, hint: Hint): SentryEvent {
         event.throwable
             .findThrowable<ProtonDriveSdkException>()
             ?.enrichEvent(event, hint)

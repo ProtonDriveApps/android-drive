@@ -85,6 +85,8 @@ import me.proton.android.drive.ui.dialog.LogOptions
 import me.proton.android.drive.ui.dialog.MultipleFileOrFolderOptions
 import me.proton.android.drive.ui.dialog.Onboarding
 import me.proton.android.drive.ui.dialog.ParentFolderOptions
+import me.proton.android.drive.ui.dialog.AppPromoOptions
+import me.proton.android.drive.ui.dialog.ContactSupportOptions
 import me.proton.android.drive.ui.dialog.ProtonDocsInsertImageOptions
 import me.proton.android.drive.ui.dialog.SendFileDialog
 import me.proton.android.drive.ui.dialog.ShareExternalInvitationOptions
@@ -128,6 +130,7 @@ import me.proton.android.drive.ui.screen.SubscriptionPromoScreen
 import me.proton.android.drive.ui.screen.SummerSalePromoScreen
 import me.proton.android.drive.ui.screen.TrashScreen
 import me.proton.android.drive.ui.screen.UploadToScreen
+import me.proton.android.drive.ui.screen.UpsellScreen
 import me.proton.android.drive.ui.screen.UserInvitationScreen
 import me.proton.android.drive.ui.viewmodel.ConfirmStopSyncFolderDialogViewModel
 import me.proton.android.drive.ui.viewmodel.PreviewViewModel
@@ -291,7 +294,6 @@ fun AppNavGraph(
             photosRoute = photosRoute,
             navigateToBugReport = navigateToBugReport,
             navigateToSubscription = navigateToSubscription,
-            navigateToRatingBooster = navigateToRatingBooster,
             onDrawerStateChanged = onDrawerStateChanged,
         )
         addHomeFiles(
@@ -301,7 +303,6 @@ fun AppNavGraph(
             photosRoute = photosRoute,
             navigateToBugReport = navigateToBugReport,
             navigateToSubscription = navigateToSubscription,
-            navigateToRatingBooster = navigateToRatingBooster,
             onDrawerStateChanged = onDrawerStateChanged,
         )
         addHomePhotos(
@@ -310,7 +311,6 @@ fun AppNavGraph(
             deepLinkBaseUrl = deepLinkBaseUrl,
             navigateToBugReport = navigateToBugReport,
             navigateToSubscription = navigateToSubscription,
-            navigateToRatingBooster = navigateToRatingBooster,
             onDrawerStateChanged = onDrawerStateChanged,
         )
         addHomePhotosAndAlbums(
@@ -319,7 +319,6 @@ fun AppNavGraph(
             deepLinkBaseUrl = deepLinkBaseUrl,
             navigateToBugReport = navigateToBugReport,
             navigateToSubscription = navigateToSubscription,
-            navigateToRatingBooster = navigateToRatingBooster,
             onDrawerStateChanged = onDrawerStateChanged,
         )
         addHomeComputers(
@@ -329,7 +328,6 @@ fun AppNavGraph(
             photosRoute = photosRoute,
             navigateToBugReport = navigateToBugReport,
             navigateToSubscription = navigateToSubscription,
-            navigateToRatingBooster = navigateToRatingBooster,
             onDrawerStateChanged = onDrawerStateChanged,
         )
         addHomeSharedTabs(
@@ -339,7 +337,6 @@ fun AppNavGraph(
             photosRoute = photosRoute,
             navigateToBugReport = navigateToBugReport,
             navigateToSubscription = navigateToSubscription,
-            navigateToRatingBooster = navigateToRatingBooster,
             onDrawerStateChanged = onDrawerStateChanged,
         )
         addPhotosIssues(navController)
@@ -413,6 +410,9 @@ fun AppNavGraph(
         addScanDocument(navController)
         addScanDocumentName(navController)
         addSummerSalePromoScreen(navController)
+        addUpsellScreen(navController, navigateToSubscription)
+        addAppPromoOptions(navController, navigateToRatingBooster)
+        addContactSupportOptions(navController)
     }
 }
 
@@ -930,7 +930,6 @@ internal fun NavGraphBuilder.addHome(
     photosRoute: String?,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
-    navigateToRatingBooster: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
     arguments: List<NamedNavArgument> = listOf(
         navArgument(Screen.Home.USER_ID) {
@@ -1051,8 +1050,6 @@ internal fun NavGraphBuilder.addHome(
                 Screen.WhatsNew(userId, key)
             )
         },
-
-        navigateToRatingBooster = navigateToRatingBooster,
         navigateToNotificationPermissionRationale = {
             navController.navigate(
                 Screen.NotificationPermissionRationale(
@@ -1076,6 +1073,12 @@ internal fun NavGraphBuilder.addHome(
         navigateToSummerSalePromo = {
             navController.navigate(Screen.Promo.SummerSale2026(userId))
         },
+        navigateToUpsellPromo = {
+            navController.navigate(Screen.Promo.Upsell(userId))
+        },
+        navigateToAppPromo = {
+            navController.navigate(Screen.Promo.App(userId))
+        },
         modifier = Modifier.fillMaxSize(),
     )
 }
@@ -1090,7 +1093,6 @@ fun NavGraphBuilder.addHome(
     photosRoute: String?,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
-    navigateToRatingBooster: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) = addHome(
     navController = navController,
@@ -1101,7 +1103,6 @@ fun NavGraphBuilder.addHome(
     photosRoute = photosRoute,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
-    navigateToRatingBooster = navigateToRatingBooster,
     onDrawerStateChanged= onDrawerStateChanged,
     arguments = listOf(
         navArgument(Screen.Home.USER_ID) {
@@ -1123,7 +1124,6 @@ fun NavGraphBuilder.addHomeFiles(
     photosRoute: String?,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
-    navigateToRatingBooster: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) = addHome(
     navController = navController,
@@ -1134,7 +1134,6 @@ fun NavGraphBuilder.addHomeFiles(
     photosRoute = photosRoute,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
-    navigateToRatingBooster = navigateToRatingBooster,
     onDrawerStateChanged= onDrawerStateChanged,
     arguments = listOf(
         navArgument(Screen.Files.USER_ID) { type = NavType.StringType },
@@ -1159,7 +1158,6 @@ fun NavGraphBuilder.addHomePhotos(
     deepLinkBaseUrl: String,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
-    navigateToRatingBooster: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) = addHome(
     navController = navController,
@@ -1170,7 +1168,6 @@ fun NavGraphBuilder.addHomePhotos(
     photosRoute = Screen.Photos.route,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
-    navigateToRatingBooster = navigateToRatingBooster,
     onDrawerStateChanged = onDrawerStateChanged
 )
 
@@ -1182,7 +1179,6 @@ fun NavGraphBuilder.addHomePhotosAndAlbums(
     deepLinkBaseUrl: String,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
-    navigateToRatingBooster: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) = addHome(
     navController = navController,
@@ -1193,7 +1189,6 @@ fun NavGraphBuilder.addHomePhotosAndAlbums(
     photosRoute = Screen.PhotosAndAlbums.route,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
-    navigateToRatingBooster = navigateToRatingBooster,
     onDrawerStateChanged = onDrawerStateChanged
 )
 
@@ -1206,7 +1201,6 @@ fun NavGraphBuilder.addHomeComputers(
     photosRoute: String?,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
-    navigateToRatingBooster: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) = addHome(
     navController = navController,
@@ -1217,7 +1211,6 @@ fun NavGraphBuilder.addHomeComputers(
     photosRoute = photosRoute,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
-    navigateToRatingBooster = navigateToRatingBooster,
     onDrawerStateChanged = onDrawerStateChanged
 )
 
@@ -1230,7 +1223,6 @@ fun NavGraphBuilder.addHomeSharedTabs(
     photosRoute: String?,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
-    navigateToRatingBooster: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) = addHome(
     navController = navController,
@@ -1241,7 +1233,6 @@ fun NavGraphBuilder.addHomeSharedTabs(
     photosRoute = photosRoute,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
-    navigateToRatingBooster = navigateToRatingBooster,
     onDrawerStateChanged = onDrawerStateChanged
 )
 
@@ -2134,6 +2125,80 @@ fun NavGraphBuilder.addSummerSalePromoScreen(
                 inclusive = true,
             )
         },
+    )
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+fun NavGraphBuilder.addUpsellScreen(
+    navController: NavHostController,
+    navigateToSubscription: () -> Unit,
+) = composable(
+    route = Screen.Promo.Upsell.route,
+    arguments = listOf(
+        navArgument(Screen.Promo.Upsell.USER_ID) { type = NavType.StringType }
+    ),
+    enterTransition = defaultEnterSlideTransition { true },
+    popExitTransition = defaultPopExitSlideTransition { true },
+) {
+    UpsellScreen(
+        navigateToSubscription = {
+            navController.popBackStack(
+                route = Screen.Promo.Upsell.route,
+                inclusive = true,
+            )
+            navigateToSubscription()
+        },
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.Promo.Upsell.route,
+                inclusive = true,
+            )
+        },
+    )
+}
+
+fun NavGraphBuilder.addAppPromoOptions(
+    navController: NavHostController,
+    navigateToRatingBooster: () -> Unit,
+) = modalBottomSheet(
+    route = Screen.Promo.App.route,
+    arguments = listOf(
+        navArgument(Screen.Promo.App.USER_ID) { type = NavType.StringType },
+    ),
+) { _, _ ->
+    AppPromoOptions(
+        navigateToRatingBooster = {
+            navController.popBackStack(
+                route = Screen.Promo.App.route,
+                inclusive = true,
+            )
+            navigateToRatingBooster()
+        },
+        navigateToContactSupportOptions = {
+            navController.navigate(Screen.Support.Contact.route) {
+                popUpTo(route = Screen.Promo.App.route) {
+                    inclusive = true
+                }
+            }
+        }
+    )
+}
+
+fun NavGraphBuilder.addContactSupportOptions(
+    navController: NavHostController,
+) = modalBottomSheet(
+    route = Screen.Support.Contact.route,
+    arguments = listOf(
+        navArgument(Screen.Support.Contact.USER_ID) { type = NavType.StringType },
+    ),
+) { _, _ ->
+    ContactSupportOptions(
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.Support.Contact.route,
+                inclusive = true,
+            )
+        }
     )
 }
 

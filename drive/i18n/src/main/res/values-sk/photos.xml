@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">Je to potrebné na zabezpečenie toho, aby boli všetky vaše fotografie zálohované a dostupné vo všetkých vašich zariadeniach.\n%1$s berie vaše súkromie vážne a bude mať prístup k vašim fotografiám len na účely synchronizácie a zálohovania.</string>
   <string name="photos_permission_rational_confirm_action">Nastavenia</string>
-  <string name="photos_permission_rational_dismiss_action">Teraz nie</string>
   <string name="photos_empty_loading_label_encrypted">End-to-end šifrované</string>
   <string name="photos_empty_loading_label_progress">Prebieha zálohovanie.\nMôže to chvíľu trvať</string>
   <string name="photos_separator_current_month">Tento mesiac</string>
@@ -122,7 +121,6 @@
   </plurals>
   <string name="photos_upsell_title">Nikdy nevyčerpajte úložisko</string>
   <string name="photos_upsell_description">Upgradujte teraz a uchovávajte všetky svoje spomienky zašifrované a v bezpečí.</string>
-  <string name="photos_upsell_dismiss_action">Teraz nie</string>
   <string name="photos_filter_favorite">Obľúbené</string>
   <string name="photos_filter_screenshots">Snímky obrazovky</string>
   <string name="photos_filter_videos">Videá</string>

@@ -147,9 +147,9 @@ class HomeViewModel @Inject constructor(
         navigateToGetMoreFreeStorage: () -> Unit,
         navigateToOnboarding: () -> Unit,
         navigateToWhatsNew: (WhatsNewKey) -> Unit,
-        navigateToRatingBooster: () -> Unit,
         navigateToSubscriptionPromo: (String) -> Unit,
         navigateToSummerSalePromo: () -> Unit,
+        navigateToAppPromo: () -> Unit,
     ): HomeViewEvent = object : HomeViewEvent {
         override val onTab = { tab: NavigationTab -> navigateToTab(tab.screen(userId)) }
         override val onFirstLaunch: (NavigationTab?) -> Unit = { navigationTab ->
@@ -162,10 +162,11 @@ class HomeViewModel @Inject constructor(
                     error.log(VIEW_MODEL, "Timeout waiting for tabs")
                     return@launch
                 }
-                when (val overlay = shouldShowOverlay(navigationTab?.homeTabEntity)) {
+                val homeTabEntity = coRunCatching { navigationTab?.homeTabEntity }.getOrNull()
+                when (val overlay = shouldShowOverlay(homeTabEntity)) {
                     UserOverlay.Onboarding -> navigateToOnboarding()
                     is UserOverlay.WhatsNew -> navigateToWhatsNew(overlay.key)
-                    UserOverlay.RatingBooster -> navigateToRatingBooster()
+                    UserOverlay.RatingBooster -> navigateToAppPromo()
                     is UserOverlay.Subscription -> navigateToSubscriptionPromo(overlay.key)
                     UserOverlay.SummerSalePromo -> navigateToSummerSalePromo()
                     null -> {}

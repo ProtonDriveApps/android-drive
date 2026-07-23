@@ -25,6 +25,7 @@ import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.link.domain.usecase.ValidateLinkName
 import me.proton.drive.sdk.entity.FolderNode
 import me.proton.drive.sdk.entity.NodeUid
+import java.time.Instant
 import javax.inject.Inject
 
 class CreateFolderSdk @Inject constructor(
@@ -36,6 +37,7 @@ class CreateFolderSdk @Inject constructor(
         userId: UserId,
         parentFolderUid: NodeUid,
         folderName: String,
+        modificationTime: Instant? = Instant.now(),
         shouldUpdateEvent: Boolean = true,
     ): Result<Pair<String, FolderNode>> = coRunCatching {
         val validatedName = validateLinkName(folderName).getOrThrow()
@@ -47,6 +49,7 @@ class CreateFolderSdk @Inject constructor(
                 .createFolder(
                     parentFolderUid = parentFolderUid,
                     name = validatedName,
+                    lastModificationTime = modificationTime,
                 )
 
             validatedName to folderNode

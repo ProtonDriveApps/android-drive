@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">Hal ini diperlukan untuk memastikan seluruh foto Anda tercadangkan dengan baik dan tersedia pada seluruh perangkat Anda.\n%1$s sangat menghargai privasi Anda dan hanya akan mengakses foto Anda untuk keperluan sinkronisasi dan pencadangan.</string>
   <string name="photos_permission_rational_confirm_action">Pengaturan</string>
-  <string name="photos_permission_rational_dismiss_action">Tidak sekarang</string>
   <string name="photos_empty_loading_label_encrypted">Terenkripsi end-to-end</string>
   <string name="photos_empty_loading_label_progress">Pencadangan sedang berlangsung.\nProses ini dapat memakan waktu sejenak</string>
   <string name="photos_separator_current_month">Bulan ini</string>
@@ -113,7 +112,6 @@
   </plurals>
   <string name="photos_upsell_title">Jangan pernah kehabisan ruang penyimpanan</string>
   <string name="photos_upsell_description">Tingkatkan sekarang juga dan jadikan seluruh kenangan Anda aman dan terenkripsi.</string>
-  <string name="photos_upsell_dismiss_action">Tidak sekarang</string>
   <string name="photos_filter_favorite">Favorit</string>
   <string name="photos_filter_screenshots">Tangkapan Layar</string>
   <string name="photos_filter_videos">Video</string>

@@ -318,22 +318,64 @@ sealed class Event {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
         override val occurredAt: TimestampMs = TimestampMs()
 
-        data class SummerSale2026(
+        data class AppPromotion(
             val action: Action? = null,
-            val result: Result? = null,
-            val failureReason: FailureReason? = null
+        ): Sentry() {
+            override val message: String get() = "App"
+            override val level: Level get() = Level.INFO
+            override val tags: List<Pair<String, String>> get() =
+                listOfNotNull(
+                    Tags.EVENT_TYPE.value to EventType.APP_PROMOTION.name.lowercase(),
+                    action?.let { Tags.ACTION.value to action.name.lowercase() },
+                )
+
+            enum class Tags(val value: String) {
+                EVENT_TYPE("event.type"),
+                ACTION("app.promo.action")
+            }
+
+            enum class Action {
+                SCREEN_SHOWN,
+                LIKE_IT,
+                COULD_BE_BETTER,
+            }
+        }
+
+        data class Upsell(
+            val action: Payments.Action? = null,
+            val result: Payments.Result? = null,
+            val failureReason: Payments.FailureReason? = null,
+        ) : Sentry() {
+            override val message: String get() = "Upsell"
+            override val level: Level get() = Level.INFO
+            override val tags: List<Pair<String, String>> get() =
+                listOfNotNull(
+                    Payments.Tags.EVENT_TYPE.value to EventType.UPSELL.name.lowercase(),
+                    Payments.Tags.PROMO_ID.value to "upsell",
+                    action?.let { Payments.Tags.PROMO_ACTION.value to action.name.lowercase() },
+                    result?.let { Payments.Tags.PROMO_RESULT.value to result.name.lowercase() },
+                    failureReason?.let { Payments.Tags.PROMO_FAILURE_REASON.value to failureReason.name.lowercase() }
+                )
+        }
+
+        data class SummerSale2026(
+            val action: Payments.Action? = null,
+            val result: Payments.Result? = null,
+            val failureReason: Payments.FailureReason? = null,
         ) : Sentry() {
             override val message: String get() = "Summer Sale 2026"
             override val level: Level get() = Level.INFO
             override val tags: List<Pair<String, String>> get() =
                 listOfNotNull(
-                    Tags.EVENT_TYPE.value to EventType.PROMOTION.name.lowercase(),
-                    Tags.PROMO_ID.value to "summer_2026",
-                    action?.let { Tags.PROMO_ACTION.value to action.name.lowercase() },
-                    result?.let { Tags.PROMO_RESULT.value to result.name.lowercase() },
-                    failureReason?.let { Tags.PROMO_FAILURE_REASON.value to failureReason.name.lowercase() }
+                    Payments.Tags.EVENT_TYPE.value to EventType.PROMOTION.name.lowercase(),
+                    Payments.Tags.PROMO_ID.value to "summer_2026",
+                    action?.let { Payments.Tags.PROMO_ACTION.value to action.name.lowercase() },
+                    result?.let { Payments.Tags.PROMO_RESULT.value to result.name.lowercase() },
+                    failureReason?.let { Payments.Tags.PROMO_FAILURE_REASON.value to failureReason.name.lowercase() }
                 )
+        }
 
+        object Payments {
             enum class Tags(val value: String) {
                 EVENT_TYPE("event.type"),
                 PROMO_ID("promo.id"),
@@ -375,7 +417,9 @@ sealed class Event {
         }
 
         enum class EventType {
-            PROMOTION
+            PROMOTION,
+            UPSELL,
+            APP_PROMOTION,
         }
     }
 

@@ -38,7 +38,7 @@
     -->
     <string name="photos_permission_rational_description">This is necessary to ensure that all your photos are backed up and available across all your devices.\n%1$s takes your privacy seriously and will only access your photos for the purpose of syncing and backup.</string>
     <string name="photos_permission_rational_confirm_action">Settings</string>
-    <string name="photos_permission_rational_dismiss_action">Not now</string>
+    <string name="photos_permission_rational_dismiss_action">@string/common_not_now</string>
     <string name="photos_empty_loading_label_encrypted">End-to-end encrypted</string>
     <string name="photos_empty_loading_label_progress">Backup is in progress.\nIt can take a while</string>
     <string name="photos_separator_current_month">This month</string>
@@ -120,7 +120,7 @@
     <string name="photos_upsell_title">Never run out of storage</string>
     <string name="photos_upsell_description">Upgrade now and keep all your memories encrypted and safe.</string>
     <string name="photos_upsell_get_storage_action" translatable="false">@string/storage_quotas_get_storage_action</string>
-    <string name="photos_upsell_dismiss_action">Not now</string>
+    <string name="photos_upsell_dismiss_action">@string/common_not_now</string>
 
 
     <string name="photos_filter_all">@string/common_all</string>

@@ -167,7 +167,6 @@
   <string name="notification_permission_rationale_title_backup">隨時更新您的備份狀態</string>
   <string name="notification_permission_rationale_description_backup">接收關於您備份的進度與狀態的通知。</string>
   <string name="notification_permission_rationale_action_accept">啟用通知</string>
-  <string name="notification_permission_rationale_action_reject">現在不要</string>
   <string name="notification_content_title_transferring">正在傳輸資料</string>
   <!-- endregion -->
   <string name="content_description_select_all">顯示清單中所有的項目</string>
@@ -282,4 +281,7 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">以 %1$s 的價格升級</string>
+  <string name="support_contact_options_title">Help us enhance your experience</string>
+  <string name="support_contact_options_description">If you are having an issue our Help Docs and support team are here to help!</string>
+  <string name="support_contact_options_action_button">聯絡我們</string>
 </resources>

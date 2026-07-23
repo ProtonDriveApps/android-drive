@@ -27,4 +27,7 @@ fun CoreFeatureFlag.toFeatureFlag(userId: UserId) =
     FeatureFlag(
         id = FeatureFlagId.Unleash(userId, featureId.id),
         state = if (value) FeatureFlag.State.ENABLED else FeatureFlag.State.DISABLED,
+        variant = variantName,
+        payloadType = payloadType,
+        payloadValue = payloadValue,
     )

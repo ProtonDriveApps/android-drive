@@ -185,7 +185,6 @@
   <string name="notification_permission_rationale_title_backup">Bodite na tekočem s stanjem vaše varnostne kopije</string>
   <string name="notification_permission_rationale_description_backup">Prejemajte obvestila o napredku in stanju vaših varnostnih kopij.</string>
   <string name="notification_permission_rationale_action_accept">Omogoči obvestila</string>
-  <string name="notification_permission_rationale_action_reject">Ne zdaj</string>
   <string name="notification_content_title_transferring">Prenos podatkov</string>
   <!-- endregion -->
   <string name="content_description_select_all">Izberite vse predmete na seznamu</string>
@@ -300,4 +299,7 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">Nadgradi za %1$s</string>
+  <string name="support_contact_options_title">Pomagajte nam izboljšati vašo izkušnjo</string>
+  <string name="support_contact_options_description">Če imate težave, so vam naši dokumenti s pomočjo in ekipa za podporo na voljo!</string>
+  <string name="support_contact_options_action_button">Stopite v stik z nami</string>
 </resources>

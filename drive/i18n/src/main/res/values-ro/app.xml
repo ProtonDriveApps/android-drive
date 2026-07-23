@@ -179,7 +179,6 @@
   <string name="notification_permission_rationale_title_backup">Fiți la curent cu starea copiei de rezervă</string>
   <string name="notification_permission_rationale_description_backup">Primiți notificări despre progresul și starea copiilor de rezervă.</string>
   <string name="notification_permission_rationale_action_accept">Activare notificări</string>
-  <string name="notification_permission_rationale_action_reject">Nu acum</string>
   <string name="notification_content_title_transferring">Se transferă datele</string>
   <!-- endregion -->
   <string name="content_description_select_all">Selectare toate din listă</string>
@@ -294,4 +293,7 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">Îmbunătățire cu %1$s</string>
+  <string name="support_contact_options_title">Ajutați-ne să vă îmbunătățim experiența</string>
+  <string name="support_contact_options_description">Dacă întâmpinați o problemă, documentele de ajutor și echipa de asistență sunt aici pentru a vă ajuta!</string>
+  <string name="support_contact_options_action_button">Contactați-ne</string>
 </resources>

@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withTimeout
 import me.proton.android.drive.verifier.domain.exception.ContentDigestVerifierException
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.extension.bytes
@@ -59,8 +60,10 @@ import me.proton.drive.sdk.DownloadController
 import me.proton.drive.sdk.ProtonDriveSdkException
 import me.proton.drive.sdk.ProtonSdkError
 import me.proton.drive.sdk.ProtonSdkError.ErrorDomain
+import me.proton.drive.sdk.entity.FileDownloaderRequest
 import me.proton.drive.sdk.entity.FileNode
 import me.proton.drive.sdk.entity.Node
+import me.proton.drive.sdk.entity.PhotosDownloaderRequest
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -111,10 +114,15 @@ class DownloadFileSdk @Inject constructor(
                         fileId = fileId,
                         revisionId = revisionId,
                     ) { client ->
-                        client.downloader(
-                            photoUid = fileId.nodeUid(volumeId),
-                            timeout = configurationProvider.sdkQueueTimeout,
-                        )
+                        // TODO implement enqueue without timeout and noWaiting = true
+                        withTimeout(configurationProvider.sdkQueueTimeout) {
+                            client.downloader(
+                                PhotosDownloaderRequest(
+                                    nodeUid = fileId.nodeUid(volumeId),
+                                    noWaiting = false,
+                                )
+                            )
+                        }
                     }
                 }
 
@@ -124,13 +132,18 @@ class DownloadFileSdk @Inject constructor(
                         fileId = fileId,
                         revisionId = revisionId,
                     ) { client ->
-                        client.downloader(
-                            revisionUid = fileId.revisionUid(
-                                volumeId = volumeId,
-                                revisionId = revisionId,
-                            ),
-                            timeout = configurationProvider.sdkQueueTimeout,
-                        )
+                        // TODO implement enqueue without timeout and noWaiting = true
+                        withTimeout(configurationProvider.sdkQueueTimeout) {
+                            client.downloader(
+                                FileDownloaderRequest(
+                                    revisionUid = fileId.revisionUid(
+                                        volumeId = volumeId,
+                                        revisionId = revisionId,
+                                    ),
+                                    noWaiting = false,
+                                )
+                            )
+                        }
                     }
                 }
 

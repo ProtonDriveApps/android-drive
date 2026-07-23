@@ -21,15 +21,15 @@ package me.proton.android.drive.extension
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.payment.presentation.viewmodel.ProtonPaymentEvent
 
-val ProtonPaymentEvent.Error.failureReason: Event.Sentry.SummerSale2026.FailureReason get() = when (this) {
-    is ProtonPaymentEvent.Error.GiapUnredeemed -> Event.Sentry.SummerSale2026.FailureReason.GiapUnredeemed
-    is ProtonPaymentEvent.Error.UnrecoverableBillingError -> Event.Sentry.SummerSale2026.FailureReason.UnrecoverableBillingError
-    is ProtonPaymentEvent.Error.UserCancelled -> Event.Sentry.SummerSale2026.FailureReason.UserCancelled
-    is ProtonPaymentEvent.Error.Generic -> Event.Sentry.SummerSale2026.FailureReason.Generic
-    is ProtonPaymentEvent.Error.EmptyCustomerId -> Event.Sentry.SummerSale2026.FailureReason.EmptyCustomerId
-    is ProtonPaymentEvent.Error.GoogleProductDetailsNotFound -> Event.Sentry.SummerSale2026.FailureReason.GoogleProductDetailsNotFound
-    is ProtonPaymentEvent.Error.PurchaseNotFound -> Event.Sentry.SummerSale2026.FailureReason.PurchaseNotFound
-    is ProtonPaymentEvent.Error.RecoverableBillingError -> Event.Sentry.SummerSale2026.FailureReason.RecoverableBillingError
-    is ProtonPaymentEvent.Error.SubscriptionManagedByOtherApp -> Event.Sentry.SummerSale2026.FailureReason.SubscriptionManagedByOtherApp
-    is ProtonPaymentEvent.Error.UnsupportedPaymentProvider -> Event.Sentry.SummerSale2026.FailureReason.UnsupportedPaymentProvider
+val ProtonPaymentEvent.Error.failureReason: Event.Sentry.Payments.FailureReason get() = when (this) {
+    is ProtonPaymentEvent.Error.GiapUnredeemed -> Event.Sentry.Payments.FailureReason.GiapUnredeemed
+    is ProtonPaymentEvent.Error.UnrecoverableBillingError -> Event.Sentry.Payments.FailureReason.UnrecoverableBillingError
+    is ProtonPaymentEvent.Error.UserCancelled -> Event.Sentry.Payments.FailureReason.UserCancelled
+    is ProtonPaymentEvent.Error.Generic -> Event.Sentry.Payments.FailureReason.Generic
+    is ProtonPaymentEvent.Error.EmptyCustomerId -> Event.Sentry.Payments.FailureReason.EmptyCustomerId
+    is ProtonPaymentEvent.Error.GoogleProductDetailsNotFound -> Event.Sentry.Payments.FailureReason.GoogleProductDetailsNotFound
+    is ProtonPaymentEvent.Error.PurchaseNotFound -> Event.Sentry.Payments.FailureReason.PurchaseNotFound
+    is ProtonPaymentEvent.Error.RecoverableBillingError -> Event.Sentry.Payments.FailureReason.RecoverableBillingError
+    is ProtonPaymentEvent.Error.SubscriptionManagedByOtherApp -> Event.Sentry.Payments.FailureReason.SubscriptionManagedByOtherApp
+    is ProtonPaymentEvent.Error.UnsupportedPaymentProvider -> Event.Sentry.Payments.FailureReason.UnsupportedPaymentProvider
 }

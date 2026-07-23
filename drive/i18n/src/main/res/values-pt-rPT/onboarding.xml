@@ -17,7 +17,6 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="onboarding_action_skip">Agora não</string>
   <string name="onboarding_title">Guarde e encripte automaticamente as suas fotos e vídeos</string>
   <string name="onboarding_description_part_one">Proteja as suas memórias com</string>
   <string name="onboarding_description_part_two">armazenamento encriptado de ponta a ponta</string>

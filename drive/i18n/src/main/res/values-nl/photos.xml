@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">Dit is noodzakelijk om ervoor te zorgen dat al uw foto\'s worden geback-upt en beschikbaar zijn op al uw apparaten. \n%1$s hecht veel waarde aan uw privacy en zal uw foto\'s alleen raadplegen voor het doel van synchronisatie en back-up.</string>
   <string name="photos_permission_rational_confirm_action">Instellingen</string>
-  <string name="photos_permission_rational_dismiss_action">Niet nu</string>
   <string name="photos_empty_loading_label_encrypted">End-to-end versleuteld</string>
   <string name="photos_empty_loading_label_progress">Back-up is bezig.\nHet kan even duren</string>
   <string name="photos_separator_current_month">Deze maand</string>
@@ -116,7 +115,6 @@
   </plurals>
   <string name="photos_upsell_title">Nooit meer te weinig opslag</string>
   <string name="photos_upsell_description">Upgrade nu en bewaar uw herinneringen versleuteld en veilig.</string>
-  <string name="photos_upsell_dismiss_action">Niet nu</string>
   <string name="photos_filter_favorite">Favorieten</string>
   <string name="photos_filter_screenshots">Schermafbeeldingen</string>
   <string name="photos_filter_videos">Video\'s</string>

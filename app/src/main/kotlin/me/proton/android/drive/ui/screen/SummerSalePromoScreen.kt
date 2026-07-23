@@ -18,12 +18,8 @@
 
 package me.proton.android.drive.ui.screen
 
-import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.view.ContextThemeWrapper
 import android.view.ViewGroup
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -62,7 +58,6 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -74,11 +69,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import me.proton.android.drive.R
-import me.proton.android.drive.log.DriveLogTag
-import me.proton.android.drive.ui.effect.PaymentErrorEffect
+import me.proton.android.drive.ui.component.PaymentUnredeemedHandler
 import me.proton.android.drive.ui.viewevent.SummerSalePromoViewEvent
 import me.proton.android.drive.ui.viewmodel.SummerSalePromoViewModel
 import me.proton.android.drive.ui.viewstate.ProtonPaymentButtonViewState
@@ -92,8 +84,6 @@ import me.proton.core.drive.base.presentation.component.TopBarActions
 import me.proton.core.drive.base.presentation.extension.isLandscape
 import me.proton.core.payment.presentation.view.ProtonPaymentButton
 import me.proton.core.payment.presentation.viewmodel.ProtonPaymentEvent
-import me.proton.core.plan.presentation.ui.StartUnredeemedPurchase
-import me.proton.core.util.kotlin.CoreLogger
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.base.presentation.component.TopAppBar as BaseTopAppBar
 
@@ -113,35 +103,10 @@ fun SummerSalePromoScreen(
         )
     }
 
-    val context = LocalContext.current
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) {
-        if (it.resultCode == Activity.RESULT_OK) {
-            viewEvent.onRedeemedSuccessfully()
-        }
-    }
-
-    LaunchedEffect(viewModel, LocalContext.current) {
-        viewModel.paymentErrorEffect
-            .onEach { effect ->
-                when (effect) {
-                    PaymentErrorEffect.GiapUnredeemed -> try {
-                        launcher.launch(
-                            input = StartUnredeemedPurchase.createIntent(context, Unit)
-                        )
-                    } catch (e: ActivityNotFoundException) {
-                        CoreLogger.w(
-                            tag = DriveLogTag.UI,
-                            e = e,
-                            message = "Unexpected UnredeemedPurchaseActivity activity not found",
-                        )
-                        viewEvent.onPaymentCallback(ProtonPaymentEvent.Error.UnrecoverableBillingError)
-                    }
-                }
-            }
-            .launchIn(this)
-    }
+    PaymentUnredeemedHandler(
+        paymentErrorEffect = viewModel.paymentErrorEffect,
+        viewEvent = viewEvent,
+    )
 
     AnimatedVisibility(viewState != null) {
         LaunchedEffect(Unit) {

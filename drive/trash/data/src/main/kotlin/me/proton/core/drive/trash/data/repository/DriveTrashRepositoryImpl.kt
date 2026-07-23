@@ -21,18 +21,21 @@ package me.proton.core.drive.trash.data.repository
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.SaveAction
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidSDKTrashNode
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidSDKTrashOperations
+import me.proton.core.drive.feature.flag.domain.extension.on
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
 import me.proton.core.drive.trash.domain.repository.DriveTrashRepository
-import me.proton.core.drive.trash.domain.usecase.UseSdkForTrash
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class DriveTrashRepositoryImpl @Inject constructor(
     private val legacy: DriveTrashRepositoryLegacy,
     private val sdk: DriveTrashRepositorySdk,
-    private val useSdkForTrash: UseSdkForTrash,
+    private val getFeatureFlag: GetFeatureFlag,
     private val linkTrashRepository: LinkTrashRepository,
 ) : DriveTrashRepository {
 
@@ -41,7 +44,7 @@ class DriveTrashRepositoryImpl @Inject constructor(
         volumeId: VolumeId,
         links: List<LinkId>,
     ): Map<LinkId, DataResult<Unit>> =
-        if (useSdkForTrash(userId, volumeId).getOrElse { false }) {
+        if (getFeatureFlag(driveAndroidSDKTrashNode(userId)).on) {
             sdk.sendToTrash(userId, volumeId, links)
         } else {
             legacy.sendToTrash(userId, volumeId, links)
@@ -52,14 +55,14 @@ class DriveTrashRepositoryImpl @Inject constructor(
         volumeId: VolumeId,
         links: List<LinkId>,
     ): Map<LinkId, DataResult<Unit>> =
-        if (useSdkForTrash(userId, volumeId).getOrElse { false }) {
+        if (getFeatureFlag(driveAndroidSDKTrashOperations(userId)).on) {
             sdk.restoreFromTrash(userId, volumeId, links)
         } else {
             legacy.restoreFromTrash(userId, volumeId, links)
         }
 
     override suspend fun emptyTrash(userId: UserId, volumeId: VolumeId) {
-        if (useSdkForTrash(userId, volumeId).getOrElse { false }) {
+        if (getFeatureFlag(driveAndroidSDKTrashOperations(userId)).on) {
             sdk.emptyTrash(userId, volumeId)
         } else {
             legacy.emptyTrash(userId, volumeId)
@@ -72,7 +75,7 @@ class DriveTrashRepositoryImpl @Inject constructor(
         volumeId: VolumeId,
         links: List<LinkId>,
     ): Map<LinkId, DataResult<Unit>> =
-        if (useSdkForTrash(userId, volumeId).getOrElse { false }) {
+        if (getFeatureFlag(driveAndroidSDKTrashOperations(userId)).on) {
             sdk.deleteItemsFromTrash(userId, volumeId, links)
         } else {
             legacy.deleteItemsFromTrash(userId, volumeId, links)

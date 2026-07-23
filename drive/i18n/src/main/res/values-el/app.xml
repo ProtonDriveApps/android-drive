@@ -173,7 +173,6 @@
   <string name="notification_permission_rationale_title_backup">Μείνετε ενημερωμένοι σχετικά με την κατάσταση δημιουργίας αντιγράφων ασφαλείας</string>
   <string name="notification_permission_rationale_description_backup">Λάβετε ειδοποιήσεις σχετικά με την πρόοδο και την κατάσταση των αντιγράφων ασφαλείας σας.</string>
   <string name="notification_permission_rationale_action_accept">Ενεργοποίηση ειδοποιήσεων</string>
-  <string name="notification_permission_rationale_action_reject">Όχι τώρα</string>
   <string name="notification_content_title_transferring">Μεταφορά δεδομένων</string>
   <!-- endregion -->
   <string name="content_description_select_all">Επιλογή όλων των στοιχείων στη λίστα</string>
@@ -288,4 +287,7 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">Αναβάθμιση για %1$s</string>
+  <string name="support_contact_options_title">Βοηθήστε μας να βελτιώσουμε την εμπειρία σας</string>
+  <string name="support_contact_options_description">Αν αντιμετωπίζετε κάποιο πρόβλημα, τα Έγγραφα Βοήθειας και η ομάδα υποστήριξής μας είναι εδώ για να σας βοηθήσουν!</string>
+  <string name="support_contact_options_action_button">Επικοινωνήστε μαζί μας</string>
 </resources>

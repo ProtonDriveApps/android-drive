@@ -185,7 +185,6 @@
   <string name="notification_permission_rationale_title_backup">Zůstaňte informováni o stavu zálohování</string>
   <string name="notification_permission_rationale_description_backup">Dostávejte upozornění o průběhu a stavu zálohování.</string>
   <string name="notification_permission_rationale_action_accept">Povolit upozornění</string>
-  <string name="notification_permission_rationale_action_reject">Nyní ne</string>
   <string name="notification_content_title_transferring">Přenos dat</string>
   <!-- endregion -->
   <string name="content_description_select_all">Vybrat všechny položky v seznamu</string>
@@ -300,4 +299,7 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">Navýšit za %1$s</string>
+  <string name="support_contact_options_title">Pomozte nám zlepšit váš zážitek</string>
+  <string name="support_contact_options_description">Pokud narazíte na nějaký problém, naše nápověda a tým podpory jsou tu, aby vám pomohly!</string>
+  <string name="support_contact_options_action_button">Kontaktujte nás</string>
 </resources>

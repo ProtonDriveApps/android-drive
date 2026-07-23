@@ -94,6 +94,7 @@ import me.proton.core.drive.backup.domain.usecase.SyncFolders
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.domain.entity.FastScrollAnchor
 import me.proton.core.drive.base.domain.entity.TimestampMs
+import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.domain.extension.getOrNull
@@ -392,32 +393,23 @@ class PhotosViewModel @Inject constructor(
                     if (after == null) {
                         null
                     } else if (before == null) {
-                        val cal = Calendar.getInstance().apply {
-                            timeInMillis = after.captureTime.value * 1000L
-                        }
+                        val afterCalendar = after.captureTime.toSeparatorCalendar()
                         PhotosItem.Separator(
                             value = separatorFormatter.toSeparator(after.captureTime),
-                            year = cal.get(Calendar.YEAR),
-                            month = cal.get(Calendar.MONTH),
+                            year = afterCalendar.get(Calendar.YEAR),
+                            month = afterCalendar.get(Calendar.MONTH),
                             afterCaptureTime = after.captureTime,
                         )
                     } else {
-                        val beforeCalendar = Calendar.getInstance().apply {
-                            timeInMillis = before.captureTime.value * 1000L
-                        }
-                        val afterCalendar = Calendar.getInstance().apply {
-                            timeInMillis = after.captureTime.value * 1000L
-                        }
+                        val beforeCalendar = before.captureTime.toSeparatorCalendar()
+                        val afterCalendar = after.captureTime.toSeparatorCalendar()
                         if (beforeCalendar.get(Calendar.YEAR) != afterCalendar.get(Calendar.YEAR) ||
                             beforeCalendar.get(Calendar.MONTH) != afterCalendar.get(Calendar.MONTH)
                         ) {
-                            val cal = Calendar.getInstance().apply {
-                                timeInMillis = after.captureTime.value * 1000L
-                            }
                             PhotosItem.Separator(
                                 value = separatorFormatter.toSeparator(after.captureTime),
-                                year = cal.get(Calendar.YEAR),
-                                month = cal.get(Calendar.MONTH),
+                                year = afterCalendar.get(Calendar.YEAR),
+                                month = afterCalendar.get(Calendar.MONTH),
                                 afterCaptureTime = after.captureTime,
                             )
                         } else {
@@ -426,6 +418,14 @@ class PhotosViewModel @Inject constructor(
                     }
                 }
             }.shareIn(viewModelScope, WhileSubscribed(5_000), replay = 1)
+        }
+
+    private fun TimestampS.toSeparatorCalendar(): Calendar =
+        Calendar.getInstance().apply {
+            timeInMillis = coerceIn(
+                separatorFormatter.minTimestampS,
+                separatorFormatter.maxTimestampS,
+            ).value * 1000L
         }
 
     val photoItems: Flow<PagingData<PhotosItem>> = combine(
@@ -565,15 +565,15 @@ class PhotosViewModel @Inject constructor(
         )
     }.stateIn(viewModelScope, Eagerly, Unit)
 
-    private fun navigateToSubscriptionOrSummerSale(
-        navigateToSubscription: () -> Unit,
+    private fun navigateToUpsellOrSummerSale(
+        navigateToUpsellPromo: () -> Unit,
         navigateToSummerSalePromo: () -> Unit,
     ) {
         viewModelScope.launch {
             if (isSummerSalePromoEnabled(userId)) {
                 navigateToSummerSalePromo()
             } else {
-                navigateToSubscription()
+                navigateToUpsellPromo()
             }
         }
     }
@@ -582,10 +582,10 @@ class PhotosViewModel @Inject constructor(
         navigateToPreview: (fileId: FileId, photoTag: PhotoTag?) -> Unit,
         navigateToPhotosOptions: (fileId: FileId, SelectionId?) -> Unit,
         navigateToMultiplePhotosOptions: (selectionId: SelectionId) -> Unit,
-        navigateToSubscription: () -> Unit,
         navigateToPhotosIssues: (FolderId) -> Unit,
         navigateToPhotosUpsell: () -> Unit,
         navigateToSummerSalePromo: () -> Unit,
+        navigateToUpsellPromo: () -> Unit,
         navigateToBackupSettings: () -> Unit,
         navigateToEnableBackupDialog: () -> Unit,
         lifecycle: Lifecycle,
@@ -651,7 +651,7 @@ class PhotosViewModel @Inject constructor(
         override val onRetry = this@PhotosViewModel::onRetry
         override val onScroll = this@PhotosViewModel::onScroll
         override val onStatusClicked = this@PhotosViewModel::onStatusClicked
-        override val onGetStorage: () -> Unit = { navigateToSubscriptionOrSummerSale(navigateToSubscription, navigateToSummerSalePromo) }
+        override val onGetStorage: () -> Unit = { navigateToUpsellOrSummerSale(navigateToUpsellPromo, navigateToSummerSalePromo) }
         override val onResolveMissingFolder: () -> Unit = navigateToBackupSettings
         override val onChangeNetwork: () -> Unit = navigateToBackupSettings
         override val onEnableBackupDialog: () -> Unit = navigateToEnableBackupDialog

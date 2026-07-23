@@ -173,7 +173,6 @@
   <string name="notification_permission_rationale_title_backup">Hold dig opdateret om din status for din sikkerhedskopiering</string>
   <string name="notification_permission_rationale_description_backup">Modtag notifikationer om fremskridt og status for dine sikkerhedskopieringer.</string>
   <string name="notification_permission_rationale_action_accept">Aktivér notifikationer</string>
-  <string name="notification_permission_rationale_action_reject">Ikke nu</string>
   <string name="notification_content_title_transferring">Overfører data</string>
   <!-- endregion -->
   <string name="content_description_select_all">Vælg alle elementer på listen</string>
@@ -288,4 +287,7 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">Opgradér for %1$s</string>
+  <string name="support_contact_options_title">Hjælp os med at forbedre din oplevelse</string>
+  <string name="support_contact_options_description">Hvis du har et problem er vores supportartikler og supportteam her for at hjælpe!</string>
+  <string name="support_contact_options_action_button">Kontakt os</string>
 </resources>

@@ -44,6 +44,42 @@
   <string name="common_unknown">Neznáme</string>
   <string name="common_month">Mesiac</string>
   <string name="common_year">Rok</string>
+  <!--
+        Variable %1$d is a number of years
+        Example:
+            "1 year"
+            "17 years"
+    -->
+  <plurals name="common_x_years">
+    <item quantity="one">%1$d rok</item>
+    <item quantity="few">%1$d roky</item>
+    <item quantity="many">%1$d rokov</item>
+    <item quantity="other">%1$d rokov</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of weeks
+        Example:
+            "1 week"
+            "4 weeks"
+    -->
+  <plurals name="common_x_weeks">
+    <item quantity="one">%1$d týždeň</item>
+    <item quantity="few">%1$d týždne</item>
+    <item quantity="many">%1$d týždňov</item>
+    <item quantity="other">%1$d týždňov</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of days
+        Example:
+            "1 day"
+            "37 days"
+    -->
+  <plurals name="common_x_days">
+    <item quantity="one">%1$d deň</item>
+    <item quantity="few">%1$d dni</item>
+    <item quantity="many">%1$d dní</item>
+    <item quantity="other">%1$d dní</item>
+  </plurals>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -84,6 +120,7 @@
   <string name="common_open_action">Otvoriť</string>
   <string name="common_back_action">Späť</string>
   <string name="common_open_side_menu_action">Otvoriť bočné menu</string>
+  <string name="common_not_now">Teraz nie</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Audio</string>

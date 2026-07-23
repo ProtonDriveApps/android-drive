@@ -17,7 +17,6 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="onboarding_action_skip">არა ახლა</string>
   <string name="onboarding_title">ავტომატურად შეინახეთ და დაშიფრეთ თქვენი სურათები და ვიდეოები</string>
   <string name="onboarding_description_part_one">იქონიეთ თქვენი მოგონებები უსაფრთხოდ</string>
   <string name="onboarding_description_part_two">გამჭოლად დაშიფრული საცავი</string>

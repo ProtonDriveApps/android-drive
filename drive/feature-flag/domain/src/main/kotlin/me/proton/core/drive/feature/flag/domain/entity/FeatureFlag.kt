@@ -18,7 +18,13 @@
 
 package me.proton.core.drive.feature.flag.domain.entity
 
-data class FeatureFlag(val id: FeatureFlagId, val state: State) {
+data class FeatureFlag(
+    val id: FeatureFlagId,
+    val state: State,
+    val variant: String? = null,
+    val payloadType: String? = null,
+    val payloadValue: String? = null,
+) {
 
     enum class State {
         ENABLED,

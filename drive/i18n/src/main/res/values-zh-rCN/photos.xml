@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">这对于确保您的所有照片都已备份并可在所有设备上使用非常必要。\n%1$s 非常重视您的隐私，并且只会出于同步和备份的目的访问您的照片。</string>
   <string name="photos_permission_rational_confirm_action">设置</string>
-  <string name="photos_permission_rational_dismiss_action">以后再说</string>
   <string name="photos_empty_loading_label_encrypted">已端到端加密</string>
   <string name="photos_empty_loading_label_progress">备份正在进行中。\n可能需要一段时间</string>
   <string name="photos_separator_current_month">这个月</string>
@@ -113,7 +112,6 @@
   </plurals>
   <string name="photos_upsell_title">永远不会耗尽存储空间</string>
   <string name="photos_upsell_description">立即升级并保证您的所有数据加密且安全。</string>
-  <string name="photos_upsell_dismiss_action">以后再说</string>
   <string name="photos_filter_favorite">收藏</string>
   <string name="photos_filter_screenshots">截图</string>
   <string name="photos_filter_videos">视频</string>

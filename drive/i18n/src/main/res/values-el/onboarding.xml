@@ -17,7 +17,6 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="onboarding_action_skip">Όχι τώρα</string>
   <string name="onboarding_title">Αυτόματη αποθήκευση και κρυπτογράφηση των φωτογραφιών και των βίντεό σας</string>
   <string name="onboarding_description_part_one">Διατηρήστε τις αναμνήσεις σας ασφαλείς με</string>
   <string name="onboarding_description_part_two">διατερματικά κρυπτογραφημένο χώρο αποθήκευσης</string>

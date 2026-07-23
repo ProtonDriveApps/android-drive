@@ -41,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -105,7 +106,6 @@ fun PhotosAndAlbumsScreen(
     navigateToPhotosPreview: (fileId: FileId, photoTag: PhotoTag?) -> Unit,
     navigateToPhotosOptions: (fileId: FileId, SelectionId?) -> Unit,
     navigateToMultiplePhotosOptions: (selectionId: SelectionId) -> Unit,
-    navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
     navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
@@ -115,6 +115,7 @@ fun PhotosAndAlbumsScreen(
     navigateToAlbum: (AlbumId) -> Unit,
     navigateToUserInvitation: (Boolean) -> Unit,
     navigateToSummerSalePromo: () -> Unit,
+    navigateToUpsellPromo: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<PhotosAndAlbumsViewModel>()
@@ -141,10 +142,10 @@ fun PhotosAndAlbumsScreen(
                 navigateToPhotosPreview = navigateToPhotosPreview,
                 navigateToPhotosOptions = navigateToPhotosOptions,
                 navigateToMultiplePhotosOptions = navigateToMultiplePhotosOptions,
-                navigateToSubscription = navigateToSubscription,
                 navigateToPhotosIssues = navigateToPhotosIssues,
                 navigateToPhotosUpsell = navigateToPhotosUpsell,
                 navigateToSummerSalePromo = navigateToSummerSalePromo,
+                navigateToUpsellPromo = navigateToUpsellPromo,
                 navigateToBackupSettings = navigateToBackupSettings,
                 navigateToEnableBackupDialog = navigateToEnableBackupDialog,
                 navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
@@ -189,18 +190,22 @@ fun AlbumsTab(
 
     viewModel.HandleHomeEffect(homeScaffoldState)
 
+    // See PhotosTab: the content lambda is stored once, so read viewState through
+    // rememberUpdatedState to keep the top app bar reactive instead of freezing it.
+    val currentViewState by rememberUpdatedState(viewState)
+
     LaunchedEffect(Unit) {
         homeScaffoldState.topAppBar.value = {
             TopAppBar(
-                navigationIcon = if (viewState.navigationIconResId != 0) {
-                    painterResource(id = viewState.navigationIconResId)
+                navigationIcon = if (currentViewState.navigationIconResId != 0) {
+                    painterResource(id = currentViewState.navigationIconResId)
                 } else null,
-                navigationContentDescription = viewState.navigationContentDescription,
+                navigationContentDescription = currentViewState.navigationContentDescription,
                 onNavigationIcon = viewEvent.onTopAppBarNavigation,
                 title = defaultTitle,
                 notificationDotVisible = false,
                 actions = {
-                    TopBarActions(viewState.topBarActions)
+                    TopBarActions(currentViewState.topBarActions)
                 }
             )
         }
@@ -239,10 +244,10 @@ fun PhotosTab(
     navigateToPhotosPreview: (fileId: FileId, photoTag: PhotoTag?) -> Unit,
     navigateToPhotosOptions: (fileId: FileId, SelectionId?) -> Unit,
     navigateToMultiplePhotosOptions: (selectionId: SelectionId) -> Unit,
-    navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
     navigateToPhotosUpsell: () -> Unit,
     navigateToSummerSalePromo: () -> Unit,
+    navigateToUpsellPromo: () -> Unit,
     navigateToBackupSettings: () -> Unit,
     navigateToEnableBackupDialog: () -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
@@ -258,10 +263,10 @@ fun PhotosTab(
             navigateToPreview = navigateToPhotosPreview,
             navigateToPhotosOptions = navigateToPhotosOptions,
             navigateToMultiplePhotosOptions = navigateToMultiplePhotosOptions,
-            navigateToSubscription = navigateToSubscription,
             navigateToPhotosIssues = navigateToPhotosIssues,
             navigateToPhotosUpsell = navigateToPhotosUpsell,
             navigateToSummerSalePromo = navigateToSummerSalePromo,
+            navigateToUpsellPromo = navigateToUpsellPromo,
             navigateToBackupSettings = navigateToBackupSettings,
             navigateToEnableBackupDialog = navigateToEnableBackupDialog,
             lifecycle = lifecycle,
@@ -334,30 +339,33 @@ private fun PhotosTab(
 
     BackHandler(enabled = inMultiselect) { viewEvent.onBack() }
 
+    // capture updates of view state
+    val currentViewState by rememberUpdatedState(viewState)
+
     LaunchedEffect(Unit) {
         homeScaffoldState.topAppBar.value = {
             TopAppBar(
-                navigationIcon = if (viewState.navigationIconResId != 0) {
-                    painterResource(id = viewState.navigationIconResId)
+                navigationIcon = if (currentViewState.navigationIconResId != 0) {
+                    painterResource(id = currentViewState.navigationIconResId)
                 } else null,
-                navigationContentDescription = viewState.navigationContentDescription,
+                navigationContentDescription = currentViewState.navigationContentDescription,
                 onNavigationIcon = viewEvent.onTopAppBarNavigation,
-                title = if (viewState.inMultiselect) {
-                    { Title(viewState.title, false) }
+                title = if (currentViewState.inMultiselect) {
+                    { Title(currentViewState.title, false) }
                 } else {
                     defaultTitle
                 },
                 notificationDotVisible = false,
                 actions = {
-                    TopBarActions(actionFlow = viewState.topBarActions)
+                    TopBarActions(actionFlow = currentViewState.topBarActions)
                     AnimatedVisibility(
-                        visible = viewState.showPhotosStateIndicator,
+                        visible = currentViewState.showPhotosStateIndicator,
                     ) {
                         IconButton(
                             modifier = modifier.clip(shape = CircleShape),
                             onClick = { viewEvent.onStatusClicked() }
                         ) {
-                            viewState.backupStatusViewState?.let { backupStatusViewState ->
+                            currentViewState.backupStatusViewState?.let { backupStatusViewState ->
                                 PhotosStatesIndicator(backupStatusViewState)
                             }
                         }

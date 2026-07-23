@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">Uprawnienie jest konieczne, aby zapewnić, że wszystkie zdjęcia mają utworzoną kopię zapasową i są dostępne na wszystkich urządzeniach.\n%1$s traktuje prywatność poważnie i uzyskuje dostęp do Twoich zdjęć wyłącznie w celu synchronizacji i tworzenia kopii zapasowych.</string>
   <string name="photos_permission_rational_confirm_action">Ustawienia</string>
-  <string name="photos_permission_rational_dismiss_action">Nie teraz</string>
   <string name="photos_empty_loading_label_encrypted">Zaszyfrowane end-to-end</string>
   <string name="photos_empty_loading_label_progress">Kopia zapasowa jest w toku.\nTo może zająć chwilę</string>
   <string name="photos_separator_current_month">Ten miesiąc</string>
@@ -122,7 +121,6 @@
   </plurals>
   <string name="photos_upsell_title">Nigdy nie zabraknie przestrzeni dyskowej</string>
   <string name="photos_upsell_description">Ulepsz plan i zachowaj wszystkie swoje wspomnienia zaszyfrowane i bezpieczne.</string>
-  <string name="photos_upsell_dismiss_action">Nie teraz</string>
   <string name="photos_filter_favorite">Ulubione</string>
   <string name="photos_filter_screenshots">Zrzuty ekranu</string>
   <string name="photos_filter_videos">Filmy</string>

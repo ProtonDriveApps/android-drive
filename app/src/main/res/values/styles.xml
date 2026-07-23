@@ -68,4 +68,67 @@
             @style/Widget.Drive.PaymentButton
         </item>
     </style>
+
+    <!-- Shape -->
+    <style name="ShapeAppearance.Drive.PaymentButton.Upsell"
+        parent="ShapeAppearance.MaterialComponents.MediumComponent">
+
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <!-- Actual MaterialButton style -->
+    <style name="Widget.Drive.PaymentButton.Upsell"
+        parent="Widget.MaterialComponents.Button">
+
+        <!-- Background -->
+        <item name="backgroundTint">@android:color/white</item>
+
+        <!-- Text -->
+        <item name="android:textColor">#301E6C</item>
+
+        <!-- 16sp -->
+        <item name="android:textSize">16sp</item>
+
+        <!-- Weight 700 -->
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">sans-serif</item>
+
+        <!-- API 28+ -->
+        <item name="android:textFontWeight">700</item>
+
+        <!-- For older versions -->
+        <item name="android:textStyle">bold</item>
+
+        <!-- 0.03em -->
+        <item name="android:letterSpacing">0.03</item>
+
+        <!-- 24sp line height -->
+        <item name="android:lineHeight">24sp</item>
+        <item name="lineHeight">24sp</item>
+
+        <!-- No elevation -->
+        <item name="elevation">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
+
+        <!-- No border -->
+        <item name="strokeWidth">0dp</item>
+
+        <!-- Shape -->
+        <item name="shapeAppearance">
+            @style/ShapeAppearance.Drive.PaymentButton.Upsell
+        </item>
+
+        <!-- Optional: remove insets MaterialButton sometimes adds -->
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <!-- Theme overlay applied through ContextThemeWrapper -->
+    <style name="ThemeOverlay.Drive.PaymentButton.Upsell"
+        parent="ThemeOverlay.MaterialComponents">
+        <item name="materialButtonStyle">
+            @style/Widget.Drive.PaymentButton.Upsell
+        </item>
+    </style>
 </resources>

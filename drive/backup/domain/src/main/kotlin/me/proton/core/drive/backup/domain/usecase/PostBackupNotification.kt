@@ -48,7 +48,7 @@ class PostBackupNotification @Inject constructor(
     }
 }
 
-private fun BackupState.toEvent(folderId: FolderId) =backupStatus?.let{ status: BackupStatus ->
+private fun BackupState.toEvent(folderId: FolderId) = backupStatus?.let { status: BackupStatus ->
     Event.Backup(
             folderId = folderId,
             state = status.toState(),

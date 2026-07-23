@@ -109,7 +109,7 @@ class AppProtonDriveClientProvider @Inject constructor(
             userId = userId,
             apiProvider = apiProvider,
             request = ClientCreateRequest(
-                baseUrl = "${configurationProvider.baseUrl}/drive/",
+                baseUrl = "${configurationProvider.baseUrl}/",
                 loggerProvider = getOrCreateSdkLoggerProvider().getOrThrow(),
                 bindingsLanguage = "kotlin",
                 uid = getOrCreateClientUid().getOrNull(

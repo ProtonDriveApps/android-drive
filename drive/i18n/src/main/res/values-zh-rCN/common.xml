@@ -44,6 +44,33 @@
   <string name="common_unknown">未知</string>
   <string name="common_month">每月</string>
   <string name="common_year">年</string>
+  <!--
+        Variable %1$d is a number of years
+        Example:
+            "1 year"
+            "17 years"
+    -->
+  <plurals name="common_x_years">
+    <item quantity="other">%1$d 年</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of weeks
+        Example:
+            "1 week"
+            "4 weeks"
+    -->
+  <plurals name="common_x_weeks">
+    <item quantity="other">%1$d 周</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of days
+        Example:
+            "1 day"
+            "37 days"
+    -->
+  <plurals name="common_x_days">
+    <item quantity="other">%1$d 天</item>
+  </plurals>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">好的</string>
@@ -84,6 +111,7 @@
   <string name="common_open_action">打开</string>
   <string name="common_back_action">返回</string>
   <string name="common_open_side_menu_action">打开侧边菜单</string>
+  <string name="common_not_now">以后再说</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">音频</string>

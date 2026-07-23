@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">ეს საჭიროა, რომ დავრწმუნდეთ, რომ ყველა თქვენი სურათის მარქაფი მოხდება და ის წვდომა ყველა თქვენი მოწყობლობებიდან გაქვთ.\n%1$s თქვენს კონფიდენციალობას პასუხისგებით ეკიდება და თქვენს ფოტოებთან წვდომა, მხოლოდ, მარქაფისა და სინქრონიზაციისთვის სჭირდება.</string>
   <string name="photos_permission_rational_confirm_action">მორგება</string>
-  <string name="photos_permission_rational_dismiss_action">არა ახლა</string>
   <string name="photos_empty_loading_label_encrypted">გამჭოლად დაშიფრული</string>
   <string name="photos_empty_loading_label_progress">მიმდინარეობს მარქაფის აღება.\nამას კარგა ხანი შეიძლება დასჭირდეს</string>
   <string name="photos_separator_current_month">ამ თვეში</string>
@@ -116,7 +115,6 @@
   </plurals>
   <string name="photos_upsell_title">საცავში ადგილი არასდროს დაგიმთავრდებათ</string>
   <string name="photos_upsell_description">აწიეთ ტარიფი ახლა და დაიტოვეთ თქვენი მოგონებები დაშიფრულად და უსაფრთხოდ.</string>
-  <string name="photos_upsell_dismiss_action">არა ახლა</string>
   <string name="photos_filter_favorite">რჩეული</string>
   <string name="photos_filter_screenshots">ეკრანის ანაბეჭდები</string>
   <string name="photos_filter_videos">ვიდეოები</string>

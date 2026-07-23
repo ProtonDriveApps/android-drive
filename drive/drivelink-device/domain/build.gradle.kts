@@ -28,4 +28,5 @@ driveModule(hilt = true) {
     api(project(":drive:drivelink:domain"))
     api(project(":drive:drivelink-crypto:domain"))
     api(project(":drive:drivelink-rename:domain"))
+    api(project(":drive:event-manager:base:domain"))
 }

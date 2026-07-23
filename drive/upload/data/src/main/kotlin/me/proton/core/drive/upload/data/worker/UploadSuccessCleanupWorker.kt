@@ -32,6 +32,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.util.coRunCatching
@@ -46,6 +47,7 @@ import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_I
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.manager.UploadSdkManager
+import me.proton.core.drive.upload.domain.provider.FileProvider
 import me.proton.core.drive.upload.domain.resolver.UriResolver
 import me.proton.core.drive.upload.domain.usecase.AnnounceUploadEvent
 import me.proton.core.drive.upload.domain.usecase.RemoveUploadFile
@@ -69,6 +71,7 @@ class UploadSuccessCleanupWorker @AssistedInject constructor(
     private val uriResolver: UriResolver,
     private val announceUploadEvent: AnnounceUploadEvent,
     private val uploadSdkManager: UploadSdkManager,
+    private val fileProvider: FileProvider,
     configurationProvider: ConfigurationProvider,
     uploadMetricsNotifier: UploadMetricsNotifier,
     canRun: CanRun,
@@ -92,6 +95,10 @@ class UploadSuccessCleanupWorker @AssistedInject constructor(
         uploadFileLink: UploadFileLink,
     ): Result = with(uploadFileLink) {
         logWorkState("clean ${uploadFileLink.uriString}")
+        uploadFileLink.deleteSourceFile(fileProvider).getOrNull(
+            tag = uploadFileLink.logTag(),
+            message = "Failed deleting source file",
+        )
         updateUploadState(uploadFileLink.id, UploadState.CLEANUP).getOrThrow()
         announceUploadEvent(
             uploadFileLink = uploadFileLink,

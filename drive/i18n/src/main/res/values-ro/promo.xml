@@ -17,22 +17,44 @@
   ~ along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <!-- tag(q1campaign) -->
-  <string name="promo_storage_title">1 TB de spațiu de stocare: de 200 de ori planul actual</string>
-  <!-- tag(q1campaign) -->
-  <string name="promo_document_title">Editor de documente online</string>
-  <!-- tag(q1campaign) -->
-  <string name="promo_secure_title">Stocare și partajare securizată fișiere</string>
-  <!-- tag(q1campaign) -->
-  <string name="promo_private_title">Conservare fotografii private</string>
-  <!-- tag(q1campaign) -->
-  <string name="promo_claim_offer_button">Revendicați oferta</string>
-  <!-- tag(q1campaign)
-        Variable %1$s is price per month
+  <!-- Upsell promo -->
+  <!--
+        Variable %1$s is a plan name and %2$s is a price for first period
         Example:
-            "only $6.99"
+            "Try Drive Plus 1 TB for $1"
     -->
-  <string name="promo_offer_per_month_details">la %1$s</string>
+  <string name="promo_upsell_title">Încercați %1$s cu %2$s</string>
+  <string name="promo_upsell_subtitle">Ofertă limitată, puteți anula oricând.</string>
+  <string name="promo_upsell_storage_label">Spațiu de stocare</string>
+  <string name="promo_upsell_version_history_label">Istoric versiuni fișiere</string>
+  <string name="promo_upsell_share_with_edit_access_label">Partajare cu acces la editare</string>
+  <!--
+        Variable %1$d is a storage increase factor and %2$s is a free plan title
+        Example:
+            "200x more than Free"
+    -->
+  <string name="promo_upsell_storage_plan_subtitle">de %1$d ori mai mult decât %2$s</string>
+  <!--
+        Variable %1$s is a period using common_x_months and %2$s is a price for first period
+        Example:
+            "Get 1 month for $1"
+            "Get 12 months for $60"
+    -->
+  <string name="promo_upsell_claim_offer_button">Luați %1$s cu %2$s</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Enjoying Proton Drive?"
+    -->
+  <string name="promo_app_title">Vă place %1$s?</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "If you're enjoying Proton Drive, we would greatly..."
+    -->
+  <string name="promo_app_description">Dacă vă place %1$s, am aprecia foarte mult o recenzie a aplicației!\nDacă întâmpinați o problemă, documentele de ajutor și echipa de asistență sunt aici pentru a vă ajuta!</string>
+  <string name="promo_app_positive_button">Îmi place</string>
+  <string name="promo_app_negative_button">Ar putea fi mai bună</string>
   <!-- tag(q2campaign2026) -->
   <string name="promo_summer_sale_drawer_title">Reduceri de vară</string>
   <!-- tag(q2campaign2026) -->

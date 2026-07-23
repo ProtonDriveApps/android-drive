@@ -173,7 +173,6 @@
   <string name="notification_permission_rationale_title_backup">Manténgase actualizado sobre el estado de su copia de seguridad</string>
   <string name="notification_permission_rationale_description_backup">Recibe notificaciones sobre el progreso y estado de tus copias de seguridad.</string>
   <string name="notification_permission_rationale_action_accept">Activar las notificaciones</string>
-  <string name="notification_permission_rationale_action_reject">Ahora no</string>
   <string name="notification_content_title_transferring">Transferencia de datos</string>
   <!-- endregion -->
   <string name="content_description_select_all">Seleccionar todos los elementos en la lista</string>
@@ -288,4 +287,7 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">Mejorar por %1$s</string>
+  <string name="support_contact_options_title">Ayúdanos a mejorar tu experiencia</string>
+  <string name="support_contact_options_description">Si tienes algún problema, nuestros documentos de ayuda y el equipo de asistencia están aquí para ayudarte.</string>
+  <string name="support_contact_options_action_button">Contacta con nosotros</string>
 </resources>

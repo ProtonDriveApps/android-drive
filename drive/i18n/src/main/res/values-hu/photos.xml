@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">Erre azért van szükség, hogy az összes fényképéről biztonsági mentés készüljön, és az összes eszközén elérhető legyen.\nA %1$s komolyan veszi az Ön adatvédelmét, és csak a szinkronizálás és a biztonsági mentés céljából fér hozzá a fényképekhez.</string>
   <string name="photos_permission_rational_confirm_action">Beállítások</string>
-  <string name="photos_permission_rational_dismiss_action">Most nem</string>
   <string name="photos_empty_loading_label_encrypted">Végpontok közt titkosított</string>
   <string name="photos_empty_loading_label_progress">Biztonsági mentés folyamatban.\nSokáig eltarthat.</string>
   <string name="photos_separator_current_month">Ez a hónap</string>
@@ -116,7 +115,6 @@
   </plurals>
   <string name="photos_upsell_title">Soha ne fogyjon ki a tárhelyből</string>
   <string name="photos_upsell_description">Váltson nagyobb csomagra, és tartsa titkosítva és biztonságban az összes emlékét.</string>
-  <string name="photos_upsell_dismiss_action">Most nem</string>
   <string name="photos_filter_favorite">Kedvencek</string>
   <string name="photos_filter_screenshots">Képernyőképek</string>
   <string name="photos_filter_videos">Videók</string>

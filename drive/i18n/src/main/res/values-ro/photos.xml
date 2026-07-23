@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">Acest lucru este necesar pentru a vă asigura că toate fotografiile vă sunt copiate și sunt disponibile pe toate dispozitivele personale.\n%1$s vă ia în serios confidențialitatea și vă va accesa fotografiile numai în scopul sincronizării și al conservării.</string>
   <string name="photos_permission_rational_confirm_action">Setări</string>
-  <string name="photos_permission_rational_dismiss_action">Nu acum</string>
   <string name="photos_empty_loading_label_encrypted">Criptat bilateral</string>
   <string name="photos_empty_loading_label_progress">Conservarea este în desfășurare.\nAr putea dura un timp.</string>
   <string name="photos_separator_current_month">Luna asta</string>
@@ -119,7 +118,6 @@
   </plurals>
   <string name="photos_upsell_title">Nu rămâneți niciodată fără spațiu de stocare</string>
   <string name="photos_upsell_description">Modificați planul acum și păstrați-vă toate amintirile criptate și în siguranță.</string>
-  <string name="photos_upsell_dismiss_action">Nu acum</string>
   <string name="photos_filter_favorite">Favorite</string>
   <string name="photos_filter_screenshots">Capturi de ecran</string>
   <string name="photos_filter_videos">Videoclipuri</string>

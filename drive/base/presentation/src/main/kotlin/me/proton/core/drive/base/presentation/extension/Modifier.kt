@@ -17,12 +17,15 @@
  */
 package me.proton.core.drive.base.presentation.extension
 
+import android.view.MotionEvent
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -32,6 +35,14 @@ fun Modifier.conditional(condition: Boolean, block: Modifier.() -> Modifier) =
     } else {
         this
     }
+
+@OptIn(ExperimentalComposeUiApi::class)
+fun Modifier.rejectObscuredTouches() = pointerInteropFilter { event ->
+    event.flags and (
+        MotionEvent.FLAG_WINDOW_IS_OBSCURED or
+            MotionEvent.FLAG_WINDOW_IS_PARTIALLY_OBSCURED
+        ) != 0
+}
 
 fun Modifier.shadow(
     color: Color = Color.Black,

@@ -55,10 +55,7 @@ fun ProtonDriveSdkException.log(
 internal fun ProtonDriveSdkException.loggerLevel(default: LoggerLevel? = null): LoggerLevel? =
     when(error?.domain) {
         ProtonSdkError.ErrorDomain.Serialization -> LoggerLevel.ERROR
-        ProtonSdkError.ErrorDomain.Api -> when(error?.secondaryCode?.toInt()) {
-            502, 503 -> LoggerLevel.ERROR
-            else -> LoggerLevel.DEBUG
-        }
+        ProtonSdkError.ErrorDomain.Api -> error?.secondaryCode?.toInt()?.httpCodeLoggerLevel()
         ProtonSdkError.ErrorDomain.Network,
         ProtonSdkError.ErrorDomain.Transport,
         ProtonSdkError.ErrorDomain.SuccessfulCancellation, -> LoggerLevel.DEBUG

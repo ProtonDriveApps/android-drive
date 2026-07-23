@@ -17,7 +17,6 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="onboarding_action_skip">Inte nu</string>
   <string name="onboarding_title">Spara och kryptera dina foton och videor automatiskt</string>
   <string name="onboarding_description_part_one">Behåll dina minnen säkert med</string>
   <string name="onboarding_description_part_two">end-to-end-krypterat lagringsutrymme</string>

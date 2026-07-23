@@ -28,9 +28,10 @@ class GetAllBuckets @Inject constructor(
     private val bucketRepository: BucketRepository,
     private val backupPermissionsManager: BackupPermissionsManager,
 ) {
-    operator fun invoke() =
+    operator fun invoke(partial: Boolean = true) =
         backupPermissionsManager.backupPermissions.map { backupPermissions ->
-            if (backupPermissions is BackupPermissions.Granted) {
+            val granted = backupPermissions as? BackupPermissions.Granted
+            if (granted != null && (!granted.partial || partial)) {
                 bucketRepository.getAll()
             } else {
                 null

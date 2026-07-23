@@ -20,20 +20,22 @@ package me.proton.core.drive.folder.create.domain.usecase
 
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidSDKCreateFolder
+import me.proton.core.drive.feature.flag.domain.extension.on
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.extension.linkId
 import me.proton.core.drive.link.domain.extension.nodeUid
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.GetLink
-import me.proton.core.drive.link.domain.usecase.UseSdkForNodeOperation
 import me.proton.core.drive.share.domain.usecase.GetShare
 import javax.inject.Inject
 
 class CreateFolder @Inject constructor(
     private val createFolderLegacy: CreateFolderLegacy,
     private val createFolderSdk: CreateFolderSdk,
-    private val useSdkForNodeOperation: UseSdkForNodeOperation,
+    private val getFeatureFlag: GetFeatureFlag,
     private val getLink: GetLink,
     private val getShare: GetShare,
 ) {
@@ -42,7 +44,7 @@ class CreateFolder @Inject constructor(
         folderName: String,
         shouldUpdateEvent: Boolean = true,
     ): Result<Pair<String, FolderId>> = coRunCatching {
-        if (useSdkForNodeOperation(parentFolder.id).getOrElse { false }) {
+        if (getFeatureFlag(driveAndroidSDKCreateFolder(parentFolder.userId)).on) {
             val share = getShare(parentFolder.id.shareId).toResult().getOrThrow()
             createFolderSdk(
                 userId = parentFolder.userId,

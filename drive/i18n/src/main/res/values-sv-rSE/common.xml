@@ -44,6 +44,36 @@
   <string name="common_unknown">Okänd</string>
   <string name="common_month">Månad</string>
   <string name="common_year">År</string>
+  <!--
+        Variable %1$d is a number of years
+        Example:
+            "1 year"
+            "17 years"
+    -->
+  <plurals name="common_x_years">
+    <item quantity="one">%1$d år</item>
+    <item quantity="other">%1$d år</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of weeks
+        Example:
+            "1 week"
+            "4 weeks"
+    -->
+  <plurals name="common_x_weeks">
+    <item quantity="one">%1$d vecka</item>
+    <item quantity="other">%1$d veckor</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of days
+        Example:
+            "1 day"
+            "37 days"
+    -->
+  <plurals name="common_x_days">
+    <item quantity="one">%1$d dag</item>
+    <item quantity="other">%1$d dagar</item>
+  </plurals>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -84,6 +114,7 @@
   <string name="common_open_action">Öppna</string>
   <string name="common_back_action">Tillbaka</string>
   <string name="common_open_side_menu_action">Öppna sidomeny</string>
+  <string name="common_not_now">Inte nu</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Ljud</string>

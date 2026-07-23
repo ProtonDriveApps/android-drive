@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">Это необходимо для того, чтобы все ваши фотографии были сохранены и доступны на всех ваших устройствах.\n%1$s серьезно относится к вашей приватности и получает доступ к вашим фотографиям только в целях синхронизации и резервного копирования.</string>
   <string name="photos_permission_rational_confirm_action">Настройки</string>
-  <string name="photos_permission_rational_dismiss_action">Не сейчас</string>
   <string name="photos_empty_loading_label_encrypted">Со сквозным шифрованием</string>
   <string name="photos_empty_loading_label_progress">Выполняется резервное копирование. \nIt может занять некоторое время.</string>
   <string name="photos_separator_current_month">В этом месяце</string>
@@ -122,7 +121,6 @@
   </plurals>
   <string name="photos_upsell_title">Никогда не заполнять хранилище полностью</string>
   <string name="photos_upsell_description">Улучшите сейчас и сохраните все свои воспоминания в зашифрованном виде.</string>
-  <string name="photos_upsell_dismiss_action">Не сейчас</string>
   <string name="photos_filter_favorite">Избранное</string>
   <string name="photos_filter_screenshots">Снимки экрана</string>
   <string name="photos_filter_videos">Видео</string>

@@ -23,7 +23,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
-        android:requestLegacyExternalStorage="true"
-        android:networkSecurityConfig="@xml/network_security_config"/>
+        android:requestLegacyExternalStorage="true" />
 
 </manifest>

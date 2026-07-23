@@ -33,6 +33,7 @@ import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.extension.isFileEmpty
@@ -49,6 +50,7 @@ import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_I
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.manager.post
+import me.proton.core.drive.upload.domain.provider.FileProvider
 import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.worker.data.LimitedRetryCoroutineWorker
 import me.proton.core.drive.worker.domain.usecase.CanRun
@@ -237,6 +239,17 @@ abstract class UploadCoroutineWorker(
 
     protected fun setUploadAsCancelled() {
         isCancelled = true
+    }
+
+    protected fun UploadFileLink.deleteSourceFile(fileProvider: FileProvider) = coRunCatching {
+        if (shouldDeleteSourceUri) {
+            uriString?.let {
+                val sourceFile = fileProvider.getFile(it)
+                if (sourceFile.exists()) {
+                    sourceFile.delete()
+                }
+            }
+        }
     }
 
     abstract suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result

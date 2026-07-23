@@ -17,22 +17,44 @@
   ~ along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <!-- tag(q1campaign) -->
-  <string name="promo_storage_title">1 TB opslag: 200x huidig abonnement</string>
-  <!-- tag(q1campaign) -->
-  <string name="promo_document_title">Online documenteditor</string>
-  <!-- tag(q1campaign) -->
-  <string name="promo_secure_title">Veilig bestanden opslaan en delen</string>
-  <!-- tag(q1campaign) -->
-  <string name="promo_private_title">Privé fotoback-up</string>
-  <!-- tag(q1campaign) -->
-  <string name="promo_claim_offer_button">Aanbieding claimen</string>
-  <!-- tag(q1campaign)
-        Variable %1$s is price per month
+  <!-- Upsell promo -->
+  <!--
+        Variable %1$s is a plan name and %2$s is a price for first period
         Example:
-            "only $6.99"
+            "Try Drive Plus 1 TB for $1"
     -->
-  <string name="promo_offer_per_month_details">slechts %1$s</string>
+  <string name="promo_upsell_title">Probeer %1$s voor %2$s</string>
+  <string name="promo_upsell_subtitle">Tijdelijke aanbieding, annuleer op elk moment.</string>
+  <string name="promo_upsell_storage_label">Opslagruimte</string>
+  <string name="promo_upsell_version_history_label">Versiegeschiedenis</string>
+  <string name="promo_upsell_share_with_edit_access_label">Delen met bewerkingsrechten</string>
+  <!--
+        Variable %1$d is a storage increase factor and %2$s is a free plan title
+        Example:
+            "200x more than Free"
+    -->
+  <string name="promo_upsell_storage_plan_subtitle">%1$dx meer dan %2$s</string>
+  <!--
+        Variable %1$s is a period using common_x_months and %2$s is a price for first period
+        Example:
+            "Get 1 month for $1"
+            "Get 12 months for $60"
+    -->
+  <string name="promo_upsell_claim_offer_button">Krijg %1$s voor %2$s</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Enjoying Proton Drive?"
+    -->
+  <string name="promo_app_title">Vindt u %1$s leuk?</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "If you're enjoying Proton Drive, we would greatly..."
+    -->
+  <string name="promo_app_description">Als u %1$s leuk vindt, zouden wij het erg op prijs stellen als u een recensie over de app achterlaat!\nMocht u een probleem hebben, dan staan onze Help Documenten en ons ondersteuningsteam klaar om u te helpen!</string>
+  <string name="promo_app_positive_button">Ik vind het leuk</string>
+  <string name="promo_app_negative_button">Het zou beter kunnen</string>
   <!-- tag(q2campaign2026) -->
   <string name="promo_summer_sale_drawer_title">Zomer Sale</string>
   <!-- tag(q2campaign2026) -->

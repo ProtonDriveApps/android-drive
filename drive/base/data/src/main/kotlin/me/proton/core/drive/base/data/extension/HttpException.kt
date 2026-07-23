@@ -18,7 +18,6 @@
 package me.proton.core.drive.base.data.extension
 
 import android.content.Context
-import me.proton.core.util.kotlin.CoreLogger
 import retrofit2.HttpException
 import me.proton.core.drive.i18n.R as I18N
 
@@ -28,10 +27,5 @@ fun HttpException.getDefaultMessage(context: Context): String = when (code()) {
 }
 
 fun HttpException.log(tag: String, message: String = this.message.orEmpty()): HttpException = also {
-    val logToSentry = when (code()) {
-        502, 503 -> true
-        else -> false
-    }
-    val log: (String, Throwable, String) -> Unit = if (logToSentry) CoreLogger::e else CoreLogger::d
-    log(tag, this, message)
+    code().httpCodeLoggerLevel().log(tag, this, message)
 }

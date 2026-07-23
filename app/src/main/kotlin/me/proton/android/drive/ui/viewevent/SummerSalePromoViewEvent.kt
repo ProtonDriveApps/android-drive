@@ -18,11 +18,7 @@
 
 package me.proton.android.drive.ui.viewevent
 
-import me.proton.core.payment.presentation.viewmodel.ProtonPaymentEvent
-
-interface SummerSalePromoViewEvent {
+interface SummerSalePromoViewEvent : ProtonPaymentViewEvent {
     val onClose: () -> Unit get() = {}
     val onPromoShown: () -> Unit get() = {}
-    val onPaymentCallback: (ProtonPaymentEvent) -> Unit get() = {}
-    val onRedeemedSuccessfully: () -> Unit get() = {}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Proton AG.
+ * Copyright (c) 2026 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -19,38 +19,22 @@
 package me.proton.core.drive.drivelink.device.domain.usecase
 
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.device.domain.entity.DeviceId
-import me.proton.core.drive.device.domain.extension.name
-import me.proton.core.drive.device.domain.usecase.GetDevice
-import me.proton.core.drive.device.domain.usecase.RenameDevice
-import me.proton.core.drive.drivelink.rename.domain.usecase.RenameLink
-import me.proton.core.drive.link.domain.usecase.ValidateLinkNameSize
+import me.proton.core.drive.device.domain.usecase.UseSdkForDevices
 import javax.inject.Inject
 
 class RenameDevice @Inject constructor(
-    private val getDevice: GetDevice,
-    private val renameDevice: RenameDevice,
-    private val renameLink: RenameLink,
-    private val validateLinkNameSize: ValidateLinkNameSize,
+    private val renameDeviceLegacy: RenameDeviceLegacy,
+    private val renameDeviceSdk: RenameDeviceSdk,
+    private val useSdkForDevices: UseSdkForDevices,
 ) {
 
     suspend operator fun invoke(userId: UserId, deviceId: DeviceId, name: String): Result<Unit> = coRunCatching {
-        val device = getDevice(userId, deviceId).toResult().getOrThrow()
-        renameLink(
-            rootFolderId = device.rootLinkId,
-            folderName = name,
-            nameValidator = { validateLinkNameSize(name).getOrThrow() },
-        ).getOrThrow()
-        if (device.name.isNotEmpty()) {
-            // Non-empty device name should be replaced by empty one, as real device name is part of device share
-            // root folder
-            renameDevice(userId, deviceId, DEFAULT_DEVICE_NAME).getOrThrow()
+        if (useSdkForDevices(userId).getOrElse { false }) {
+            renameDeviceSdk(userId, deviceId, name).getOrThrow()
+        } else {
+            renameDeviceLegacy(userId, deviceId, name).getOrThrow()
         }
-    }
-
-    companion object {
-        private const val DEFAULT_DEVICE_NAME = ""
     }
 }

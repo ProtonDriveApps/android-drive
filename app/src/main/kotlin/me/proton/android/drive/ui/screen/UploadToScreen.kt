@@ -63,6 +63,7 @@ import me.proton.core.compose.theme.captionWeak
 import me.proton.core.compose.theme.defaultNorm
 import me.proton.core.drive.base.presentation.component.ActionButton
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.base.presentation.extension.rejectObscuredTouches
 import me.proton.core.drive.files.presentation.component.DriveLinksFlow
 import me.proton.core.drive.files.presentation.component.Files
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -188,7 +189,9 @@ fun UploadTo(
                 }
 
                 Button(
-                    modifier = Modifier.padding(start = SmallSpacing),
+                    modifier = Modifier
+                        .rejectObscuredTouches()
+                        .padding(start = SmallSpacing),
                     onClick = { viewEvent.upload() }
                 ) {
                     Text(text = stringResource(id = I18N.string.upload_title))

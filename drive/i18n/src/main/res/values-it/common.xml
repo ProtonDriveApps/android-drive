@@ -44,6 +44,36 @@
   <string name="common_unknown">Sconosciuto</string>
   <string name="common_month">Mese</string>
   <string name="common_year">Anno</string>
+  <!--
+        Variable %1$d is a number of years
+        Example:
+            "1 year"
+            "17 years"
+    -->
+  <plurals name="common_x_years">
+    <item quantity="one">%1$d anno</item>
+    <item quantity="other">%1$d anni</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of weeks
+        Example:
+            "1 week"
+            "4 weeks"
+    -->
+  <plurals name="common_x_weeks">
+    <item quantity="one">%1$d settimana</item>
+    <item quantity="other">%1$d settimane</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of days
+        Example:
+            "1 day"
+            "37 days"
+    -->
+  <plurals name="common_x_days">
+    <item quantity="one">%1$d giorno</item>
+    <item quantity="other">%1$d giorni</item>
+  </plurals>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -84,6 +114,7 @@
   <string name="common_open_action">Apri</string>
   <string name="common_back_action">Torna indietro</string>
   <string name="common_open_side_menu_action">Apri menu laterale</string>
+  <string name="common_not_now">Not now</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Audio</string>

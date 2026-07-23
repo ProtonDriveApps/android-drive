@@ -34,15 +34,17 @@ class FetchOrganization @Inject constructor(
 ) {
 
     suspend operator fun invoke(userId: UserId): Result<Organization?> = coRunCatching {
-        organizationRepository.getOrganization(userId, true).also {
-            baseRepository.setLastFetch(userId, ORGANIZATION_URL, TimestampMs())
-        }
+        organizationRepository.getOrganization(userId, true)
     }.recoverCatching { error ->
         if (error.hasProtonErrorCode(NOT_EXISTS)) {
             null
         } else {
             throw error
         }
+    }.also { markAsFetched(userId) }
+
+    private suspend fun markAsFetched(userId: UserId) {
+        baseRepository.setLastFetch(userId, ORGANIZATION_URL, TimestampMs())
     }
 
     companion object {

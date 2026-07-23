@@ -156,6 +156,9 @@ fun Project.driveModule(
             minSdk = Config.minSdk
             targetSdk = Config.targetSdk
             testInstrumentationRunner = Config.testInstrumentationRunner
+            // The drive SDK exposes a "crypto" flavor dimension (go/rust) that this
+            // project doesn't declare, so pick the "go" variant by default.
+            missingDimensionStrategy("crypto", "go")
         }
 
         sourceSets {

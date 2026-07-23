@@ -54,6 +54,7 @@ import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_I
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.manager.UploadSdkManager
+import me.proton.core.drive.upload.domain.provider.FileProvider
 import me.proton.core.drive.upload.domain.resolver.UriResolver
 import me.proton.core.drive.upload.domain.usecase.AnnounceUploadEvent
 import me.proton.core.drive.upload.domain.usecase.GetBlockFolder
@@ -85,6 +86,7 @@ class UploadCleanupWorker @AssistedInject constructor(
     private val networkTypeProviders: @JvmSuppressWildcards Map<NetworkTypeProviderType, NetworkTypeProvider>,
     private val cleanupVerifier: CleanupVerifier,
     private val uploadSdkManager: UploadSdkManager,
+    private val fileProvider: FileProvider,
     configurationProvider: ConfigurationProvider,
     uploadMetricsNotifier: UploadMetricsNotifier,
     canRun: CanRun,
@@ -121,6 +123,10 @@ class UploadCleanupWorker @AssistedInject constructor(
             error.log(uploadFileLink.logTag(), "Cannot enqueue UploadThrottleWorker")
         }
         try {
+            uploadFileLink.deleteSourceFile(fileProvider).getOrNull(
+                tag = uploadFileLink.logTag(),
+                message = "Failed deleting source file",
+            )
             updateUploadState(uploadFileLink.id, UploadState.CLEANUP).getOrThrow()
             announceUploadEvent(
                 uploadFileLink = uploadFileLink,

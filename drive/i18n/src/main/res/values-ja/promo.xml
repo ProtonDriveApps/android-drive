@@ -17,22 +17,44 @@
   ~ along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <!-- tag(q1campaign) -->
-  <string name="promo_storage_title">1 TBストレージで現在のプランの200倍に</string>
-  <!-- tag(q1campaign) -->
-  <string name="promo_document_title">オンラインで使えるドキュメントエディタ</string>
-  <!-- tag(q1campaign) -->
-  <string name="promo_secure_title">安全なファイルストレージと共有</string>
-  <!-- tag(q1campaign) -->
-  <string name="promo_private_title">プライベート写真バックアップ</string>
-  <!-- tag(q1campaign) -->
-  <string name="promo_claim_offer_button">特典を利用する</string>
-  <!-- tag(q1campaign)
-        Variable %1$s is price per month
+  <!-- Upsell promo -->
+  <!--
+        Variable %1$s is a plan name and %2$s is a price for first period
         Example:
-            "only $6.99"
+            "Try Drive Plus 1 TB for $1"
     -->
-  <string name="promo_offer_per_month_details">わずか %1$s</string>
+  <string name="promo_upsell_title">Try %1$s for %2$s</string>
+  <string name="promo_upsell_subtitle">Limited-time offer, cancel anytime.</string>
+  <string name="promo_upsell_storage_label">Storage</string>
+  <string name="promo_upsell_version_history_label">Version history</string>
+  <string name="promo_upsell_share_with_edit_access_label">Share with edit access</string>
+  <!--
+        Variable %1$d is a storage increase factor and %2$s is a free plan title
+        Example:
+            "200x more than Free"
+    -->
+  <string name="promo_upsell_storage_plan_subtitle">%1$dx more than %2$s</string>
+  <!--
+        Variable %1$s is a period using common_x_months and %2$s is a price for first period
+        Example:
+            "Get 1 month for $1"
+            "Get 12 months for $60"
+    -->
+  <string name="promo_upsell_claim_offer_button">Get %1$s for %2$s</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Enjoying Proton Drive?"
+    -->
+  <string name="promo_app_title">Enjoying %1$s?</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "If you're enjoying Proton Drive, we would greatly..."
+    -->
+  <string name="promo_app_description">If you\'re enjoying %1$s, we would greatly appreciate an app review!\nIf you are having an issue our Help Docs and support team are here to help!</string>
+  <string name="promo_app_positive_button">I like it</string>
+  <string name="promo_app_negative_button">Could be better</string>
   <!-- tag(q2campaign2026) -->
   <string name="promo_summer_sale_drawer_title">サマーセール</string>
   <!-- tag(q2campaign2026) -->

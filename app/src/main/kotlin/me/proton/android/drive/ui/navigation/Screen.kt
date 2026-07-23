@@ -908,6 +908,21 @@ sealed class Screen(val route: String) {
             operator fun invoke(userId: UserId) = "promo/${userId.id}/summerSale2026"
             const val USER_ID = Screen.USER_ID
         }
+        data object Upsell : Screen("promo/{userId}/upsell"){
+            operator fun invoke(userId: UserId) = "promo/${userId.id}/upsell"
+            const val USER_ID = Screen.USER_ID
+        }
+        data object App : Screen("promo/{userId}/app") {
+            operator fun invoke(userId: UserId) = "promo/${userId.id}/app"
+            const val USER_ID = Screen.USER_ID
+        }
+    }
+
+    data object Support {
+        data object Contact : Screen("support/{userId}/contact") {
+            operator fun invoke(userId: UserId) = "support/${userId.id}/contact"
+            const val USER_ID = Screen.USER_ID
+        }
     }
 }
 

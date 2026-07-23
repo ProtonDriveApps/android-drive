@@ -71,13 +71,13 @@ fun PhotosScreen(
     navigateToPhotosPreview: (fileId: FileId, photoTag: PhotoTag?) -> Unit,
     navigateToPhotosOptions: (fileId: FileId, SelectionId?) -> Unit,
     navigateToMultiplePhotosOptions: (selectionId: SelectionId) -> Unit,
-    navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
     navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
     navigateToEnableBackupDialog: () -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
     navigateToSummerSalePromo: () -> Unit,
+    navigateToUpsellPromo: () -> Unit,
 ) {
     val viewModel = hiltViewModel<PhotosViewModel>()
     val viewState by viewModel.viewState.collectAsStateWithLifecycle(
@@ -89,10 +89,10 @@ fun PhotosScreen(
             navigateToPreview = navigateToPhotosPreview,
             navigateToPhotosOptions = navigateToPhotosOptions,
             navigateToMultiplePhotosOptions = navigateToMultiplePhotosOptions,
-            navigateToSubscription = navigateToSubscription,
             navigateToPhotosIssues = navigateToPhotosIssues,
             navigateToPhotosUpsell = navigateToPhotosUpsell,
             navigateToSummerSalePromo = navigateToSummerSalePromo,
+            navigateToUpsellPromo = navigateToUpsellPromo,
             navigateToBackupSettings = navigateToBackupSettings,
             navigateToEnableBackupDialog = navigateToEnableBackupDialog,
             lifecycle = lifecycle,

@@ -44,6 +44,36 @@
   <string name="common_unknown">Άγνωστο</string>
   <string name="common_month">Μήνα</string>
   <string name="common_year">Έτος</string>
+  <!--
+        Variable %1$d is a number of years
+        Example:
+            "1 year"
+            "17 years"
+    -->
+  <plurals name="common_x_years">
+    <item quantity="one">%1$d έτος</item>
+    <item quantity="other">%1$d έτη</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of weeks
+        Example:
+            "1 week"
+            "4 weeks"
+    -->
+  <plurals name="common_x_weeks">
+    <item quantity="one">%1$d εβδομάδα</item>
+    <item quantity="other">%1$d εβδομάδες</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of days
+        Example:
+            "1 day"
+            "37 days"
+    -->
+  <plurals name="common_x_days">
+    <item quantity="one">%1$d ημέρα</item>
+    <item quantity="other">%1$d ημέρες</item>
+  </plurals>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">Εντάξει</string>
@@ -84,6 +114,7 @@
   <string name="common_open_action">Άνοιγμα</string>
   <string name="common_back_action">Πίσω</string>
   <string name="common_open_side_menu_action">Άνοιγμα πλαϊνού μενού</string>
+  <string name="common_not_now">Όχι τώρα</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Ήχος</string>

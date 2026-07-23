@@ -28,7 +28,7 @@ class GetDisabledBackupState @Inject constructor(
     private val getAllBuckets: GetAllBuckets,
     private val configurationProvider: ConfigurationProvider,
 ) {
-    operator fun invoke(): Flow<BackupState> = getAllBuckets().map { bucketEntries ->
+    operator fun invoke(): Flow<BackupState> = getAllBuckets(partial = false).map { bucketEntries ->
         BackupState(
             isBackupEnabled = false,
             hasDefaultFolder = bucketEntries?.any { entry ->

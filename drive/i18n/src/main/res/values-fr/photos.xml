@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">Ceci est nécessaire pour garantir que toutes vos photos sont sauvegardées et disponibles sur tous vos appareils.\n%1$s prend très au sérieux la protection de votre vie privée et accède à vos photos uniquement dans le cadre de la synchronisation et de la sauvegarde.</string>
   <string name="photos_permission_rational_confirm_action">Paramètres</string>
-  <string name="photos_permission_rational_dismiss_action">Plus tard</string>
   <string name="photos_empty_loading_label_encrypted">Chiffré de bout en bout</string>
   <string name="photos_empty_loading_label_progress">La sauvegarde est en cours.\nCela peut prendre un moment.</string>
   <string name="photos_separator_current_month">Ce mois-ci</string>
@@ -116,7 +115,6 @@
   </plurals>
   <string name="photos_upsell_title">Ne manquez jamais d\'espace de stockage.</string>
   <string name="photos_upsell_description">Changez d\'abonnement dès maintenant et gardez tous vos souvenirs chiffrés et en sécurité.</string>
-  <string name="photos_upsell_dismiss_action">Plus tard</string>
   <string name="photos_filter_favorite">Favoris</string>
   <string name="photos_filter_screenshots">Captures d\'écran</string>
   <string name="photos_filter_videos">Vidéos</string>

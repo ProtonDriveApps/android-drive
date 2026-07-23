@@ -58,7 +58,6 @@ class BackupCleanupWorkers @Inject constructor(
                             backupFolder = backupFolder,
                             delay = 60.seconds,
                         ),
-                        BackupNotificationWorker.getWorkRequest(backupFolder.folderId),
                         BackupClearFileWorker.getWorkRequest(backupFolder, uriString),
                     )
                 }.orEmpty()

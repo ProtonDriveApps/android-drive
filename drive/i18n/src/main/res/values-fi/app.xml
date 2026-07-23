@@ -173,7 +173,6 @@
   <string name="notification_permission_rationale_title_backup">Pysy ajan tasalla varmuuskopiointisi tilasta</string>
   <string name="notification_permission_rationale_description_backup">Saat ilmoituksia varmuuskopioidesi edistymisestä ja tilasta.</string>
   <string name="notification_permission_rationale_action_accept">Ota ilmoitukset käyttöön</string>
-  <string name="notification_permission_rationale_action_reject">Ei nyt</string>
   <string name="notification_content_title_transferring">Siirretään tietoja</string>
   <!-- endregion -->
   <string name="content_description_select_all">Valitse listan kaikki kohteet</string>
@@ -288,4 +287,7 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">Päivitä hintaan %1$s</string>
+  <string name="support_contact_options_title">Auta meitä parantamaan käyttökokemustasi</string>
+  <string name="support_contact_options_description">Jos sinulla on ongelmia, ohjeistuksemme ja tukitiimimme ovat valmiina auttamaan!</string>
+  <string name="support_contact_options_action_button">Ota yhteyttä</string>
 </resources>

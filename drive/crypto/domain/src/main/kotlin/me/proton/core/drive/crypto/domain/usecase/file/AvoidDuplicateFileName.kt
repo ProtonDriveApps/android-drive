@@ -20,18 +20,20 @@ package me.proton.core.drive.crypto.domain.usecase.file
 
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidSDKAvailableName
+import me.proton.core.drive.feature.flag.domain.extension.on
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
 import me.proton.core.drive.key.domain.entity.NodeHashKey
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.nodeUid
 import me.proton.core.drive.link.domain.extension.userId
-import me.proton.core.drive.link.domain.usecase.UseSdkForNodeOperation
 import me.proton.core.drive.share.domain.usecase.GetShare
 import javax.inject.Inject
 
 class AvoidDuplicateFileName @Inject constructor(
     private val avoidDuplicateFileNameLegacy: AvoidDuplicateFileNameLegacy,
     private val avoidDuplicateFileNameSdk: AvoidDuplicateFileNameSdk,
-    private val useSdkForNodeOperation: UseSdkForNodeOperation,
+    private val getFeatureFlag: GetFeatureFlag,
     private val getShare: GetShare,
 ) {
     suspend operator fun invoke(
@@ -39,7 +41,7 @@ class AvoidDuplicateFileName @Inject constructor(
         parentFolderId: FolderId,
         folderHashKey: NodeHashKey
     ): Result<String> = coRunCatching {
-        if (useSdkForNodeOperation(parentFolderId).getOrElse { false }) {
+        if (getFeatureFlag(driveAndroidSDKAvailableName(parentFolderId.userId)).on) {
             val share = getShare(parentFolderId.shareId).toResult().getOrThrow()
             avoidDuplicateFileNameSdk(
                 userId = parentFolderId.userId,

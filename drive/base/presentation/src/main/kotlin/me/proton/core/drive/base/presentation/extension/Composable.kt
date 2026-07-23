@@ -21,9 +21,20 @@ package me.proton.core.drive.base.presentation.extension
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 val isPortrait: Boolean @Composable get() =
     LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
 
 val isLandscape: Boolean @Composable get() =
     LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+@Composable
+fun isCompactHeight(
+    threshold: Dp = 500.dp
+): Boolean = with (LocalDensity.current) {
+    LocalWindowInfo.current.containerSize.height.toDp() < threshold
+}

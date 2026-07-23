@@ -51,12 +51,18 @@ sealed class FeatureFlagId(open val userId: UserId, open val id: String) {
         const val DRIVE_ANDROID_SDK_DOWNLOAD_PHOTO = "DriveAndroidSDKDownloadPhoto"
         const val DRIVE_ANDROID_SDK_THUMBNAIL_MAIN = "DriveAndroidSDKThumbnailMain"
         const val DRIVE_ANDROID_SDK_THUMBNAIL_PHOTO = "DriveAndroidSDKThumbnailPhoto"
-        const val DRIVE_ANDROID_SDK_NODE_OPERATION = "DriveAndroidSDKNodeOperation"
-        const val DRIVE_ANDROID_SDK_TRASH = "DriveAndroidSDKTrash"
+        const val DRIVE_ANDROID_SDK_AVAILABLE_NAME = "DriveAndroidSDKAvailableName"
+        const val DRIVE_ANDROID_SDK_CREATE_FOLDER = "DriveAndroidSDKCreateFolder"
+        const val DRIVE_ANDROID_SDK_RENAME_NODE = "DriveAndroidSDKRenameNode"
+        const val DRIVE_ANDROID_SDK_TRASH_NODE = "DriveAndroidSDKTrashNode"
+        const val DRIVE_ANDROID_SDK_TRASH_OPERATIONS = "DriveAndroidSDKTrashOperations"
+        const val DRIVE_ANDROID_SDK_DEVICES = "DriveAndroidSDKDevices"
         const val DRIVE_DOWNLOAD_VERIFICATION_DISABLED = "DriveDownloadVerificationDisabled"
         const val DRIVE_UPLOAD_VERIFICATION_DISABLED = "DriveUploadVerificationDisabled"
         const val DRIVE_ANDROID_DOWNLOAD_FILE_PROGRESS_NOTIFICATION_DISABLED = "DriveAndroidDownloadFileProgressNotificationDisabled"
         const val DRIVE_ANDROID_SUMMER_SALE_2026 = "DriveAndroidSummerSale2026"
+        const val DRIVE_MOBILE_UPSELL_PLAN = "DriveMobileUpsellPlan"
+
 
         internal var developments : List<String> = listOf(
         )
@@ -85,11 +91,16 @@ sealed class FeatureFlagId(open val userId: UserId, open val id: String) {
         fun driveAndroidSDKDownloadPhoto(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_DOWNLOAD_PHOTO)
         fun driveAndroidSDKThumbnailMain(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_THUMBNAIL_MAIN)
         fun driveAndroidSDKThumbnailPhoto(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_THUMBNAIL_PHOTO)
-        fun driveAndroidSDKNodeOperation(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_NODE_OPERATION)
-        fun driveAndroidSDKTrash(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_TRASH)
+        fun driveAndroidSDKAvailableName(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_AVAILABLE_NAME)
+        fun driveAndroidSDKCreateFolder(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_CREATE_FOLDER)
+        fun driveAndroidSDKRenameNode(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_RENAME_NODE)
+        fun driveAndroidSDKTrashNode(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_TRASH_NODE)
+        fun driveAndroidSDKTrashOperations(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_TRASH_OPERATIONS)
+        fun driveAndroidSDKDevices(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_DEVICES)
         fun driveDownloadVerificationDisabled(userId: UserId) = Unleash(userId, DRIVE_DOWNLOAD_VERIFICATION_DISABLED)
         fun driveUploadVerificationDisabled(userId: UserId) = Unleash(userId, DRIVE_UPLOAD_VERIFICATION_DISABLED)
         fun driveAndroidDownloadFileProgressNotificationDisabled(userId: UserId) = Unleash(userId, DRIVE_ANDROID_DOWNLOAD_FILE_PROGRESS_NOTIFICATION_DISABLED)
         fun driveAndroidSummerSale2026(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SUMMER_SALE_2026)
+        fun driveMobileUpsellPlan(userId: UserId) = Unleash(userId, DRIVE_MOBILE_UPSELL_PLAN)
     }
 }

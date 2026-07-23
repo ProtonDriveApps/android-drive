@@ -17,7 +17,6 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="onboarding_action_skip">Şimdi değil</string>
   <string name="onboarding_title">Fotoğraflarınızı ve videolarınızı otomatik olarak kaydedin ve şifreleyin</string>
   <string name="onboarding_description_part_one">Anılarınızı güvenli tutmak için</string>
   <string name="onboarding_description_part_two">uçtan uca şifrelenmiş depolama alanı</string>

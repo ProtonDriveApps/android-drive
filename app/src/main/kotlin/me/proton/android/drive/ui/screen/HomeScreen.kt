@@ -105,13 +105,14 @@ fun HomeScreen(
     navigateToGetMoreFreeStorage: () -> Unit,
     navigateToOnboarding: () -> Unit,
     navigateToWhatsNew: (WhatsNewKey) -> Unit,
-    navigateToRatingBooster: () -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
     navigateToUserInvitation: (Boolean) -> Unit,
     navigateToCreateNewAlbum: () -> Unit,
     navigateToAlbum: (AlbumId) -> Unit,
     navigateToSubscriptionPromo: (String) -> Unit,
     navigateToSummerSalePromo: () -> Unit,
+    navigateToUpsellPromo: () -> Unit,
+    navigateToAppPromo: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     setLocalSnackbarPadding(BottomNavigationHeight)
@@ -144,9 +145,9 @@ fun HomeScreen(
             navigateToGetMoreFreeStorage = navigateToGetMoreFreeStorage,
             navigateToOnboarding = navigateToOnboarding,
             navigateToWhatsNew = navigateToWhatsNew,
-            navigateToRatingBooster = navigateToRatingBooster,
             navigateToSubscriptionPromo = navigateToSubscriptionPromo,
             navigateToSummerSalePromo = navigateToSummerSalePromo,
+            navigateToAppPromo = navigateToAppPromo,
         )
     }
     viewState?.let { currentViewState ->
@@ -162,7 +163,6 @@ fun HomeScreen(
             navigateToMultipleFileOrFolderOptions = navigateToMultipleFileOrFolderOptions,
             navigateToParentFolderOptions = navigateToParentFolderOptions,
             navigateToPhotosPermissionRationale = navigateToPhotosPermissionRationale,
-            navigateToSubscription = navigateToSubscription,
             navigateToPhotosIssues = navigateToPhotosIssues,
             navigateToPhotosUpsell = navigateToPhotosUpsell,
             navigateToBackupSettings = navigateToBackupSettings,
@@ -173,6 +173,7 @@ fun HomeScreen(
             navigateToCreateNewAlbum = navigateToCreateNewAlbum,
             navigateToAlbum = navigateToAlbum,
             navigateToSummerSalePromo = navigateToSummerSalePromo,
+            navigateToUpsellPromo = navigateToUpsellPromo,
             arguments = arguments,
             viewState = currentViewState,
             viewEvent = viewEvent,
@@ -206,7 +207,6 @@ internal fun Home(
     viewEvent: HomeViewEvent,
     modifier: Modifier = Modifier,
     navigateToPhotosPermissionRationale: () -> Unit,
-    navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
     navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
@@ -217,6 +217,7 @@ internal fun Home(
     navigateToCreateNewAlbum: () -> Unit,
     navigateToAlbum: (AlbumId) -> Unit,
     navigateToSummerSalePromo: () -> Unit,
+    navigateToUpsellPromo: () -> Unit,
 ) {
     val homeScaffoldState = rememberHomeScaffoldState()
     val isDrawerOpen = with(homeScaffoldState.scaffoldState.drawerState) {
@@ -307,7 +308,6 @@ internal fun Home(
                     navigateToMultipleFileOrFolderOptions,
                     navigateToParentFolderOptions,
                     navigateToPhotosPermissionRationale,
-                    navigateToSubscription,
                     navigateToPhotosIssues,
                     navigateToPhotosUpsell,
                     navigateToBackupSettings,
@@ -318,6 +318,7 @@ internal fun Home(
                     navigateToCreateNewAlbum,
                     navigateToAlbum,
                     navigateToSummerSalePromo,
+                    navigateToUpsellPromo,
                 )
             }
         }

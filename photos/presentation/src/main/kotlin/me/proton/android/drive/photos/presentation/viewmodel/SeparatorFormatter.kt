@@ -40,10 +40,10 @@ class SeparatorFormatter constructor(
     private val resources: Resources,
     private val clock: () -> Long,
     private val locale: Locale,
-    private val minTimestampS: TimestampS = TimestampS(
+    val minTimestampS: TimestampS = TimestampS(
         LocalDateTime.of(1900, 1, 1, 0, 0).toEpochSecond(ZoneOffset.UTC)
     ),
-    private val maxTimestampS: TimestampS = TimestampS(
+    val maxTimestampS: TimestampS = TimestampS(
         LocalDateTime.of(3000, 1, 1, 0, 0).toEpochSecond(ZoneOffset.UTC)
     )
 ) {

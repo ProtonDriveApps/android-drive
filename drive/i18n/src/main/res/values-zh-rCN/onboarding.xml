@@ -17,7 +17,6 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="onboarding_action_skip">现在不要</string>
   <string name="onboarding_title">自动保存和加密您的照片和视频</string>
   <string name="onboarding_description_part_one">确保您的数据安全</string>
   <string name="onboarding_description_part_two">端到端加密存储</string>

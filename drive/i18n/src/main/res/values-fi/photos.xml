@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">Tämä tarvitaan, jotta kaikki valokuvasi varmuuskopioidaan ja ovat saatavilla kaikilla laitteillasi.\n%1$s suhtautuu yksityisyytesi vakavasti ja käsittelee kuviasi vain synkronoinnin ja varmuuskopioinnin puitteissa.</string>
   <string name="photos_permission_rational_confirm_action">Asetukset</string>
-  <string name="photos_permission_rational_dismiss_action">Ei nyt</string>
   <string name="photos_empty_loading_label_encrypted">Päästä päähän -salattu</string>
   <string name="photos_empty_loading_label_progress">Varmuuskopiointi on käynnissä.\nSe voi kestää jonkin aikaa.</string>
   <string name="photos_separator_current_month">Tässä kuussa</string>
@@ -116,7 +115,6 @@
   </plurals>
   <string name="photos_upsell_title">Tallennustila ei koskaan lopu kesken</string>
   <string name="photos_upsell_description">Päivitä tilauksesi nyt ja pidä kaikki muistosi salattuna ja turvassa.</string>
-  <string name="photos_upsell_dismiss_action">Ei nyt</string>
   <string name="photos_filter_favorite">Suosikit</string>
   <string name="photos_filter_screenshots">Kuvakaappaukset</string>
   <string name="photos_filter_videos">Videot</string>

@@ -44,6 +44,36 @@
   <string name="common_unknown">Inconnu</string>
   <string name="common_month">Mois</string>
   <string name="common_year">Année</string>
+  <!--
+        Variable %1$d is a number of years
+        Example:
+            "1 year"
+            "17 years"
+    -->
+  <plurals name="common_x_years">
+    <item quantity="one">%1$d année</item>
+    <item quantity="other">%1$d années</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of weeks
+        Example:
+            "1 week"
+            "4 weeks"
+    -->
+  <plurals name="common_x_weeks">
+    <item quantity="one">%1$d semaine</item>
+    <item quantity="other">%1$d semaines</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of days
+        Example:
+            "1 day"
+            "37 days"
+    -->
+  <plurals name="common_x_days">
+    <item quantity="one">%1$d jour</item>
+    <item quantity="other">%1$d jours</item>
+  </plurals>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -84,6 +114,7 @@
   <string name="common_open_action">Ouvrir</string>
   <string name="common_back_action">Retour</string>
   <string name="common_open_side_menu_action">Ouvrir le menu latéral</string>
+  <string name="common_not_now">Pas maintenant</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Audio</string>
@@ -219,7 +250,7 @@
     -->
   <plurals name="common_x_months">
     <item quantity="one">%1$d mois</item>
-    <item quantity="other">%1$d muaj</item>
+    <item quantity="other">%1$d mois</item>
   </plurals>
   <!-- endregion -->
 </resources>

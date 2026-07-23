@@ -173,7 +173,6 @@
   <string name="notification_permission_rationale_title_backup">Maradjon naprakész a biztonsági mentés állapotáról</string>
   <string name="notification_permission_rationale_description_backup">Értesítéseket kaphat a biztonsági mentések előrehaladásáról és állapotáról.</string>
   <string name="notification_permission_rationale_action_accept">Értesítések engedélyezése</string>
-  <string name="notification_permission_rationale_action_reject">Nem most</string>
   <string name="notification_content_title_transferring">Adatok átvitele</string>
   <!-- endregion -->
   <string name="content_description_select_all">Az összes elem kijelölése</string>
@@ -288,4 +287,7 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">Előfizetés %1$s</string>
+  <string name="support_contact_options_title">Help us enhance your experience</string>
+  <string name="support_contact_options_description">If you are having an issue our Help Docs and support team are here to help!</string>
+  <string name="support_contact_options_action_button">Contact us</string>
 </resources>

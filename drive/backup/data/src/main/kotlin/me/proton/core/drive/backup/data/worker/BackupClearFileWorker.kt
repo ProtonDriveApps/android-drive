@@ -36,6 +36,7 @@ import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.usecase.AddBackupError
 import me.proton.core.drive.backup.domain.usecase.MarkAsCompleted
+import me.proton.core.drive.backup.domain.usecase.PostBackupNotification
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.log.LogTag
@@ -50,6 +51,7 @@ class BackupClearFileWorker @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     private val markAsCompleted: MarkAsCompleted,
     private val addBackupError: AddBackupError,
+    private val postBackupNotification: PostBackupNotification,
 ) : CoroutineWorker(context, workerParams) {
 
     private val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)))
@@ -65,6 +67,9 @@ class BackupClearFileWorker @AssistedInject constructor(
                     error.log(LogTag.BACKUP, "Cannot mark file as completed with uri: $uriString")
                     addBackupError(folderId, error.toBackupError())
                     return Result.failure()
+                }
+                postBackupNotification(folderId).onFailure { error ->
+                    error.log(LogTag.BACKUP, "Failed to update notification")
                 }
             }
         return Result.success()

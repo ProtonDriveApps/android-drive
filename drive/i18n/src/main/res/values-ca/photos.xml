@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">Això és necessari per garantir que es faci una còpia de seguretat de totes les fotos i que estiguin disponibles a tots els vostres dispositius.\n%1$s es pren seriosament la vostra privadesa i només accedirà a les vostres fotos amb la finalitat de sincronitzar i fer còpies de seguretat.</string>
   <string name="photos_permission_rational_confirm_action">Preferències</string>
-  <string name="photos_permission_rational_dismiss_action">Ara no</string>
   <string name="photos_empty_loading_label_encrypted">Xifrat d\'extrem a extrem</string>
   <string name="photos_empty_loading_label_progress">La còpia de seguretat està en curs.\nAixò pot trigar una estona.</string>
   <string name="photos_separator_current_month">Aquest mes</string>
@@ -116,7 +115,6 @@
   </plurals>
   <string name="photos_upsell_title">No s\'acaba mai l\'emmagatzematge</string>
   <string name="photos_upsell_description">Milloreu ara i manteniu totes les vostres memòries xifrades i segures.</string>
-  <string name="photos_upsell_dismiss_action">Ara no</string>
   <string name="photos_filter_favorite">Preferits</string>
   <string name="photos_filter_screenshots">Captures de pantalla</string>
   <string name="photos_filter_videos">Vídeos</string>

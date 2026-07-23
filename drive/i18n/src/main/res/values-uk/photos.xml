@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">Це необхідно для резервного копіювання усіх ваших фотографій та доступності на всіх ваших пристроях.\n%1$s поважає вашу приватність та отримуватиме доступ до ваших фотографій лише для синхронізації та резервного копіювання.</string>
   <string name="photos_permission_rational_confirm_action">Налаштування</string>
-  <string name="photos_permission_rational_dismiss_action">Не зараз</string>
   <string name="photos_empty_loading_label_encrypted">Наскрізно зашифровано</string>
   <string name="photos_empty_loading_label_progress">Створюється резервна копія.\nЦе може тривати певний час</string>
   <string name="photos_separator_current_month">Цього місяця</string>
@@ -122,7 +121,6 @@
   </plurals>
   <string name="photos_upsell_title">Завжди вдосталь простору сховища</string>
   <string name="photos_upsell_description">Передплатіть тарифний план, щоб зберігати всі свої спогади у надійному зашифрованому сховищі.</string>
-  <string name="photos_upsell_dismiss_action">Не зараз</string>
   <string name="photos_filter_favorite">Улюблені</string>
   <string name="photos_filter_screenshots">Знімки екрана</string>
   <string name="photos_filter_videos">Відео</string>

@@ -173,7 +173,6 @@
   <string name="notification_permission_rationale_title_backup">Blijf op de hoogte van uw back-upstatus</string>
   <string name="notification_permission_rationale_description_backup">Ontvang meldingen over de voortgang en status van uw back-ups.</string>
   <string name="notification_permission_rationale_action_accept">Meldingen inschakelen</string>
-  <string name="notification_permission_rationale_action_reject">Niet nu</string>
   <string name="notification_content_title_transferring">Gegevens overdragen</string>
   <!-- endregion -->
   <string name="content_description_select_all">Selecteer alle items in de lijst</string>
@@ -288,4 +287,7 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">Upgrade voor %1$s</string>
+  <string name="support_contact_options_title">Help ons om uw ervaring te verbeteren</string>
+  <string name="support_contact_options_description">Mocht u een probleem hebben, dan staan onze Help Documenten en ons ondersteuningsteam klaar om u te helpen!</string>
+  <string name="support_contact_options_action_button">Neem contact op</string>
 </resources>

@@ -17,7 +17,7 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="scan_document_name_title">Poimenujte svoj odčitaj</string>
+  <string name="scan_document_name_title">Poimenujte svoje skeniranje</string>
   <string name="scan_document_name_output_format_pdf_title">PDF</string>
   <string name="scan_document_name_output_format_pdf_description">Vse strani so shranjene v en sam dokument</string>
   <string name="scan_document_name_output_format_jpeg_title">JPEG</string>

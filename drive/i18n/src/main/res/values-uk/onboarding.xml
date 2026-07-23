@@ -17,7 +17,6 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="onboarding_action_skip">Не зараз</string>
   <string name="onboarding_title">Автоматично зберігайте й шифруйте фото й відео</string>
   <string name="onboarding_description_part_one">Зберігайте свої спогади в безпеці</string>
   <string name="onboarding_description_part_two">у наскрізно зашифрованому сховищі</string>

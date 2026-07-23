@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">Dies ist notwendig, um sicherzustellen, dass alle deine Fotos gesichert werden und auf all deinen Geräten verfügbar sind. \n%1$s nimmt deine Privatsphäre ernst und greift nur zum Zweck der Synchronisierung und Sicherung auf deine Fotos zu.</string>
   <string name="photos_permission_rational_confirm_action">Einstellungen</string>
-  <string name="photos_permission_rational_dismiss_action">Nicht jetzt</string>
   <string name="photos_empty_loading_label_encrypted">Ende-zu-Ende-verschlüsselt</string>
   <string name="photos_empty_loading_label_progress">Die Sicherung ist im Gange.\n Es kann eine Weile dauern.</string>
   <string name="photos_separator_current_month">Dieser Monat</string>
@@ -116,7 +115,6 @@
   </plurals>
   <string name="photos_upsell_title">Niemals zu wenig Speicherplatz</string>
   <string name="photos_upsell_description">Upgrade jetzt und bewahre alle deine Erinnerungen verschlüsselt und sicher auf.</string>
-  <string name="photos_upsell_dismiss_action">Nicht jetzt</string>
   <string name="photos_filter_favorite">Favoriten</string>
   <string name="photos_filter_screenshots">Screenshots</string>
   <string name="photos_filter_videos">Videos</string>

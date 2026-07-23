@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">これは、すべての写真がバックアップされ、すべてのデバイスで利用できるようにするために必要です。\n%1$s はあなたのプライバシーを重視しており、同期とバックアップの目的でのみあなたの写真にアクセスします。</string>
   <string name="photos_permission_rational_confirm_action">設定</string>
-  <string name="photos_permission_rational_dismiss_action">後で</string>
   <string name="photos_empty_loading_label_encrypted">エンドツーエンド暗号化</string>
   <string name="photos_empty_loading_label_progress">バックアップが進行中です。\nしばらく時間がかかる場合があります</string>
   <string name="photos_separator_current_month">今月</string>
@@ -113,7 +112,6 @@
   </plurals>
   <string name="photos_upsell_title">ストレージが不足することはありません</string>
   <string name="photos_upsell_description">今すぐアップグレードして、すべての思い出を暗号化して安全に保ちましょう。</string>
-  <string name="photos_upsell_dismiss_action">今はしない</string>
   <string name="photos_filter_favorite">お気に入り</string>
   <string name="photos_filter_screenshots">スクリーンショット</string>
   <string name="photos_filter_videos">動画</string>

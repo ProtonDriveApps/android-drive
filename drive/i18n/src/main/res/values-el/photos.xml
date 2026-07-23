@@ -39,7 +39,6 @@
     -->
   <string name="photos_permission_rational_description">Αυτό είναι απαραίτητο για να διασφαλιστεί ότι δημιουργούνται αντίγραφα ασφαλείας όλων των φωτογραφιών σας και είναι διαθέσιμες σε όλες τις συσκευές σας.\nTo %1$s λαμβάνει σοβαρά υπόψη το απόρρητό σας και θα έχει πρόσβαση στις φωτογραφίες σας μόνο για σκοπούς συγχρονισμού και δημιουργίας αντιγράφων ασφαλείας.</string>
   <string name="photos_permission_rational_confirm_action">Ρυθμίσεις</string>
-  <string name="photos_permission_rational_dismiss_action">Όχι τώρα</string>
   <string name="photos_empty_loading_label_encrypted">Κρυπτογραφημένο από άκρο σε άκρο (διατερματικά)</string>
   <string name="photos_empty_loading_label_progress">Η δημιουργία αντιγράφων ασφαλείας βρίσκεται σε εξέλιξη.\nΜπορεί να χρειαστεί λίγος χρόνος</string>
   <string name="photos_separator_current_month">Αυτό το μήνα</string>
@@ -116,7 +115,6 @@
   </plurals>
   <string name="photos_upsell_title">Μην ξεμείνετε ποτέ από αποθηκευτικό χώρο</string>
   <string name="photos_upsell_description">Αναβαθμίστε τώρα και διατηρήστε όλες τις αναμνήσεις σας κρυπτογραφημένες και ασφαλείς.</string>
-  <string name="photos_upsell_dismiss_action">Όχι τώρα</string>
   <string name="photos_filter_favorite">Αγαπημένα</string>
   <string name="photos_filter_screenshots">Στιγμιότυπα οθόνης</string>
   <string name="photos_filter_videos">Βίντεο</string>

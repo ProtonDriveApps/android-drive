@@ -17,7 +17,6 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="onboarding_action_skip">Nu acum</string>
   <string name="onboarding_title">Salvați-vă și criptați-vă automat fotografiile și videoclipurile</string>
   <string name="onboarding_description_part_one">Păstrați-vă memoriile în siguranță cu</string>
   <string name="onboarding_description_part_two">stocarea criptată bilateral</string>

@@ -223,7 +223,7 @@ class SummerSalePromoViewModel @Inject constructor(
             is ProtonPaymentEvent.Loading -> asyncAnnounceEvent(
                 userId = userId,
                 event = Event.Sentry.SummerSale2026(
-                    action = Event.Sentry.SummerSale2026.Action.CLAIM_OFFER
+                    action = Event.Sentry.Payments.Action.CLAIM_OFFER
                 )
             )
             is ProtonPaymentEvent.GiapSuccess -> purchaseSuccess(navigateBack)
@@ -231,7 +231,7 @@ class SummerSalePromoViewModel @Inject constructor(
                 asyncAnnounceEvent(
                     userId = userId,
                     event = Event.Sentry.SummerSale2026(
-                        result = Event.Sentry.SummerSale2026.Result.FAILURE,
+                        result = Event.Sentry.Payments.Result.FAILURE,
                         failureReason = event.failureReason,
                     )
                 )
@@ -249,12 +249,12 @@ class SummerSalePromoViewModel @Inject constructor(
         }
     }
 
-    fun purchaseSuccess(navigateBack: () -> Unit) {
+    private fun purchaseSuccess(navigateBack: () -> Unit) {
         viewModelScope.launch {
             asyncAnnounceEvent(
                 userId = userId,
                 event = Event.Sentry.SummerSale2026(
-                    result = Event.Sentry.SummerSale2026.Result.SUCCESS
+                    result = Event.Sentry.Payments.Result.SUCCESS
                 )
             )
             coRunCatching {
@@ -281,7 +281,7 @@ class SummerSalePromoViewModel @Inject constructor(
             asyncAnnounceEvent(
                 userId = userId,
                 event = Event.Sentry.SummerSale2026(
-                    action = Event.Sentry.SummerSale2026.Action.SCREEN_SHOWN,
+                    action = Event.Sentry.Payments.Action.SCREEN_SHOWN,
                 )
             )
             markSummerSalePromoAsShown(userId)

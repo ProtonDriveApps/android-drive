@@ -17,7 +17,6 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="onboarding_action_skip">Ei nyt</string>
   <string name="onboarding_title">Tallenna ja salaa kuvasi ja videosi automaattisesti</string>
   <string name="onboarding_description_part_one">Pidä muistosi turvassa</string>
   <string name="onboarding_description_part_two">päästä päähän -salatulla tallennustilalla</string>

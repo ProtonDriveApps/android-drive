@@ -17,7 +17,6 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="onboarding_action_skip">Niet nu</string>
   <string name="onboarding_title">Automatisch opslaan en versleutelen van uw foto\'s en video\'s</string>
   <string name="onboarding_description_part_one">Houd uw herinneringen veilig met</string>
   <string name="onboarding_description_part_two">end-to-end versleutelde opslag</string>

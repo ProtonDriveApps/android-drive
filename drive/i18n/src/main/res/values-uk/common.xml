@@ -44,6 +44,42 @@
   <string name="common_unknown">Невідомо</string>
   <string name="common_month">Місяць</string>
   <string name="common_year">Year</string>
+  <!--
+        Variable %1$d is a number of years
+        Example:
+            "1 year"
+            "17 years"
+    -->
+  <plurals name="common_x_years">
+    <item quantity="one">%1$d year</item>
+    <item quantity="few">%1$d years</item>
+    <item quantity="many">%1$d years</item>
+    <item quantity="other">%1$d years</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of weeks
+        Example:
+            "1 week"
+            "4 weeks"
+    -->
+  <plurals name="common_x_weeks">
+    <item quantity="one">%1$d week</item>
+    <item quantity="few">%1$d weeks</item>
+    <item quantity="many">%1$d weeks</item>
+    <item quantity="other">%1$d weeks</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of days
+        Example:
+            "1 day"
+            "37 days"
+    -->
+  <plurals name="common_x_days">
+    <item quantity="one">%1$d day</item>
+    <item quantity="few">%1$d days</item>
+    <item quantity="many">%1$d days</item>
+    <item quantity="other">%1$d days</item>
+  </plurals>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -84,6 +120,7 @@
   <string name="common_open_action">Open</string>
   <string name="common_back_action">Back</string>
   <string name="common_open_side_menu_action">Open side menu</string>
+  <string name="common_not_now">Not now</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Аудіо</string>

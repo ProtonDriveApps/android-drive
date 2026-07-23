@@ -371,15 +371,15 @@ class FilesViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, defaultEmptyState)
     private var viewEvent: FilesViewEvent? = null
 
-    private fun navigateToSubscriptionOrSummerSale(
-        navigateToSubscription: () -> Unit,
+    private fun navigateToUpsellOrSummerSale(
+        navigateToUpsellPromo: () -> Unit,
         navigateToSummerSalePromo: () -> Unit,
     ) {
         viewModelScope.launch {
             if (isSummerSalePromoEnabled(userId)) {
                 navigateToSummerSalePromo()
             } else {
-                navigateToSubscription()
+                navigateToUpsellPromo()
             }
         }
     }
@@ -391,8 +391,8 @@ class FilesViewModel @Inject constructor(
         navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
         navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId) -> Unit,
         navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
-        navigateToSubscription: () -> Unit,
         navigateToSummerSalePromo: () -> Unit,
+        navigateToUpsellPromo: () -> Unit,
         navigateBack: () -> Unit,
         lifecycle: Lifecycle,
     ): FilesViewEvent = object : FilesViewEvent {
@@ -454,7 +454,7 @@ class FilesViewModel @Inject constructor(
         override val onSelectDriveLink = { driveLink: DriveLink -> onSelectDriveLink(driveLink) }
         override val onDeselectDriveLink = { driveLink: DriveLink -> onDeselectDriveLink(driveLink) }
         override val onBack = { onBack() }
-        override val onSubscription = { navigateToSubscriptionOrSummerSale(navigateToSubscription, navigateToSummerSalePromo) }
+        override val onSubscription = { navigateToUpsellOrSummerSale(navigateToUpsellPromo, navigateToSummerSalePromo) }
         override val onRenderThumbnail = { driveLink: DriveLink ->
             val stopTime = TimestampMs(SystemClock.elapsedRealtime())
             viewModelScope.launch {

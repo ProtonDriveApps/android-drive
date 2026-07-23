@@ -44,11 +44,7 @@ fun ApiException.log(
 
 internal fun ApiException.loggerLevel(): LoggerLevel = when (val cause = error) {
     is ApiResult.Error.Certificate -> LoggerLevel.ERROR
-    is ApiResult.Error.Http -> when (cause.httpCode) {
-        502, 503 -> LoggerLevel.ERROR
-        else -> LoggerLevel.DEBUG
-    }
-
+    is ApiResult.Error.Http -> cause.httpCode.httpCodeLoggerLevel()
     is ApiResult.Error.Parse -> LoggerLevel.ERROR
     else -> LoggerLevel.DEBUG
 }

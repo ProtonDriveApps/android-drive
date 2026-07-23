@@ -30,6 +30,7 @@ import me.proton.android.drive.log.DriveLogTag
 import me.proton.android.drive.log.DriveLogger
 import me.proton.android.drive.log.UserLogger
 import me.proton.android.drive.usecase.GetFileLoggerTree
+import me.proton.core.drive.base.data.entity.HttpErrorCode
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.usersettings.domain.UsersSettingsHandler
 import me.proton.core.util.kotlin.CoreLogger
@@ -64,6 +65,9 @@ class LoggerInitializer : Initializer<Unit> {
             } else {
                 strictMode(logger)
             }
+        }
+        if (BuildConfig.FLAVOR == BuildConfig.FLAVOR_PRODUCTION) {
+            HttpErrorCode.reports4xx = emptyList()
         }
         CoreLogger.set(logger)
         logger.deviceInfo()

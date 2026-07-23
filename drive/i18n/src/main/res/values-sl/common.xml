@@ -44,6 +44,42 @@
   <string name="common_unknown">Neznano</string>
   <string name="common_month">Mesec</string>
   <string name="common_year">Leto</string>
+  <!--
+        Variable %1$d is a number of years
+        Example:
+            "1 year"
+            "17 years"
+    -->
+  <plurals name="common_x_years">
+    <item quantity="one">%1$d leto</item>
+    <item quantity="two">%1$d leti</item>
+    <item quantity="few">%1$d leta</item>
+    <item quantity="other">%1$d let</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of weeks
+        Example:
+            "1 week"
+            "4 weeks"
+    -->
+  <plurals name="common_x_weeks">
+    <item quantity="one">%1$d teden</item>
+    <item quantity="two">%1$d tedna</item>
+    <item quantity="few">%1$d tedni</item>
+    <item quantity="other">%1$d tednov</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of days
+        Example:
+            "1 day"
+            "37 days"
+    -->
+  <plurals name="common_x_days">
+    <item quantity="one">%1$d dan</item>
+    <item quantity="two">%1$d dneva</item>
+    <item quantity="few">%1$d dni</item>
+    <item quantity="other">%1$d dni</item>
+  </plurals>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">V redu</string>
@@ -84,6 +120,7 @@
   <string name="common_open_action">Odpri</string>
   <string name="common_back_action">Nazaj</string>
   <string name="common_open_side_menu_action">Odpri stranski meni</string>
+  <string name="common_not_now">Ne zdaj</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Zvok</string>

@@ -185,7 +185,6 @@
   <string name="notification_permission_rationale_title_backup">Будзьце ў курсе аб статусе рэзервовага капіявання</string>
   <string name="notification_permission_rationale_description_backup">Атрымлівайце апавяшчэнні аб выкананні і статусе вашых рэзервовых копій.</string>
   <string name="notification_permission_rationale_action_accept">Уключыць апавяшчэнні</string>
-  <string name="notification_permission_rationale_action_reject">Не зараз</string>
   <string name="notification_content_title_transferring">Перадача даных</string>
   <!-- endregion -->
   <string name="content_description_select_all">Выбраць усе элементы ў спісе</string>
@@ -300,4 +299,7 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">Палепшыць за %1$s</string>
+  <string name="support_contact_options_title">Дапамажыце нам палепшыць ваш досвед працы</string>
+  <string name="support_contact_options_description">Калі ў вас узніклі праблемы, то нашы дапаможнікі і служба падтрымкі заўсёды гатовы дапамагчы!</string>
+  <string name="support_contact_options_action_button">Звязацца з намі</string>
 </resources>

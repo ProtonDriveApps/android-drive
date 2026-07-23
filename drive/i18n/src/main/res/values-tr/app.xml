@@ -173,7 +173,6 @@
   <string name="notification_permission_rationale_title_backup">Yedekleme durumunuzla ilgili bilgi alın</string>
   <string name="notification_permission_rationale_description_backup">Yedeklemelerinizin ilerlemesi ve durumuyla ilgili bildirimler alın.</string>
   <string name="notification_permission_rationale_action_accept">Bildirimleri aç</string>
-  <string name="notification_permission_rationale_action_reject">Şimdi değil</string>
   <string name="notification_content_title_transferring">Veriler aktarılıyor</string>
   <!-- endregion -->
   <string name="content_description_select_all">Listedeki tüm ögeleri seç</string>
@@ -288,4 +287,7 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">%1$s tarifesine yükseltin</string>
+  <string name="support_contact_options_title">Deneyiminizi iyileştirmemize yardımcı olun</string>
+  <string name="support_contact_options_description">Bir sorun yaşarsanız yardım belgelerimiz ve destek ekibimiz size yardımcı olmaya hazır!</string>
+  <string name="support_contact_options_action_button">Bize ulaşın</string>
 </resources>

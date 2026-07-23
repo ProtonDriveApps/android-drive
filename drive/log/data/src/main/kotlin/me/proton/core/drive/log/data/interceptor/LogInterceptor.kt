@@ -31,7 +31,6 @@ import me.proton.core.drive.base.domain.util.coRunCatching
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
-import okhttp3.ResponseBody
 import java.util.Locale
 
 class LogInterceptor : Interceptor {
@@ -84,8 +83,7 @@ class LogInterceptor : Interceptor {
             code = response.code,
             message = response.message,
             jsonBody = coRunCatching {
-                // Avoid Socket is closed error (SocketException)
-                response.peekBody(byteCount = MAX_BYTE_COUNT.value).jsonString
+                response.peekJsonBody(byteCount = MAX_BYTE_COUNT.value)
             }.getOrNull(LogTag.LOG, "Cannot read body"),
             source = response.source,
         ),
@@ -98,12 +96,14 @@ class LogInterceptor : Interceptor {
         )
     }
 
-    private val ResponseBody.jsonString: String? get() = takeIf {
-        JSON_CONTENT_TYPE.equals(
-            other = contentType()?.toString(),
-            ignoreCase = true,
-        )
-    }?.let { coRunCatching { string() }.getOrNull() }
+    private fun Response.peekJsonBody(byteCount: Long): String? {
+        val contentType = body?.contentType() ?: return null
+        if (!contentType.type.equals(JSON_CONTENT_TYPE, ignoreCase = true)
+            || !contentType.subtype.equals(JSON_CONTENT_SUB_TYPE, ignoreCase = true)) {
+            return null
+        }
+        return peekBody(byteCount).string()
+    }
 
     private val Response.source: Event.Network.Source get() = when {
         networkResponse != null -> Event.Network.Source.Network
@@ -112,8 +112,8 @@ class LogInterceptor : Interceptor {
     }
 
     companion object {
+        private const val JSON_CONTENT_TYPE = "application"
+        private const val JSON_CONTENT_SUB_TYPE = "json"
         private val MAX_BYTE_COUNT = 1.MiB
-        private const val JSON_CONTENT_TYPE = "application/json"
-        private const val ERROR_MESSAGE_CANCELED = "Canceled"
     }
 }
