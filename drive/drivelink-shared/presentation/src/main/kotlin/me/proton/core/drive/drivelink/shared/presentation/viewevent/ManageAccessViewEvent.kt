@@ -31,4 +31,7 @@ interface ManageAccessViewEvent {
     val onStopAllSharing: () -> Unit
     val onConfigureSharing: () -> Unit
     val onEditLinkPermissions: () -> Unit
+    val onToggleEditorsCanShare: () -> Unit
+    val onDismissNewEditorPermissions: () -> Unit
+    val onNewEditorPermissionsShown: () -> Unit
 }

@@ -110,4 +110,9 @@ interface ShareRepository {
      * Get the volume type for a given share, fetching from server if not cached
      */
     suspend fun getVolumeType(shareId: ShareId): Result<Volume.Type>
+
+    /**
+     * Set whether editor members may manage access (share, change permissions) on the given share
+     */
+    suspend fun setEditorsCanShare(shareId: ShareId, editorsCanShare: Boolean): Unit
 }

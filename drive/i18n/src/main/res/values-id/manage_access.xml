@@ -18,7 +18,6 @@
   -->
 <resources>
   <string name="title_manage_access">Kelola Akses</string>
-  <string name="manage_access_share_with">Bagikan dengan</string>
   <string name="manage_access_share_with_anyone">Bagikan dengan siapa pun</string>
   <string name="manage_access_link_settings_action">Pengaturan tautan</string>
   <string name="manage_access_link_description_public">Siapa pun yang memiliki tautan</string>

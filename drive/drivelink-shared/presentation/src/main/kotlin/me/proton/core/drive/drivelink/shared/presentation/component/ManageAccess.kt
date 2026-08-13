@@ -18,34 +18,51 @@
 package me.proton.core.drive.drivelink.shared.presentation.component
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Surface
+import androidx.compose.material.Switch
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import me.proton.core.compose.component.DeferredCircularProgressIndicator
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
+import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
+import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.compose.theme.defaultNorm
+import me.proton.core.compose.theme.defaultSmallWeak
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.presentation.component.ActionButton
 import me.proton.core.drive.base.presentation.component.TopAppBar
-import me.proton.core.drive.drivelink.shared.presentation.extension.isShared
+import me.proton.core.drive.drivelink.shared.presentation.effect.ManageAccessEffect
 import me.proton.core.drive.drivelink.shared.presentation.viewevent.ManageAccessViewEvent
 import me.proton.core.drive.drivelink.shared.presentation.viewmodel.ManageAccessViewModel
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.LoadingViewState
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ManageAccessViewState
-import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserType.*
+import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserType.INVITATION
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserViewState
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -70,6 +87,13 @@ fun ManageAccess(
 
     val manageAccessViewState by rememberFlowWithLifecycle(viewModel.viewState)
         .collectAsState(initial = null)
+    LaunchedEffect(viewModel, navigateBack) {
+        viewModel.effect.onEach { effect ->
+            when (effect) {
+                ManageAccessEffect.Close -> navigateBack()
+            }
+        }.launchIn(this)
+    }
     ManageAccess(
         viewState = manageAccessViewState,
         viewEvent = viewModel.viewEvent(
@@ -105,11 +129,13 @@ private fun ManageAccess(
             title = viewState?.title ?: "",
             modifier = Modifier.statusBarsPadding(),
             actions = {
-                ActionButton(
-                    icon = CorePresentation.drawable.ic_proton_user_plus,
-                    contentDescription = I18N.string.common_share,
-                    onClick = { viewEvent.onInvite() },
-                )
+                if (viewState?.canEditMembers == true) {
+                    ActionButton(
+                        icon = CorePresentation.drawable.ic_proton_user_plus,
+                        contentDescription = I18N.string.common_share,
+                        onClick = { viewEvent.onInvite() },
+                    )
+                }
             }
         )
         Crossfade(targetState = viewState, label = "manage-access-content") { viewState ->
@@ -150,7 +176,7 @@ fun ManageAccessContent(
             )
         }
         if (viewState.shareUsers.isNotEmpty()) {
-            SectionTitle(stringResource(I18N.string.manage_access_share_with))
+            SectionTitle(stringResource(I18N.string.manage_access_who_has_access))
             ShareUsers(
                 shareUsers = viewState.shareUsers,
                 onMore = viewState.takeIf { it.canEditMembers }?.let {
@@ -160,12 +186,71 @@ fun ManageAccessContent(
                 },
             )
         }
-        if (viewState.isShared) {
+        if (viewState.showStopSharing || viewState.showEditorsCanShare) {
             Divider(color = ProtonTheme.colors.separatorNorm)
-            StopSharingButton(onClick = { viewEvent.onStopAllSharing() })
+            if (viewState.showEditorsCanShare) {
+                LaunchedEffect(viewState.showNewEditorPermissions) {
+                    if (viewState.showNewEditorPermissions) {
+                        viewEvent.onNewEditorPermissionsShown()
+                    }
+                }
+                NewEditorPermissionsBubble(
+                    visible = viewState.showNewEditorPermissions,
+                    onDismiss = viewEvent.onDismissNewEditorPermissions,
+                )
+                EditorsCanShareToggle(
+                    checked = viewState.editorsCanShare,
+                    onCheckedChange = { viewEvent.onToggleEditorsCanShare() },
+                )
+            }
+            if (viewState.showStopSharing) {
+                StopSharingButton(modifier = Modifier.heightIn(min = MinActionHeight)) {
+                    viewEvent.onStopAllSharing()
+                }
+            }
         }
     }
 }
+
+@Composable
+private fun EditorsCanShareToggle(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .toggleable(
+                value = checked,
+            ) {
+                onCheckedChange(it)
+            }
+            .fillMaxWidth()
+            .padding(horizontal = DefaultSpacing, vertical = SmallSpacing)
+            .heightIn(min = MinActionHeight),
+        horizontalArrangement = Arrangement.spacedBy(DefaultSpacing),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+        ) {
+            Text(
+                text = stringResource(I18N.string.manage_access_allow_editors_to_share_title),
+                style = ProtonTheme.typography.defaultNorm,
+            )
+            Text(
+                text = stringResource(I18N.string.manage_access_allow_editors_to_share_description),
+                style = ProtonTheme.typography.defaultSmallWeak,
+            )
+        }
+        Switch(
+            checked = checked,
+            onCheckedChange = null,
+        )
+    }
+}
+
+private val MinActionHeight = 56.dp
 
 @Preview
 @Composable
@@ -183,6 +268,7 @@ fun ManageAccessSharedPreview() {
                     isLinkNameEncrypted = false,
                     canEditMembers = true,
                     canEditLink = true,
+                    showStopSharing = true,
                     loadingViewState = LoadingViewState.Initial,
                     shareUsers = listOf(
                         ShareUserViewState(
@@ -195,6 +281,9 @@ fun ManageAccessSharedPreview() {
                         )
                     ),
                     showShareWithAnyone = true,
+                    showEditorsCanShare = true,
+                    showNewEditorPermissions = true,
+                    editorsCanShare = true,
                 ),
                 viewEvent = object : ManageAccessViewEvent {
                     override val onBackPressed: () -> Unit = {}
@@ -207,6 +296,9 @@ fun ManageAccessSharedPreview() {
                     override val onStopAllSharing: () -> Unit = {}
                     override val onConfigureSharing: () -> Unit = {}
                     override val onEditLinkPermissions: () -> Unit = {}
+                    override val onToggleEditorsCanShare: () -> Unit = {}
+                    override val onDismissNewEditorPermissions: () -> Unit = {}
+                    override val onNewEditorPermissionsShown: () -> Unit = {}
                 }
             )
         }
@@ -229,6 +321,7 @@ fun ManageAccessNotSharedPreview() {
                     isLinkNameEncrypted = false,
                     canEditMembers = true,
                     canEditLink = true,
+                    showStopSharing = true,
                     loadingViewState = LoadingViewState.Initial,
                     shareUsers = emptyList(),
                     showShareWithAnyone = true,
@@ -244,6 +337,9 @@ fun ManageAccessNotSharedPreview() {
                     override val onStopAllSharing: () -> Unit = {}
                     override val onConfigureSharing: () -> Unit = {}
                     override val onEditLinkPermissions: () -> Unit = {}
+                    override val onToggleEditorsCanShare: () -> Unit = {}
+                    override val onDismissNewEditorPermissions: () -> Unit = {}
+                    override val onNewEditorPermissionsShown: () -> Unit = {}
                 }
             )
         }

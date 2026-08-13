@@ -85,6 +85,7 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.OwnedBy
 import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.link.domain.entity.SharingDetails
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
@@ -441,6 +442,7 @@ fun MediaItemPreview() {
                 ShareId(userId, ""),
                 shareUrlId = ShareUrlId(ShareId(userId, ""), "")
             ),
+            ownedBy = OwnedBy("m4@proton.black"),
             photoCaptureTime = TimestampS(0),
             photoContentHash = "",
             mainPhotoLinkId = "MAIN_ID",

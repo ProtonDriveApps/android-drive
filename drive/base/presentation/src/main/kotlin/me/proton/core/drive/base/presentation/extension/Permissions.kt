@@ -25,7 +25,6 @@ import me.proton.core.drive.i18n.R as I18N
 fun Permissions.toPermissionLabel(appContext: Context) = appContext.getString(
     when {
         isOwner -> I18N.string.common_permission_owner
-        isAdmin -> I18N.string.common_permission_admin
         canWrite -> I18N.string.common_permission_editor
         canRead -> I18N.string.common_permission_viewer
         else -> I18N.string.common_permission_unknown

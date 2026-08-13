@@ -22,6 +22,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import kotlinx.coroutines.flow.StateFlow
@@ -29,6 +30,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
@@ -50,6 +52,7 @@ import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLin
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isShareMember
 import me.proton.core.drive.drivelink.offline.domain.usecase.ToggleOffline
+import me.proton.core.drive.drivelink.shared.domain.usecase.CanManageSharing
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDevelopment
@@ -61,11 +64,13 @@ import me.proton.core.drive.share.domain.entity.ShareId
 import javax.inject.Inject
 
 @HiltViewModel
+@OptIn(ExperimentalCoroutinesApi::class)
 class AlbumOptionsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getDriveLink: GetDecryptedDriveLink,
     getFeatureFlagFlow: GetFeatureFlagFlow,
     private val toggleOffline: ToggleOffline,
+    private val canManageSharing: CanManageSharing,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val albumId = AlbumId(
         shareId = ShareId(userId, savedStateHandle.require(KEY_SHARE_ID)),
@@ -104,40 +109,42 @@ class AlbumOptionsViewModel @Inject constructor(
         navigateToDelete: (AlbumId) -> Unit,
         navigateToLeave: (AlbumId) -> Unit,
         dismiss: () -> Unit,
-    ): Flow<List<FileOptionEntry<DriveLink.Album>>> = combine(
-        driveLink.filterNotNull(),
-        sharingDevelopment,
-    ) { driveLink, sharingDevelopment ->
-        options
-            .filter(driveLink)
-            .filterShareMember(driveLink.isShareMember)
-            .filterPermissions(driveLink.sharePermissions ?: Permissions.owner)
-            .filterRoot(driveLink, sharingDevelopment)
-            .map { option ->
-                when (option) {
-                    is Option.OfflineToggle -> option.build(runAction) { driveLink ->
-                        viewModelScope.launch {
-                            toggleOffline(driveLink).onFailure { error ->
-                                error.log(VIEW_MODEL, "Failed to toggle offline for ${driveLink.id.id}")
+    ): Flow<List<FileOptionEntry<DriveLink.Album>>> = driveLink.filterNotNull().flatMapLatest { driveLink ->
+        combine(
+            sharingDevelopment,
+            canManageSharing(albumId),
+        ) { sharingDevelopment, canManageSharing ->
+            options
+                .filter(driveLink)
+                .filterShareMember(driveLink.isShareMember)
+                .filterPermissions(driveLink.sharePermissions ?: Permissions.owner, canManageSharing)
+                .filterRoot(driveLink, sharingDevelopment)
+                .map { option ->
+                    when (option) {
+                        is Option.OfflineToggle -> option.build(runAction) { driveLink ->
+                            viewModelScope.launch {
+                                toggleOffline(driveLink).onFailure { error ->
+                                    error.log(VIEW_MODEL, "Failed to toggle offline for ${driveLink.id.id}")
+                                }
                             }
                         }
+                        is Option.ShareViaInvitations -> option.build(runAction, navigateToShareViaInvitations)
+                        is Option.ManageAccess -> option.build(runAction, navigateToManageAccess)
+                        is Option.Rename -> option.build(runAction, navigateToRename)
+                        is Option.DeleteAlbum -> option.build(runAction = runAction) { albumId ->
+                            navigateToDelete(albumId)
+                        }
+                        is Option.LeaveAlbum -> option.build(runAction) { album ->
+                            navigateToLeave(album.id)
+                        }
+                        else -> error(
+                            "Option ${option.javaClass.simpleName} is not found. Did you forget to add it?"
+                        )
                     }
-                    is Option.ShareViaInvitations -> option.build(runAction, navigateToShareViaInvitations)
-                    is Option.ManageAccess -> option.build(runAction, navigateToManageAccess)
-                    is Option.Rename -> option.build(runAction, navigateToRename)
-                    is Option.DeleteAlbum -> option.build(runAction = runAction) { albumId ->
-                        navigateToDelete(albumId)
-                    }
-                    is Option.LeaveAlbum -> option.build(runAction) { album ->
-                        navigateToLeave(album.id)
-                    }
-                    else -> error(
-                        "Option ${option.javaClass.simpleName} is not found. Did you forget to add it?"
-                    )
+                }.also {
+                    this.dismiss = dismiss
                 }
-            }.also {
-                this.dismiss = dismiss
-            }
+        }
     }
 
     companion object {

@@ -29,6 +29,7 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.entity.OwnedBy
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.share.domain.entity.ShareId
@@ -66,6 +67,7 @@ val BASE_FILE_LINK = Link.File(
     shareUrlExpirationTime = null,
     xAttr = null,
     sharingDetails = null,
+    ownedBy = OwnedBy(),
 )
 
 val BASE_FOLDER_LINK = Link.Folder(
@@ -97,6 +99,7 @@ val BASE_FOLDER_LINK = Link.Folder(
     shareUrlExpirationTime = null,
     xAttr = null,
     sharingDetails = null,
+    ownedBy = OwnedBy(),
 )
 
 fun Link.File.toDriveLink(

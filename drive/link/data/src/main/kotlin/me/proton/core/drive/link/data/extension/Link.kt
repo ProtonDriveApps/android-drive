@@ -60,6 +60,8 @@ fun Link.toLinkWithProperties() = LinkWithProperties(
         sharingDetailsShareId = sharingDetails?.shareId?.id,
         shareUrlId = sharingDetails?.shareUrlId?.id,
         xAttr = xAttr,
+        ownedByEmail = ownedBy.email,
+        ownedByOrganization = ownedBy.organization,
     ),
     properties = when (this) {
         is Link.File -> LinkFilePropertiesEntity(

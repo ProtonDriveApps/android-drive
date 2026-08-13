@@ -31,7 +31,11 @@ data class ManageAccessViewState(
     val isLinkNameEncrypted: Boolean,
     val canEditMembers: Boolean,
     val canEditLink: Boolean,
+    val showStopSharing: Boolean,
     val loadingViewState: LoadingViewState,
     val shareUsers: List<ShareUserViewState> = emptyList(),
     val showShareWithAnyone: Boolean = false,
+    val showEditorsCanShare: Boolean = false,
+    val editorsCanShare: Boolean = false,
+    val showNewEditorPermissions: Boolean = false,
 )

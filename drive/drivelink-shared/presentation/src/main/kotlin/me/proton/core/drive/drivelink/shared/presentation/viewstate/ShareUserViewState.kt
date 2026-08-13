@@ -25,6 +25,7 @@ data class ShareUserViewState(
     val firstLetter: String,
     val type: ShareUserType,
     val displayName: String? = null,
+    val showOptions: Boolean = true,
 )
 
 enum class ShareUserType {

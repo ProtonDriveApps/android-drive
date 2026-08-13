@@ -92,6 +92,7 @@ sealed class Link : BaseLink {
     abstract val creationTime: TimestampS
     abstract val trashedTime: TimestampS?
     abstract val sharingDetails: SharingDetails?
+    abstract val ownedBy: OwnedBy
 
     data class File(
         override val id: FileId,
@@ -123,6 +124,7 @@ sealed class Link : BaseLink {
         override val activeRevisionId: String,
         override val xAttr: String?,
         override val sharingDetails: SharingDetails?,
+        override val ownedBy: OwnedBy,
         val contentKeyPacket: String,
         val contentKeyPacketSignature: String?,
         override val photoCaptureTime: TimestampS? = null,
@@ -169,6 +171,7 @@ sealed class Link : BaseLink {
         override val trashedTime: TimestampS?,
         override val xAttr: String?,
         override val sharingDetails: SharingDetails?,
+        override val ownedBy: OwnedBy,
         val nodeHashKey: String,
     ) : Link(), me.proton.core.drive.link.domain.entity.Folder {
         override val isFavorite: Boolean = false
@@ -202,6 +205,7 @@ sealed class Link : BaseLink {
         override val trashedTime: TimestampS?,
         override val xAttr: String?,
         override val sharingDetails: SharingDetails?,
+        override val ownedBy: OwnedBy,
         val nodeHashKey: String,
         override val isLocked: Boolean,
         override val lastActivityTime: TimestampS,

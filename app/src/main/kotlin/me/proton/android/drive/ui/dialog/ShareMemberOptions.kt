@@ -33,14 +33,17 @@ import androidx.lifecycle.flowWithLifecycle
 import me.proton.android.drive.ui.viewmodel.ShareMemberOptionsViewModel
 import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.drive.drivelink.shared.presentation.component.ShareUserOptions
+import me.proton.core.drive.link.domain.entity.LinkId
 
 @Composable
 fun ShareMemberOptions(
     runAction: RunAction,
+    navigateToConfirmChangeAccessToViewer: (LinkId, String) -> Unit,
     modifier: Modifier = Modifier,
 ) = ShareMemberOptions(
     viewModel = hiltViewModel(),
     runAction = runAction,
+    navigateToConfirmChangeAccessToViewer = navigateToConfirmChangeAccessToViewer,
     modifier = modifier
         .testTag(MemberOptionsDialogTestTag.contextMenu),
 )
@@ -49,6 +52,7 @@ fun ShareMemberOptions(
 fun ShareMemberOptions(
     viewModel: ShareMemberOptionsViewModel,
     runAction: RunAction,
+    navigateToConfirmChangeAccessToViewer: (LinkId, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val nullableMember by viewModel.viewState.collectAsStateWithLifecycle(initialValue = null)
@@ -58,6 +62,7 @@ fun ShareMemberOptions(
     val entries by remember(viewModel, lifecycle) {
         viewModel.entries(
             runAction = runAction,
+            navigateToConfirmChangeAccessToViewer = navigateToConfirmChangeAccessToViewer,
         ).flowWithLifecycle(
             lifecycle = lifecycle,
             minActiveState = Lifecycle.State.STARTED

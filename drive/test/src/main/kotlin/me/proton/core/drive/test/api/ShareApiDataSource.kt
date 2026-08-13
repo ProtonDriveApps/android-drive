@@ -69,6 +69,7 @@ fun MockWebServer.getShareBootstrap(addressId: String = "address-id") = routing 
                 volumeId = volumeId.id,
                 volumeType = VolumeDto.TYPE_REGULAR,
                 creator = creator,
+                editorsCanShare = false,
                 flags = 0,
                 locked = false,
                 key = "",

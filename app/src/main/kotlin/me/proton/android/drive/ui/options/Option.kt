@@ -622,7 +622,8 @@ fun Iterable<Option>.filterShareMember(isMember: Boolean) = filter { option ->
 }
 
 fun Iterable<Option>.filterPermissions(
-    permissions: Permissions
+    permissions: Permissions,
+    canManageSharing: Boolean = permissions.isOwner,
 ) = filter { option ->
     when (option) {
         Option.AddToAlbums -> permissions.canWrite
@@ -634,7 +635,7 @@ fun Iterable<Option>.filterPermissions(
         Option.Download -> permissions.canRead
         Option.Info -> permissions.canRead
         Option.LeaveAlbum -> permissions.canRead
-        Option.ManageAccess -> permissions.isAdmin
+        Option.ManageAccess -> canManageSharing
         Option.Move -> permissions.canWrite
         Option.OfflineToggle -> permissions.canRead
         Option.FavoriteToggle -> permissions.canWrite
@@ -646,7 +647,7 @@ fun Iterable<Option>.filterPermissions(
         Option.ScanDocument -> permissions.canWrite
         Option.SendFile -> permissions.canRead
         Option.SetAsAlbumCover -> permissions.isAdmin
-        Option.ShareViaInvitations -> permissions.isAdmin
+        Option.ShareViaInvitations -> canManageSharing
         Option.ShareMultiplePhotos -> permissions.isAdmin
         Option.TagPhotoFile -> permissions.isAdmin
         Option.TakeAPhoto -> permissions.canWrite

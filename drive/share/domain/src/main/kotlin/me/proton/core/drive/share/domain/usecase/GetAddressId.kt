@@ -42,6 +42,13 @@ class GetAddressId @Inject constructor(
         userId: UserId,
         volumeId: VolumeId,
     ): Result<AddressId> = coRunCatching {
+        volumeAddressIdOrNull(userId, volumeId) ?: getAddressId(userId).getOrThrow()
+    }
+
+    suspend fun volumeAddressIdOrNull(
+        userId: UserId,
+        volumeId: VolumeId,
+    ): AddressId? =
         getVolume(userId, volumeId).toResult()
             .getOrNull(SHARE, "Cannot find volume ${volumeId.id.logId()}")
             ?.let { volume -> ShareId(userId, volume.shareId) }
@@ -50,15 +57,17 @@ class GetAddressId @Inject constructor(
                     .getOrNull("Cannot find volume share: ${shareId.id.logId()}")
             }
             ?.addressId
-            ?: getAddressId(userId).getOrThrow()
-    }
 
     suspend operator fun invoke(
         shareId: ShareId,
     ): Result<AddressId> = coRunCatching {
         val share = getShare(shareId).toResult().getOrThrow()
         if (share.type == Share.Type.STANDARD) {
-            getShareMembership(shareId).toResult().getOrThrow().addressId
+            getShareMembership(shareId).toResult()
+                .getOrNull(SHARE, "Cannot find membership for share: ${shareId.id.logId()}")
+                ?.addressId
+                ?: share.addressId
+                ?: getAddressId(shareId.userId).getOrThrow()
         } else {
             share.addressId ?: invoke(
                 userId = shareId.userId,

@@ -70,6 +70,7 @@ fun LinkWithProperties.toLink(): Link {
             },
             xAttr = link.xAttr,
             sharingDetails = link.sharingDetails(),
+            ownedBy = link.ownedBy(),
             photoCaptureTime = properties.photoCaptureTime?.let { captureTime -> TimestampS(captureTime) },
             photoContentHash = properties.photoContentHash,
             mainPhotoLinkId = properties.mainPhotoLinkId,
@@ -114,6 +115,7 @@ fun LinkWithProperties.toLink(): Link {
             },
             xAttr = link.xAttr,
             sharingDetails = link.sharingDetails(),
+            ownedBy = link.ownedBy()
         )
 
         is LinkAlbumPropertiesEntity -> Link.Album(
@@ -147,6 +149,7 @@ fun LinkWithProperties.toLink(): Link {
             },
             xAttr = link.xAttr,
             sharingDetails = link.sharingDetails(),
+            ownedBy = link.ownedBy(),
             isLocked = properties.locked,
             lastActivityTime = TimestampS(properties.lastActivityTime),
             photoCount = properties.photoCount,

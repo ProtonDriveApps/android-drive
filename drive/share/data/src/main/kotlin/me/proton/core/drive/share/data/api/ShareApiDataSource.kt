@@ -18,6 +18,7 @@
 package me.proton.core.drive.share.data.api
 
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.share.data.api.request.EditorsCanShareRequest
 import me.proton.core.drive.share.data.api.request.ShareAccessWithNodeRequest
 import me.proton.core.drive.share.data.api.response.GetShareBootstrapResponse
 import me.proton.core.drive.share.data.api.response.UpdateUnmigratedSharesResponse
@@ -47,6 +48,12 @@ class ShareApiDataSource(private val apiProvider: ApiProvider) {
     suspend fun deleteShare(shareId: ShareId, force: Boolean = false) =
         apiProvider.get<ShareApi>(shareId.userId).invoke {
             deleteShare(shareId.id, if(force) 1 else 0)
+        }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun setEditorsCanShare(shareId: ShareId, editorsCanShare: Boolean) =
+        apiProvider.get<ShareApi>(shareId.userId).invoke {
+            setEditorsCanShare(shareId.id, EditorsCanShareRequest(editorsCanShare))
         }.valueOrThrow
 
     @Throws(ApiException::class)

@@ -19,6 +19,7 @@
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.LibraryExtension
 import com.android.build.gradle.TestedExtension
+import com.google.devtools.ksp.gradle.KspExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
@@ -30,7 +31,6 @@ import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
-import com.google.devtools.ksp.gradle.KspExtension
 import java.io.File
 
 @Suppress("LongMethod")
@@ -250,7 +250,7 @@ val Project.tags get() = "1.0.0-alpha01\n1.0.0_cancelled(16)\n1.0.0_cancelled(18
 
 val Project.versionCodeFromTags: Int get() = tags.countSubstrings("\n") + 2 // last new line + next tag
 
-val Project.gitCommitCount: String get() = "git rev-list --count HEAD".runCommand(rootDir)
+val Project.gitCommitCount: String get() = "4516"//"git rev-list --count HEAD".runCommand(rootDir)
 
 val Project.versionCodeFromGitCommitCount: Int get() = gitCommitCount.toInt()
 

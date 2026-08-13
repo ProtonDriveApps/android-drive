@@ -32,13 +32,19 @@ import me.proton.core.drive.cryptobase.domain.usecase.SignatureContexts
 import me.proton.core.drive.key.domain.extension.keyHolder
 import me.proton.core.drive.key.domain.extension.primaryPublicKey
 import me.proton.core.drive.key.domain.usecase.GetAddressKeys
+import me.proton.core.drive.key.domain.usecase.GetNodeKey
 import me.proton.core.drive.key.domain.usecase.GetPublicAddressInfo
+import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.share.crypto.domain.entity.ShareInvitationRequest
+import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.usecase.GetAddressId
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.key.domain.encryptSessionKey
 import me.proton.core.key.domain.entity.key.PublicAddressInfo
+import me.proton.core.crypto.common.pgp.SessionKey
+import me.proton.core.key.domain.entity.keyholder.KeyHolder
+import me.proton.core.user.domain.entity.AddressId
 import javax.inject.Inject
 
 class CreateShareInvitationRequest @Inject constructor(
@@ -46,6 +52,7 @@ class CreateShareInvitationRequest @Inject constructor(
     private val getPublicAddressInfo: GetPublicAddressInfo,
     private val getAddressId: GetAddressId,
     private val getAddressKeys: GetAddressKeys,
+    private val getNodeKey: GetNodeKey,
     private val getUserEmail: GetUserEmail,
     private val cryptoContext: CryptoContext,
     private val getSessionKeyFromEncryptedMessage: GetSessionKeyFromEncryptedMessage,
@@ -59,6 +66,7 @@ class CreateShareInvitationRequest @Inject constructor(
         message: String? = null,
         itemName: String? = null,
         externalInvitationId: String? = null,
+        contextLinkId: LinkId? = null,
     ): Result<ShareInvitationRequest> = coRunCatching {
         val publicAddress = getPublicAddressInfo(
             userId = shareId.userId,
@@ -75,6 +83,7 @@ class CreateShareInvitationRequest @Inject constructor(
                 message = message,
                 itemName = itemName,
                 externalInvitationId = externalInvitationId,
+                contextLinkId = contextLinkId,
             )
         } else {
             createExternalRequest(
@@ -83,8 +92,45 @@ class CreateShareInvitationRequest @Inject constructor(
                 permissions = permissions,
                 message = message,
                 itemName = itemName,
+                contextLinkId = contextLinkId,
             )
         }
+    }
+
+    /**
+     * Address we sign with and report as inviter. It is the one we hold on the context share, the
+     * share we access the link through, which for resharing on somebody else's volume is the only
+     * membership we have. Falls back to the address of the share itself.
+     */
+    private suspend fun inviterAddressId(
+        shareId: ShareId,
+        contextLinkId: LinkId?,
+    ): AddressId = contextLinkId
+        ?.let { linkId -> getAddressId(linkId.shareId).getOrNull() }
+        ?: getAddressId(shareId).getOrThrow()
+
+    /**
+     * Share passphrase is encrypted for both the node key of the shared link and the address key
+     * of whoever created the share. Only the node key is guaranteed to be ours, address keys are
+     * the fallback for shares created before node key packets.
+     */
+    private suspend fun getSessionKey(
+        share: Share,
+        contextLinkId: LinkId?,
+        addressKeys: KeyHolder,
+    ): SessionKey {
+        val nodeKey = contextLinkId?.let { linkId -> getNodeKey(linkId).getOrNull() }
+        return nodeKey
+            ?.let { key ->
+                getSessionKeyFromEncryptedMessage(
+                    decryptKey = key.keyHolder,
+                    message = share.passphrase,
+                ).getOrNull()
+            }
+            ?: getSessionKeyFromEncryptedMessage(
+                decryptKey = addressKeys,
+                message = share.passphrase,
+            ).getOrThrow()
     }
 
     private suspend fun createInternalRequest(
@@ -95,18 +141,25 @@ class CreateShareInvitationRequest @Inject constructor(
         itemName: String?,
         publicAddressInfo: PublicAddressInfo,
         externalInvitationId: String? = null,
+        contextLinkId: LinkId? = null,
     ): ShareInvitationRequest.Internal {
         val share = getShare(shareId).filterSuccessOrError().toResult().getOrThrow()
-        val contextAddressId = getAddressId(shareId.userId, share.volumeId).getOrThrow()
-        val shareAddressId = getAddressId(shareId).getOrThrow()
+        val inviterAddressId = inviterAddressId(shareId, contextLinkId)
+        // Without a context share to go by, keep reporting the main share address of the volume.
+        val contextAddressId = when (contextLinkId) {
+            null -> getAddressId.volumeAddressIdOrNull(shareId.userId, share.volumeId)
+                ?: inviterAddressId
+            else -> inviterAddressId
+        }
         val addressKeys = getAddressKeys(
             userId = shareId.userId,
-            addressId = shareAddressId
+            addressId = inviterAddressId
         )
-        val sessionKey = getSessionKeyFromEncryptedMessage(
-            decryptKey = addressKeys.keyHolder,
-            message = share.passphrase
-        ).getOrThrow()
+        val sessionKey = getSessionKey(
+            share = share,
+            contextLinkId = contextLinkId,
+            addressKeys = addressKeys.keyHolder,
+        )
         val encryptedKeyPacket = publicAddressInfo
             .primaryPublicKey(unverified = true)
             .publicKey
@@ -138,17 +191,19 @@ class CreateShareInvitationRequest @Inject constructor(
         permissions: Permissions,
         message: String?,
         itemName: String?,
+        contextLinkId: LinkId? = null,
     ): ShareInvitationRequest.External {
         val share = getShare(shareId).filterSuccessOrError().toResult().getOrThrow()
-        val addressId = requireNotNull(share.addressId)
+        val addressId = share.addressId ?: inviterAddressId(shareId, contextLinkId)
         val addressKeys = getAddressKeys(
             userId = shareId.userId,
             addressId = addressId
         )
-        val sessionKey = getSessionKeyFromEncryptedMessage(
-            decryptKey = addressKeys.keyHolder,
-            message = share.passphrase
-        ).getOrThrow()
+        val sessionKey = getSessionKey(
+            share = share,
+            contextLinkId = contextLinkId,
+            addressKeys = addressKeys.keyHolder,
+        )
         val key = "$inviteeEmail|${Base64.encodeToString(sessionKey.key, Base64.NO_WRAP)}".toByteArray()
         val signature = signData(
             signKey = addressKeys,

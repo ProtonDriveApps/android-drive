@@ -30,6 +30,7 @@ import me.proton.core.drive.share.data.api.ShareApiDataSource
 import me.proton.core.drive.share.data.db.ShareDao
 import me.proton.core.drive.share.data.db.ShareDatabase
 import me.proton.core.drive.share.data.db.ShareEntity
+import me.proton.core.drive.share.data.db.ShareMembershipEntity
 import me.proton.core.drive.share.data.extension.toLong
 import me.proton.core.drive.share.data.extension.toShare
 import me.proton.core.drive.share.data.extension.toShareEntity
@@ -85,14 +86,24 @@ class ShareRepositoryImpl @Inject constructor(
     override suspend fun hasShares(userId: UserId, volumeId: VolumeId, shareType: Share.Type): Boolean =
         dao.hasShareEntities(userId, volumeId.id, shareType.toLong())
 
-    override suspend fun fetchShares(userId: UserId, shareType: Share.Type): List<Share> =
-        with(api.getShares(userId, shareType)
-            .filter { share -> share.isActive }
-            .map { share -> share.toShareEntity(userId) }
+    override suspend fun fetchShares(userId: UserId, shareType: Share.Type): List<Share> {
+        val localShares = dao.getAll(userId).associateBy { shareEntity -> shareEntity.id }
+        return with(
+            receiver = api.getShares(userId, shareType)
+                .filter { share -> share.isActive }
+                .map { share ->
+                    val shareEntity = share.toShareEntity(userId)
+                    localShares[share.id]?.editorsCanShare?.let { editorsCanShare ->
+                        shareEntity.copy(
+                            editorsCanShare = shareEntity.editorsCanShare ?: editorsCanShare,
+                        )
+                    } ?: shareEntity
+                }
         ) {
             dao.insertOrUpdate(*toTypedArray())
             map { shareEntity -> shareEntity.toShare(userId) }
         }
+    }
 
     override fun getShareFlow(shareId: ShareId): Flow<DataResult<Share>> =
         dao.getDistinctFlow(shareId.userId, shareId.id)
@@ -191,12 +202,17 @@ class ShareRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun setEditorsCanShare(
+        shareId: ShareId,
+        editorsCanShare: Boolean,
+    ): Unit = api.setEditorsCanShare(shareId, editorsCanShare)
+
     override fun getMembership(shareId: ShareId): Flow<DataResult<ShareMembership>> =
-        db.shareMembershipDao.get(
+        db.shareMembershipDao.getAll(
             userId = shareId.userId,
             shareId = shareId.id
-        ).map { entity ->
-            entity.toShareMembership().asSuccess
+        ).map { entities: List<ShareMembershipEntity> ->
+            entities.firstOrNull()?.toShareMembership().asSuccessOrNullAsError()
         }
 }
 

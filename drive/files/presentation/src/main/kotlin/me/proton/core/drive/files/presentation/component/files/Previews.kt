@@ -29,6 +29,7 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.entity.OwnedBy
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.entity.ShareUser
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -65,6 +66,7 @@ internal val PREVIEW_LINK = Link.File(
     trashedTime = null,
     shareUrlExpirationTime = null,
     sharingDetails = null,
+    ownedBy = OwnedBy(),
 )
 internal val PREVIEW_LINK_FOLDER = Link.Folder(
     id = FolderId(ShareId(UserId("USER_ID"), "SHARE_ID"), "FOLDER_ID"),
@@ -94,6 +96,7 @@ internal val PREVIEW_LINK_FOLDER = Link.Folder(
     trashedTime = null,
     shareUrlExpirationTime = null,
     sharingDetails = null,
+    ownedBy = OwnedBy(),
     nodeHashKey = "",
 )
 internal val PREVIEW_DRIVELINK = DriveLink.File(

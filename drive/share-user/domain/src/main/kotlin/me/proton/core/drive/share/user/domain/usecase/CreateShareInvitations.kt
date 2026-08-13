@@ -52,6 +52,7 @@ class CreateShareInvitations @Inject constructor(
                     permissions = shareMemberInvitation.permissions,
                     message = invitation.message,
                     itemName = invitation.itemName,
+                    contextLinkId = invitation.linkId,
                 ).filterSuccessOrError().last()
             }.let { results ->
                 emit(

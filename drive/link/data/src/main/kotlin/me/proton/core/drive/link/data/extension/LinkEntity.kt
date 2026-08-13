@@ -18,6 +18,7 @@
 package me.proton.core.drive.link.data.extension
 
 import me.proton.core.drive.link.data.db.entity.LinkEntity
+import me.proton.core.drive.link.domain.entity.OwnedBy
 import me.proton.core.drive.link.domain.entity.SharingDetails
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
@@ -40,3 +41,8 @@ fun LinkEntity.sharingDetails(): SharingDetails? = sharingDetailsShareId?.let { 
         }
     )
 }
+
+fun LinkEntity.ownedBy(): OwnedBy = OwnedBy(
+    email = ownedByEmail,
+    organization = ownedByOrganization
+)

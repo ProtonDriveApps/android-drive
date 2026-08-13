@@ -152,6 +152,22 @@ interface ShareDatabase : Database {
             }
         }
 
+        val MIGRATION_5 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("DELETE FROM `ShareEntity` WHERE $TYPE = 2")
+                database.execSQL(
+                    """
+                    ALTER TABLE `ShareEntity` ADD COLUMN ${Column.CREATOR_EMAIL} TEXT NOT NULL DEFAULT ''
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    ALTER TABLE `ShareEntity` ADD COLUMN ${Column.EDITORS_CAN_SHARE} INTEGER DEFAULT NULL
+                    """.trimIndent()
+                )
+            }
+        }
+
         private fun SupportSQLiteDatabase.updateShareEntityType() {
             query("SELECT * FROM ShareEntity")?.use { cursor ->
                 while (cursor.moveToNext()) {

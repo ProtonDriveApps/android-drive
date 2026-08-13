@@ -25,7 +25,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import me.proton.android.drive.extension.getDefaultMessage
 import me.proton.android.drive.extension.log
@@ -46,6 +47,7 @@ import me.proton.core.drive.documentsprovider.domain.usecase.ExportToDownload
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.lowestCommonPermissions
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
+import me.proton.core.drive.drivelink.shared.domain.usecase.CanManageSharing
 import me.proton.core.drive.files.presentation.entry.OptionEntry
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -64,7 +66,7 @@ import javax.inject.Inject
 class MultipleFileOrFolderOptionsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getSelectedDriveLinks: GetSelectedDriveLinks,
-    @ApplicationContext private val appContext: Context,
+    @param:ApplicationContext private val appContext: Context,
     private val sendToTrash: SendToTrash,
     private val exportToDownload: ExportToDownload,
     private val deselectLinks: DeselectLinks,
@@ -73,8 +75,9 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val hasPhotoVolume: HasPhotoVolume,
     private val scanPhotoForTags: ScanPhotoForTags,
+    private val canManageSharing: CanManageSharing,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
-    private val selectionId = SelectionId(requireNotNull(savedStateHandle.get(KEY_SELECTION_ID)))
+    private val selectionId = SelectionId(requireNotNull(savedStateHandle[KEY_SELECTION_ID]))
     val selectedDriveLinks: Flow<List<DriveLink>> = getSelectedDriveLinks(selectionId)
     // Send -> ACTION_SEND_MULTIPLE (mime type aggregation) - we need to update sendfiledialog with multiple file download
     //   Mime type aggregation - all the same use that one, all same prefix use prefix/*  else use */*
@@ -92,13 +95,16 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
         navigateToAddToAlbumsOptions: (SelectionId) -> Unit,
         navigateToShareMultiplePhotosOptions: (SelectionId) -> Unit,
         dismiss: () -> Unit,
-    ): Flow<List<OptionEntry<Unit>>> = hasPhotoVolume(userId).map { hasPhotoVolume ->
+    ): Flow<List<OptionEntry<Unit>>> = combine(
+        hasPhotoVolume(userId),
+        canManageAllSharing(driveLinks),
+    ) { hasPhotoVolume, canManageSharing ->
         options
             .filterAll(driveLinks)
             .filterAlbums(hasPhotoVolume, albumId)
             .filterPhotoTag(configurationProvider.scanPhotoFileForTags)
             .filterShare(false, albumId)
-            .filterPermissions(driveLinks.lowestCommonPermissions)
+            .filterPermissions(driveLinks.lowestCommonPermissions, canManageSharing)
             .map { option ->
                 when (option) {
                     is Option.Trash -> option.build(
@@ -184,6 +190,19 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
                 if (isEmpty() || driveLinks.isEmpty()) dismiss()
             }
     }
+
+    private fun canManageAllSharing(driveLinks: List<DriveLink>): Flow<Boolean> =
+        if (driveLinks.isEmpty()) {
+            flowOf(false)
+        } else {
+            combine(
+                driveLinks
+                    .distinctBy { driveLink -> driveLink.volumeId to driveLink.sharePermissions }
+                    .map { driveLink -> canManageSharing(driveLink.id) }
+            ) { values ->
+                values.all { canManage -> canManage }
+            }
+        }
 
     private suspend fun scanPhotoForTags(driveLinks: List<DriveLink>) {
         scanPhotoForTags(

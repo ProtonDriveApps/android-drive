@@ -51,6 +51,8 @@ private fun LinkDto.toLinkEntity(shareId: ShareId) =
         xAttr = xAttr,
         sharingDetailsShareId = sharingDetails?.shareId,
         shareUrlId = sharingDetails?.shareUrl?.shareUrlId,
+        ownedByEmail = ownedBy?.email,
+        ownedByOrganization = ownedBy?.organization,
     )
 
 

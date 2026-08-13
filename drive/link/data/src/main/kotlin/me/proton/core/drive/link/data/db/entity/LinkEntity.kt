@@ -35,6 +35,8 @@ import me.proton.core.drive.base.data.db.Column.MIME_TYPE
 import me.proton.core.drive.base.data.db.Column.NAME
 import me.proton.core.drive.base.data.db.Column.NAME_SIGNATURE_EMAIL
 import me.proton.core.drive.base.data.db.Column.NUMBER_OF_ACCESSES
+import me.proton.core.drive.base.data.db.Column.OWNED_BY_EMAIL
+import me.proton.core.drive.base.data.db.Column.OWNED_BY_ORGANIZATION
 import me.proton.core.drive.base.data.db.Column.PARENT_ID
 import me.proton.core.drive.base.data.db.Column.PERMISSIONS
 import me.proton.core.drive.base.data.db.Column.SHARE_ID
@@ -137,4 +139,8 @@ data class LinkEntity(
     val sharingDetailsShareId: String? = null,
     @ColumnInfo(name = SHARE_URL_ID, defaultValue = "NULL")
     val shareUrlId: String? = null,
+    @ColumnInfo(name = OWNED_BY_EMAIL, defaultValue = "NULL")
+    val ownedByEmail: String? = null,
+    @ColumnInfo(name = OWNED_BY_ORGANIZATION, defaultValue = "NULL")
+    val ownedByOrganization: String? = null,
 )

@@ -25,10 +25,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.proton.android.drive.extension.getDefaultMessage
@@ -61,6 +63,7 @@ import me.proton.core.drive.documentsprovider.domain.usecase.ExportTo
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isShareMember
+import me.proton.core.drive.drivelink.shared.domain.usecase.CanManageSharing
 import me.proton.core.drive.drivelink.offline.domain.usecase.ToggleOffline
 import me.proton.core.drive.drivelink.photo.domain.usecase.ToggleFavorite
 import me.proton.core.drive.drivelink.photo.domain.usecase.UpdateAlbumCover
@@ -87,6 +90,7 @@ import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
+@OptIn(ExperimentalCoroutinesApi::class)
 class FileOrFolderOptionsViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
     savedStateHandle: SavedStateHandle,
@@ -109,6 +113,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
     private val hasPhotoVolume: HasPhotoVolume,
     private val selectLinks: SelectLinks,
     private val scanPhotoForTags: ScanPhotoForTags,
+    private val canManageSharing: CanManageSharing,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val selectionId = savedStateHandle.get<String?>(KEY_SELECTION_ID)?.let { SelectionId(it) }
     private var dismiss: (() -> Unit)? = null
@@ -155,136 +160,138 @@ class FileOrFolderOptionsViewModel @Inject constructor(
         navigateToAddToAlbumsOptions: (selectionId: SelectionId) -> Unit,
         dismiss: () -> Unit,
         showCreateDocumentPicker: (String, () -> Unit) -> Unit = { _, _ -> },
-    ): Flow<List<FileOptionEntry<T>>> = combine(
-        this.driveLink.filterNotNull(),
-        sharingDevelopment,
-        hasPhotoVolume(userId),
-    ) { driveLink, sharingDevelopment, hasPhotoVolume ->
-        options
-            .filter(driveLink)
-            .filterAlbums(hasPhotoVolume, albumId)
-            .filterPhotoTag(configurationProvider.scanPhotoFileForTags)
-            .filterPhotoFavorite(hasPhotoVolume)
-            .filterRoot(driveLink, sharingDevelopment)
-            .filterShare(false, albumId)
-            .filterShareMember(driveLink.isShareMember)
-            .filterPermissions(driveLink.sharePermissions ?: Permissions.owner)
-            .map { option ->
-                when (option) {
-                    is Option.DeletePermanently -> option.build(runAction, navigateToDelete)
-                    is Option.FavoriteToggle -> option.build(runAction) { driveLink ->
-                        viewModelScope.launch {
-                            toggleFavoriteAction(driveLink)
-                            deselectLinks()
-                        }
-                    }
-                    is Option.Info -> option.build(runAction) { linkId ->
-                        navigateToInfo(linkId)
-                        deselectLinks()
-                    }
-                    is Option.Move -> option.build(runAction) { linkId, parentId ->
-                        navigateToMove(linkId, parentId)
-                        deselectLinks()
-                    }
-                    is Option.OfflineToggle -> option.build(runAction) { driveLink ->
-                        viewModelScope.launch {
-                            toggleOffline(driveLink).onFailure { error ->
-                                error.log(VIEW_MODEL, "Failed to toggle offline for ${driveLink.id.id}")
-                            }
-                            deselectLinks()
-                        }
-                    }
-                    is Option.Rename -> option.build(runAction) { linkId ->
-                        navigateToRename(linkId)
-                        deselectLinks()
-                    }
-                    is Option.Trash -> option.build(
-                        runAction = runAction,
-                        toggleTrash = {
+    ): Flow<List<FileOptionEntry<T>>> = driveLink.filterNotNull().flatMapLatest { driveLink ->
+        combine(
+            sharingDevelopment,
+            hasPhotoVolume(userId),
+            canManageSharing(linkId),
+        ) { sharingDevelopment, hasPhotoVolume, canManageSharing ->
+            options
+                .filter(driveLink)
+                .filterAlbums(hasPhotoVolume, albumId)
+                .filterPhotoTag(configurationProvider.scanPhotoFileForTags)
+                .filterPhotoFavorite(hasPhotoVolume)
+                .filterRoot(driveLink, sharingDevelopment)
+                .filterShare(false, albumId)
+                .filterShareMember(driveLink.isShareMember)
+                .filterPermissions(driveLink.sharePermissions ?: Permissions.owner, canManageSharing)
+                .map { option ->
+                    when (option) {
+                        is Option.DeletePermanently -> option.build(runAction, navigateToDelete)
+                        is Option.FavoriteToggle -> option.build(runAction) { driveLink ->
                             viewModelScope.launch {
-                                toggleTrashState(driveLink)
+                                toggleFavoriteAction(driveLink)
                                 deselectLinks()
                             }
                         }
-                    )
-                    is Option.SendFile -> option.build(runAction) { linkId ->
-                        navigateToSendFile(linkId)
-                        deselectLinks()
-                    }
-                    is Option.Download -> option.build { filename ->
-                        showCreateDocumentPicker(filename) { handleActivityNotFound() }
-                        deselectLinks()
-                    }
-                    is Option.ManageAccess -> option.build(runAction) { linkId ->
-                        navigateToManageAccess(linkId)
-                        deselectLinks()
-                    }
-                    is Option.ShareViaInvitations -> option.build(runAction) { linkId ->
-                        navigateToShareViaInvitations(linkId)
-                        deselectLinks()
-                    }
-                    is Option.RemoveMe -> option.build(runAction) { driveLink ->
-                        viewModelScope.launch {
-                            leaveShare(driveLink).onFailure { error ->
-                                error.log(VIEW_MODEL, "Failed to leave share for ${driveLink.id.id}")
-                            }
+                        is Option.Info -> option.build(runAction) { linkId ->
+                            navigateToInfo(linkId)
                             deselectLinks()
                         }
-                    }
-                    is Option.OpenInBrowser -> option.build(runAction) { driveLink ->
-                        viewModelScope.launch {
-                            openProtonDocumentInBrowser(driveLink).onFailure { error ->
-                                error.log(VIEW_MODEL, "Failed to open proton document in browser")
-                            }
+                        is Option.Move -> option.build(runAction) { linkId, parentId ->
+                            navigateToMove(linkId, parentId)
                             deselectLinks()
                         }
-                    }
-                    is Option.SetAsAlbumCover -> option.build(runAction) { driveLink ->
-                        viewModelScope.launch {
-                            setAsAlbumCover(driveLink)
-                            deselectLinks()
-                        }
-                    }
-                    is Option.TagPhotoFile -> option.build(runAction) { driveLink ->
-                        viewModelScope.launch {
-                            scanPhotoForTags(driveLink)
-                            deselectLinks()
-                        }
-                    }
-                    is Option.SaveSharePhoto -> option.build(runAction) { driveLink ->
-                        viewModelScope.launch {
-                            saveSharedPhoto(driveLink)
-                            deselectLinks()
-                        }
-                    }
-                    is Option.RemoveFromAlbum -> option.build(runAction) { driveLink ->
-                        viewModelScope.launch {
-                            removePhotosFromAlbum(driveLink)
-                            deselectLinks()
-                        }
-                    }
-                    is Option.AddToAlbums -> option.build(runAction) { driveLink ->
-                        if (selectionId != null) {
-                            navigateToAddToAlbumsOptions(selectionId)
-                        } else {
+                        is Option.OfflineToggle -> option.build(runAction) { driveLink ->
                             viewModelScope.launch {
-                                selectLinks(listOf(driveLink.id))
-                                    .onFailure { error ->
-                                        error.log(VIEW_MODEL, "Failed to select links")
-                                    }
-                                    .onSuccess { selectionId ->
-                                        navigateToAddToAlbumsOptions(selectionId)
-                                    }
+                                toggleOffline(driveLink).onFailure { error ->
+                                    error.log(VIEW_MODEL, "Failed to toggle offline for ${driveLink.id.id}")
+                                }
+                                deselectLinks()
                             }
                         }
+                        is Option.Rename -> option.build(runAction) { linkId ->
+                            navigateToRename(linkId)
+                            deselectLinks()
+                        }
+                        is Option.Trash -> option.build(
+                            runAction = runAction,
+                            toggleTrash = {
+                                viewModelScope.launch {
+                                    toggleTrashState(driveLink)
+                                    deselectLinks()
+                                }
+                            }
+                        )
+                        is Option.SendFile -> option.build(runAction) { linkId ->
+                            navigateToSendFile(linkId)
+                            deselectLinks()
+                        }
+                        is Option.Download -> option.build { filename ->
+                            showCreateDocumentPicker(filename) { handleActivityNotFound() }
+                            deselectLinks()
+                        }
+                        is Option.ManageAccess -> option.build(runAction) { linkId ->
+                            navigateToManageAccess(linkId)
+                            deselectLinks()
+                        }
+                        is Option.ShareViaInvitations -> option.build(runAction) { linkId ->
+                            navigateToShareViaInvitations(linkId)
+                            deselectLinks()
+                        }
+                        is Option.RemoveMe -> option.build(runAction) { driveLink ->
+                            viewModelScope.launch {
+                                leaveShare(driveLink).onFailure { error ->
+                                    error.log(VIEW_MODEL, "Failed to leave share for ${driveLink.id.id}")
+                                }
+                                deselectLinks()
+                            }
+                        }
+                        is Option.OpenInBrowser -> option.build(runAction) { driveLink ->
+                            viewModelScope.launch {
+                                openProtonDocumentInBrowser(driveLink).onFailure { error ->
+                                    error.log(VIEW_MODEL, "Failed to open proton document in browser")
+                                }
+                                deselectLinks()
+                            }
+                        }
+                        is Option.SetAsAlbumCover -> option.build(runAction) { driveLink ->
+                            viewModelScope.launch {
+                                setAsAlbumCover(driveLink)
+                                deselectLinks()
+                            }
+                        }
+                        is Option.TagPhotoFile -> option.build(runAction) { driveLink ->
+                            viewModelScope.launch {
+                                scanPhotoForTags(driveLink)
+                                deselectLinks()
+                            }
+                        }
+                        is Option.SaveSharePhoto -> option.build(runAction) { driveLink ->
+                            viewModelScope.launch {
+                                saveSharedPhoto(driveLink)
+                                deselectLinks()
+                            }
+                        }
+                        is Option.RemoveFromAlbum -> option.build(runAction) { driveLink ->
+                            viewModelScope.launch {
+                                removePhotosFromAlbum(driveLink)
+                                deselectLinks()
+                            }
+                        }
+                        is Option.AddToAlbums -> option.build(runAction) { driveLink ->
+                            if (selectionId != null) {
+                                navigateToAddToAlbumsOptions(selectionId)
+                            } else {
+                                viewModelScope.launch {
+                                    selectLinks(listOf(driveLink.id))
+                                        .onFailure { error ->
+                                            error.log(VIEW_MODEL, "Failed to select links")
+                                        }
+                                        .onSuccess { selectionId ->
+                                            navigateToAddToAlbumsOptions(selectionId)
+                                        }
+                                }
+                            }
+                        }
+                        else -> throw IllegalStateException(
+                            "Option ${option.javaClass.simpleName} is not found. Did you forget to add it?"
+                        )
                     }
-                    else -> throw IllegalStateException(
-                        "Option ${option.javaClass.simpleName} is not found. Did you forget to add it?"
-                    )
+                }.also {
+                    this.dismiss = dismiss
                 }
-            }.also {
-                this.dismiss = dismiss
-            }
+        }
     }
 
     private suspend fun scanPhotoForTags(driveLink: DriveLink.File) {

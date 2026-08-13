@@ -39,4 +39,6 @@ driveModule(
     api(project(":drive:share-user:domain"))
     api(libs.core.presentation.compose)
     implementation(project(":drive:base:data"))
+    implementation(libs.androidx.dataStore.core)
+    implementation(libs.androidx.dataStore.preferences)
 }

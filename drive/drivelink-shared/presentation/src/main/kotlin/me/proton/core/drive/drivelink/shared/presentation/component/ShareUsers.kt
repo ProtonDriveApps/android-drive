@@ -18,7 +18,6 @@
 
 package me.proton.core.drive.drivelink.shared.presentation.component
 
-import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -64,7 +63,7 @@ fun ShareUsers(
                 email = user.email,
                 role = user.permissionLabel,
                 displayName = user.displayName,
-                onMore = onMore?.let { action ->
+                onMore = onMore?.takeIf { user.showOptions }?.let { action ->
                     { action(user) }
                 },
                 firstLetter = user.firstLetter

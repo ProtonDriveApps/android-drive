@@ -23,6 +23,7 @@ import me.proton.core.drive.base.data.api.Dto.ACTIVE_URLS
 import me.proton.core.drive.base.data.api.Dto.ALBUM_PROPERTIES
 import me.proton.core.drive.base.data.api.Dto.ATTRIBUTES
 import me.proton.core.drive.base.data.api.Dto.CREATE_TIME
+import me.proton.core.drive.base.data.api.Dto.EMAIL
 import me.proton.core.drive.base.data.api.Dto.EXPIRATION_TIME
 import me.proton.core.drive.base.data.api.Dto.FILE_PROPERTIES
 import me.proton.core.drive.base.data.api.Dto.FOLDER_PROPERTIES
@@ -37,6 +38,8 @@ import me.proton.core.drive.base.data.api.Dto.NODE_KEY
 import me.proton.core.drive.base.data.api.Dto.NODE_PASSPHRASE
 import me.proton.core.drive.base.data.api.Dto.NODE_PASSPHRASE_SIGNATURE
 import me.proton.core.drive.base.data.api.Dto.NUMBER_OF_ACCESSES
+import me.proton.core.drive.base.data.api.Dto.ORGANIZATION
+import me.proton.core.drive.base.data.api.Dto.OWNED_BY
 import me.proton.core.drive.base.data.api.Dto.PARENT_LINK_ID
 import me.proton.core.drive.base.data.api.Dto.PERMISSIONS
 import me.proton.core.drive.base.data.api.Dto.PHOTO_PROPERTIES
@@ -113,6 +116,8 @@ data class LinkDto(
     val xAttr: String? = null,
     @SerialName(SHARING_DETAILS)
     val sharingDetails: SharingDetailsDto? = null,
+    @SerialName(OWNED_BY)
+    val ownedBy: OwnedBy? = null,
 ) {
 
     @Serializable
@@ -131,6 +136,14 @@ data class LinkDto(
         val shareId: String? = null,
         @SerialName(SHARE_URL)
         val shareUrl: ShareUrlDto? = null,
+    )
+
+    @Serializable
+    data class OwnedBy(
+        @SerialName(EMAIL)
+        val email: String? = null,
+        @SerialName(ORGANIZATION)
+        val organization: String? = null,
     )
 
     companion object {

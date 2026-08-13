@@ -20,6 +20,7 @@ package me.proton.android.drive.db
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import me.proton.android.drive.db.migration.OrphanedShareDataCleanup
 import me.proton.android.drive.document.scanner.data.db.DocumentScannerDatabase
 import me.proton.android.drive.photos.data.db.PhotosDatabase
 import me.proton.core.account.data.db.AccountDatabase
@@ -679,6 +680,19 @@ object DriveDatabaseMigrations {
         override fun migrate(db: SupportSQLiteDatabase) {
             BackupDatabase.MIGRATION_8.migrate(db)
             LinkUploadDatabase.MIGRATION_8.migrate(db)
+        }
+    }
+
+    val MIGRATION_105_106 = object : Migration(105, 106) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            ShareDatabase.MIGRATION_5.migrate(db)
+            LinkDatabase.MIGRATION_5.migrate(db)
+        }
+    }
+
+    val MIGRATION_106_107 = object : Migration(106, 107) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            OrphanedShareDataCleanup.migrate(db)
         }
     }
 }

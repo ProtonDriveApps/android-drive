@@ -18,6 +18,7 @@
 package me.proton.core.drive.share.data.api
 
 import me.proton.core.drive.share.data.api.request.CreateShareRequest
+import me.proton.core.drive.share.data.api.request.EditorsCanShareRequest
 import me.proton.core.drive.share.data.api.request.ShareAccessWithNodeRequest
 import me.proton.core.drive.share.data.api.response.CreateShareResponse
 import me.proton.core.drive.share.data.api.response.GetShareBootstrapResponse
@@ -29,6 +30,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -52,6 +54,12 @@ interface ShareApi : BaseRetrofitApi {
     suspend fun deleteShare(
         @Path("enc_shareID") shareId: String,
         @Query("Force") force: Long,
+    )
+
+    @PUT("drive/shares/{shareID}/editors-can-share")
+    suspend fun setEditorsCanShare(
+        @Path("shareID") shareId: String,
+        @Body request: EditorsCanShareRequest,
     )
 
     @GET("drive/migrations/shareaccesswithnode/unmigrated")

@@ -34,6 +34,8 @@ fun ShareEntity.toShare(userId: UserId) =
         volumeType = volumeType?.toVolumeType(),
         rootLinkId = linkId,
         addressId = addressId,
+        creatorEmail = creator,
+        editorsCanShare = editorsCanShare,
         isMain = (flags and PRIMARY_BIT) == 1L,
         isLocked = isLocked,
         key = key,

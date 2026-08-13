@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.share.domain.usecase.GetAllMembershipId
 import me.proton.core.drive.share.user.data.api.ShareMemberApiDataSource
 import me.proton.core.drive.share.user.data.api.request.UpdateShareMemberRequest
 import me.proton.core.drive.share.user.data.db.ShareUserDatabase
@@ -40,10 +39,10 @@ class ShareMemberRepositoryImpl @Inject constructor(
     override suspend fun hasMembers(shareId: ShareId): Boolean =
         db.shareMemberDao.hasMembers(shareId.userId, shareId.id)
 
-    override suspend fun fetchAndStoreMembers(shareId: ShareId, ignoredIds: List<String>): List<ShareUser.Member> {
+    override suspend fun fetchAndStoreMembers(shareId: ShareId): List<ShareUser.Member> {
         val members = api.getMembers(shareId.userId, shareId.id).members.map { dto ->
             dto.toShareUserMember()
-        }.filter { member -> member.id !in ignoredIds }
+        }
         db.inTransaction {
             db.shareMemberDao.deleteAll(shareId.userId, shareId.id)
             db.shareMemberDao.insertOrUpdate(*members.map { member ->

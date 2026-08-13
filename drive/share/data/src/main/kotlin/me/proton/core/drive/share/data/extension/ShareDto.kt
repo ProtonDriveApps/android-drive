@@ -29,6 +29,7 @@ fun ShareDto.toShareEntity(userId: UserId) =
         volumeId = volumeId,
         volumeType= volumeType,
         addressId = addressId?.let { AddressId(addressId) },
+        creator = creator,
         flags = flags,
         linkId = linkId,
         isLocked = locked,
@@ -37,4 +38,5 @@ fun ShareDto.toShareEntity(userId: UserId) =
         passphraseSignature = passphraseSignature ?: "",
         creationTime = creationTime,
         type = type,
+        editorsCanShare = editorsCanShare,
     )

@@ -27,9 +27,11 @@ import me.proton.core.drive.cryptobase.domain.usecase.GetSessionKeyFromEncrypted
 import me.proton.core.drive.cryptobase.domain.usecase.VerifyData
 import me.proton.core.drive.key.domain.extension.keyHolder
 import me.proton.core.drive.key.domain.usecase.GetAddressKeys
+import me.proton.core.drive.key.domain.usecase.GetNodeKey
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.share.domain.entity.Share
+import me.proton.core.drive.share.domain.usecase.GetAddressId
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.share.user.domain.entity.ShareUser
 import me.proton.core.key.domain.extension.publicKeyRing
@@ -40,6 +42,8 @@ class ConvertExternalInvitation @Inject constructor(
     private val getShare: GetShare,
     private val getLink: GetLink,
     private val getAddressKeys: GetAddressKeys,
+    private val getAddressId: GetAddressId,
+    private val getNodeKey: GetNodeKey,
     private val getSessionKeyFromEncryptedMessage: GetSessionKeyFromEncryptedMessage,
     private val cryptoContext: CryptoContext,
     private val verifyData: VerifyData,
@@ -66,7 +70,8 @@ class ConvertExternalInvitation @Inject constructor(
         }
 
         share.verifySignature(
-            signature = externalInvitation.signature
+            signature = externalInvitation.signature,
+            contextLinkId = linkId,
         )
 
         createShareInvitation(
@@ -74,21 +79,34 @@ class ConvertExternalInvitation @Inject constructor(
             email = externalInvitation.email,
             permissions = externalInvitation.permissions,
             externalInvitationId = externalInvitation.id,
+            contextLinkId = linkId,
         ).toResult().getOrThrow()
     }
 
     private suspend fun Share.verifySignature(
-        signature: String
+        signature: String,
+        contextLinkId: LinkId,
     ): Boolean {
-        val addressId = requireNotNull(addressId)
+        // Share created while resharing on somebody else's volume carries no address of ours, the
+        // one we hold is on the context share we access the link through.
+        val addressId = addressId ?: getAddressId(contextLinkId.shareId).getOrThrow()
         val addressKeys = getAddressKeys(
             userId = id.userId,
             addressId = addressId
         )
-        val sessionKey = getSessionKeyFromEncryptedMessage(
-            decryptKey = addressKeys.keyHolder,
-            message = passphrase
-        ).getOrThrow()
+        // Passphrase is encrypted for the node key of the shared link as well, which is the only
+        // key we are guaranteed to hold.
+        val sessionKey = getNodeKey(contextLinkId).getOrNull()
+            ?.let { nodeKey ->
+                getSessionKeyFromEncryptedMessage(
+                    decryptKey = nodeKey.keyHolder,
+                    message = passphrase,
+                ).getOrNull()
+            }
+            ?: getSessionKeyFromEncryptedMessage(
+                decryptKey = addressKeys.keyHolder,
+                message = passphrase
+            ).getOrThrow()
 
         return verifyData(
             verifyKeyRing = addressKeys.keyHolder.publicKeyRing(cryptoContext),

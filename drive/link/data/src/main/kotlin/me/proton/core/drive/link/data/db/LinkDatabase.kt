@@ -24,6 +24,8 @@ import me.proton.core.drive.base.data.db.Column.CAPTURE_TIME
 import me.proton.core.drive.base.data.db.Column.CHECKSUM_VERIFIED
 import me.proton.core.drive.base.data.db.Column.CONTENT_HASH
 import me.proton.core.drive.base.data.db.Column.MAIN_PHOTO_LINK_ID
+import me.proton.core.drive.base.data.db.Column.OWNED_BY_EMAIL
+import me.proton.core.drive.base.data.db.Column.OWNED_BY_ORGANIZATION
 import me.proton.core.drive.base.data.db.Column.SHARE_URL_ID
 import me.proton.core.drive.base.data.db.Column.SHARE_URL_SHARE_ID
 import me.proton.core.drive.base.data.db.Column.THUMBNAIL_ID_DEFAULT
@@ -136,6 +138,21 @@ interface LinkDatabase : Database {
                 database.execSQL(
                     """
                         ALTER TABLE `LinkFilePropertiesEntity` ADD COLUMN $CHECKSUM_VERIFIED INTEGER NOT NULL DEFAULT 0
+                    """.trimIndent()
+                )
+            }
+        }
+
+        val MIGRATION_5 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                        ALTER TABLE `LinkEntity` ADD COLUMN $OWNED_BY_EMAIL TEXT DEFAULT NULL
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                        ALTER TABLE `LinkEntity` ADD COLUMN $OWNED_BY_ORGANIZATION TEXT DEFAULT NULL
                     """.trimIndent()
                 )
             }

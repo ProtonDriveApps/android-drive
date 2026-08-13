@@ -23,9 +23,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.options.InvitationOption
 import me.proton.core.compose.component.bottomsheet.RunAction
@@ -41,16 +46,19 @@ import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
+import me.proton.core.drive.drivelink.shared.domain.usecase.CanManageSharing
 import me.proton.core.drive.drivelink.shared.presentation.entry.ShareUserOptionEntry
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.entity.ShareUser
 
+@OptIn(ExperimentalCoroutinesApi::class)
 abstract class ShareInvitationOptionsViewModel(
-    @ApplicationContext private val appContext: Context,
+    @param:ApplicationContext private val appContext: Context,
     savedStateHandle: SavedStateHandle,
     getDriveLink: GetDriveLink,
+    private val canManageSharing: CanManageSharing,
     private val configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
@@ -62,8 +70,9 @@ abstract class ShareInvitationOptionsViewModel(
         savedStateHandle.require(KEY_LINK_ID)
     )
 
-    protected val driveLink: Flow<DriveLink?> =
+    protected val driveLink: StateFlow<DriveLink?> =
         getDriveLink(linkId = linkId).mapSuccessValueOrNull()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     abstract val invitation: Flow<ShareUser>
 
@@ -74,14 +83,15 @@ abstract class ShareInvitationOptionsViewModel(
     ): Flow<List<ShareUserOptionEntry>> = combine(
         driveLink.filterNotNull(),
         invitation,
-    ) { driveLink, invitation ->
+        canManageSharing(linkId),
+    ) { driveLink, invitation, canManageSharing ->
         options.filter { option ->
             when (option) {
                 InvitationOption.CopyInvitationLink -> true
                 InvitationOption.PermissionsEditor,
                 InvitationOption.PermissionsViewer,
                 InvitationOption.ResendInvitation,
-                InvitationOption.RemoveAccess -> driveLink.sharePermissions?.isAdmin == true
+                InvitationOption.RemoveAccess -> canManageSharing
             }
         }.map { option ->
             when (option) {
@@ -120,8 +130,6 @@ abstract class ShareInvitationOptionsViewModel(
                         deleteInvitation(driveLink)
                     }
                 }
-
-                else -> error("Option ${option.javaClass.simpleName} is not found. Did you forget to add it?")
             }
         }
     }

@@ -31,6 +31,7 @@ sealed class FeatureFlagId(open val userId: UserId, open val id: String) {
         const val DRIVE_SHARING_DEVELOPMENT = "DriveSharingDevelopment"
         const val DRIVE_SHARING_DISABLED = "DriveSharingDisabled"
         const val DRIVE_SHARING_EXTERNAL_INVITATIONS_DISABLED = "DriveSharingExternalInvitationsDisabled"
+        const val DRIVE_SHARING_ADMIN_PERMISSIONS = "DriveSharingAdminPermissions"
         const val DRIVE_ANDROID_WHATS_NEW = "DriveAndroidWhatsNew"
         const val DRIVE_ANDROID_USER_LOG_DISABLED = "DriveAndroidUserLogDisabled"
         const val DRIVE_PUBLIC_SHARE_EDIT_MODE = "DrivePublicShareEditMode"
@@ -71,6 +72,7 @@ sealed class FeatureFlagId(open val userId: UserId, open val id: String) {
         fun driveSharingDevelopment(userId: UserId) = Unleash(userId, DRIVE_SHARING_DEVELOPMENT)
         fun driveSharingDisabled(userId: UserId) = Unleash(userId, DRIVE_SHARING_DISABLED)
         fun driveSharingExternalInvitationsDisabled(userId: UserId) = Unleash(userId, DRIVE_SHARING_EXTERNAL_INVITATIONS_DISABLED)
+        fun driveSharingAdminPermissions(userId: UserId) = Unleash(userId, DRIVE_SHARING_ADMIN_PERMISSIONS)
         fun driveAndroidWhatsNew(userId: UserId) = Unleash(userId, DRIVE_ANDROID_WHATS_NEW)
         fun driveAndroidUserLogDisabled(userId: UserId) = Unleash(userId, DRIVE_ANDROID_USER_LOG_DISABLED)
         fun drivePublicShareEditMode(userId: UserId) = Unleash(userId, DRIVE_PUBLIC_SHARE_EDIT_MODE)

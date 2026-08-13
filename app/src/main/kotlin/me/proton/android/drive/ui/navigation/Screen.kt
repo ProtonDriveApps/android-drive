@@ -30,6 +30,7 @@ import me.proton.android.drive.ui.viewmodel.AddToAlbumsOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.AlbumOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.AlbumViewModel
 import me.proton.android.drive.ui.viewmodel.ComputerOptionsViewModel
+import me.proton.android.drive.ui.viewmodel.ConfirmChangeAccessToViewerDialogViewModel
 import me.proton.android.drive.ui.viewmodel.ConfirmDeleteAlbumDialogViewModel
 import me.proton.android.drive.ui.viewmodel.ConfirmLeaveAlbumDialogViewModel
 import me.proton.android.drive.ui.viewmodel.ConfirmStopAllSharingDialogViewModel
@@ -721,6 +722,21 @@ sealed class Screen(val route: String) {
             linkId: LinkId,
             memberId: String,
         ) = "shareViaInvitations/${linkId.userId.id}/shares/${linkId.shareId.id}/linkId/${linkId.id}/member/${memberId}/options"
+
+        object Dialogs {
+            data object ConfirmChangeAccessToViewer :
+                Screen("shareViaInvitations/{userId}/shares/{shareId}/linkId/{linkId}/member/{memberId}/change_access_to_viewer") {
+                operator fun invoke(
+                    linkId: LinkId,
+                    memberId: String,
+                ) = "shareViaInvitations/${linkId.userId.id}/shares/${linkId.shareId.id}/linkId/${linkId.id}/member/${memberId}/change_access_to_viewer"
+
+                const val USER_ID = Screen.USER_ID
+                const val SHARE_ID = ConfirmChangeAccessToViewerDialogViewModel.KEY_SHARE_ID
+                const val LINK_ID = ConfirmChangeAccessToViewerDialogViewModel.KEY_LINK_ID
+                const val MEMBER_ID = ConfirmChangeAccessToViewerDialogViewModel.KEY_MEMBER_ID
+            }
+        }
 
         const val USER_ID = Screen.USER_ID
         const val SHARE_ID = ShareMemberOptionsViewModel.KEY_SHARE_ID

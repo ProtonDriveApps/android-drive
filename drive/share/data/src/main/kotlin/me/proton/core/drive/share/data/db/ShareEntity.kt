@@ -26,6 +26,8 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.base.data.db.Column.ADDRESS_ID
 import me.proton.core.drive.base.data.db.Column.CREATION_TIME
+import me.proton.core.drive.base.data.db.Column.CREATOR_EMAIL
+import me.proton.core.drive.base.data.db.Column.EDITORS_CAN_SHARE
 import me.proton.core.drive.base.data.db.Column.FLAGS
 import me.proton.core.drive.base.data.db.Column.ID
 import me.proton.core.drive.base.data.db.Column.KEY
@@ -83,6 +85,10 @@ data class ShareEntity(
     val creationTime: Long? = null,
     @ColumnInfo(name = TYPE)
     val type: Long,
+    @ColumnInfo(name = CREATOR_EMAIL)
+    val creator: String,
+    @ColumnInfo(name = EDITORS_CAN_SHARE)
+    val editorsCanShare: Boolean? = null,
 ) {
     companion object {
         const val PRIMARY_BIT = 1L

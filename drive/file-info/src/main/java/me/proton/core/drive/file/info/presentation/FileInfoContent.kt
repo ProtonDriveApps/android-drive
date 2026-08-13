@@ -73,6 +73,7 @@ import me.proton.core.drive.file.info.presentation.extension.toItems
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.entity.OwnedBy
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.thumbnail.presentation.extension.thumbnailPainter
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -276,6 +277,7 @@ fun PreviewFileInfoContent() {
             shareUrlExpirationTime = null,
             xAttr = null,
             sharingDetails = null,
+            ownedBy = OwnedBy("m4@proton.black"),
         ),
         volumeId = VolumeId("VOLUME_ID"),
         isMarkedAsOffline = false,

@@ -96,6 +96,7 @@ import me.proton.core.drive.files.presentation.extension.driveLinkSemantics
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.OwnedBy
 import me.proton.core.drive.photo.domain.entity.AlbumListing
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -557,6 +558,7 @@ private fun PreviewAlbumItem() {
                     trashedTime = null,
                     xAttr = null,
                     sharingDetails = null,
+                    ownedBy = OwnedBy(),
                     nodeHashKey = "",
                     isLocked = false,
                     lastActivityTime = TimestampS(0),

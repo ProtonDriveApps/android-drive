@@ -29,6 +29,7 @@ import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.d
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingExternalInvitationsDisabled
 import me.proton.core.drive.feature.flag.domain.extension.off
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
+import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.share.crypto.domain.entity.ShareInvitationRequest
 import me.proton.core.drive.share.crypto.domain.usecase.CreateShareInvitationRequest
 import me.proton.core.drive.share.domain.entity.ShareId
@@ -50,6 +51,7 @@ class CreateShareInvitation @Inject constructor(
         message: String? = null,
         itemName: String? = null,
         externalInvitationId: String? = null,
+        contextLinkId: LinkId? = null,
     ): Flow<DataResult<ShareUser>> = flow {
         emit(DataResult.Processing(ResponseSource.Local))
         createShareInvitationRequest(
@@ -59,6 +61,7 @@ class CreateShareInvitation @Inject constructor(
             message = message,
             itemName = itemName,
             externalInvitationId = externalInvitationId,
+            contextLinkId = contextLinkId,
         ).onFailure { error ->
             emit(DataResult.Error.Local(
                 message = "Cannot create invitation request for ${shareId.id}",

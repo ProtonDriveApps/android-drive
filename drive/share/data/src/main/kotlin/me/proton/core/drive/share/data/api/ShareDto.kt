@@ -22,6 +22,7 @@ import kotlinx.serialization.Serializable
 import me.proton.core.drive.base.data.api.Dto.ADDRESS_ID
 import me.proton.core.drive.base.data.api.Dto.CREATION_TIME
 import me.proton.core.drive.base.data.api.Dto.CREATOR
+import me.proton.core.drive.base.data.api.Dto.EDITORS_CAN_SHARE
 import me.proton.core.drive.base.data.api.Dto.FLAGS
 import me.proton.core.drive.base.data.api.Dto.KEY
 import me.proton.core.drive.base.data.api.Dto.LINK_ID
@@ -64,6 +65,8 @@ data class ShareDto(
     val addressId: String? = null,
     @SerialName(CREATION_TIME)
     val creationTime: Long?,
+    @SerialName(EDITORS_CAN_SHARE)
+    val editorsCanShare: Boolean? = null,
 ) {
     val isActive: Boolean get() = state == 1L
 

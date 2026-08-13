@@ -18,7 +18,6 @@
   -->
 <resources>
   <string name="title_manage_access">წვდომის მართვა</string>
-  <string name="manage_access_share_with">გაზიარება</string>
   <string name="manage_access_share_with_anyone">ყველასთვის გაზიარება</string>
   <string name="manage_access_link_settings_action">ბმულის მორგება</string>
   <string name="manage_access_link_description_public">ამ ბმულის მქონე ყველა</string>

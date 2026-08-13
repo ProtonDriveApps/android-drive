@@ -38,6 +38,7 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
+import me.proton.core.drive.drivelink.shared.domain.usecase.CanManageSharing
 import me.proton.core.drive.drivelink.shared.domain.extension.sharingDetails
 import me.proton.core.drive.drivelink.shared.presentation.extension.toViewState
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserViewState
@@ -61,12 +62,14 @@ class ShareInternalInvitationOptionsViewModel @Inject constructor(
     private val copyInvitationUrl: CopyInvitationUrl,
     private val resendInvitation: ResendInvitation,
     private val deleteInvitation: DeleteInvitation,
+    canManageSharing: CanManageSharing,
     configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
 ) : ShareInvitationOptionsViewModel(
     appContext = appContext,
     savedStateHandle = savedStateHandle,
     getDriveLink = getDriveLink,
+    canManageSharing = canManageSharing,
     configurationProvider = configurationProvider,
     broadcastMessages = broadcastMessages
 ) {

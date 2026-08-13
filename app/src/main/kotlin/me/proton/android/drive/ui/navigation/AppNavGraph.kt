@@ -69,8 +69,10 @@ import me.proton.android.drive.photos.presentation.component.EnableBackupForBuck
 import me.proton.android.drive.photos.presentation.component.PhotosPermissionRationale
 import me.proton.android.drive.ui.dialog.AddToAlbumsOptions
 import me.proton.android.drive.ui.dialog.AlbumOptions
+import me.proton.android.drive.ui.dialog.AppPromoOptions
 import me.proton.android.drive.ui.dialog.AutoLockDurations
 import me.proton.android.drive.ui.dialog.ComputerOptions
+import me.proton.android.drive.ui.dialog.ConfirmChangeAccessToViewerDialog
 import me.proton.android.drive.ui.dialog.ConfirmDeleteAlbumDialog
 import me.proton.android.drive.ui.dialog.ConfirmDeletionDialog
 import me.proton.android.drive.ui.dialog.ConfirmEmptyTrashDialog
@@ -80,13 +82,12 @@ import me.proton.android.drive.ui.dialog.ConfirmSkipIssuesDialog
 import me.proton.android.drive.ui.dialog.ConfirmStopAllSharingDialog
 import me.proton.android.drive.ui.dialog.ConfirmStopLinkSharingDialog
 import me.proton.android.drive.ui.dialog.ConfirmStopSyncFolderDialog
+import me.proton.android.drive.ui.dialog.ContactSupportOptions
 import me.proton.android.drive.ui.dialog.FileOrFolderOptions
 import me.proton.android.drive.ui.dialog.LogOptions
 import me.proton.android.drive.ui.dialog.MultipleFileOrFolderOptions
 import me.proton.android.drive.ui.dialog.Onboarding
 import me.proton.android.drive.ui.dialog.ParentFolderOptions
-import me.proton.android.drive.ui.dialog.AppPromoOptions
-import me.proton.android.drive.ui.dialog.ContactSupportOptions
 import me.proton.android.drive.ui.dialog.ProtonDocsInsertImageOptions
 import me.proton.android.drive.ui.dialog.SendFileDialog
 import me.proton.android.drive.ui.dialog.ShareExternalInvitationOptions
@@ -376,6 +377,7 @@ fun AppNavGraph(
         addInvitationOptions(navController)
         addExternalInvitationOptions(navController)
         addMemberOptions(navController)
+        addConfirmChangeAccessToViewerDialog(navController)
         addUserInvitation(navController)
         addShareLinkPermissions(navController)
         addDiscardShareViaInvitationsChanges(navController)
@@ -761,7 +763,44 @@ fun NavGraphBuilder.addMemberOptions(
     ),
 ) { _, runAction ->
     ShareMemberOptions(
-        runAction = runAction
+        runAction = runAction,
+        navigateToConfirmChangeAccessToViewer = { linkId, memberId ->
+            navController.navigate(
+                Screen.ShareMemberOptions.Dialogs.ConfirmChangeAccessToViewer(linkId, memberId)
+            ) {
+                popUpTo(Screen.ShareMemberOptions.route) { inclusive = true }
+            }
+        },
+    )
+}
+
+@ExperimentalCoroutinesApi
+fun NavGraphBuilder.addConfirmChangeAccessToViewerDialog(
+    navController: NavHostController,
+) = dialog(
+    route = Screen.ShareMemberOptions.Dialogs.ConfirmChangeAccessToViewer.route,
+    arguments = listOf(
+        navArgument(Screen.ShareMemberOptions.Dialogs.ConfirmChangeAccessToViewer.USER_ID) {
+            type = NavType.StringType
+        },
+        navArgument(Screen.ShareMemberOptions.Dialogs.ConfirmChangeAccessToViewer.SHARE_ID) {
+            type = NavType.StringType
+        },
+        navArgument(Screen.ShareMemberOptions.Dialogs.ConfirmChangeAccessToViewer.LINK_ID) {
+            type = NavType.StringType
+        },
+        navArgument(Screen.ShareMemberOptions.Dialogs.ConfirmChangeAccessToViewer.MEMBER_ID) {
+            type = NavType.StringType
+        },
+    ),
+) {
+    ConfirmChangeAccessToViewerDialog(
+        onDismiss = {
+            navController.popBackStack(
+                route = Screen.ShareMemberOptions.Dialogs.ConfirmChangeAccessToViewer.route,
+                inclusive = true,
+            )
+        }
     )
 }
 

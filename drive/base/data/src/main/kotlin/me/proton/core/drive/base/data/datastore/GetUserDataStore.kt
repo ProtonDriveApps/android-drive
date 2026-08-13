@@ -63,6 +63,8 @@ class GetUserDataStore @Inject constructor(
         private const val KEY_SCAN_DOCUMENT_ACTION_INVOKED = "scan_document_action_invoked"
         private const val KEY_SPRING_SALE_PROMO_2026_LAST_SHOWN = "spring_sale_promo_2026_last_shown"
         private const val KEY_SUMMER_SALE_PROMO_2026_LAST_SHOWN = "summer_sale_promo_2026_last_shown"
+        private const val KEY_NEW_EDITOR_PERMISSIONS_DISMISSED = "new_editor_permissions_dismissed"
+        private const val KEY_NEW_EDITOR_PERMISSIONS_FIRST_SHOWN = "new_editor_permissions_first_shown"
     }
 
     data object Keys {
@@ -77,5 +79,7 @@ class GetUserDataStore @Inject constructor(
         val downloadWorkManagerCancelledAll get() = booleanPreferencesKey(KEY_DOWNLOAD_WORK_MANAGER_CANCELLED_ALL)
         val scanDocumentActionInvoked get() = booleanPreferencesKey(KEY_SCAN_DOCUMENT_ACTION_INVOKED)
         val summerSalePromo2026LastShown get() = longPreferencesKey(KEY_SUMMER_SALE_PROMO_2026_LAST_SHOWN)
+        val newEditorPermissionsDismissed get() = booleanPreferencesKey(KEY_NEW_EDITOR_PERMISSIONS_DISMISSED)
+        val newEditorPermissionsFirstShown get() = longPreferencesKey(KEY_NEW_EDITOR_PERMISSIONS_FIRST_SHOWN)
     }
 }

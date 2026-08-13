@@ -63,7 +63,7 @@ abstract class ShareMembershipDao : BaseDao<ShareMembershipEntity>() {
             share_id = :shareId
         """
     )
-    abstract fun get(userId: UserId, shareId: String): Flow<ShareMembershipEntity>
+    abstract fun getAll(userId: UserId, shareId: String): Flow<List<ShareMembershipEntity>>
 
     companion object {
         const val LINK_JOIN_STATEMENT = """

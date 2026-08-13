@@ -23,6 +23,7 @@ import me.proton.core.drive.base.data.api.Dto.ADDRESS_ID
 import me.proton.core.drive.base.data.api.Dto.CODE
 import me.proton.core.drive.base.data.api.Dto.CREATION_TIME
 import me.proton.core.drive.base.data.api.Dto.CREATOR
+import me.proton.core.drive.base.data.api.Dto.EDITORS_CAN_SHARE
 import me.proton.core.drive.base.data.api.Dto.FLAGS
 import me.proton.core.drive.base.data.api.Dto.KEY
 import me.proton.core.drive.base.data.api.Dto.LINK_ID
@@ -55,6 +56,8 @@ data class GetShareBootstrapResponse(
     val volumeType: Long,
     @SerialName(CREATOR)
     val creator: String,
+    @SerialName(EDITORS_CAN_SHARE)
+    val editorsCanShare: Boolean? = null,
     @SerialName(FLAGS)
     val flags: Long,
     @SerialName(LOCKED)

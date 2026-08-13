@@ -114,6 +114,7 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.OwnedBy
 import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.link.domain.extension.isProtonDocument
 import me.proton.core.drive.link.domain.extension.isProtonSpreadsheet
@@ -919,6 +920,7 @@ private fun PhotoListing.placeholderDriveLink(
         activeRevisionId = "",
         xAttr = null,
         sharingDetails = null,
+        ownedBy = OwnedBy(),
         contentKeyPacket = "",
         contentKeyPacketSignature = null,
         photoCaptureTime = captureTime,
