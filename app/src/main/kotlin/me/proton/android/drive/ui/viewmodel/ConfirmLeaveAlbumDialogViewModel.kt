@@ -141,10 +141,11 @@ class ConfirmLeaveAlbumDialogViewModel @Inject constructor(
                             type = type,
                         )
                     }
-                    leaveShare(it)
-                        .onSuccess {
-                            dismiss()
-                        }
+                    leaveShare(it).onSuccess {
+                        dismiss()
+                    }.onFailure { error ->
+                        error.log(VIEW_MODEL, "Failed to leave share for ${it.id}")
+                    }
                 }
                 isSavingOperationInProgress.value = false
             }

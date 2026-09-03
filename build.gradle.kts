@@ -25,8 +25,15 @@ buildscript {
         }
         google()
         mavenCentral()
+        // R8 releases repo: needed to override the R8 bundled with AGP (see classpath below).
+        maven("https://storage.googleapis.com/r8-releases/raw")
     }
     dependencies {
+        // AGP 8.9.1 bundles R8 8.9.32, which is too old to parse Kotlin 2.2 metadata and fails
+        // dexing (D8) with "error occurred when parsing kotlin metadata". Kotlin 2.2 requires
+        // R8 >= 8.10.21. See https://developer.android.com/studio/build/kotlin-d8-r8-versions
+        // TODO: remove this override once AGP is upgraded to a version bundling R8 >= 8.10.21.
+        classpath("com.android.tools:r8:8.10.21")
         classpath(libs.gradle.plugin.android)
         classpath(libs.gradle.plugin.kotlin)
         classpath(libs.gradle.plugin.hilt.android)

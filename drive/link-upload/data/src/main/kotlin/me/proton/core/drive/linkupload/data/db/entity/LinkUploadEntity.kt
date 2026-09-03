@@ -25,6 +25,7 @@ import androidx.room.PrimaryKey
 import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column
+import me.proton.core.drive.base.data.db.Column.ATTEMPTS
 import me.proton.core.drive.base.data.db.Column.CACHE_OPTION
 import me.proton.core.drive.base.data.db.Column.CONTENT_KEY_PACKET
 import me.proton.core.drive.base.data.db.Column.CONTENT_KEY_PACKET_SIGNATURE
@@ -158,4 +159,6 @@ data class LinkUploadEntity(
     val uploadCreationDateTime: Long? = null,
     @ColumnInfo(name = SHOULD_BROADCAST_ERROR_MESSAGE, defaultValue = "true")
     val shouldBroadcastErrorMessage: Boolean = true,
+    @ColumnInfo(name = ATTEMPTS, defaultValue = "0")
+    val attempts: Long = 0,
 )

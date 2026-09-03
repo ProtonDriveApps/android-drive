@@ -62,6 +62,7 @@ data class UploadFileLink(
     val priority: Long,
     val uploadCreationDateTime: TimestampS? = null,
     val shouldBroadcastErrorMessage: Boolean = true,
+    val attempts: Long = 0,
 ) {
     companion object {
         const val USER_PRIORITY = 1_000L

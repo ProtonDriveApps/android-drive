@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Previsualització del contingut del fitxer</string>
-  <string name="content_description_more_options">Mostra més opcions per al fitxer</string>
+  <string name="content_description_more_options">Mostrar més opcions per al fitxer</string>
   <string name="preview_downloading_state">Descarregant…</string>
   <string name="preview_processing_state">En procés…</string>
   <string name="preview_empty">Sense vista prèvia…</string>

@@ -150,7 +150,7 @@
             "Downloading 3 files"
     -->
   <plurals name="notification_content_text_download_downloading">
-    <item quantity="other">Downloading %1$d files</item>
+    <item quantity="other">%1$d개 파일 다운로드 중</item>
   </plurals>
   <string name="notification_content_title_download_complete">다운로드 완료</string>
   <string name="notification_content_title_forced_sign_out">로그인해 주세요</string>
@@ -282,6 +282,6 @@
     -->
   <string name="drive_plus_promo_action">%1$s(으)로 업그레이드</string>
   <string name="support_contact_options_title">Help us enhance your experience</string>
-  <string name="support_contact_options_description">If you are having an issue our Help Docs and support team are here to help!</string>
-  <string name="support_contact_options_action_button">Contact us</string>
+  <string name="support_contact_options_description">문제가 발생한 경우 언제든 지원 문서나 지원 팀에 도움을 요청하세요!</string>
+  <string name="support_contact_options_action_button">문의하기</string>
 </resources>

@@ -225,6 +225,26 @@ class TagsMigrationRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun removeAll(
+        userId: UserId,
+        volumeId: VolumeId,
+        state: TagsMigrationFile.State,
+    ) {
+        database.tagsMigrationFileDao.deleteAll(
+            userId = userId,
+            volumeId = volumeId.id,
+            state = state,
+        )
+    }
+
+    override suspend fun remove(fileId: FileId) {
+        database.tagsMigrationFileDao.delete(
+            userId = fileId.userId,
+            shareId = fileId.shareId.id,
+            linkIds = listOf(fileId.id),
+        )
+    }
+
     override suspend fun insertTags(
         volumeId: VolumeId,
         fileId: FileId,

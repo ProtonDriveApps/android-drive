@@ -67,7 +67,6 @@ import me.proton.core.drive.drivelink.download.domain.repository.DownloadFileRep
 import me.proton.core.drive.drivelink.download.domain.repository.DownloadParentLinkRepository
 import me.proton.core.drive.drivelink.download.domain.usecase.DownloadCleanup
 import me.proton.core.drive.drivelink.download.domain.usecase.DownloadFile
-import me.proton.core.drive.drivelink.download.domain.usecase.DownloadMetricsNotifier
 import me.proton.core.drive.folder.domain.usecase.GetDescendants
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.File
@@ -109,7 +108,6 @@ class DownloadManagerImpl @Inject constructor(
     private val getAllAlbumChildren: GetAllAlbumChildren,
     private val areAllAlbumPhotosDownloaded: AreAllAlbumPhotosDownloaded,
     private val downloadErrorManager: DownloadErrorManager,
-    private val downloadMetricsNotifier: DownloadMetricsNotifier,
     private val isLinkOrAnyAncestorTrashed: IsLinkOrAnyAncestorTrashed,
     private val downloadSdkManager: DownloadSdkManager,
 ) : DownloadManager, DownloadManager.FileDownloader, PipelineManager.TaskProvider<DownloadFileTask> {
@@ -257,7 +255,6 @@ class DownloadManagerImpl @Inject constructor(
             fileId = task.downloadFileLink.fileId,
             revisionId = task.downloadFileLink.revisionId,
         )
-        downloadMetricsNotifier(task.downloadFileLink.fileId, true)
         runningTasks.value -= task
         downloadFileRepository.delete(task.downloadFileLink.id)
     }
@@ -266,7 +263,6 @@ class DownloadManagerImpl @Inject constructor(
         throwable.log(task.downloadFileLink.fileId.logTag, "taskCompleted pipelineId=${task.pipelineId}")
         setDownloadState(task.downloadFileLink.fileId, DownloadState.Error)
         downloadErrorManager.post(task.downloadFileLink.fileId, throwable)
-        downloadMetricsNotifier(task.downloadFileLink.fileId, false, throwable)
         runningTasks.value -= task
 
         if (task.downloadFileLink.retryable && throwable.isRetryable && task.downloadFileLink.numberOfRetries < configurationProvider.maxApiAutoRetries) {

@@ -28,6 +28,7 @@ driveModule(
     workManager = true,
     serialization = true,
     i18n = true,
+    socialTest = true,
 ) {
     api(project(":drive:base:domain"))
     api(project(":drive:feature-flag:domain"))

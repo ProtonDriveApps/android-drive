@@ -22,6 +22,7 @@ import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.photo.domain.entity.PhotoListing
+import me.proton.core.drive.photo.domain.extension.filterMainPhotos
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
@@ -32,7 +33,7 @@ class InsertOrDeleteAlbumPhotoListings @Inject constructor(
 
     suspend operator fun invoke(volumeId: VolumeId, links: List<Link.File>): Result<Unit> = coRunCatching {
         links
-            .filterRelatedPhotos()
+            .filterMainPhotos()
             .map { link -> link.toPhotoListing(volumeId, links) }
             .insertOrIgnorePhotoListings(volumeId)
             .deletePhotoListings(volumeId)
@@ -61,17 +62,6 @@ class InsertOrDeleteAlbumPhotoListings @Inject constructor(
                 deleteAlbumPhotoListings(albumId.userId, volumeId, albumId, photoListings.map { it.linkId }.toSet())
             }
     }
-
-    private fun List<Link.File>.filterRelatedPhotos() =
-        this.let { links ->
-            val relatedPhotos = links
-                .map { link ->
-                    link.relatedPhotoIds
-                }
-                .flatten()
-                .toSet()
-            links.filter { link -> link.id !in relatedPhotos }
-        }
 
     private fun Link.File.toPhotoListing(
         volumeId: VolumeId,

@@ -72,7 +72,7 @@ class EnablePhotosBackupImpl @Inject constructor(
         if (backupManager.isEnabled(folderId).first().not()) {
             setupPhotosBackup(folderId, folderFilter).getOrThrow().let { results ->
                 if (results.isEmpty()) {
-                    PhotoBackupState.NoFolder(configurationProvider.backupDefaultBucketName)
+                    PhotoBackupState.NoFolder(configurationProvider.backupDefaultBucketName.first())
                 } else {
                     PhotoBackupState.Enabled(
                         folderNames = results.map { result -> result.folderName },
@@ -91,9 +91,9 @@ class EnablePhotosBackupImpl @Inject constructor(
     }
 
     private fun defaultFolder(): (BucketEntry) -> Boolean {
-        val folderName = configurationProvider.backupDefaultBucketName
+        val defaultFolderNames = configurationProvider.backupDefaultBucketName
         val folderNames = configurationProvider.backupAdditionalBucketNames
-        val names = listOf(folderName) + folderNames
+        val names = defaultFolderNames + folderNames
         return { entry -> entry.bucketName in names }
     }
 }

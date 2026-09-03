@@ -22,6 +22,8 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
+import me.proton.core.drive.backup.data.extension.toTransportTypes
+import me.proton.core.drive.backup.data.extension.toTransportTypesMask
 import android.net.NetworkRequest
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -40,7 +42,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 class BackupConnectivityManagerImpl @Inject constructor(
-    @ApplicationContext private val appContext: Context,
+    @param:ApplicationContext private val appContext: Context,
     coroutineContext: CoroutineContext,
 ) : BackupConnectivityManager {
     private val coroutineScope = CoroutineScope(coroutineContext)
@@ -52,8 +54,6 @@ class BackupConnectivityManagerImpl @Inject constructor(
     override val connectivity: Flow<BackupConnectivityManager.Connectivity> = callbackFlow {
         val networkRequest = NetworkRequest.Builder()
             .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
             .build()
         val networkCallback = object : ConnectivityManager.NetworkCallback() {
 
@@ -133,8 +133,8 @@ class BackupConnectivityManagerImpl @Inject constructor(
                     isValidated = capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED),
                     downstreamBandwidthKbps = capabilities.linkDownstreamBandwidthKbps,
                     upstreamBandwidthKbps = capabilities.linkUpstreamBandwidthKbps,
-                    isWifi = capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI),
-                    isCellular = capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR),
+                    transportTypes = capabilities.toTransportTypes(),
+                    transportTypesMask = capabilities.toTransportTypesMask(),
                 )
             }
 }

@@ -17,6 +17,41 @@
   ~ along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
+  <!-- tag(q1campaign) -->
+  <string name="promo_storage_title">1 TB Speicher: 200x des aktuellen Abonnements</string>
+  <!-- tag(q1campaign) -->
+  <string name="promo_claim_offer_button">Angebot beanspruchen</string>
+  <!-- tag(q1campaign)
+        Variable %1$s is price per month
+        Example:
+            "only $6.99"
+    -->
+  <string name="promo_offer_per_month_details">Nur %1$s</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_drawer_title">Sonderangebot</string>
+  <!-- tag(q3campaign2026) Free vs. Unlimited comparison table on the Q3 campaign promo screen -->
+  <string name="promo_q3_campaign_comparison_header_free">Kostenlos</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_header_unlimited">Unbegrenzt</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_label">Speicher</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_free">5 GB</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_unlimited">500 GB</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_unlimited_subtitle">100x mehr als beim kostenlosen Abonnement</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_share_edit_label">Mit Bearbeitungszugriff teilen</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_mail_label">Mail Plus mit benutzerdefinierten E-Mail-Domains</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_vpn_label">VPN Plus mit über 20.000 Servern in über 140 Ländern</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_pass_label">Pass Plus mit 50 sicheren Tresoren</string>
+  <!-- tag(q3campaign2026) Preview-only mock price for Q3CampaignPromoScreenPortraitPreview, not a real formatted currency amount -->
+  <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
+  <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
   <!-- Upsell promo -->
   <!--
         Variable %1$s is a plan name and %2$s is a price for first period
@@ -55,8 +90,4 @@
   <string name="promo_app_description">Wenn dir %1$s gefällt, würden wir uns sehr über eine Bewertung der App freuen!\nSolltest du ein Problem haben, stehen dir unsere Hilfe-Dokumente und unser Support-Team gerne zur Verfügung!</string>
   <string name="promo_app_positive_button">Mir gefällt es</string>
   <string name="promo_app_negative_button">Könnte besser sein</string>
-  <!-- tag(q2campaign2026) -->
-  <string name="promo_summer_sale_drawer_title">Sommer Sale</string>
-  <!-- tag(q2campaign2026) -->
-  <string name="promo_storage_200_GB_title">200 GB Speicher: 40x dein aktuelles Abonnement</string>
 </resources>

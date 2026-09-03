@@ -109,8 +109,7 @@ fun HomeScreen(
     navigateToUserInvitation: (Boolean) -> Unit,
     navigateToCreateNewAlbum: () -> Unit,
     navigateToAlbum: (AlbumId) -> Unit,
-    navigateToSubscriptionPromo: (String) -> Unit,
-    navigateToSummerSalePromo: () -> Unit,
+    navigateToQ3CampaignPromo: () -> Unit,
     navigateToUpsellPromo: () -> Unit,
     navigateToAppPromo: () -> Unit,
     modifier: Modifier = Modifier,
@@ -145,8 +144,7 @@ fun HomeScreen(
             navigateToGetMoreFreeStorage = navigateToGetMoreFreeStorage,
             navigateToOnboarding = navigateToOnboarding,
             navigateToWhatsNew = navigateToWhatsNew,
-            navigateToSubscriptionPromo = navigateToSubscriptionPromo,
-            navigateToSummerSalePromo = navigateToSummerSalePromo,
+            navigateToQ3CampaignPromo = navigateToQ3CampaignPromo,
             navigateToAppPromo = navigateToAppPromo,
         )
     }
@@ -172,7 +170,7 @@ fun HomeScreen(
             navigateToUserInvitation = navigateToUserInvitation,
             navigateToCreateNewAlbum = navigateToCreateNewAlbum,
             navigateToAlbum = navigateToAlbum,
-            navigateToSummerSalePromo = navigateToSummerSalePromo,
+            navigateToQ3CampaignPromo = navigateToQ3CampaignPromo,
             navigateToUpsellPromo = navigateToUpsellPromo,
             arguments = arguments,
             viewState = currentViewState,
@@ -216,7 +214,7 @@ internal fun Home(
     navigateToUserInvitation: (Boolean) -> Unit,
     navigateToCreateNewAlbum: () -> Unit,
     navigateToAlbum: (AlbumId) -> Unit,
-    navigateToSummerSalePromo: () -> Unit,
+    navigateToQ3CampaignPromo: () -> Unit,
     navigateToUpsellPromo: () -> Unit,
 ) {
     val homeScaffoldState = rememberHomeScaffoldState()
@@ -317,7 +315,7 @@ internal fun Home(
                     navigateToUserInvitation,
                     navigateToCreateNewAlbum,
                     navigateToAlbum,
-                    navigateToSummerSalePromo,
+                    navigateToQ3CampaignPromo,
                     navigateToUpsellPromo,
                 )
             }

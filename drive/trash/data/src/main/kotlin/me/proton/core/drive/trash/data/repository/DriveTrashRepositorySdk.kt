@@ -18,6 +18,8 @@
 
 package me.proton.core.drive.trash.data.repository
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.toList
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
@@ -81,12 +83,17 @@ class DriveTrashRepositorySdk @Inject constructor(
             .toDataResultMap(nodeUids)
     }
 
-    private fun List<NodeResultPair>.toDataResultMap(nodeUids: Map<NodeUid, LinkId>): Map<LinkId, DataResult<Unit>> =
-        mapNotNull { pair ->
+    private suspend fun Flow<NodeResultPair>.toDataResultMap(
+        nodeUids: Map<NodeUid, LinkId>,
+    ): Map<LinkId, DataResult<Unit>> = toList()
+        .mapNotNull { pair ->
             nodeUids[pair.nodeUid]?.let { linkId ->
                 linkId to when (pair) {
-                    is NodeResultPair.Success -> DataResult.Success(ResponseSource.Remote, Unit)
-                    is NodeResultPair.Failure -> DataResult.Error.Remote(pair.error.message, pair.error)
+                    is NodeResultPair.Success ->
+                        DataResult.Success(ResponseSource.Remote, Unit)
+
+                    is NodeResultPair.Failure ->
+                        DataResult.Error.Remote(pair.error.message, pair.error)
                 }
             }
         }.toMap()

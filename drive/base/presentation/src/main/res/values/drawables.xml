@@ -27,9 +27,4 @@
     <item name="empty_albums_daynight" type="drawable" format="reference">@drawable/empty_albums_light</item>
     <item name="drive_subscriptions_badge_daynight" type="drawable" format="reference">@drawable/drive_subscription_badge_light</item>
     <item name="img_whats_new_upload_folder_daynight" type="drawable" format="reference">@drawable/img_whats_new_upload_folder_light</item>
-    <item name="img_storage_daynight_32" type="drawable" format="reference">@drawable/img_storage_light_32</item>
-    <item name="img_document_daynight_32" type="drawable" format="reference">@drawable/img_document_light_32</item>
-    <item name="img_secure_daynight_32" type="drawable" format="reference">@drawable/img_secure_light_32</item>
-    <item name="img_private_daynight_32" type="drawable" format="reference">@drawable/img_private_light_32</item>
-    <item name="bg_summer_sale_promo_port_daynight" type="drawable" format="reference">@drawable/bg_summer_sale_promo_port_light</item>
 </resources>

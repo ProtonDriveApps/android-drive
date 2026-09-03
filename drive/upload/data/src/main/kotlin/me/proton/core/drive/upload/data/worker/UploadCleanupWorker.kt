@@ -30,7 +30,6 @@ import androidx.work.await
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import me.proton.android.drive.verifier.domain.usecase.CleanupVerifier
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.data.extension.log
@@ -59,7 +58,6 @@ import me.proton.core.drive.upload.domain.resolver.UriResolver
 import me.proton.core.drive.upload.domain.usecase.AnnounceUploadEvent
 import me.proton.core.drive.upload.domain.usecase.GetBlockFolder
 import me.proton.core.drive.upload.domain.usecase.RemoveUploadFile
-import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
@@ -84,11 +82,9 @@ class UploadCleanupWorker @AssistedInject constructor(
     private val uriResolver: UriResolver,
     private val announceUploadEvent: AnnounceUploadEvent,
     private val networkTypeProviders: @JvmSuppressWildcards Map<NetworkTypeProviderType, NetworkTypeProvider>,
-    private val cleanupVerifier: CleanupVerifier,
     private val uploadSdkManager: UploadSdkManager,
     private val fileProvider: FileProvider,
     configurationProvider: ConfigurationProvider,
-    uploadMetricsNotifier: UploadMetricsNotifier,
     canRun: CanRun,
     run: Run,
     done: Done,
@@ -100,7 +96,6 @@ class UploadCleanupWorker @AssistedInject constructor(
     getUploadFileLink = getUploadFileLink,
     uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
-    uploadMetricsNotifier = uploadMetricsNotifier,
     canRun = canRun,
     run = run,
     done = done,
@@ -154,16 +149,6 @@ class UploadCleanupWorker @AssistedInject constructor(
             uploadFileLink.uriString?.let { uriResolver.release(it) }
             removeUploadFile(uploadFileLink).onFailure { error ->
                 error.log(uploadFileLink.logTag(), "Cannot remove file")
-            }
-            uploadFileLink.linkId?.let { linkId ->
-                cleanupVerifier(
-                    userId = userId,
-                    shareId = uploadFileLink.shareId.id,
-                    linkId = linkId,
-                    revisionId = uploadFileLink.draftRevisionId,
-                ).onFailure { error ->
-                    error.log(uploadFileLink.logTag(), "Cannot cleanup verifier")
-                }
             }
         } finally {
             uploadFileLink.deleteOnServer().onFailure { error ->

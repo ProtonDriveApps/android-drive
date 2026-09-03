@@ -72,7 +72,6 @@ sealed class Event {
     data class UploadSpeed(
         val bytes: Bytes,
         val elapsedTime: TimestampMs,
-        val usedSdk: Boolean = true,
     ) : Event() {
         override val id: String =
             "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
@@ -83,7 +82,6 @@ sealed class Event {
     data class DownloadSpeed(
         val bytes: Bytes,
         val elapsedTime: TimestampMs,
-        val usedSdk: Boolean = true,
     ) : Event() {
         override val id: String =
             "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
@@ -358,17 +356,17 @@ sealed class Event {
                 )
         }
 
-        data class SummerSale2026(
+        data class Q3Campaign2026(
             val action: Payments.Action? = null,
             val result: Payments.Result? = null,
             val failureReason: Payments.FailureReason? = null,
         ) : Sentry() {
-            override val message: String get() = "Summer Sale 2026"
+            override val message: String get() = "Q3 Campaign 2026"
             override val level: Level get() = Level.INFO
             override val tags: List<Pair<String, String>> get() =
                 listOfNotNull(
                     Payments.Tags.EVENT_TYPE.value to EventType.PROMOTION.name.lowercase(),
-                    Payments.Tags.PROMO_ID.value to "summer_2026",
+                    Payments.Tags.PROMO_ID.value to "q3_campaign_2026",
                     action?.let { Payments.Tags.PROMO_ACTION.value to action.name.lowercase() },
                     result?.let { Payments.Tags.PROMO_RESULT.value to result.name.lowercase() },
                     failureReason?.let { Payments.Tags.PROMO_FAILURE_REASON.value to failureReason.name.lowercase() }

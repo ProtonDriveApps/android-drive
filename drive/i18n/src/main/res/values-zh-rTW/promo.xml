@@ -17,6 +17,41 @@
   ~ along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
+  <!-- tag(q1campaign) -->
+  <string name="promo_storage_title">1 TB 儲存空間：目前方案的 200 倍</string>
+  <!-- tag(q1campaign) -->
+  <string name="promo_claim_offer_button">領取優惠</string>
+  <!-- tag(q1campaign)
+        Variable %1$s is price per month
+        Example:
+            "only $6.99"
+    -->
+  <string name="promo_offer_per_month_details">只需 %1$s</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_drawer_title">特別優惠</string>
+  <!-- tag(q3campaign2026) Free vs. Unlimited comparison table on the Q3 campaign promo screen -->
+  <string name="promo_q3_campaign_comparison_header_free">免費</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_header_unlimited">吃到飽</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_label">儲存空間</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_free">5 GB</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_unlimited">500 GB</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_unlimited_subtitle">比免費方案多 100 倍</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_share_edit_label">以編輯存取權限共享</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_mail_label">隨附自訂電子郵件網域的 Mail Plus</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_vpn_label">隨附 140+ 個國家 20,000+ 個伺服器的 VPN Plus</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_pass_label">隨附 50 個安全保管庫的 Pass Plus</string>
+  <!-- tag(q3campaign2026) Preview-only mock price for Q3CampaignPromoScreenPortraitPreview, not a real formatted currency amount -->
+  <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
+  <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
   <!-- Upsell promo -->
   <!--
         Variable %1$s is a plan name and %2$s is a price for first period
@@ -55,8 +90,4 @@
   <string name="promo_app_description">If you\'re enjoying %1$s, we would greatly appreciate an app review!\nIf you are having an issue our Help Docs and support team are here to help!</string>
   <string name="promo_app_positive_button">我喜歡</string>
   <string name="promo_app_negative_button">可以更好</string>
-  <!-- tag(q2campaign2026) -->
-  <string name="promo_summer_sale_drawer_title">夏季特賣</string>
-  <!-- tag(q2campaign2026) -->
-  <string name="promo_storage_200_GB_title">200 GB 儲存空間：目前方案的 40 倍</string>
 </resources>

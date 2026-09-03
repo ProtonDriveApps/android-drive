@@ -49,7 +49,7 @@ class EnqueueUploadSpeedHistogramEvent @Inject constructor(
                     } else {
                         UploadSpeedHistogram.Context.background
                     },
-                    pipeline = if (event.usedSdk) Pipeline.default else Pipeline.legacy,
+                    pipeline = Pipeline.default,
                 ),
                 Value = kibibytesPerSecond
             )

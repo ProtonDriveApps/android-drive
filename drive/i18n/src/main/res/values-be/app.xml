@@ -198,7 +198,7 @@
   <string name="description_empty_trash">Гэта месца для выдаленых элементаў. Яны будуць знаходзіцца тут да таго, пакуль не будуць незваротна выдалены або адноўлены.</string>
   <string name="description_empty_offline_available">Зрабіце важныя файлы заўсёды даступнымі, нават калі вы па-за сеткай.</string>
   <string name="description_no_drive_scope">У карыстальніка адсутнічае вобласць дыска.</string>
-  <string name="description_file_download_failed">Не ўдалося спампаваць. Праверце падключэнне да інтэрнэту і паспрабуйце яшчэ раз.</string>
+  <string name="description_file_download_failed">Не ўдалося спампаваць. Праверце падключэнне да інтэрнэту і паўтарыце спробу.</string>
   <string name="description_file_decryption_failed">Немагчыма расшыфраваць файл</string>
   <string name="description_file_verify_signature_failed">Немагчыма спраўдзіць подпіс файла</string>
   <string name="description_files_stop_sharing">Гэта выдаліць спасылку і закрые доступ да вашага файла або папкі для ўсіх, хто яе атрымаў.</string>

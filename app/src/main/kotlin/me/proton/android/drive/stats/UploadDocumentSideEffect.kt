@@ -22,25 +22,18 @@ import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.documentsprovider.domain.entity.DocumentId
 import me.proton.core.drive.documentsprovider.domain.usecase.NotifyDocumentChanged
-import me.proton.core.drive.drivelink.domain.usecase.UseSdkForUpload
-import me.proton.core.drive.linkupload.domain.extension.fileId
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import javax.inject.Inject
 
 class UploadDocumentSideEffect @Inject constructor(
     private val getUploadFileLink: GetUploadFileLink,
     private val notifyDocumentChanged: NotifyDocumentChanged,
-    private val useSdkForUpload: UseSdkForUpload
 ) {
 
     suspend operator fun invoke(event: Event.Upload) {
         if (event.state == Event.Upload.UploadState.UPLOAD_COMPLETE) {
             val uploadFileLink = getUploadFileLink(event.uploadFileLinkId).toResult().getOrThrow()
-            val documentId = if (useSdkForUpload(uploadFileLink.parentLinkId).getOrThrow()) {
-                DocumentId(uploadFileLink.userId, uploadId = event.uploadFileLinkId.toString())
-            } else {
-                DocumentId(uploadFileLink.userId, linkId = uploadFileLink.fileId)
-            }
+            val documentId = DocumentId(uploadFileLink.userId, uploadId = event.uploadFileLinkId.toString())
             notifyDocumentChanged(documentId)
         }
     }

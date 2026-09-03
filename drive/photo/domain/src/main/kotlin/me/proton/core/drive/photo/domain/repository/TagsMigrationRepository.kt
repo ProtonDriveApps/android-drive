@@ -65,6 +65,8 @@ interface TagsMigrationRepository {
     ): Flow<TagsMigrationFile?>
 
     suspend fun removeAll(userId: UserId, volumeId: VolumeId)
+    suspend fun removeAll(userId: UserId, volumeId: VolumeId, state: TagsMigrationFile.State)
+    suspend fun remove(fileId: FileId)
     suspend fun getOldestFileWithState(
         userId: UserId,
         volumeId: VolumeId,

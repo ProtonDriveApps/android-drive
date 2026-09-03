@@ -31,9 +31,23 @@ interface BackupConnectivityManager {
         val isValidated: Boolean,
         val downstreamBandwidthKbps: Int,
         val upstreamBandwidthKbps: Int,
-        val isWifi: Boolean,
-        val isCellular: Boolean,
-    )
+        val transportTypes: Set<TransportType>,
+        val transportTypesMask: Long,
+    ) {
+        enum class TransportType {
+            OTHER,
+            WIFI,
+            CELLULAR,
+            USB,
+            VPN,
+            LOWPAN,
+            BLUETOOTH,
+            ETHERNET,
+            SATELLITE,
+            THREAD,
+            WIFI_AWARE,
+        }
+    }
 
     val connectivity: Flow<Connectivity>
 

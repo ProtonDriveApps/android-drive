@@ -17,6 +17,41 @@
   ~ along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
+  <!-- tag(q1campaign) -->
+  <string name="promo_storage_title">1 ტბ საცავი: 200-ჯერ მეტი მიმდინარე პაკეტზე</string>
+  <!-- tag(q1campaign) -->
+  <string name="promo_claim_offer_button">შეთავაზების მიღება</string>
+  <!-- tag(q1campaign)
+        Variable %1$s is price per month
+        Example:
+            "only $6.99"
+    -->
+  <string name="promo_offer_per_month_details">მხოლოდ %1$s</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_drawer_title">სპეციალური შეთავაზება</string>
+  <!-- tag(q3campaign2026) Free vs. Unlimited comparison table on the Q3 campaign promo screen -->
+  <string name="promo_q3_campaign_comparison_header_free">Free</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_header_unlimited">შეუზღუდავი</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_label">საცავი</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_free">5 გბ</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_unlimited">500 გბ</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_unlimited_subtitle">100-ჯერ მეტი უფასოზე</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_share_edit_label">გაზიარება ჩასწორების უფლებით</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_mail_label">Mail Plus მორგებული ელფოსტის დომენებით</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_vpn_label">VPN Plus 20 000+ სერვერით 140+ ქვეყანაში</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_pass_label">Pass Plus 50 დაცული სეიფით</string>
+  <!-- tag(q3campaign2026) Preview-only mock price for Q3CampaignPromoScreenPortraitPreview, not a real formatted currency amount -->
+  <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
+  <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
   <!-- Upsell promo -->
   <!--
         Variable %1$s is a plan name and %2$s is a price for first period
@@ -46,17 +81,13 @@
         Example:
             "Enjoying Proton Drive?"
     -->
-  <string name="promo_app_title">Enjoying %1$s?</string>
+  <string name="promo_app_title">მოგწონთ %1$s?</string>
   <!--
         Variable %1$s is an application name
         Example:
             "If you're enjoying Proton Drive, we would greatly..."
     -->
-  <string name="promo_app_description">If you\'re enjoying %1$s, we would greatly appreciate an app review!\nIf you are having an issue our Help Docs and support team are here to help!</string>
-  <string name="promo_app_positive_button">I like it</string>
-  <string name="promo_app_negative_button">Could be better</string>
-  <!-- tag(q2campaign2026) -->
-  <string name="promo_summer_sale_drawer_title">საზაფხულო ფასდაკლება</string>
-  <!-- tag(q2campaign2026) -->
-  <string name="promo_storage_200_GB_title">200 გბ საცავი: მიმდინარე პაკეტზე 40-ჯერ მეტი</string>
+  <string name="promo_app_description">თუ მოგწონთ %1$s, ჩვენ ძალიან დავაფასებდით თქვენს აპლიკაციის მიმოხილვას\nთუ პრობლემები გაქვთ, ჩვენი დახმარების დოკუმენტაცია და მხარდაჭერის გუნდი ყოველთვის მზადაა, დაგეხმაროთ!</string>
+  <string name="promo_app_positive_button">მომწონს</string>
+  <string name="promo_app_negative_button">შეიძლება, უკეთესიც ყოფილიყო</string>
 </resources>

@@ -141,24 +141,6 @@ class UploadSdkManager @Inject constructor(
         }
     }
 
-    suspend fun cancelController(uploadFileLink: UploadFileLink) {
-        val id = uploadFileLink.id
-        val state = states[id] ?: return
-        with(state) {
-            CoreLogger.d(
-                id.logTag(), "Cancelling sdk controller: ${uploader != null}"
-            )
-            mutex.withLock {
-                controller?.apply {
-                    cancel()
-                    dispose()
-                    close()
-                }
-                controller = null
-            }
-        }
-    }
-
     private fun UploadFileLink.state(): UploadState =
         states.computeIfAbsent(id) {
             UploadState(mutex = Mutex())

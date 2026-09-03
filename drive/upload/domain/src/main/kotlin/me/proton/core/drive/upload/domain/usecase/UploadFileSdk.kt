@@ -99,7 +99,7 @@ class UploadFileSdk @Inject constructor(
                     }
                     .onEach { (bytesCompleted, bytesUploaded) ->
                         block(bytesCompleted)
-                        uploadSpeedManager.add(uploadFileLink.userId, usedSdk = true, bytesUploaded)
+                        uploadSpeedManager.add(uploadFileLink.userId, bytesUploaded)
                     }
                     .launchIn(this)
                 controller.tryResume(this)

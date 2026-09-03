@@ -20,6 +20,7 @@ package me.proton.core.drive.photo.domain.usecase
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.photo.domain.entity.TagsMigrationFile
 import me.proton.core.drive.photo.domain.repository.TagsMigrationRepository
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
@@ -29,5 +30,13 @@ class RemoveAllTagsMigrationFile @Inject constructor(
 ) {
     suspend operator fun invoke(userId: UserId, volumeId: VolumeId) = coRunCatching {
         repository.removeAll(userId, volumeId)
+    }
+
+    suspend operator fun invoke(
+        userId: UserId,
+        volumeId: VolumeId,
+        state: TagsMigrationFile.State,
+    ) = coRunCatching {
+        repository.removeAll(userId, volumeId, state)
     }
 }

@@ -334,6 +334,9 @@ class LinkUploadRepositoryImpl @Inject constructor(
         }.toTypedArray())
     }
 
+    override suspend fun incrementUploadFileLinkAttempts(uploadFileLinkId: Long) =
+        db.linkUploadDao.incrementAttempts(uploadFileLinkId)
+
     override suspend fun removeUploadFileLink(uploadFileLinkId: Long) =
         db.linkUploadDao.delete(uploadFileLinkId)
 

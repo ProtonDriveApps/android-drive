@@ -17,6 +17,41 @@
   ~ along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
+  <!-- tag(q1campaign) -->
+  <string name="promo_storage_title">1 ТБ сховішча: у 200 разоў больш за бягучы тарыфны план</string>
+  <!-- tag(q1campaign) -->
+  <string name="promo_claim_offer_button">Скарыстацца прапановай</string>
+  <!-- tag(q1campaign)
+        Variable %1$s is price per month
+        Example:
+            "only $6.99"
+    -->
+  <string name="promo_offer_per_month_details">усяго за %1$s</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_drawer_title">Спецыяльная прапанова</string>
+  <!-- tag(q3campaign2026) Free vs. Unlimited comparison table on the Q3 campaign promo screen -->
+  <string name="promo_q3_campaign_comparison_header_free">Free</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_header_unlimited">Неабмежавана</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_label">Сховішча</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_free">5 ГБ</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_unlimited">500 ГБ</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_unlimited_subtitle">У 100 разоў больш за бясплатны</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_share_edit_label">Абагуліць з правамі рэдагавання</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_mail_label">Mail Plus з карыстальніцкімі даменамі электроннай пошты</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_vpn_label">VPN Plus з 20,000+ серверамі ў 140+ краінах</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_pass_label">Pass Plus з 50 бяспечнымі сховішчамі</string>
+  <!-- tag(q3campaign2026) Preview-only mock price for Q3CampaignPromoScreenPortraitPreview, not a real formatted currency amount -->
+  <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
+  <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
   <!-- Upsell promo -->
   <!--
         Variable %1$s is a plan name and %2$s is a price for first period
@@ -55,8 +90,4 @@
   <string name="promo_app_description">Наша каманда будзе вам вельмі ўдзячная, калі вы знойдзеце час ацаніць %1$s!\nКалі ў вас узніклі праблемы, то нашы дапаможнікі і служба падтрымкі заўсёды гатовы дапамагчы!</string>
   <string name="promo_app_positive_button">Мне падабаецца</string>
   <string name="promo_app_negative_button">Можа быць лепш</string>
-  <!-- tag(q2campaign2026) -->
-  <string name="promo_summer_sale_drawer_title">Летні распродаж</string>
-  <!-- tag(q2campaign2026) -->
-  <string name="promo_storage_200_GB_title">200 ГБ сховішча: у 40 разоў больш за бягучы тарыфны план</string>
 </resources>

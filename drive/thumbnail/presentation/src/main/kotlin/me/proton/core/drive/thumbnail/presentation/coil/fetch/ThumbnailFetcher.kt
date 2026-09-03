@@ -84,7 +84,7 @@ class ThumbnailFetcher(
             volumeId = data.volumeId,
             revisionId = data.revisionId,
             type = data.thumbnailId.type,
-            inCacheFolder = isLinkOrAnyAncestorMarkedAsOffline(data.fileId)
+            inCacheFolder = !isLinkOrAnyAncestorMarkedAsOffline(data.fileId)
         )
         val allowNetwork = options.networkCachePolicy.readEnabled
         val allowDiskRead = options.diskCachePolicy.readEnabled

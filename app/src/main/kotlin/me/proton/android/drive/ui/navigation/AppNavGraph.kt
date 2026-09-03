@@ -127,11 +127,11 @@ import me.proton.android.drive.ui.screen.ScanDocumentNameScreen
 import me.proton.android.drive.ui.screen.ScanDocumentScreen
 import me.proton.android.drive.ui.screen.SettingsScreen
 import me.proton.android.drive.ui.screen.SigningOutScreen
-import me.proton.android.drive.ui.screen.SubscriptionPromoScreen
-import me.proton.android.drive.ui.screen.SummerSalePromoScreen
+import me.proton.android.drive.ui.screen.SubscriptionScreen
+import me.proton.android.drive.ui.screen.Q3CampaignPromoScreen
 import me.proton.android.drive.ui.screen.TrashScreen
 import me.proton.android.drive.ui.screen.UploadToScreen
-import me.proton.android.drive.ui.screen.UpsellScreen
+import me.proton.android.drive.ui.screen.UpsellUfcScreen
 import me.proton.android.drive.ui.screen.UserInvitationScreen
 import me.proton.android.drive.ui.viewmodel.ConfirmStopSyncFolderDialogViewModel
 import me.proton.android.drive.ui.viewmodel.PreviewViewModel
@@ -181,9 +181,7 @@ fun AppNavGraph(
     navigateToRecoveryEmail: (UserId) -> Unit,
     navigateToSecurityKeys: (UserId) -> Unit,
     navigateToBugReport: () -> Unit,
-    navigateToSubscription: () -> Unit,
     navigateToRatingBooster: () -> Unit,
-    navigateToUpgradePlan: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) {
     val navController = rememberAnimatedNavController(keyStoreCrypto)
@@ -234,6 +232,9 @@ fun AppNavGraph(
             }
             .launchIn(this)
     }
+    val navigateToSubscription: () -> Unit = {
+        navController.navigate(Screen.Subscription.route)
+    }
     AppLock(locked = locked, primaryAccount = primaryAccount) {
         defaultStartDestination?.let {
             AppNavGraph(
@@ -249,7 +250,6 @@ fun AppNavGraph(
                 navigateToBugReport = navigateToBugReport,
                 navigateToSubscription = navigateToSubscription,
                 navigateToRatingBooster = navigateToRatingBooster,
-                navigateToUpgradePlan = navigateToUpgradePlan,
                 onDrawerStateChanged = onDrawerStateChanged,
             )
         }
@@ -272,7 +272,6 @@ fun AppNavGraph(
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToRatingBooster: () -> Unit,
-    navigateToUpgradePlan: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) {
     DriveNavHost(
@@ -405,14 +404,14 @@ fun AppNavGraph(
         addConfirmDeleteAlbumDialog(navController)
         addPickerPhotos(navController)
         addPickerAlbum(navController)
-        addSubscriptionPromoScreen(navigateToUpgradePlan)
         addConfirmLeaveAlbumDialog(navController)
         addShareMultiplePhotosOptions(navController)
         addAddToAlbumsOptions(navController)
         addScanDocument(navController)
         addScanDocumentName(navController)
-        addSummerSalePromoScreen(navController)
+        addQ3CampaignPromoScreen(navController)
         addUpsellScreen(navController, navigateToSubscription)
+        addSubscriptionScreen(navController)
         addAppPromoOptions(navController, navigateToRatingBooster)
         addContactSupportOptions(navController)
     }
@@ -1106,11 +1105,8 @@ internal fun NavGraphBuilder.addHome(
         navigateToAlbum = { albumId ->
             navController.navigate(Screen.Album(albumId))
         },
-        navigateToSubscriptionPromo = { key ->
-            navController.navigate(Screen.Promo.Subscription(userId, key))
-        },
-        navigateToSummerSalePromo = {
-            navController.navigate(Screen.Promo.SummerSale2026(userId))
+        navigateToQ3CampaignPromo = {
+            navController.navigate(Screen.Promo.Q3Campaign2026(userId))
         },
         navigateToUpsellPromo = {
             navController.navigate(Screen.Promo.Upsell(userId))
@@ -2130,40 +2126,34 @@ fun NavGraphBuilder.addPhotosUpsell(
     )
 }
 
-@ExperimentalAnimationApi
-fun NavGraphBuilder.addSubscriptionPromoScreen(
-    navigateToSubscription: () -> Unit,
-) = modalBottomSheet(
-    route = Screen.Promo.Subscription.route,
-    arguments = listOf(
-        navArgument(Screen.Settings.USER_ID) { type = NavType.StringType },
-        navArgument(Screen.Promo.Subscription.PROMO_KEY) { type = NavType.StringType },
-    ),
-) { _, runAction ->
-    SubscriptionPromoScreen(
-        runAction = runAction,
-        navigateToSubscription = navigateToSubscription,
-    )
-}
-
 @OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.addSummerSalePromoScreen(
+fun NavGraphBuilder.addQ3CampaignPromoScreen(
     navController: NavHostController,
 ) = composable(
-    route = Screen.Promo.SummerSale2026.route,
+    route = Screen.Promo.Q3Campaign2026.route,
     arguments = listOf(
-        navArgument(Screen.Promo.SummerSale2026.USER_ID) { type = NavType.StringType }
+        navArgument(Screen.Promo.Q3Campaign2026.USER_ID) { type = NavType.StringType }
     ),
     enterTransition = defaultEnterSlideTransition { true },
     popExitTransition = defaultPopExitSlideTransition { true },
 ) {
-    SummerSalePromoScreen(
+    Q3CampaignPromoScreen(
         navigateBack = {
             navController.popBackStack(
-                route = Screen.Promo.SummerSale2026.route,
+                route = Screen.Promo.Q3Campaign2026.route,
                 inclusive = true,
             )
         },
+    )
+}
+
+fun NavGraphBuilder.addSubscriptionScreen(
+    navController: NavHostController,
+) = composable(
+    route = Screen.Subscription.route,
+) {
+    SubscriptionScreen(
+        onNavigateBack = { navController.popBackStack() },
     )
 }
 
@@ -2179,7 +2169,7 @@ fun NavGraphBuilder.addUpsellScreen(
     enterTransition = defaultEnterSlideTransition { true },
     popExitTransition = defaultPopExitSlideTransition { true },
 ) {
-    UpsellScreen(
+    UpsellUfcScreen(
         navigateToSubscription = {
             navController.popBackStack(
                 route = Screen.Promo.Upsell.route,

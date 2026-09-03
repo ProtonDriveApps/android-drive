@@ -47,6 +47,7 @@ import me.proton.android.drive.ui.viewstate.HomeViewState
 import me.proton.android.drive.usecase.CanGetMoreFreeStorage
 import me.proton.android.drive.usecase.GetDynamicHomeTabsFlow
 import me.proton.android.drive.usecase.ShouldShowOverlay
+import me.proton.android.payment.purchase.usecase.GetPaymentStatus
 import me.proton.core.domain.entity.SessionUserId
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
@@ -55,12 +56,11 @@ import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.base.presentation.component.NavigationTab
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
-import me.proton.core.drive.feature.flag.domain.usecase.IsSummerSalePromoEnabled
+import me.proton.android.drive.usecase.IsQ3CampaignPromoEligible
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewEvent
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewState
 import me.proton.core.drive.share.user.domain.usecase.HasUserInvitationFlow
-import me.proton.core.payment.domain.PaymentManager
 import me.proton.core.user.domain.UserManager
 import me.proton.core.user.domain.entity.User
 import me.proton.core.util.kotlin.CoreLogger
@@ -82,8 +82,8 @@ class HomeViewModel @Inject constructor(
     hasUserInvitationFlow: HasUserInvitationFlow,
     private val broadcastMessages: BroadcastMessages,
     private val shouldShowOverlay: ShouldShowOverlay,
-    private val paymentManager: PaymentManager,
-    private val isSummerSalePromoEnabled: IsSummerSalePromoEnabled,
+    private val getPaymentStatus: GetPaymentStatus,
+    private val isQ3CampaignPromoEligible: IsQ3CampaignPromoEligible,
     private val configurationProvider: ConfigurationProvider,
 ) : ViewModel(), NotificationDotViewModel, UserViewModel by UserViewModel(savedStateHandle) {
     private var navigateToTab: ((route: String) -> Unit)? = null
@@ -147,8 +147,7 @@ class HomeViewModel @Inject constructor(
         navigateToGetMoreFreeStorage: () -> Unit,
         navigateToOnboarding: () -> Unit,
         navigateToWhatsNew: (WhatsNewKey) -> Unit,
-        navigateToSubscriptionPromo: (String) -> Unit,
-        navigateToSummerSalePromo: () -> Unit,
+        navigateToQ3CampaignPromo: () -> Unit,
         navigateToAppPromo: () -> Unit,
     ): HomeViewEvent = object : HomeViewEvent {
         override val onTab = { tab: NavigationTab -> navigateToTab(tab.screen(userId)) }
@@ -167,8 +166,7 @@ class HomeViewModel @Inject constructor(
                     UserOverlay.Onboarding -> navigateToOnboarding()
                     is UserOverlay.WhatsNew -> navigateToWhatsNew(overlay.key)
                     UserOverlay.RatingBooster -> navigateToAppPromo()
-                    is UserOverlay.Subscription -> navigateToSubscriptionPromo(overlay.key)
-                    UserOverlay.SummerSalePromo -> navigateToSummerSalePromo()
+                    UserOverlay.Q3CampaignPromo -> navigateToQ3CampaignPromo()
                     null -> {}
                 }
             }
@@ -183,7 +181,7 @@ class HomeViewModel @Inject constructor(
                 override val onBugReport = navigateToBugReport
                 override val onSubscription = navigateToSubscription
                 override val onGetFreeStorage = navigateToGetMoreFreeStorage
-                override val onSummerSalePromo = navigateToSummerSalePromo
+                override val onQ3CampaignPromo = navigateToQ3CampaignPromo
             }
     }.also {
         this.navigateToTab = navigateToTab
@@ -231,12 +229,12 @@ class HomeViewModel @Inject constructor(
                 BuildConfig.VERSION_NAME,
                 currentUser = user,
                 showGetFreeStorage = user?.let { canGetMoreFreeStorage(user) } ?: false,
-                showSubscription = user?.userId?.let { userId ->
+                showSubscription = user?.userId?.let {
                     coRunCatching {
-                        paymentManager.isSubscriptionAvailable(userId)
-                    }.getOrNull(VIEW_MODEL, "Failed to read subscriptions")
+                        getPaymentStatus().getOrThrow().inApp.enabled
+                    }.getOrNull(VIEW_MODEL, "Failed to read payment status")
                 } ?: false,
-                isSummerSalePromoEnabled = isSummerSalePromoEnabled(userId),
+                isQ3CampaignPromoEligible = isQ3CampaignPromoEligible(userId),
             )
         )
 

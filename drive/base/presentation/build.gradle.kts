@@ -29,6 +29,7 @@ driveModule(
     hilt = true,
     showkase = true,
     buildConfig = true,
+    socialTest = true,
 ) {
     api(project(":drive:base:domain"))
     api(libs.androidx.activity.compose)

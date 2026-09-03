@@ -30,6 +30,7 @@ import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.extension.requireIsInstance
+import me.proton.core.drive.base.domain.extension.toHex
 import me.proton.core.drive.base.domain.extension.toPercentage
 import me.proton.core.drive.base.domain.formatter.DateTimeFormatter
 import me.proton.core.drive.base.domain.log.LogTag
@@ -168,7 +169,7 @@ class DownloadFileSdk @Inject constructor(
                 }
                 .onEach { (percentage, bytesDownloaded) ->
                     progress.value = percentage
-                    downloadSpeedManager.add(fileId.userId, usedSdk = true, bytesDownloaded)
+                    downloadSpeedManager.add(fileId.userId, bytesDownloaded)
                 }
                 .launchIn(this)
             controller.tryResume(this)
@@ -221,7 +222,7 @@ class DownloadFileSdk @Inject constructor(
                     val fileNode = requireIsInstance<FileNode>(node) { "Node must be a file from: $nodeUid"}
                     val contentDigests = fileNode.activeRevision.claimedDigests
                     checksumVerified = contentDigests?.sha1Verified == true
-                    val sha1 = contentDigests?.sha1.orEmpty()
+                    val sha1 = contentDigests?.sha1?.toHex().orEmpty()
                     verifyDownloadedFile(
                         claimed = sha1,
                         file = file,

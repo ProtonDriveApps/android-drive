@@ -18,10 +18,30 @@
   -->
 <resources>
   <string name="title_manage_access">Erişim yönetimi</string>
+  <string name="manage_access_who_has_access">Erişme izni olanlar</string>
+  <!--
+        Variable %1$s is a name or email
+        Example:
+            "Jack Frost (you)"
+            "jack.frost@example.com (you)"
+    -->
+  <string name="manage_access_current_user">%1$s (siz)</string>
   <string name="manage_access_share_with_anyone">Herkes ile paylaş</string>
+  <string name="manage_access_allow_editors_to_share_title">Erişim</string>
+  <string name="manage_access_allow_editors_to_share_description">Düzenleyiciler izinleri değiştirebilsin ve paylaşabilsin</string>
   <string name="manage_access_link_settings_action">Bağlantı ayarları</string>
   <string name="manage_access_link_description_public">Bu bağlantıyı bilen herkes</string>
   <string name="manage_access_link_description_password_protected">Bağlantı ve parolayı bilen herkes</string>
   <string name="manage_access_link_default_permission">Görüntüleyebilir</string>
   <string name="manage_access_link_editor_permission">Düzenleyebilir</string>
+  <string name="manage_access_change_access_to_viewer_title">Erişme iznini izleyici olarak değiştir</string>
+  <!--
+        Variable %1$s is a file or folder name
+        Example:
+            You won’t be able to share "Some folder" after changing your access to viewer. The owner or an editor with sharing access can restore your edit access. You can’t undo this change yourself.
+    -->
+  <string name="manage_access_change_access_to_viewer_description">"Erişim izninizi İzleyici olarak değiştirdikten sonra \"%1$s\" ögesini paylaşamazsınız. Sahibi veya paylaşma izni olan bir düzenleyici, düzenleme izninizi yeniden ayarlayabilir. Bu değişikliği kendiniz geri alamazsınız."</string>
+  <string name="manage_access_change_access_to_viewer_action">Erişim iznimi değiştir</string>
+  <string name="manage_access_new_editor_permissions_title">Yeni düzenleyici izinleri</string>
+  <string name="manage_access_new_editor_permissions_description">Düzenleyiciler artık paylaşma iznini yönetebilir ve başkalarını davet edebilir. İstediğiniz zaman kapatabilirsiniz.</string>
 </resources>

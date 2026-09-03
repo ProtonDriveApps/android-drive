@@ -21,12 +21,6 @@
     <!-- tag(q1campaign) -->
     <string name="promo_storage_title">1 TB storage: 200x current plan</string>
     <!-- tag(q1campaign) -->
-    <string name="promo_document_title">Online document editor</string>
-    <!-- tag(q1campaign) -->
-    <string name="promo_secure_title">Secure file storage and sharing</string>
-    <!-- tag(q1campaign) -->
-    <string name="promo_private_title">Private photo backup</string>
-    <!-- tag(q1campaign) -->
     <string name="promo_claim_offer_button">Claim offer</string>
     <!-- tag(q1campaign)
         Variable %1$s is price per month
@@ -34,10 +28,36 @@
             "only $6.99"
     -->
     <string name="promo_offer_per_month_details">only %1$s</string>
-    <!-- tag(q2campaign2026) -->
-    <string name="promo_summer_sale_drawer_title">Summer Sale</string>
-    <!-- tag(q2campaign2026) -->
-    <string name="promo_storage_200_GB_title">200 GB storage: 40x current plan</string>
+    <!-- tag(q3campaign2026) -->
+    <string name="promo_q3_campaign_drawer_title">Special Offer</string>
+
+    <!-- tag(q3campaign2026) Free vs. Unlimited comparison table on the Q3 campaign promo screen -->
+    <string name="promo_q3_campaign_comparison_header_free">Free</string>
+    <!-- tag(q3campaign2026) -->
+    <string name="promo_q3_campaign_comparison_header_unlimited">Unlimited</string>
+    <!-- tag(q3campaign2026) -->
+    <string name="promo_q3_campaign_comparison_storage_label">Storage</string>
+    <!-- tag(q3campaign2026) -->
+    <string name="promo_q3_campaign_comparison_storage_free">5 GB</string>
+    <!-- tag(q3campaign2026) -->
+    <string name="promo_q3_campaign_comparison_storage_unlimited">500 GB</string>
+    <!-- tag(q3campaign2026) -->
+    <string name="promo_q3_campaign_comparison_storage_unlimited_subtitle">100x more than free</string>
+    <!-- tag(q3campaign2026) -->
+    <string name="promo_q3_campaign_comparison_share_edit_label">Share with edit access</string>
+    <!-- tag(q3campaign2026) -->
+    <string name="promo_q3_campaign_comparison_mail_label">Mail Plus with custom email domains</string>
+    <!-- tag(q3campaign2026) -->
+    <string name="promo_q3_campaign_comparison_vpn_label">VPN Plus with 20,000+ servers in 140+ countries</string>
+    <!-- tag(q3campaign2026) -->
+    <string name="promo_q3_campaign_comparison_pass_label">Pass Plus with 50 secure vaults</string>
+
+    <!-- tag(q3campaign2026) Preview-only mock price for Q3CampaignPromoScreenPortraitPreview, not a real formatted currency amount -->
+    <string name="promo_q3_campaign_total_price_preview" translatable="false">$77.88</string>
+    <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
+    <string name="promo_q3_campaign_monthly_price_preview" translatable="false">$6.99</string>
+    <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
+    <string name="promo_q3_campaign_renewal_price_preview" translatable="false">$83.88</string>
 
     <!-- Upsell promo -->
     <!--

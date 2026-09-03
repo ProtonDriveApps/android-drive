@@ -97,4 +97,5 @@ fun LinkUploadEntity.toUploadFileLink() =
         priority = priority,
         uploadCreationDateTime = uploadCreationDateTime?.let(::TimestampS),
         shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
+        attempts = attempts,
     )

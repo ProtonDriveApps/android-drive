@@ -37,7 +37,6 @@ import me.proton.core.drive.drivelink.download.domain.repository.DownloadFileRep
 import me.proton.core.drive.drivelink.download.domain.repository.DownloadParentLinkRepository
 import me.proton.core.drive.drivelink.download.domain.usecase.DownloadCleanup
 import me.proton.core.drive.drivelink.download.domain.usecase.DownloadFile
-import me.proton.core.drive.drivelink.download.domain.usecase.DownloadMetricsNotifier
 import me.proton.core.drive.folder.domain.usecase.GetDescendants
 import me.proton.core.drive.linkdownload.domain.usecase.AreAllAlbumPhotosDownloaded
 import me.proton.core.drive.linkdownload.domain.usecase.AreAllFilesDownloaded
@@ -68,7 +67,6 @@ object DownloadModule {
         getAllAlbumChildren: GetAllAlbumChildren,
         areAllAlbumPhotosDownloaded: AreAllAlbumPhotosDownloaded,
         downloadErrorManager: DownloadErrorManager,
-        downloadMetricsNotifier: DownloadMetricsNotifier,
         isLinkOrAnyAncestorTrashed: IsLinkOrAnyAncestorTrashed,
         downloadSdkManager: DownloadSdkManager,
     ): DownloadManager = DownloadManagerImpl(
@@ -88,7 +86,6 @@ object DownloadModule {
         getAllAlbumChildren,
         areAllAlbumPhotosDownloaded,
         downloadErrorManager,
-        downloadMetricsNotifier,
         isLinkOrAnyAncestorTrashed,
         downloadSdkManager,
     )

@@ -481,5 +481,12 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
         subjectArea: String?,
     )
 
+    @Query("""
+        UPDATE LinkUploadEntity SET
+            attempts = attempts + 1
+        WHERE id = :id
+    """)
+    abstract suspend fun incrementAttempts(id: Long)
+
     open fun getDistinctFlow(id: Long) = getFlow(id).distinctUntilChanged()
 }

@@ -37,5 +37,5 @@
   <string name="log_origin_backup">Biztonsági mentés</string>
   <string name="log_origin_user">Felhasználó</string>
   <string name="log_origin_device">Eszköz</string>
-  <string name="log_origin_crypto">Crypto</string>
+  <string name="log_origin_crypto">Kriptovaluta</string>
 </resources>

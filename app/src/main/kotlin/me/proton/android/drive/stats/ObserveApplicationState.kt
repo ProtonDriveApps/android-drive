@@ -47,8 +47,8 @@ class ObserveApplicationState @Inject constructor(
                     appendLine("validated=${cnsi.isValidated}")
                     appendLine("downstream bandwidth=${cnsi.downstreamBandwidthKbps} Kbps")
                     appendLine("upstream bandwidth=${cnsi.upstreamBandwidthKbps} Kbps")
-                    appendLine("wifi=${cnsi.isWifi}")
-                    appendLine("cellular=${cnsi.isCellular}")
+                    appendLine("transports=${cnsi.transportTypes.joinToString().ifEmpty { "none" }}")
+                    appendLine("transports mask=${cnsi.transportTypesMask}")
                 }
             }
         )

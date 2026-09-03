@@ -34,11 +34,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.drive.base.data.workmanager.addTags
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
+import me.proton.core.drive.linkupload.domain.usecase.IncrementAttempts
 import me.proton.core.drive.linkupload.domain.usecase.sdk.ResolveNameConflict
 import me.proton.core.drive.upload.data.extension.getSizeData
 import me.proton.core.drive.upload.data.extension.isRetryable
@@ -55,7 +57,6 @@ import me.proton.core.drive.upload.domain.exception.UploadNotFoundException
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.manager.UploadSdkManager
 import me.proton.core.drive.upload.domain.usecase.UploadFileSdk
-import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.upload.domain.usecase.sdk.ResolveContentSizeMismatch
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
@@ -79,10 +80,10 @@ class UploadFileSdkWorker @AssistedInject constructor(
     private val resolveNameConflict: ResolveNameConflict,
     private val resolveContentSizeMismatch: ResolveContentSizeMismatch,
     private val uploadSdkManager: UploadSdkManager,
+    private val incrementAttempts: IncrementAttempts,
     private val cleanupWorkers: CleanupWorkers,
     private val networkTypeProviders: @JvmSuppressWildcards Map<NetworkTypeProviderType, NetworkTypeProvider>,
     configurationProvider: ConfigurationProvider,
-    uploadMetricsNotifier: UploadMetricsNotifier,
     canRun: CanRun,
     run: Run,
     done: Done,
@@ -94,7 +95,6 @@ class UploadFileSdkWorker @AssistedInject constructor(
     getUploadFileLink = getUploadFileLink,
     uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
-    uploadMetricsNotifier = uploadMetricsNotifier,
     canRun = canRun,
     run = run,
     done = done,
@@ -113,25 +113,12 @@ class UploadFileSdkWorker @AssistedInject constructor(
                 if (error.handle(uploadFileLink)) {
                     Result.failure()
                 } else {
-                    if (error is UploadAbortedException) {
-                        uploadFileLink.retryOrAbort(
-                            retryable = error.cause?.isRetryable == true,
-                            canRetry = canRetry(),
-                            error = error,
-                            message = "Uploading via SDK aborted"
-                        ).also { result ->
-                            if (result == Result.retry()) {
-                                uploadSdkManager.cancelController(uploadFileLink)
-                            }
-                        }
-                    } else {
-                        uploadFileLink.retryOrAbort(
-                            retryable = error.isRetryable,
-                            canRetry = canRetry(),
-                            error = error,
-                            message = "Uploading via SDK failed"
-                        )
-                    }
+                    uploadFileLink.retryOrAbort(
+                        retryable = error.isRetryable,
+                        canRetry = canRetry(),
+                        error = error,
+                        message = "Uploading via SDK failed"
+                    )
                 }
             },
             onSuccess = {
@@ -141,65 +128,89 @@ class UploadFileSdkWorker @AssistedInject constructor(
         )
     }
 
-    private suspend fun Throwable.handle(uploadFileLink: UploadFileLink): Boolean = when (this) {
-        is UploadNotFoundException -> {
-            log(
-                tag = logTag(),
-                message = "Upload not found, maybe after the app restarted",
-                level = LoggerLevel.INFO,
+    private suspend fun Throwable.handle(uploadFileLink: UploadFileLink): Boolean {
+        if (uploadFileLink.attempts >= configurationProvider.uploadMaxRetries) {
+            CoreLogger.w(
+                tag = uploadFileLink.logTag(),
+                message = "Max upload retries reached (${uploadFileLink.attempts}), giving up",
             )
-            uploadFileLink.recreateFileSdk()
-            true
+            return false
         }
+        return when (this) {
+            is UploadNotFoundException -> {
+                log(
+                    tag = logTag(),
+                    message = "Upload not found, maybe after the app restarted",
+                    level = LoggerLevel.INFO,
+                )
+                uploadFileLink.recreateFileSdk()
+                true
+            }
 
-        is UploadAbortedException -> {
-            when (val data = error?.additionalData) {
-                is ProtonSdkError.Data.NodeNameConflict -> {
-                    resolveNameConflict(uploadFileLink, data).fold(
-                        onFailure = { error ->
-                            error.addSuppressed(this)
-                            error.log(uploadFileLink.logTag(), "Failed to resolve name conflict, will not retry")
-                            false
-                        },
-                        onSuccess = {
-                            log(
-                                tag = uploadFileLink.logTag(),
-                                message = "Retrying upload after resolving name conflict",
-                                level = LoggerLevel.INFO,
-                            )
-                            uploadSdkManager.cancel(uploadFileLink)
-                            uploadFileLink.recreateFileSdk()
-                            true
-                        }
-                    )
-                }
-                is ProtonSdkError.Data.ContentSizeMismatch -> {
-                    resolveContentSizeMismatch(uploadFileLink, data).fold(
-                        onFailure = { error ->
-                            error.addSuppressed(this)
-                            error.log(
-                                tag = uploadFileLink.logTag(),
-                                message = "Failed to resolve content size mismatch, will not retry",
-                            )
-                            false
-                        },
-                        onSuccess = {
+            is UploadAbortedException -> {
+                when (val data = error?.additionalData) {
+                    is ProtonSdkError.Data.NodeNameConflict -> {
+                        resolveNameConflict(uploadFileLink, data).fold(
+                            onFailure = { error ->
+                                error.addSuppressed(this)
+                                error.log(uploadFileLink.logTag(), "Failed to resolve name conflict, will not retry")
+                                false
+                            },
+                            onSuccess = {
+                                log(
+                                    tag = uploadFileLink.logTag(),
+                                    message = "Retrying upload after resolving name conflict",
+                                    level = LoggerLevel.INFO,
+                                )
+                                uploadSdkManager.cancel(uploadFileLink)
+                                uploadFileLink.recreateFileSdk()
+                                true
+                            }
+                        )
+                    }
+                    is ProtonSdkError.Data.ContentSizeMismatch -> {
+                        resolveContentSizeMismatch(uploadFileLink, data).fold(
+                            onFailure = { error ->
+                                error.addSuppressed(this)
+                                error.log(
+                                    tag = uploadFileLink.logTag(),
+                                    message = "Failed to resolve content size mismatch, will not retry",
+                                )
+                                false
+                            },
+                            onSuccess = {
+                                CoreLogger.i(
+                                    tag = uploadFileLink.logTag(),
+                                    message = "Retrying upload after resolving content size mismatch",
+                                )
+                                uploadSdkManager.cancel(uploadFileLink)
+                                uploadFileLink.recreateFileSdk()
+                                true
+                            }
+                        )
+                    }
+
+                    else -> {
+                        val errorCause = cause
+                        if (errorCause?.isRetryable == true) {
+                            val type = (errorCause as? ProtonDriveSdkException)?.error?.type
+                                ?: errorCause.javaClass.simpleName
                             CoreLogger.i(
                                 tag = uploadFileLink.logTag(),
-                                message = "Retrying upload after resolving content size mismatch",
+                                message = "Retrying upload after $type",
                             )
                             uploadSdkManager.cancel(uploadFileLink)
                             uploadFileLink.recreateFileSdk()
                             true
+                        } else {
+                            false
                         }
-                    )
+                    }
                 }
-
-                else -> false
             }
-        }
 
-        else -> false
+            else -> false
+        }
     }
 
 
@@ -214,6 +225,7 @@ class UploadFileSdkWorker @AssistedInject constructor(
     }
 
     private suspend fun UploadFileLink.recreateFileSdk() {
+        incrementAttempts(id).getOrNull(logTag(), "Cannot increment attempts")
         val networkType =
             requireNotNull(networkTypeProviders[networkTypeProviderType])
                 .get(parentLinkId)

@@ -76,10 +76,11 @@ interface ConfigurationProvider {
         0.seconds, 60.seconds, 2.minutes, 5.minutes, 15.minutes, 30.minutes
     )
     val maxApiAutoRetries: Int get() = 10
+    val uploadMaxRetries: Long get() = 5
     val logToFileInDebugEnabled: Boolean get() = true
     val allowBackupDeletedFilesEnabled: Boolean get() = false
     val scanBackupPageSize: Int get() = 100
-    val backupDefaultBucketName: String get() = "Camera"
+    val backupDefaultBucketName: List<String> get() = listOf("Camera", "Kamera")
     val backupAdditionalBucketNames: List<String> get() = listOf("Raw", "Screenshots")
     val backupMaxAttempts: Long get() = 5
     val backupSyncWindow: Duration get() = 1.days
@@ -123,7 +124,6 @@ interface ConfigurationProvider {
     val preferSdkForUpload: Boolean get() = true
     val preferSdkForDownload: Boolean get() = true
     val preferSdkForThumbnail: Boolean get() = true
-    val preferSdkForDevices: Boolean get() = false
     val createFolderInParallel: Int get() = 16
     val sdkQueueTimeout: Duration get() = 30.seconds
     val tabsLoadTimeout: Duration get() = 3.seconds

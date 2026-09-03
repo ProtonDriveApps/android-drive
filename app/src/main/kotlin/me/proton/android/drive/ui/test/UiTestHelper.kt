@@ -22,8 +22,7 @@ import androidx.annotation.RestrictTo
 import androidx.datastore.preferences.core.edit
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.datastore.GetUserDataStore
-import me.proton.core.drive.base.data.datastore.GetUserDataStore.Keys.subscriptionLastUpdate
-import me.proton.core.drive.base.data.datastore.GetUserDataStore.Keys.summerSalePromo2026LastShown
+import me.proton.core.drive.base.data.datastore.GetUserDataStore.Keys.q3CampaignPromo2026LastShown
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.drive.android.settings.data.datastore.AppUiSettingsDataStore
 import me.proton.drive.android.settings.domain.entity.WhatsNewKey
@@ -48,21 +47,9 @@ class UiTestHelper @Inject constructor(
         appUiSettingsDataStore.ratingBooster = 1L
     }
 
-    suspend fun doNotShowDrivePlusPromoAfterLogin(userId: UserId) {
+    suspend fun doNotShowQ3CampaignPromo2026(userId: UserId) {
         getUserDataStore(userId).edit { preferences ->
-            preferences[subscriptionLastUpdate("drive2022")] = 1L
-        }
-    }
-
-    suspend fun doNotShowDriveLitePromoAfterLogin(userId: UserId) {
-        getUserDataStore(userId).edit { preferences ->
-            preferences[subscriptionLastUpdate("drivelite2024")] = 1L
-        }
-    }
-
-    suspend fun doNotShowSummerSalePromo2026(userId: UserId) {
-        getUserDataStore(userId).edit { preferences ->
-            preferences[summerSalePromo2026LastShown] = Date().time
+            preferences[q3CampaignPromo2026LastShown] = Date().time
         }
     }
 }

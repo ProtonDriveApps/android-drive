@@ -118,15 +118,15 @@ class LibraryFoldersViewModel @Inject constructor(
         if (permissions is BackupPermissions.Granted) {
             val libraryFolders = merge(entries, folders)
                 .sortedByDescending { entry -> entry.enabled }
-            val defaultBucketName = configurationProvider.backupDefaultBucketName
+            val defaultBucketNames = configurationProvider.backupDefaultBucketName
             LibraryFoldersState.Content(
                 title = appContext.getString(I18N.string.settings_photos_backup_folders_title),
                 description = appContext.getString(I18N.string.settings_photos_backup_folders_description)
-                    .format(defaultBucketName),
-                folders = if (libraryFolders.none { folder -> folder.name == defaultBucketName }) {
+                    .format(defaultBucketNames.first()),
+                folders = if (libraryFolders.none { folder -> folder.name in defaultBucketNames }) {
                     listOf(
                         LibraryFolder.NotFound(
-                            name = defaultBucketName,
+                            name = defaultBucketNames.first(),
                             description = appContext.getString(I18N.string.settings_photos_backup_folders_not_found)
                         )
                     ) + libraryFolders

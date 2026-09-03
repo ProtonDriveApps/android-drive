@@ -18,10 +18,30 @@
   -->
 <resources>
   <string name="title_manage_access">管理访问</string>
+  <string name="manage_access_who_has_access">Who has access</string>
+  <!--
+        Variable %1$s is a name or email
+        Example:
+            "Jack Frost (you)"
+            "jack.frost@example.com (you)"
+    -->
+  <string name="manage_access_current_user">%1$s (you)</string>
   <string name="manage_access_share_with_anyone">与他人分享</string>
+  <string name="manage_access_allow_editors_to_share_title">Access</string>
+  <string name="manage_access_allow_editors_to_share_description">Allow editors to change permissions and share</string>
   <string name="manage_access_link_settings_action">链接设置</string>
   <string name="manage_access_link_description_public">知道此链接的任何人</string>
   <string name="manage_access_link_description_password_protected">任何知道链接和密码的人</string>
   <string name="manage_access_link_default_permission">可查看</string>
   <string name="manage_access_link_editor_permission">可以编辑</string>
+  <string name="manage_access_change_access_to_viewer_title">Change access to viewer?</string>
+  <!--
+        Variable %1$s is a file or folder name
+        Example:
+            You won’t be able to share "Some folder" after changing your access to viewer. The owner or an editor with sharing access can restore your edit access. You can’t undo this change yourself.
+    -->
+  <string name="manage_access_change_access_to_viewer_description">"You won\’t be able to share \"%1$s\" after changing your access to viewer. The owner or an editor with sharing access can restore your edit access. You can\’t undo this change yourself."</string>
+  <string name="manage_access_change_access_to_viewer_action">Change my access</string>
+  <string name="manage_access_new_editor_permissions_title">New editor permissions</string>
+  <string name="manage_access_new_editor_permissions_description">Editors can now manage sharing and invite others. You can turn it off anytime.</string>
 </resources>

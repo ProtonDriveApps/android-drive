@@ -183,6 +183,14 @@ abstract class TagsMigrationFileDao : BaseDao<TagsMigrationFileEntity>() {
     @Query("DELETE FROM TagsMigrationFileEntity WHERE user_id = :userId AND volume_id = :volumeId")
     abstract suspend fun deleteAll(userId: UserId, volumeId: String)
 
+    @Query("""
+        DELETE FROM TagsMigrationFileEntity
+        WHERE user_id = :userId AND
+            volume_id = :volumeId AND
+            state = :state
+    """)
+    abstract suspend fun deleteAll(userId: UserId, volumeId: String, state: TagsMigrationFile.State)
+
     @Query(
         """
         SELECT state, COUNT(*) AS count FROM TagsMigrationFileEntity

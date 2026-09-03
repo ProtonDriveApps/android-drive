@@ -23,7 +23,7 @@ android {
     namespace = "me.proton.core.drive.drivelink.sorting.domain"
 }
 
-driveModule(hilt = true) {
+driveModule(hilt = true, socialTest = true) {
     api(project(":drive:drivelink:domain"))
     api(project(":drive:sorting:domain"))
 }

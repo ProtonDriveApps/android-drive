@@ -22,13 +22,10 @@ import android.provider.DocumentsContract
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.documentsprovider.domain.entity.DocumentId
-import me.proton.core.drive.drivelink.domain.usecase.UseSdkForUpload
 import me.proton.core.drive.folder.create.domain.usecase.CreateFolder
-import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.linkupload.domain.entity.CacheOption
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
-import me.proton.core.drive.upload.domain.usecase.CreateNewFile
 import me.proton.core.drive.upload.domain.usecase.CreateUploadFile
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
@@ -36,19 +33,24 @@ import javax.inject.Inject
 class CreateDocument @Inject constructor(
     private val withDriveLinkFolder: WithDriveLinkFolder,
     private val createFolder: CreateFolder,
-    private val createNewFile: CreateNewFile,
     private val createUploadFile: CreateUploadFile,
-    private val useSdkForUpload: UseSdkForUpload,
 ) {
 
-    suspend operator fun invoke(parentDocumentId: DocumentId, mimeType: String?, displayName: String?) =
+    suspend operator fun invoke(
+        parentDocumentId: DocumentId,
+        mimeType: String?,
+        displayName: String?
+    ) =
         withDriveLinkFolder(parentDocumentId) { userId, driveLink ->
             requireNotNull(displayName) { "displayName cannot be null" }
             requireNotNull(mimeType) { "mimeType cannot be null" }
             if (mimeType == DocumentsContract.Document.MIME_TYPE_DIR) {
                 val (_, folderId) = createFolder(driveLink.id, displayName)
                     .getOrThrow()
-                CoreLogger.d(LogTag.DOCUMENTS_PROVIDER, "Folder created with id: ${folderId.id.logId()}")
+                CoreLogger.d(
+                    LogTag.DOCUMENTS_PROVIDER,
+                    "Folder created with id: ${folderId.id.logId()}"
+                )
                 DocumentId(userId, folderId)
             } else {
                 val uploadFileLink = createUploadFile(
@@ -63,25 +65,11 @@ class CreateDocument @Inject constructor(
                     priority = UploadFileLink.USER_PRIORITY,
                     shouldBroadcastErrorMessage = true,
                 ).getOrThrow()
-                if (useSdkForUpload(driveLink).getOrThrow()) {
-                    CoreLogger.d(
-                        LogTag.DOCUMENTS_PROVIDER,
-                        "File waiting for sdk upload with id: ${uploadFileLink.id}"
-                    )
-                    DocumentId(userId, uploadId = uploadFileLink.id.toString())
-                } else {
-                    createNewFile(
-                        uploadFileLink = uploadFileLink,
-                    ).getOrThrow().let { uploadFileLink ->
-                        val fileId =
-                            FileId(uploadFileLink.shareId, requireNotNull(uploadFileLink.linkId))
-                        CoreLogger.d(
-                            LogTag.DOCUMENTS_PROVIDER,
-                            "File created with id: ${fileId.id.logId()}"
-                        )
-                        DocumentId(userId, fileId)
-                    }
-                }
+                CoreLogger.d(
+                    LogTag.DOCUMENTS_PROVIDER,
+                    "File waiting for sdk upload with id: ${uploadFileLink.id}"
+                )
+                DocumentId(userId, uploadId = uploadFileLink.id.toString())
             }
         }
 }

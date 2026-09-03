@@ -80,7 +80,6 @@ import me.proton.android.drive.ui.provider.LocalSnackbarPadding
 import me.proton.android.drive.ui.provider.ProvideLocalSnackbarPadding
 import me.proton.android.drive.ui.viewmodel.AccountViewModel
 import me.proton.android.drive.ui.viewmodel.BugReportViewModel
-import me.proton.android.drive.ui.viewmodel.PlansViewModel
 import me.proton.android.drive.usecase.GetDefaultEnabledDynamicHomeTab
 import me.proton.android.drive.usecase.ProcessIntent
 import me.proton.android.drive.usecase.ShowRatingBooster
@@ -125,7 +124,6 @@ class MainActivity : FragmentActivity() {
     lateinit var configurationProvider: ConfigurationProvider
     private val accountViewModel: AccountViewModel by viewModels()
     private val bugReportViewModel: BugReportViewModel by viewModels()
-    private val plansViewModel: PlansViewModel by viewModels()
     private val rootView: View by lazy { findViewById(android.R.id.content) }
     private val clearBackstackTrigger = MutableSharedFlow<Unit>()
     private val deepLinkIntent = MutableSharedFlow<Intent>()
@@ -180,9 +178,7 @@ class MainActivity : FragmentActivity() {
                         navigateToRecoveryEmail = accountViewModel::startUpdateRecoveryEmail,
                         navigateToSecurityKeys = accountViewModel::startSecurityKeys,
                         navigateToBugReport = bugReportViewModel::sendBugReport,
-                        navigateToSubscription = plansViewModel::showCurrentPlans,
                         navigateToRatingBooster = { showRatingBooster(activity = this@MainActivity) },
-                        navigateToUpgradePlan = plansViewModel::startUpgrade,
                     ) { isOpen ->
                         isDrawerOpen = isOpen
                     }
@@ -307,7 +303,6 @@ class MainActivity : FragmentActivity() {
     private fun initializeViewModels() {
         setupAccountsViewModel()
         bugReportViewModel.initialize(this)
-        plansViewModel.initialize(this)
     }
 
     private fun setupAccountsViewModel() {
@@ -347,7 +342,6 @@ class MainActivity : FragmentActivity() {
     override fun onDestroy() {
         accountViewModel.deInitialize()
         bugReportViewModel.deInitialize()
-        plansViewModel.deInitialize()
         super.onDestroy()
     }
 

@@ -25,6 +25,7 @@ import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.file.base.domain.entity.ThumbnailType
 import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.extension.decryptedFileName
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailFile
 import java.io.File
@@ -45,12 +46,9 @@ class GetThumbnailAndContentCachedStatus @Inject constructor(
         val wasThumbnailCached = thumbnailFile != null && thumbnailFile.exists()
         val permanentFolder = getPermanentFolder(fileId.userId, volumeId.id, revisionId)
         val cacheFolder = getCacheFolder(fileId.userId, volumeId.id, revisionId)
-        val wasContentCached = File(permanentFolder, FIRST_BLOCK_FILE_NAME).exists() ||
-                File(cacheFolder, FIRST_BLOCK_FILE_NAME).exists()
+        val fileName = fileId.decryptedFileName
+        val wasContentCached = File(permanentFolder, fileName).exists() ||
+                File(cacheFolder, fileName).exists()
         wasThumbnailCached to wasContentCached
-    }
-
-    companion object {
-        private const val FIRST_BLOCK_FILE_NAME = "1"
     }
 }

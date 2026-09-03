@@ -18,10 +18,30 @@
   -->
 <resources>
   <string name="title_manage_access">Toegang beheren</string>
+  <string name="manage_access_who_has_access">Wie heeft toegang</string>
+  <!--
+        Variable %1$s is a name or email
+        Example:
+            "Jack Frost (you)"
+            "jack.frost@example.com (you)"
+    -->
+  <string name="manage_access_current_user">%1$s (u)</string>
   <string name="manage_access_share_with_anyone">Delen met iemand</string>
+  <string name="manage_access_allow_editors_to_share_title">Toegang</string>
+  <string name="manage_access_allow_editors_to_share_description">Geef editors toestemming om rechten te wijzigen en te delen</string>
   <string name="manage_access_link_settings_action">Linkinstellingen</string>
   <string name="manage_access_link_description_public">Iedereen met deze link</string>
   <string name="manage_access_link_description_password_protected">Eender wie met deze link en dit wachtwoord</string>
   <string name="manage_access_link_default_permission">Kan bekijken</string>
   <string name="manage_access_link_editor_permission">Kan bewerken</string>
+  <string name="manage_access_change_access_to_viewer_title">Toegang tot viewer wijzigen?</string>
+  <!--
+        Variable %1$s is a file or folder name
+        Example:
+            You won’t be able to share "Some folder" after changing your access to viewer. The owner or an editor with sharing access can restore your edit access. You can’t undo this change yourself.
+    -->
+  <string name="manage_access_change_access_to_viewer_description">"U kunt \"%1$s\" niet delen nadat u uw toegang tot de viewer hebt gewijzigd. De eigenaar of een bewerker met deelrechten kan uw bewerkingsrechten herstellen. U kunt deze wijziging niet zelf ongedaan maken."</string>
+  <string name="manage_access_change_access_to_viewer_action">Wijzig mijn toegang</string>
+  <string name="manage_access_new_editor_permissions_title">Nieuwe editorrechten</string>
+  <string name="manage_access_new_editor_permissions_description">Bewerkers kunnen nu het delen beheren en anderen uitnodigen. U kunt het op elk gewenst moment uitschakelen.</string>
 </resources>

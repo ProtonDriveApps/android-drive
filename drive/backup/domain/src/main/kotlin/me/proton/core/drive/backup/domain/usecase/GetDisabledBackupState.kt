@@ -32,7 +32,7 @@ class GetDisabledBackupState @Inject constructor(
         BackupState(
             isBackupEnabled = false,
             hasDefaultFolder = bucketEntries?.any { entry ->
-                entry.bucketName == configurationProvider.backupDefaultBucketName
+                entry.bucketName in configurationProvider.backupDefaultBucketName
             },
             backupStatus = null,
         )

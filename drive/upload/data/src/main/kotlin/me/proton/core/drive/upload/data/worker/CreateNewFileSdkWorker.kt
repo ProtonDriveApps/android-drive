@@ -48,7 +48,6 @@ import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_URI_STRING
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.CreateNewFileSdk
-import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
@@ -66,7 +65,6 @@ class CreateNewFileSdkWorker @AssistedInject constructor(
     uploadErrorManager: UploadErrorManager,
     private val createNewFileSdk: CreateNewFileSdk,
     configurationProvider: ConfigurationProvider,
-    uploadMetricsNotifier: UploadMetricsNotifier,
     updateName: UpdateName,
     canRun: CanRun,
     run: Run,
@@ -79,7 +77,6 @@ class CreateNewFileSdkWorker @AssistedInject constructor(
     getUploadFileLink = getUploadFileLink,
     uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
-    uploadMetricsNotifier = uploadMetricsNotifier,
     updateName = updateName,
     canRun = canRun,
     run = run,

@@ -40,6 +40,10 @@ interface BackupManager {
 
     suspend fun unwatchFolders(userId: UserId)
 
+    suspend fun schedulePeriodicSync(userId: UserId)
+
+    suspend fun cancelPeriodicSync(userId: UserId)
+
     fun isEnabled(folderId: FolderId): Flow<Boolean>
 
     suspend fun updateNotification(folderId: FolderId)

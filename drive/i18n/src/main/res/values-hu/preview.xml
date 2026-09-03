@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Fájl előnézete</string>
-  <string name="content_description_more_options">További lehetőségek megjelenítése</string>
+  <string name="content_description_more_options">Show more options for the file</string>
   <string name="preview_downloading_state">Letöltés…</string>
   <string name="preview_processing_state">Feldolgozás…</string>
   <string name="preview_empty">Nincs előnézet…</string>

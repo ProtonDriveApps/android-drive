@@ -49,7 +49,6 @@ import me.proton.core.drive.linkupload.domain.entity.UploadBulk
 import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
-import me.proton.core.drive.linkupload.domain.usecase.GetUploadBlocks
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksPaged
 import me.proton.core.drive.linkupload.domain.usecase.RemoveAllUploadFileLinks
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
@@ -76,7 +75,6 @@ import me.proton.core.drive.i18n.R as I18N
 class UploadWorkManagerImpl @Inject constructor(
     @ApplicationContext private val appContext: Context,
     private val workManager: WorkManager,
-    private val getUploadBlocks: GetUploadBlocks,
     private val getUploadFileLinks: GetUploadFileLinksPaged,
     private val broadcastMessages: BroadcastMessages,
     private val broadcastFilesBeingUploaded: BroadcastFilesBeingUploaded,
@@ -89,30 +87,6 @@ class UploadWorkManagerImpl @Inject constructor(
     private val removeAllUploadFileLinks: RemoveAllUploadFileLinks,
 ) : UploadWorkManager {
 
-
-    /**
-     * https://www.websequencediagrams.com/
-     *
-    opt If not created before
-    FileUploadWorker->+CreateNewFileWorker: State.CreatingNewFile
-    CreateNewFileWorker->-FileUploadWorker:
-    end
-
-    FileUploadWorker->+EncryptBlocksWorker: State.EncryptingBlocks
-    EncryptBlocksWorker->-FileUploadWorker:
-
-    FileUploadWorker->GetBlocksUploadUrlWorker: State.GettingUploadLinks
-    loop for each blocks:
-    GetBlocksUploadUrlWorker->+BlockUploadWorker: State.UploadingBlocks
-    BlockUploadWorker->-GetBlocksUploadUrlWorker:
-    end
-    GetBlocksUploadUrlWorker->+UpdateRevisionWorker: State.UpdatingRevision
-    UpdateRevisionWorker->-GetBlocksUploadUrlWorker:
-    GetBlocksUploadUrlWorker->+UploadSuccessCleanupWorker: State.Cleanup
-    UploadSuccessCleanupWorker->-GetBlocksUploadUrlWorker:
-    GetBlocksUploadUrlWorker->FileUploadWorker:
-     *
-     */
     override suspend fun upload(
         userId: UserId,
         volumeId: VolumeId,

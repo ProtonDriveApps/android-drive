@@ -21,6 +21,7 @@ package me.proton.core.drive.photo.domain.usecase
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.photo.domain.entity.PhotoListing
+import me.proton.core.drive.photo.domain.extension.filterMainPhotos
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
@@ -34,6 +35,7 @@ class InsertOrDeletePhotoListings @Inject constructor(
         links: List<Link.File>,
     ): Result<Unit> = coRunCatching {
         links
+            .filterMainPhotos()
             .map { link -> link.toPhotoListing(volumeId, links) to link.state }
             .insertOrIgnorePhotoListings(volumeId)
             .deletePhotoListings()

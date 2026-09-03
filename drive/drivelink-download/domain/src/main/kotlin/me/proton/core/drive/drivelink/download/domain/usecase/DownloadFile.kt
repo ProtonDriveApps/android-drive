@@ -20,18 +20,13 @@ package me.proton.core.drive.drivelink.download.domain.usecase
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import me.proton.core.drive.base.domain.entity.Percentage
-import me.proton.core.drive.base.domain.extension.getOrNull
-import me.proton.core.drive.base.domain.log.LogTag.DOWNLOAD
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.drivelink.domain.usecase.UseSdkForDownload
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class DownloadFile @Inject constructor(
-    private val downloadFileLegacy: DownloadFileLegacy,
     private val downloadFileSdk: DownloadFileSdk,
-    private val useSdkForDownload: UseSdkForDownload,
 ) {
 
     suspend operator fun invoke(
@@ -41,23 +36,11 @@ class DownloadFile @Inject constructor(
         isCancelled: () -> Boolean,
         progress: MutableStateFlow<Percentage>,
     ) = coRunCatching {
-        val useSdk = useSdkForDownload(fileId)
-            .getOrNull(DOWNLOAD, "Cannot check sdk usage")
-        if (useSdk == true) {
-            downloadFileSdk(
-                volumeId = volumeId,
-                fileId = fileId,
-                revisionId = revisionId,
-                progress = progress,
-            ).getOrThrow()
-        } else {
-            downloadFileLegacy(
-                volumeId = volumeId,
-                fileId = fileId,
-                revisionId = revisionId,
-                isCancelled = isCancelled,
-                progress = progress,
-            ).getOrThrow()
-        }
+        downloadFileSdk(
+            volumeId = volumeId,
+            fileId = fileId,
+            revisionId = revisionId,
+            progress = progress,
+        ).getOrThrow()
     }
 }

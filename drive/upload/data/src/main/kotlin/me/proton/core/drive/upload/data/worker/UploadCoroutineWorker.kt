@@ -34,9 +34,7 @@ import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
-import me.proton.core.drive.linkupload.domain.extension.isFileEmpty
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.upload.data.exception.UploadCleanupException
@@ -44,14 +42,11 @@ import me.proton.core.drive.upload.data.exception.UploadWorkerException
 import me.proton.core.drive.upload.data.extension.getDefaultMessage
 import me.proton.core.drive.upload.data.extension.log
 import me.proton.core.drive.upload.data.extension.toEventUploadReason
-import me.proton.core.drive.upload.data.extension.uniqueUploadWorkName
-import me.proton.core.drive.upload.data.provider.NetworkTypeProvider
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_ID
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.manager.post
 import me.proton.core.drive.upload.domain.provider.FileProvider
-import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.worker.data.LimitedRetryCoroutineWorker
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
@@ -69,7 +64,6 @@ abstract class UploadCoroutineWorker(
     private val getUploadFileLink: GetUploadFileLink,
     private val uploadErrorManager: UploadErrorManager,
     protected val configurationProvider: ConfigurationProvider,
-    protected val uploadMetricsNotifier: UploadMetricsNotifier,
     canRun: CanRun,
     run: Run,
     done: Done,
@@ -111,22 +105,12 @@ abstract class UploadCoroutineWorker(
         } catch (e: NoSuchElementException) {
             uploadFileLink?.run {
                 post(e)
-                uploadMetricsNotifier(
-                    uploadFileLink = this,
-                    isSuccess = false,
-                    throwable = e,
-                )
             }
             CoreLogger.d(logTag(), "Cannot find upload file link")
             Result.failure()
         } catch (e: Exception) {
             uploadFileLink?.run {
                 post(e)
-                uploadMetricsNotifier(
-                    uploadFileLink = this,
-                    isSuccess = false,
-                    throwable = e,
-                )
             }
             when (e) {
                 is UploadCleanupException,
@@ -204,36 +188,6 @@ abstract class UploadCoroutineWorker(
         CoreLogger.d(
             logTag(),
             "$workerName($runAttemptCount) $message: $uriString [$workerId]"
-        )
-    }
-
-    protected suspend fun recreateFile(
-        uploadFileLink: UploadFileLink,
-        cleanupWorkers: CleanupWorkers,
-        networkTypeProviders: Map<NetworkTypeProviderType, NetworkTypeProvider>,
-    ) {
-        val networkType =
-            requireNotNull(networkTypeProviders[uploadFileLink.networkTypeProviderType])
-                .get(uploadFileLink.parentLinkId)
-        when {
-            uploadFileLink.isFileEmpty
-            -> FileUploadFlow.EmptyFileFromScratch(
-                workManager,
-                userId,
-                uploadFileLink.id,
-                networkType,
-                cleanupWorkers,
-            )
-            else
-            -> FileUploadFlow.RecreateFileFlow(
-                workManager,
-                userId,
-                uploadFileLink.id,
-                networkType,
-            )
-        }.enqueueWork(
-            uploadTags = listOf(uploadFileLinkId.uniqueUploadWorkName),
-            uriString = requireNotNull(uploadFileLink.uriString),
         )
     }
 

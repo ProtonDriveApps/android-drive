@@ -52,10 +52,12 @@ import me.proton.core.drive.backup.domain.entity.BackupErrorType
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
 import me.proton.core.drive.backup.domain.usecase.AnnounceFolderStatus
+import me.proton.core.drive.backup.domain.usecase.CancelPeriodicSync
 import me.proton.core.drive.backup.domain.usecase.CheckAvailableSpace
 import me.proton.core.drive.backup.domain.usecase.MarkOrphanedEnqueuedFilesAsFailed
 import me.proton.core.drive.backup.domain.usecase.HasFolders
 import me.proton.core.drive.backup.domain.usecase.ObserveConfigurationChanges
+import me.proton.core.drive.backup.domain.usecase.SchedulePeriodicSync
 import me.proton.core.drive.backup.domain.usecase.StartBackupAfterErrorResolved
 import me.proton.core.drive.backup.domain.usecase.SyncStaleFolders
 import me.proton.core.drive.backup.domain.usecase.UnwatchFolders
@@ -116,6 +118,17 @@ class BackupInitializer : Initializer<Unit> {
                             }
                         }
                     }.launchIn(scope)
+                    hasFolders(userId).onEach { hasFolders ->
+                        if (hasFolders) {
+                            schedulePeriodicSync(userId).onFailure { error ->
+                                error.log(BACKUP, "Cannot schedule periodic sync")
+                            }
+                        } else {
+                            cancelPeriodicSync(userId).onFailure { error ->
+                                error.log(BACKUP, "Cannot cancel periodic sync")
+                            }
+                        }
+                    }.launchIn(scope)
 
                     observeConfigurationChanges(userId).launchIn(scope)
 
@@ -133,6 +146,7 @@ class BackupInitializer : Initializer<Unit> {
                 }
                 .onAccountRemoved { account ->
                     unwatchFolders(account.userId)
+                    cancelPeriodicSync(account.userId)
                     scopes.remove(account.userId)?.cancel()
                 }
         }
@@ -175,6 +189,8 @@ class BackupInitializer : Initializer<Unit> {
         val userManager: UserManager
         val watchFolders: WatchFolders
         val unwatchFolders: UnwatchFolders
+        val schedulePeriodicSync: SchedulePeriodicSync
+        val cancelPeriodicSync: CancelPeriodicSync
         val backupPermissionsManager: BackupPermissionsManager
         val startBackupAfterErrorResolved: StartBackupAfterErrorResolved
         val appLifecycleProvider: AppLifecycleProvider

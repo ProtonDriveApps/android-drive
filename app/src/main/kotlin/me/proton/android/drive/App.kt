@@ -24,6 +24,7 @@ import me.proton.android.drive.initializer.MainInitializer
 
 @HiltAndroidApp
 class App : Application() {
+
     override fun onCreate() {
         super.onCreate()
         MainInitializer.init(this)

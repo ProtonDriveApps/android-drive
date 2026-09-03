@@ -57,4 +57,5 @@ fun UploadFileLink.toLinkUploadEntity() =
         priority = priority,
         uploadCreationDateTime = uploadCreationDateTime?.value,
         shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
+        attempts = attempts,
     )

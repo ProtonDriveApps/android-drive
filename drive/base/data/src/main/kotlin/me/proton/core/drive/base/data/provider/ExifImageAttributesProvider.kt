@@ -53,7 +53,9 @@ class ExifImageAttributesProvider @Inject constructor(
                     ExifInterface(inputStream).run {
                         ImageAttributes(
                             cameraExifTags = cameraExifTags,
-                            creationDateTime = creationDateTimeOriginal ?: creationDateTimeDigitized ?: creationDateTime,
+                            creationDateTime = creationDateTimeOriginal
+                                ?: creationDateTimeDigitized
+                                ?: creationDateTime,
                             resolution = mediaResolution,
                             location = location,
                         )

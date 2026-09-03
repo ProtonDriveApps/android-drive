@@ -46,7 +46,6 @@ import me.proton.android.drive.ui.viewmodel.ScanDocumentViewModel
 import me.proton.android.drive.ui.viewmodel.ShareInvitationOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.ShareMemberOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.ShareMultiplePhotosOptionsViewModel
-import me.proton.android.drive.ui.viewmodel.SubscriptionPromoViewModel
 import me.proton.android.drive.ui.viewmodel.UploadToViewModel
 import me.proton.android.drive.ui.viewmodel.UserInvitationViewModel
 import me.proton.android.drive.ui.viewmodel.WhatsNewViewModel
@@ -89,6 +88,10 @@ sealed class Screen(val route: String) {
 
         const val USER_ID = Screen.USER_ID
     }
+
+    // UFC subscription screen. Static route: SubscriptionManagementViewModel resolves the primary
+    // user internally, so no userId argument is needed.
+    data object Subscription : Screen("subscription")
 
     data object Home : Screen("home/{userId}?tab={tab}") {
         operator fun invoke(userId: UserId, tab: String? = null) = buildString {
@@ -916,12 +919,8 @@ sealed class Screen(val route: String) {
             }
     }
     data object Promo {
-        data object Subscription : Screen("home/{userId}/promo/subscription?key={key}"){
-            operator fun invoke(userId: UserId, key: String) = "home/${userId.id}/promo/subscription?key=$key"
-            const val PROMO_KEY = SubscriptionPromoViewModel.PROMO_KEY
-        }
-        data object SummerSale2026 : Screen("promo/{userId}/summerSale2026") {
-            operator fun invoke(userId: UserId) = "promo/${userId.id}/summerSale2026"
+        data object Q3Campaign2026 : Screen("promo/{userId}/q3Campaign2026") {
+            operator fun invoke(userId: UserId) = "promo/${userId.id}/q3Campaign2026"
             const val USER_ID = Screen.USER_ID
         }
         data object Upsell : Screen("promo/{userId}/upsell"){

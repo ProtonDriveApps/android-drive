@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">文件内容预览</string>
-  <string name="content_description_more_options">显示文件的更多选项</string>
+  <string name="content_description_more_options">Show more options for the file</string>
   <string name="preview_downloading_state">下载中…</string>
   <string name="preview_processing_state">处理中…</string>
   <string name="preview_empty">没什么可预览的…</string>

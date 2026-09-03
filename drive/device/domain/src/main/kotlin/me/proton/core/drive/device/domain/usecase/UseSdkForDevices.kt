@@ -19,7 +19,6 @@
 package me.proton.core.drive.device.domain.usecase
 
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidSDKDevices
 import me.proton.core.drive.feature.flag.domain.extension.on
@@ -27,10 +26,9 @@ import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
 import javax.inject.Inject
 
 class UseSdkForDevices @Inject constructor(
-    private val configurationProvider: ConfigurationProvider,
     private val getFeatureFlag: GetFeatureFlag,
 ) {
     suspend operator fun invoke(userId: UserId) = coRunCatching {
-        configurationProvider.preferSdkForDevices && getFeatureFlag(driveAndroidSDKDevices(userId)).on
+        getFeatureFlag(driveAndroidSDKDevices(userId)).on
     }
 }

@@ -19,7 +19,6 @@
 package me.proton.android.drive.initializer
 
 import android.content.Context
-import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.coroutineScope
 import androidx.startup.Initializer
 import dagger.hilt.EntryPoint
@@ -38,18 +37,14 @@ import me.proton.core.accountmanager.presentation.observe
 import me.proton.core.accountmanager.presentation.onAccountReady
 import me.proton.core.accountmanager.presentation.onAccountRemoved
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.data.datastore.GetUserDataStore
 import me.proton.core.drive.base.data.entity.LoggerLevel
-import me.proton.core.drive.base.data.extension.get
 import me.proton.core.drive.base.data.extension.log
-import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.LogTag.TRACKING
 import me.proton.core.drive.base.domain.usecase.GetDownloadStagingTempFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.download.domain.handler.DownloadErrorHandler
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadErrorManager
-import me.proton.core.drive.drivelink.download.domain.manager.DownloadWorkManager
 import me.proton.core.drive.linkdownload.domain.manager.DownloadSpeedManager
 import me.proton.core.drive.linkdownload.domain.usecase.IsDownloading
 import me.proton.core.presentation.app.AppLifecycleProvider
@@ -80,7 +75,6 @@ class DownloadInitializer : Initializer<Unit> {
                         CoroutineScope(Dispatchers.IO + Job())
                     }
                     deleteTempFolder(userId, scope)
-                    cancelWorkManagerDownloads(userId, scope)
                     isDownloading(userId).onEach { downloading ->
                         if (downloading) {
                             CoreLogger.v(TRACKING, "Resuming, downloading files")
@@ -113,18 +107,6 @@ class DownloadInitializer : Initializer<Unit> {
         }
     }
 
-    private fun DownloadInitializerEntryPoint.cancelWorkManagerDownloads(
-        userId: UserId,
-        coroutineScope: CoroutineScope,
-    ) {
-        coroutineScope.launch {
-            if (wasDownloadWorkManagerCancelled(userId).not()) {
-                downloadWorkManager.cancelAll(userId)
-                setDownloadWorkManagerAsCancelled(userId)
-            }
-        }
-    }
-
     private fun DownloadInitializerEntryPoint.deleteTempFolder(
         userId: UserId,
         coroutineScope: CoroutineScope,
@@ -138,21 +120,6 @@ class DownloadInitializer : Initializer<Unit> {
         }
     }
 
-    private suspend fun DownloadInitializerEntryPoint.wasDownloadWorkManagerCancelled(
-        userId: UserId,
-    ): Boolean = getUserDataStore(userId)
-        .get(GetUserDataStore.Keys.downloadWorkManagerCancelledAll)
-        ?: false
-
-    private suspend fun DownloadInitializerEntryPoint.setDownloadWorkManagerAsCancelled(
-        userId: UserId,
-    ) {
-        getUserDataStore(userId)
-            .edit { preferences ->
-                preferences[GetUserDataStore.Keys.downloadWorkManagerCancelledAll] = true
-            }
-    }
-
     @EntryPoint
     @InstallIn(SingletonComponent::class)
     interface DownloadInitializerEntryPoint {
@@ -162,8 +129,6 @@ class DownloadInitializer : Initializer<Unit> {
         val downloadSpeedManager: DownloadSpeedManager
         val isDownloading: IsDownloading
         val downloadErrorHandlers: @JvmSuppressWildcards Set<DownloadErrorHandler>
-        val downloadWorkManager: DownloadWorkManager
-        val getUserDataStore: GetUserDataStore
         val getDownloadStagingTempFolder: GetDownloadStagingTempFolder
     }
 }

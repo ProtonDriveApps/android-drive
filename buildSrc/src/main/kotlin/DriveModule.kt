@@ -250,7 +250,7 @@ val Project.tags get() = "1.0.0-alpha01\n1.0.0_cancelled(16)\n1.0.0_cancelled(18
 
 val Project.versionCodeFromTags: Int get() = tags.countSubstrings("\n") + 2 // last new line + next tag
 
-val Project.gitCommitCount: String get() = "4516"//"git rev-list --count HEAD".runCommand(rootDir)
+val Project.gitCommitCount: String get() = "git rev-list --count HEAD".runCommand(rootDir)
 
 val Project.versionCodeFromGitCommitCount: Int get() = gitCommitCount.toInt()
 

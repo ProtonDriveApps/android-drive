@@ -39,6 +39,8 @@ import me.proton.core.drive.base.domain.entity.MediaResolution
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.util.coRunCatching
 import java.text.SimpleDateFormat
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -95,8 +97,12 @@ private fun ExifInterface.getDate(tagDateTime: String, tagOffsetTime: String) =
                 }
                 .parse(dateTime)?.let { date ->
                     utcOffsetTime(date, tagOffsetTime)
-                }?.takeIf { date -> date.value >= 0 } // avoiding negative value
+                }?.takeIf { date -> date.value in TIMESTAMP_RANGE } // validate values
         }
+
+private const val TIMESTAMP_MIN = -6847804800 // 1753
+private val TIMESTAMP_MAX = ZonedDateTime.now(ZoneOffset.UTC).plusYears(1).toEpochSecond()
+private val TIMESTAMP_RANGE = TIMESTAMP_MIN..TIMESTAMP_MAX
 
 fun ExifInterface.utcOffsetTime(date: Date, key: String): TimestampS {
     val (hour, minute) = getAttribute(key)?.let { utcOffset ->

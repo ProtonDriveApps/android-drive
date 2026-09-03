@@ -52,10 +52,10 @@ class DownloadSpeedManager @Inject constructor(
         }
     }
 
-    suspend fun pause(userId: UserId, usedSdk: Boolean = true) {
+    suspend fun pause(userId: UserId) {
         mutex.withLock {
             if (bytesPerMinutes > 0) {
-                checkTime(userId, usedSdk, THRESHOLD)
+                checkTime(userId, THRESHOLD)
             }
             stopWatch.stop()
         }
@@ -63,17 +63,16 @@ class DownloadSpeedManager @Inject constructor(
 
     fun isRunning() = stopWatch.isRunning()
 
-    suspend fun add(userId: UserId, usedSdk: Boolean, value: Long) {
+    suspend fun add(userId: UserId, value: Long) {
         mutex.withLock {
             bytesPerMinutes += value
             stopWatch.start()
-            checkTime(userId, usedSdk)
+            checkTime(userId)
         }
     }
 
     private fun checkTime(
         userId: UserId,
-        usedSdk: Boolean,
         clockElapsedTime: Long = minuteWatch.getElapsedTimeInMs(),
     ) {
         if (clockElapsedTime >= THRESHOLD) {
@@ -84,7 +83,7 @@ class DownloadSpeedManager @Inject constructor(
             if (stopWatch.isRunning()) {
                 val stopElapsedTime = stopWatch.getElapsedTimeInMs()
                 if (stopElapsedTime < MAX_LIMIT) {
-                    announceSpeed(userId, usedSdk, stopElapsedTime)
+                    announceSpeed(userId, stopElapsedTime)
                 } else {
                     CoreLogger.d(
                         TRACKING,
@@ -101,13 +100,12 @@ class DownloadSpeedManager @Inject constructor(
 
     private fun Long.toSeconds() = this.toFloat() / 1000
 
-    private fun announceSpeed(userId: UserId, usedSdk: Boolean, elapsedTimeInMs: Long) {
+    private fun announceSpeed(userId: UserId, elapsedTimeInMs: Long) {
         if (elapsedTimeInMs != 0L) {
             asyncAnnounceEventProvider.get().invoke(
                 userId, Event.DownloadSpeed(
                     bytes = bytesPerMinutes.bytes,
                     elapsedTime = TimestampMs(elapsedTimeInMs),
-                    usedSdk = usedSdk,
                 )
             )
         }

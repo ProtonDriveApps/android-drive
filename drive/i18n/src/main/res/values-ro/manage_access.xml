@@ -18,10 +18,30 @@
   -->
 <resources>
   <string name="title_manage_access">Gestionare acces</string>
+  <string name="manage_access_who_has_access">Cine are acces</string>
+  <!--
+        Variable %1$s is a name or email
+        Example:
+            "Jack Frost (you)"
+            "jack.frost@example.com (you)"
+    -->
+  <string name="manage_access_current_user">%1$s (eu)</string>
   <string name="manage_access_share_with_anyone">Partajare cu oricine</string>
+  <string name="manage_access_allow_editors_to_share_title">Accesare</string>
+  <string name="manage_access_allow_editors_to_share_description">Permiteți editorilor să modifice permisiunile și să partajeze.</string>
   <string name="manage_access_link_settings_action">Setări legătură web</string>
   <string name="manage_access_link_description_public">Oricine cu această legătură web</string>
   <string name="manage_access_link_description_password_protected">Oricine cu această legătură web și cu parolă</string>
   <string name="manage_access_link_default_permission">Poate vedea</string>
   <string name="manage_access_link_editor_permission">Poate edita</string>
+  <string name="manage_access_change_access_to_viewer_title">Modificați accesul la doar vizualizare?</string>
+  <!--
+        Variable %1$s is a file or folder name
+        Example:
+            You won’t be able to share "Some folder" after changing your access to viewer. The owner or an editor with sharing access can restore your edit access. You can’t undo this change yourself.
+    -->
+  <string name="manage_access_change_access_to_viewer_description">"Nu veți putea partaja „%1$s” după ce vă schimbați accesul la doar vizualizare. Proprietarul sau un editor cu acces de partajare vă poate restabili accesul de editare. Nu puteți anula această modificare personal."</string>
+  <string name="manage_access_change_access_to_viewer_action">Modifică-mi accesul</string>
+  <string name="manage_access_new_editor_permissions_title">Permisiuni noi editori</string>
+  <string name="manage_access_new_editor_permissions_description">Editorii pot gestiona acum partajarea și pot invita alte persoane. Puteți dezactiva oricând această opțiune.</string>
 </resources>

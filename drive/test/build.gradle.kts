@@ -29,6 +29,9 @@ android {
     defaultConfig {
         minSdk = Config.minSdk
         compileSdk = Config.compileSdk
+        // The drive SDK exposes a "crypto" flavor dimension (go/rust) that this
+        // module doesn't declare, so pick the "go" variant by default.
+        missingDimensionStrategy("crypto", "go")
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

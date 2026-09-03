@@ -18,8 +18,11 @@
 
 package me.proton.core.drive.photo.domain.usecase
 
+import me.proton.core.drive.base.domain.api.ProtonApiCode.NOT_EXISTS
+import me.proton.core.drive.base.domain.extension.hasThrowableOrCauseProtonErrorCode
 import me.proton.core.drive.base.domain.log.LogTag.PHOTO
 import me.proton.core.drive.base.domain.log.logId
+import me.proton.core.drive.base.domain.usecase.ReportError
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.photo.domain.entity.TagsMigrationFile.State.IDLE
@@ -32,6 +35,8 @@ class TagsMigrationUpdateTags @Inject constructor(
     private val updateTagsMigrationFileState: UpdateTagsMigrationFileState,
     private val getTagsMigrationFileTags: GetTagsMigrationFileTags,
     private val addPhotoTag: AddPhotoTag,
+    private val removeTagsMigrationFile: RemoveTagsMigrationFile,
+    private val reportError: ReportError
 ) {
     suspend operator fun invoke(volumeId: VolumeId, fileId: FileId) = coRunCatching {
         val tags = getTagsMigrationFileTags(volumeId, fileId).getOrThrow()
@@ -42,7 +47,13 @@ class TagsMigrationUpdateTags @Inject constructor(
         }
         updateTagsMigrationFileState(volumeId, fileId, UPDATED).getOrThrow()
     }.recoverCatching { error ->
-        updateTagsMigrationFileState(volumeId, fileId, IDLE)
-        throw error
+        if (error.hasThrowableOrCauseProtonErrorCode(NOT_EXISTS)) {
+            reportError(PHOTO, error, "File not found during migration")
+            removeTagsMigrationFile(fileId).getOrThrow()
+            null
+        } else {
+            updateTagsMigrationFileState(volumeId, fileId, IDLE)
+            throw error
+        }
     }
 }

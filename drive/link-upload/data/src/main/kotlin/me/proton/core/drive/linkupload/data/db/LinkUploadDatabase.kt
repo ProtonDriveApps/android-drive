@@ -249,5 +249,15 @@ interface LinkUploadDatabase : Database {
                 )
             }
         }
+
+        val MIGRATION_9 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                        ALTER TABLE `LinkUploadEntity` ADD COLUMN ${Column.ATTEMPTS} INTEGER NOT NULL DEFAULT 0
+                    """.trimIndent()
+                )
+            }
+        }
     }
 }

@@ -18,6 +18,7 @@
 
 package me.proton.core.drive.backup.data.manager
 
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import androidx.work.await
@@ -30,6 +31,7 @@ import me.proton.core.drive.backup.data.worker.BackupCleanRevisionsWorker
 import me.proton.core.drive.backup.data.worker.BackupEnabledWorker
 import me.proton.core.drive.backup.data.worker.BackupFileWatcherWorker
 import me.proton.core.drive.backup.data.worker.BackupFindDuplicatesWorker
+import me.proton.core.drive.backup.data.worker.BackupPeriodicSyncWorker
 import me.proton.core.drive.backup.data.worker.BackupNotificationWorker
 import me.proton.core.drive.backup.data.worker.BackupScanFolderWorker
 import me.proton.core.drive.backup.data.worker.BackupScheduleUploadFolderWorker
@@ -155,6 +157,20 @@ class BackupManagerImpl @Inject constructor(
     override suspend fun unwatchFolders(userId: UserId) {
         CoreLogger.d(BACKUP, "Unwatch folders for $userId")
         workManager.cancelUniqueWork(BackupFileWatcherWorker.uniqueWorkName(userId)).await()
+    }
+
+    override suspend fun schedulePeriodicSync(userId: UserId) {
+        CoreLogger.d(BACKUP, "Schedule periodic sync for $userId")
+        workManager.enqueueUniquePeriodicWork(
+            BackupPeriodicSyncWorker.uniqueWorkName(userId),
+            ExistingPeriodicWorkPolicy.UPDATE,
+            BackupPeriodicSyncWorker.getWorkRequest(userId),
+        ).await()
+    }
+
+    override suspend fun cancelPeriodicSync(userId: UserId) {
+        CoreLogger.d(BACKUP, "Cancel periodic sync for $userId")
+        workManager.cancelUniqueWork(BackupPeriodicSyncWorker.uniqueWorkName(userId)).await()
     }
 
     override fun isEnabled(folderId: FolderId): Flow<Boolean> = hasFolders(folderId)

@@ -26,6 +26,7 @@ android {
 
 driveModule(
     hilt = true,
+    socialTest = true,
 ) {
     api(project(":drive:upload:domain"))
     testImplementation(project(":drive:db-test"))

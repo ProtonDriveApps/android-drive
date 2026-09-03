@@ -24,7 +24,6 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import androidx.work.await
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
@@ -34,14 +33,11 @@ import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
-import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag.UPLOAD
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.drivelink.domain.usecase.UseSdkForUpload
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
-import me.proton.core.drive.linkupload.domain.extension.isFileEmpty
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
 import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.data.extension.uniqueUploadWorkName
@@ -58,23 +54,19 @@ class UploadThrottleWorker @AssistedInject constructor(
     private val getNextUploadFileLinks: GetNextUploadFileLinks,
     private val networkTypeProviders: @JvmSuppressWildcards Map<NetworkTypeProviderType, NetworkTypeProvider>,
     private val cleanupWorkers: CleanupWorkers,
-    private val useSdkForUpload: UseSdkForUpload,
 ) : CoroutineWorker(appContext, workerParams) {
     private val userId =
         UserId(requireNotNull(inputData.getString(WorkerKeys.KEY_USER_ID)) { "User id is required" })
 
     override suspend fun doWork(): Result = coRunCatching {
         getNextUploadFileLinks(userId).getOrThrow().also { uploadFileLinks ->
-            CoreLogger.d(UPLOAD, "UploadThrottleWorker($runAttemptCount) upload ${uploadFileLinks.size} files")
+            CoreLogger.d(
+                UPLOAD,
+                "UploadThrottleWorker($runAttemptCount) upload ${uploadFileLinks.size} files"
+            )
         }.forEach { uploadFileLink ->
             if (uploadFileLink.isNotEnqueued()) {
-                val useSdk = useSdkForUpload(uploadFileLink.parentLinkId)
-                    .getOrNull(UPLOAD, "Cannot check for sdk usage")
-                if (useSdk == true) {
-                    uploadFileLink.enqueueWithSdk()
-                } else {
-                    uploadFileLink.enqueue(userId).await()
-                }
+                uploadFileLink.enqueueWithSdk()
                 updateUploadState(uploadFileLink.id, UploadState.IDLE)
                 CoreLogger.d(
                     tag = uploadFileLink.logTag(),
@@ -135,56 +127,6 @@ class UploadThrottleWorker @AssistedInject constructor(
             .getWorkInfosByTagFlow(id.uniqueUploadWorkName).first()
         return workInfos.none { workInfo -> !workInfo.state.isFinished }
     }
-
-    private suspend fun UploadFileLink.enqueue(
-        userId: UserId,
-    ) = requireNotNull(networkTypeProviders[networkTypeProviderType])
-        .get(parentLinkId)
-        .let { networkType ->
-            val isFileAlreadyCreated = draftRevisionId.isNotEmpty()
-            when {
-                isFileAlreadyCreated && isFileEmpty
-                    -> FileUploadFlow.EmptyFileAlreadyCreated(
-                    workManager = workManager,
-                    userId = userId,
-                    uploadFileLinkId = id,
-                    networkType = networkType,
-                    cleanupWorkers = cleanupWorkers,
-                )
-
-                isFileAlreadyCreated
-                    -> FileUploadFlow.FileAlreadyCreated(
-                    workManager = workManager,
-                    userId = userId,
-                    uploadFileLinkId = id,
-                    shouldDeleteSource = shouldDeleteSourceUri,
-                    networkType = networkType,
-                )
-
-                !isFileAlreadyCreated && isFileEmpty
-                    -> FileUploadFlow.EmptyFileFromScratch(
-                    workManager = workManager,
-                    userId = userId,
-                    uploadFileLinkId = id,
-                    networkType = networkType,
-                    cleanupWorkers = cleanupWorkers,
-                )
-
-                !isFileAlreadyCreated
-                    -> FileUploadFlow.FromScratch(
-                    workManager = workManager,
-                    userId = userId,
-                    uploadFileLinkId = id,
-                    shouldDeleteSource = shouldDeleteSourceUri,
-                    networkType = networkType,
-                )
-
-                else -> error("Unhandled file upload flow ")
-            }.enqueueWork(
-                uploadTags = listOf(id.uniqueUploadWorkName),
-                uriString = requireNotNull(uriString),
-            )
-        }
 
     companion object {
         fun getWorkRequest(

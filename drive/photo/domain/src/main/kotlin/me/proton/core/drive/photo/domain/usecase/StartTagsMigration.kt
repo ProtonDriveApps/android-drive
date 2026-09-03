@@ -21,8 +21,11 @@ package me.proton.core.drive.photo.domain.usecase
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.entity.ClientUid
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.base.domain.extension.getOrNull
+import me.proton.core.drive.base.domain.extension.hasThrowableOrCauseProtonErrorCode
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.PHOTO
 import me.proton.core.drive.base.domain.log.logId
@@ -33,6 +36,7 @@ import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.d
 import me.proton.core.drive.feature.flag.domain.extension.on
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
 import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.photo.domain.entity.TagsMigrationAnchor
 import me.proton.core.drive.photo.domain.entity.TagsMigrationFile
 import me.proton.core.drive.photo.domain.entity.TagsMigrationStatus
@@ -55,6 +59,8 @@ class StartTagsMigration @Inject constructor(
     private val updateTagsMigrationStatus: UpdateTagsMigrationStatus,
     private val workManager: PhotoTagWorkManager,
     private val getVolume: GetVolume,
+    private val removeTagsMigrationFile: RemoveTagsMigrationFile,
+    private val removeAllTagsMigrationFile: RemoveAllTagsMigrationFile,
 ) {
     suspend operator fun invoke(userId: UserId, volumeId: VolumeId) = coRunCatching {
         if (getFeatureFlag(drivePhotosTagsMigrationDisabled(userId)).on) {
@@ -77,25 +83,7 @@ class StartTagsMigration @Inject constructor(
             return@coRunCatching
         }
 
-        val photoListings = fetchAllPhotoListings(
-            userId = userId,
-            volumeId = volumeId,
-            pageSize = configurationProvider.apiListingPageSize,
-            linkId = (getOldestTagsMigrationFile(
-                userId = userId,
-                volumeId = volumeId,
-                state = TagsMigrationFile.State.IDLE,
-            ).firstOrNull()?.fileId ?: statusAnchor?.lastProcessedLinkId)
-        ).getOrThrow().let { photoListings ->
-            val lastProcessedCaptureTime = statusAnchor?.lastProcessedCaptureTime
-            if (lastProcessedCaptureTime != null) {
-                photoListings.filter { photoListing ->
-                    photoListing.captureTime < lastProcessedCaptureTime
-                }
-            } else {
-                photoListings
-            }
-        }
+        val photoListings = fetchAllPhotoListings(userId, volumeId, statusAnchor)
         if (photoListings.isEmpty()) {
             CoreLogger.i(PHOTO, "No files to migrate for volume: ${volumeId.id.logId()}")
             val statistics = getTagsMigrationStatistics(userId, volumeId).first()
@@ -132,6 +120,61 @@ class StartTagsMigration @Inject constructor(
             )
         }).getOrThrow()
         workManager.enqueue(userId, volumeId)
+    }
+
+    private suspend fun fetchAllPhotoListings(
+        userId: UserId,
+        volumeId: VolumeId,
+        statusAnchor: TagsMigrationAnchor? = null,
+    ): List<PhotoListing> {
+        var maxRetries = 3
+        while (true) {
+            val oldestIdleFile = getOldestTagsMigrationFile(
+                userId = userId,
+                volumeId = volumeId,
+                state = TagsMigrationFile.State.IDLE,
+            ).firstOrNull()?.fileId
+            fetchAllPhotoListings(
+                userId = userId,
+                volumeId = volumeId,
+                pageSize = configurationProvider.apiListingPageSize,
+                linkId = (oldestIdleFile ?: statusAnchor?.lastProcessedLinkId)
+            ).fold(
+                onSuccess = { photoListings ->
+                    val lastProcessedCaptureTime = statusAnchor?.lastProcessedCaptureTime
+                    return if (lastProcessedCaptureTime != null) {
+                        photoListings.filter { photoListing ->
+                            photoListing.captureTime < lastProcessedCaptureTime
+                        }
+                    } else {
+                        photoListings
+                    }
+                },
+                onFailure = { error ->
+                    if (error.hasThrowableOrCauseProtonErrorCode(ProtonApiCode.NOT_EXISTS) &&
+                        oldestIdleFile != null) {
+                        if (maxRetries-- <= 0) {
+                            removeAllTagsMigrationFile(
+                                userId = userId,
+                                volumeId = volumeId,
+                                state = TagsMigrationFile.State.IDLE,
+                            ).getOrNull(
+                                tag = PHOTO,
+                                message = "Failed to remove all IDLE tags migration files",
+                            )
+                            throw error
+                        }
+                        removeTagsMigrationFile(oldestIdleFile)
+                            .getOrNull(
+                                tag = PHOTO,
+                                message = "Failed to remove tags migration file",
+                            )
+                        continue
+                    }
+                    throw error
+                }
+            )
+        }
     }
 
     private suspend fun TagsMigrationAnchor?.createAnchor(

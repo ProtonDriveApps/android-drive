@@ -56,13 +56,12 @@ class GetUserDataStore @Inject constructor(
         private const val KEY_CREATE_DOCUMENT_ACTION_INVOKED = "create_document_action_invoked"
         private const val KEY_NOTIFICATION_PERMISSION_RATIONALE_REJECTED = "notification_permission_rationale_rejected"
         private const val KEY_NEW_ALBUM_NAME = "new_album_name"
-        private const val KEY_SUBSCRIPTION_LAST_UPDATE = "subscription_last_update_"
         private const val KEY_PHOTOS_MIGRATION_TAGS_LAST_FINISHED_UPDATE = "key_photos_migration_tags_last_finished_update"
         private const val KEY_DOWNLOAD_WORK_MANAGER_CANCELLED_ALL = "key_download_work_manager_cancelled_all"
         private const val KEY_UPLOAD_FOLDER_ACTION_INVOKED = "upload_folder_action_invoked"
         private const val KEY_SCAN_DOCUMENT_ACTION_INVOKED = "scan_document_action_invoked"
         private const val KEY_SPRING_SALE_PROMO_2026_LAST_SHOWN = "spring_sale_promo_2026_last_shown"
-        private const val KEY_SUMMER_SALE_PROMO_2026_LAST_SHOWN = "summer_sale_promo_2026_last_shown"
+        private const val KEY_Q3_CAMPAIGN_PROMO_2026_LAST_SHOWN = "q3_campaign_promo_2026_last_shown"
         private const val KEY_NEW_EDITOR_PERMISSIONS_DISMISSED = "new_editor_permissions_dismissed"
         private const val KEY_NEW_EDITOR_PERMISSIONS_FIRST_SHOWN = "new_editor_permissions_first_shown"
     }
@@ -74,11 +73,9 @@ class GetUserDataStore @Inject constructor(
             KEY_NOTIFICATION_PERMISSION_RATIONALE_REJECTED
         )
         val newAlbumName get() = stringPreferencesKey(KEY_NEW_ALBUM_NAME)
-        fun subscriptionLastUpdate(name: String) = longPreferencesKey(KEY_SUBSCRIPTION_LAST_UPDATE + name)
         val photosMigrationTagsLastFinishedUpdate get() = longPreferencesKey(KEY_PHOTOS_MIGRATION_TAGS_LAST_FINISHED_UPDATE)
-        val downloadWorkManagerCancelledAll get() = booleanPreferencesKey(KEY_DOWNLOAD_WORK_MANAGER_CANCELLED_ALL)
         val scanDocumentActionInvoked get() = booleanPreferencesKey(KEY_SCAN_DOCUMENT_ACTION_INVOKED)
-        val summerSalePromo2026LastShown get() = longPreferencesKey(KEY_SUMMER_SALE_PROMO_2026_LAST_SHOWN)
+        val q3CampaignPromo2026LastShown get() = longPreferencesKey(KEY_Q3_CAMPAIGN_PROMO_2026_LAST_SHOWN)
         val newEditorPermissionsDismissed get() = booleanPreferencesKey(KEY_NEW_EDITOR_PERMISSIONS_DISMISSED)
         val newEditorPermissionsFirstShown get() = longPreferencesKey(KEY_NEW_EDITOR_PERMISSIONS_FIRST_SHOWN)
     }

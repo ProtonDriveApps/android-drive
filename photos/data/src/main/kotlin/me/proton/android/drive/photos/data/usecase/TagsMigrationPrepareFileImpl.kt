@@ -18,8 +18,11 @@
 
 package me.proton.android.drive.photos.data.usecase
 
+import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.api.ProtonApiCode.NOT_EXISTS
 import me.proton.core.drive.base.domain.entity.FileTypeCategory
 import me.proton.core.drive.base.domain.entity.toFileTypeCategory
+import me.proton.core.drive.base.domain.extension.hasThrowableOrCauseProtonErrorCode
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.PHOTO
 import me.proton.core.drive.base.domain.log.logId
@@ -32,6 +35,7 @@ import me.proton.core.drive.photo.domain.entity.TagsMigrationFile.State.DOWNLOAD
 import me.proton.core.drive.photo.domain.entity.TagsMigrationFile.State.IDLE
 import me.proton.core.drive.photo.domain.entity.TagsMigrationFile.State.PREPARED
 import me.proton.core.drive.photo.domain.manager.PhotoTagWorkManager
+import me.proton.core.drive.photo.domain.usecase.RemoveTagsMigrationFile
 import me.proton.core.drive.photo.domain.usecase.TagsMigrationPrepareFile
 import me.proton.core.drive.photo.domain.usecase.UpdateTagsMigrationFileState
 import me.proton.core.drive.photo.domain.usecase.UpdateTagsMigrationFileUri
@@ -44,6 +48,7 @@ class TagsMigrationPrepareFileImpl @Inject constructor(
     private val updateTagsMigrationFileState: UpdateTagsMigrationFileState,
     private val findLocalFile: FindLocalFile,
     private val getLink: GetLink,
+    private val removeTagsMigrationFile: RemoveTagsMigrationFile,
     private val updateMimeType: UpdateTagsMigrationMimeType,
     private val updateUri: UpdateTagsMigrationFileUri,
     private val getDownloadState: GetDownloadState,
@@ -54,9 +59,9 @@ class TagsMigrationPrepareFileImpl @Inject constructor(
         fileId: FileId,
         startTagging: Boolean
     ): Result<String?> = coRunCatching {
-        val mimeType = getLink(fileId).toResult().getOrNull()?.mimeType
+        val mimeType = getLink(fileId).toResult().getOrThrow().mimeType
         updateMimeType(volumeId, fileId, mimeType).getOrThrow()
-        val typeCategory = mimeType?.toFileTypeCategory()
+        val typeCategory = mimeType.toFileTypeCategory()
 
         if (typeCategory != FileTypeCategory.Image) {
             CoreLogger.d(
@@ -96,8 +101,14 @@ class TagsMigrationPrepareFileImpl @Inject constructor(
         }
         null
     }.recoverCatching { error ->
-        updateTagsMigrationFileState(volumeId, fileId, IDLE)
-        throw error
+        if (error.hasThrowableOrCauseProtonErrorCode(NOT_EXISTS)) {
+            error.log(PHOTO, "File not found during migration")
+            removeTagsMigrationFile(fileId).getOrThrow()
+            null
+        } else {
+            updateTagsMigrationFileState(volumeId, fileId, IDLE)
+            throw error
+        }
     }
 
     private suspend fun TagsMigrationPrepareFileImpl.skipDownload(

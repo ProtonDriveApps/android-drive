@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Proton AG.
+ * Copyright (c) 2026 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -18,59 +18,47 @@
 
 package me.proton.android.drive.usecase
 
-import android.content.Context
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.last
-import me.proton.core.drive.base.data.extension.getDefaultMessage
-import me.proton.core.drive.base.data.extension.log
-import me.proton.core.drive.base.domain.extension.toResult
-import me.proton.core.drive.base.domain.log.LogTag
-import me.proton.core.drive.base.domain.log.logId
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.base.domain.extension.getOrNull
+import me.proton.core.drive.base.domain.log.LogTag.SHARING
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
-import me.proton.core.drive.drivelink.shared.domain.extension.sharingDetails
-import me.proton.core.drive.link.domain.extension.shareId
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidSDKLeaveSharedNode
+import me.proton.core.drive.feature.flag.domain.extension.on
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
+import me.proton.core.drive.link.domain.extension.nodeUid
 import me.proton.core.drive.link.domain.extension.userId
-import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
-import me.proton.core.drive.share.user.domain.usecase.LeaveShare
-import me.proton.core.util.kotlin.CoreLogger
+import me.proton.core.drive.share.domain.usecase.DeleteShare
+import me.proton.core.drive.share.user.domain.usecase.DeleteLocalSharedWithMe
+import me.proton.core.drive.volume.domain.extension.volumeId
 import javax.inject.Inject
 
 class LeaveShare @Inject constructor(
-    @ApplicationContext private val appContext: Context,
-    private val leaveShare: LeaveShare,
-    private val broadcastMessages: BroadcastMessages,
-    private val configurationProvider: ConfigurationProvider,
+    private val leaveShareLegacy: LeaveShareLegacy,
+    private val leaveShareSdk: LeaveShareSdk,
+    private val getFeatureFlag: GetFeatureFlag,
+    private val deleteShare: DeleteShare,
+    private val deleteLocalSharedWithMe: DeleteLocalSharedWithMe,
 ) {
 
     suspend operator fun invoke(driveLink: DriveLink): Result<Boolean> = coRunCatching {
-        val shareId = driveLink.sharingDetails?.shareId
-        val memberId = driveLink.shareUser?.id
-        if (shareId != null && memberId != null && shareId == driveLink.shareId) {
-            leaveShare(driveLink.volumeId, driveLink.id, memberId).last().toResult()
-                .onFailure { error ->
-                    error.log(LogTag.SHARING, "Cannot leave share")
-                    broadcastMessages(
-                        userId = driveLink.userId,
-                        message = error.getDefaultMessage(
-                            appContext,
-                            configurationProvider.useExceptionMessage
-                        ),
-                        type = BroadcastMessage.Type.ERROR
-                    )
-                }.getOrThrow()
-            true
+        if (getFeatureFlag(driveAndroidSDKLeaveSharedNode(driveLink.userId)).on) {
+            leaveShareSdk(
+                userId = driveLink.userId,
+                nodeUid = driveLink.id.nodeUid(driveLink.volumeId),
+            ).onSuccess { successful ->
+                if (successful) {
+                    deleteShare(
+                        shareId = driveLink.id.shareId,
+                        locallyOnly = true
+                    ).getOrNull(SHARING, "Cannot remove local share")
+                    deleteLocalSharedWithMe(
+                        volumeId = driveLink.volumeId,
+                        linkId = driveLink.id,
+                    ).getOrNull(SHARING, "Cannot remove local shared with me listing")
+                }
+            }.getOrThrow()
         } else {
-            CoreLogger.w(
-                tag = LogTag.SHARING,
-                message = """
-                    Skipping leave share (DriveLink.shareId=${driveLink.shareId.id.logId()},
-                    SharingDetails.shareId=${shareId?.id?.logId()}, memberId=${memberId?.logId()})
-                """.trimIndent(),
-            )
-            false
+            leaveShareLegacy(driveLink).getOrThrow()
         }
     }
 }

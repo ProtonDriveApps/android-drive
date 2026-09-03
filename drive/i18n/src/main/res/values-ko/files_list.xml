@@ -62,9 +62,9 @@
   <string name="files_confirm_empty_trash_title">휴지통을 비우시겠습니까?</string>
   <string name="files_confirm_empty_trash_message">휴지통의 항목이 즉시 지워집니다. 이 동작을 취소할 수 없습니다.</string>
   <string name="files_confirm_empty_trash_confirm_action">휴지통 비우기</string>
-  <string name="files_confirm_remove_all_offline_title">Remove all from offline?</string>
-  <string name="files_confirm_remove_all_offline_message">Files will no longer be available offline.</string>
-  <string name="files_confirm_remove_all_offline_confirm_action">Remove all</string>
+  <string name="files_confirm_remove_all_offline_title">모든 오프라인에서 사용 가능한 파일을 삭제합니까?</string>
+  <string name="files_confirm_remove_all_offline_message">더 이상 오프라인에서 파일을 사용할 수 없습니다.</string>
+  <string name="files_confirm_remove_all_offline_confirm_action">모두 삭제</string>
   <string name="files_display_file_info_action">파일 세부 정보</string>
   <string name="files_display_folder_info_action">폴더 세부 정보</string>
 </resources>

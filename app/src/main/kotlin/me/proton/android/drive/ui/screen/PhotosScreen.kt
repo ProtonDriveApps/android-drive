@@ -76,7 +76,7 @@ fun PhotosScreen(
     navigateToBackupSettings: () -> Unit,
     navigateToEnableBackupDialog: () -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
-    navigateToSummerSalePromo: () -> Unit,
+    navigateToQ3CampaignPromo: () -> Unit,
     navigateToUpsellPromo: () -> Unit,
 ) {
     val viewModel = hiltViewModel<PhotosViewModel>()
@@ -91,7 +91,7 @@ fun PhotosScreen(
             navigateToMultiplePhotosOptions = navigateToMultiplePhotosOptions,
             navigateToPhotosIssues = navigateToPhotosIssues,
             navigateToPhotosUpsell = navigateToPhotosUpsell,
-            navigateToSummerSalePromo = navigateToSummerSalePromo,
+            navigateToQ3CampaignPromo = navigateToQ3CampaignPromo,
             navigateToUpsellPromo = navigateToUpsellPromo,
             navigateToBackupSettings = navigateToBackupSettings,
             navigateToEnableBackupDialog = navigateToEnableBackupDialog,

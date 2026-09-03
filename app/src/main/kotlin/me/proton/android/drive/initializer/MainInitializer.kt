@@ -25,9 +25,6 @@ import me.proton.core.auth.presentation.MissingScopeInitializer
 import me.proton.core.crypto.validator.presentation.init.CryptoValidatorInitializer
 import me.proton.core.humanverification.presentation.HumanVerificationInitializer
 import me.proton.core.network.presentation.init.UnAuthSessionFetcherInitializer
-import me.proton.core.paymentiap.presentation.GooglePurchaseHandlerInitializer
-import me.proton.core.plan.presentation.PurchaseHandlerInitializer
-import me.proton.core.plan.presentation.UnredeemedPurchaseInitializer
 
 class MainInitializer : Initializer<Unit> {
 
@@ -48,9 +45,6 @@ class MainInitializer : Initializer<Unit> {
         CryptoValidatorInitializer::class.java,
         EventManagerInitializer::class.java,
         HumanVerificationInitializer::class.java,
-        UnredeemedPurchaseInitializer::class.java,
-        PurchaseHandlerInitializer::class.java,
-        GooglePurchaseHandlerInitializer::class.java,
         MissingScopeInitializer::class.java,
         UnAuthSessionFetcherInitializer::class.java,
         AutoLockInitializer::class.java,
@@ -67,6 +61,8 @@ class MainInitializer : Initializer<Unit> {
         DownloadInitializer::class.java,
         ShortcutInitializer::class.java,
         WebViewInitializer::class.java,
+        ProtonDriveSdkInitializer::class.java,
+        PaymentsUfcInitializer::class.java
     )
 
     companion object {

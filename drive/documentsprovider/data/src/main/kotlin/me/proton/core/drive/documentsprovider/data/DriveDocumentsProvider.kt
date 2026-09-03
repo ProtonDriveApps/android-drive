@@ -28,6 +28,7 @@ import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import android.provider.DocumentsProvider
+import androidx.collection.LruCache
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.EntryPoint
@@ -37,12 +38,12 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.flow.transformLatest
+import kotlinx.coroutines.job
 import kotlinx.coroutines.runBlocking
 import me.proton.core.drive.documentsprovider.data.extension.addTo
 import me.proton.core.drive.documentsprovider.data.extension.asCursor
@@ -74,18 +75,40 @@ class DriveDocumentsProvider : DocumentsProvider() {
     }
 
     /**
-     * [android.content.ContentProvider]s open and close [Cursor]s to get their information. We need to keep track of
-     * the data which was requested before in order to provide the same [PagingData] flow when the provider is just
-     * requesting a new [Cursor] because it was notified the data changed.
+     * A shared [PagingData] flow per `parentDocumentId`, reused when the provider reopens a [Cursor] after a change
+     * notification. Keying by folder lets several folders be observed concurrently and ensures `replay = 1` only ever
+     * re-delivers this folder's own data on requery instead of a stale value from another folder.
+     *
+     * Each folder owns a child [CoroutineScope] so its paging cache can be released independently. Entries live in a
+     * bounded [LruCache]: on overflow the least-recently-used folder is evicted and its scope cancelled (see
+     * [entryRemoved]), which frees the (unbounded) paging cache instead of retaining every visited folder for the whole
+     * process lifetime.
      */
-    private val trigger = MutableStateFlow<String?>(null)
+    private class FolderFlow(
+        val scope: CoroutineScope,
+        val flow: Flow<PagingData<DriveLink>>,
+    )
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val children: Flow<PagingData<DriveLink>> = trigger.transformLatest { parentDocumentId ->
-        emit(PagingData.empty())
-        if (parentDocumentId != null) {
-            emitAll(getQueryChildDocumentsFlow(parentDocumentId).cachedIn(scope))
+    private val childrenFlows = object : LruCache<String, FolderFlow>(MAX_CACHED_FOLDERS) {
+        override fun create(key: String): FolderFlow {
+            val folderScope = CoroutineScope(scope.coroutineContext + SupervisorJob(scope.coroutineContext.job))
+            return FolderFlow(
+                scope = folderScope,
+                flow = getQueryChildDocumentsFlow(key)
+                    .cachedIn(folderScope)
+                    .shareIn(folderScope, SharingStarted.WhileSubscribed(CHILDREN_FLOW_TIMEOUT_MILLIS), replay = 1),
+            )
         }
-    }.shareIn(scope, SharingStarted.WhileSubscribed(TimeUnit.MINUTES.toMillis(5)), 1)
+
+        override fun entryRemoved(evicted: Boolean, key: String, oldValue: FolderFlow, newValue: FolderFlow?) {
+            // Cancel on eviction and when a concurrently-created duplicate (create() runs outside the lock) is discarded.
+            if (oldValue !== newValue) oldValue.scope.cancel()
+        }
+    }
+
+    private fun childrenFlow(parentDocumentId: String): Flow<PagingData<DriveLink>> =
+        requireNotNull(childrenFlows[parentDocumentId]).flow
 
     private fun getQueryChildDocumentsFlow(documentId: String) = runBlocking {
         injections.withDriveLinkFolder(documentId.toDocumentId()) { _, driveLink ->
@@ -136,14 +159,14 @@ class DriveDocumentsProvider : DocumentsProvider() {
     ): Cursor = runBlocking {
         parentDocumentId ?: throw FileNotFoundException("parentDocumentId should not be null")
         val context = requireNotNull(context)
-        trigger.value = parentDocumentId
-        children.asCursor(
-            context = context,
-            uri = DocumentsContract.buildChildDocumentsUri(context.AUTHORITY, parentDocumentId),
-            projection = projection ?: DEFAULT_DOCUMENT_PROJECTION,
-        ) { driveLink ->
-            driveLink.addTo(this)
-        }
+        childrenFlow(parentDocumentId)
+            .asCursor(
+                context = context,
+                uri = DocumentsContract.buildChildDocumentsUri(context.AUTHORITY, parentDocumentId),
+                projection = projection ?: DEFAULT_DOCUMENT_PROJECTION,
+            ) { driveLink ->
+                driveLink.addTo(this)
+            }
     }
 
     override fun createDocument(parentDocumentId: String?, mimeType: String?, displayName: String?): String = runBlocking {
@@ -183,6 +206,11 @@ class DriveDocumentsProvider : DocumentsProvider() {
     }
 
     companion object {
+        /** Maximum number of folders whose paging cache is kept alive at once. */
+        private const val MAX_CACHED_FOLDERS = 3
+
+        private val CHILDREN_FLOW_TIMEOUT_MILLIS = TimeUnit.MINUTES.toMillis(5)
+
         private val DEFAULT_ROOT_PROJECTION = arrayOf(
             DocumentsContract.Root.COLUMN_ROOT_ID,
             DocumentsContract.Root.COLUMN_ICON,

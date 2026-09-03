@@ -150,6 +150,8 @@ interface LinkUploadRepository {
 
     suspend fun updateUploadFileLinkPhotoTags(uploadFileLinkId: Long, tags: Set<PhotoTag>)
 
+    suspend fun incrementUploadFileLinkAttempts(uploadFileLinkId: Long)
+
     suspend fun removeUploadFileLink(uploadFileLinkId: Long)
 
     suspend fun removeAllUploadFileLinks(userId: UserId, uploadState: UploadState)

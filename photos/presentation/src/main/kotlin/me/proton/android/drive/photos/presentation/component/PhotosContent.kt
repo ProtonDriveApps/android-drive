@@ -57,7 +57,6 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.itemKey
 import coil.request.Disposable
 import kotlinx.coroutines.flow.Flow
 import me.proton.android.drive.photos.presentation.extension.rememberLazyGridState
@@ -220,19 +219,20 @@ fun PhotosContent(
             items(
                 count = items.itemCount,
                 span = { index ->
-                    when (items.peek(index)) {
+                    when (items.itemSnapshotList.getOrNull(index)) {
                         is PhotosItem.Separator -> GridItemSpan(maxLineSpan)
                         else -> GridItemSpan(1)
                     }
                 },
-                key = items.itemKey { photoItem ->
-                    when (photoItem) {
+                key = { index ->
+                    when (val photoItem = items.itemSnapshotList.getOrNull(index)) {
                         is PhotosItem.Separator -> photoItem.value
                         is PhotosItem.PhotoListing -> photoItem.id.id
+                        null -> "placeholder-$index"
                     }
                 }
             ) { index ->
-                items[index]?.let { item ->
+                items.takeIf { index < it.itemCount }?.get(index)?.let { item ->
                     when (item) {
                         is PhotosItem.Separator -> Text(
                             modifier = Modifier.padding(

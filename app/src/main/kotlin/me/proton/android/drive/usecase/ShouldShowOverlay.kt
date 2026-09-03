@@ -31,8 +31,7 @@ class ShouldShowOverlay @Inject constructor(
     private val shouldShowOnboarding: ShouldShowOnboarding,
     private val shouldShowWhatsNew: ShouldShowWhatsNew,
     private val shouldShowRatingBooster: ShouldShowRatingBooster,
-    private val shouldShowSubscriptionPromo: ShouldShowSubscriptionPromo,
-    private val shouldShowSummerSalePromo: ShouldShowSummerSalePromo,
+    private val shouldShowQ3CampaignPromo: ShouldShowQ3CampaignPromo,
     private val repository: UiSettingsRepository,
 ) {
     suspend operator fun invoke(
@@ -45,12 +44,8 @@ class ShouldShowOverlay @Inject constructor(
         if (shouldShowOnboarding(userId).getOrThrow()) {
             return@coRunCatching UserOverlay.Onboarding
         }
-        if (shouldShowSummerSalePromo(userId).getOrThrow()) {
-            return@coRunCatching UserOverlay.SummerSalePromo
-        }
-        val subscriptionPromo = shouldShowSubscriptionPromo(userId).getOrThrow()
-        if (subscriptionPromo != null) {
-            return@coRunCatching subscriptionPromo
+        if (shouldShowQ3CampaignPromo(userId).getOrThrow()) {
+            return@coRunCatching UserOverlay.Q3CampaignPromo
         }
         val whatsNewKey = shouldShowWhatsNew(userId, currentHomeTab).getOrThrow()
         if (whatsNewKey != null) {

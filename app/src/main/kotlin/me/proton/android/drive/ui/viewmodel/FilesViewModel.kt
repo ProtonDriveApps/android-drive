@@ -87,7 +87,7 @@ import me.proton.core.drive.drivelink.download.domain.usecase.GetDownloadProgres
 import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
-import me.proton.core.drive.feature.flag.domain.usecase.IsSummerSalePromoEnabled
+import me.proton.android.drive.usecase.ObserveQ3CampaignPromoEligible
 import me.proton.core.drive.files.domain.usecase.ToFirstItemMetricsNotifier
 import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.files.presentation.state.FilesViewState
@@ -148,7 +148,7 @@ class FilesViewModel @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val toFirstItemMetricsNotifier: ToFirstItemMetricsNotifier,
     private val isScannerAvailable: IsScannerAvailable,
-    private val isSummerSalePromoEnabled: IsSummerSalePromoEnabled,
+    private val observeQ3CampaignPromoEligible: ObserveQ3CampaignPromoEligible,
     private val openFolderActionProvider: OpenFolderActionProvider,
     private val folderCreatedHandlerDelegate: FolderCreatedHandlerDelegate,
 ) : SelectionViewModel(savedStateHandle, selectLinks, deselectLinks, selectAll, getSelectedDriveLinks),
@@ -196,9 +196,8 @@ class FilesViewModel @Inject constructor(
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, Unit)
 
-    private val isSummerSalePromoEnabledFlow: Flow<Boolean> = flowOf {
-        isSummerSalePromoEnabled(userId)
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+    // Shared across tabs (see ObserveQ3CampaignPromoEligible) so switching tabs doesn't re-trigger
+    private val isQ3CampaignPromoEligibleFlow: StateFlow<Boolean?> = observeQ3CampaignPromoEligible(userId)
 
     val driveLinks: Flow<PagingData<DriveLink>> =
         driveLink.filterNotNull()
@@ -268,7 +267,8 @@ class FilesViewModel @Inject constructor(
         notificationDotRequested,
         scanDocumentNotificationDotViewModel.notificationDotRequested,
         userManager.observeUser(userId),
-    ) { driveLink, sorting, contentState, appendingState, layoutType, selected, notificationDotRequested, scanDocumentNotificationDotRequested, user ->
+        isQ3CampaignPromoEligibleFlow,
+    ) { driveLink, sorting, contentState, appendingState, layoutType, selected, notificationDotRequested, scanDocumentNotificationDotRequested, user, isQ3CampaignPromoEligible ->
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
@@ -277,12 +277,12 @@ class FilesViewModel @Inject constructor(
         }
         if (selected.isEmpty()) {
             val permissions = driveLink?.sharePermissions ?: Permissions.owner
-            val isSummerSalePromoEnabled = isSummerSalePromoEnabled(userId)
             topBarActions.value = if (permissions.canWrite) {
                 setOfNotNull(
-                    takeIf { ((user != null && user.isFree) || isSummerSalePromoEnabled) && isRootFolder }
-                        ?.let {
-                            getSubscriptionAction(isSummerSalePromoEnabled) {
+                    isQ3CampaignPromoEligible
+                        ?.takeIf { eligible -> ((user != null && user.isFree) || eligible) && isRootFolder }
+                        ?.let { eligible ->
+                            getSubscriptionAction(eligible) {
                                 viewEvent?.onSubscription?.invoke()
                             }
                         },
@@ -371,13 +371,13 @@ class FilesViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, defaultEmptyState)
     private var viewEvent: FilesViewEvent? = null
 
-    private fun navigateToUpsellOrSummerSale(
+    private fun navigateToUpsellOrQ3Campaign(
         navigateToUpsellPromo: () -> Unit,
-        navigateToSummerSalePromo: () -> Unit,
+        navigateToQ3CampaignPromo: () -> Unit,
     ) {
         viewModelScope.launch {
-            if (isSummerSalePromoEnabled(userId)) {
-                navigateToSummerSalePromo()
+            if (isQ3CampaignPromoEligibleFlow.filterNotNull().first()) {
+                navigateToQ3CampaignPromo()
             } else {
                 navigateToUpsellPromo()
             }
@@ -391,7 +391,7 @@ class FilesViewModel @Inject constructor(
         navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
         navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId) -> Unit,
         navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
-        navigateToSummerSalePromo: () -> Unit,
+        navigateToQ3CampaignPromo: () -> Unit,
         navigateToUpsellPromo: () -> Unit,
         navigateBack: () -> Unit,
         lifecycle: Lifecycle,
@@ -454,7 +454,7 @@ class FilesViewModel @Inject constructor(
         override val onSelectDriveLink = { driveLink: DriveLink -> onSelectDriveLink(driveLink) }
         override val onDeselectDriveLink = { driveLink: DriveLink -> onDeselectDriveLink(driveLink) }
         override val onBack = { onBack() }
-        override val onSubscription = { navigateToUpsellOrSummerSale(navigateToUpsellPromo, navigateToSummerSalePromo) }
+        override val onSubscription = { navigateToUpsellOrQ3Campaign(navigateToUpsellPromo, navigateToQ3CampaignPromo) }
         override val onRenderThumbnail = { driveLink: DriveLink ->
             val stopTime = TimestampMs(SystemClock.elapsedRealtime())
             viewModelScope.launch {

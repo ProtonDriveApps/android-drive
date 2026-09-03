@@ -37,5 +37,5 @@
   <string name="log_origin_backup">Còpia de seguretat</string>
   <string name="log_origin_user">Usuari</string>
   <string name="log_origin_device">Dispositiu</string>
-  <string name="log_origin_crypto">Criptomoneda</string>
+  <string name="log_origin_crypto">Cripto</string>
 </resources>

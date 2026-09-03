@@ -18,10 +18,30 @@
   -->
 <resources>
   <string name="title_manage_access">Gestiona l\'accés</string>
+  <string name="manage_access_who_has_access">Qui hi té accés</string>
+  <!--
+        Variable %1$s is a name or email
+        Example:
+            "Jack Frost (you)"
+            "jack.frost@example.com (you)"
+    -->
+  <string name="manage_access_current_user">%1$s (vós)</string>
   <string name="manage_access_share_with_anyone">Comparteix amb tothom</string>
+  <string name="manage_access_allow_editors_to_share_title">Accés</string>
+  <string name="manage_access_allow_editors_to_share_description">Permeteu als editors canviar permisos i compartir</string>
   <string name="manage_access_link_settings_action">Configuració d\'enllaços</string>
   <string name="manage_access_link_description_public">Qualsevol persona amb aquest enllaç</string>
   <string name="manage_access_link_description_password_protected">Qualsevol persona amb l\'enllaç i la contrasenya</string>
   <string name="manage_access_link_default_permission">Pot veure</string>
   <string name="manage_access_link_editor_permission">Pot editar</string>
+  <string name="manage_access_change_access_to_viewer_title">Voleu canviar l\'accés al visualitzador?</string>
+  <!--
+        Variable %1$s is a file or folder name
+        Example:
+            You won’t be able to share "Some folder" after changing your access to viewer. The owner or an editor with sharing access can restore your edit access. You can’t undo this change yourself.
+    -->
+  <string name="manage_access_change_access_to_viewer_description">"No podreu compartir «%1$s» després de canviar el vostre accés al visualitzador. El propietari o un editor amb permís per compartir podran restaurar el vostre accés d'edició. No podreu desfer aquest canvi vós mateix."</string>
+  <string name="manage_access_change_access_to_viewer_action">Canviar el meu accés</string>
+  <string name="manage_access_new_editor_permissions_title">Nous permisos d\'editor</string>
+  <string name="manage_access_new_editor_permissions_description">Ara els editors poden gestionar la compartició i convidar altres persones. Ho podeu desactivar quan vulgueu.</string>
 </resources>

@@ -695,4 +695,10 @@ object DriveDatabaseMigrations {
             OrphanedShareDataCleanup.migrate(db)
         }
     }
+
+    val MIGRATION_107_108 = object : Migration(107, 108) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            LinkUploadDatabase.MIGRATION_9.migrate(db)
+        }
+    }
 }

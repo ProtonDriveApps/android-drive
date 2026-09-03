@@ -17,46 +17,77 @@
   ~ along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
+  <!-- tag(q1campaign) -->
+  <string name="promo_storage_title">1TB 저장공간: 현재 요금제의 200배</string>
+  <!-- tag(q1campaign) -->
+  <string name="promo_claim_offer_button">혜택 받기</string>
+  <!-- tag(q1campaign)
+        Variable %1$s is price per month
+        Example:
+            "only $6.99"
+    -->
+  <string name="promo_offer_per_month_details">단 %1$s</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_drawer_title">특별 할인</string>
+  <!-- tag(q3campaign2026) Free vs. Unlimited comparison table on the Q3 campaign promo screen -->
+  <string name="promo_q3_campaign_comparison_header_free">무료</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_header_unlimited">무제한</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_label">저장 공간</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_free">5 GB</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_unlimited">500 GB</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_storage_unlimited_subtitle">무료 대비 100배</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_share_edit_label">수정 접근 권한 공유</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_mail_label">사용자 지정 이메일 도메인이 포함된 Mail Plus</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_vpn_label">140개 이상의 국가에 20,000개 이상의 서버를 갖춘 VPN Plus</string>
+  <!-- tag(q3campaign2026) -->
+  <string name="promo_q3_campaign_comparison_pass_label">50개의 보안 보관함을 갖춘 Pass Plus</string>
+  <!-- tag(q3campaign2026) Preview-only mock price for Q3CampaignPromoScreenPortraitPreview, not a real formatted currency amount -->
+  <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
+  <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
   <!-- Upsell promo -->
   <!--
         Variable %1$s is a plan name and %2$s is a price for first period
         Example:
             "Try Drive Plus 1 TB for $1"
     -->
-  <string name="promo_upsell_title">Try %1$s for %2$s</string>
-  <string name="promo_upsell_subtitle">Limited-time offer, cancel anytime.</string>
-  <string name="promo_upsell_storage_label">Storage</string>
-  <string name="promo_upsell_version_history_label">Version history</string>
-  <string name="promo_upsell_share_with_edit_access_label">Share with edit access</string>
+  <string name="promo_upsell_title">%2$s에 %1$s 경험하기</string>
+  <string name="promo_upsell_subtitle">기간 한정 혜택, 언제든지 취소할 수 있습니다.</string>
+  <string name="promo_upsell_storage_label">저장공간</string>
+  <string name="promo_upsell_version_history_label">버전 기록</string>
+  <string name="promo_upsell_share_with_edit_access_label">수정 접근 권한 공유</string>
   <!--
         Variable %1$d is a storage increase factor and %2$s is a free plan title
         Example:
             "200x more than Free"
     -->
-  <string name="promo_upsell_storage_plan_subtitle">%1$dx more than %2$s</string>
+  <string name="promo_upsell_storage_plan_subtitle">%2$s에 비해 %1$d배 많은 저장공간</string>
   <!--
         Variable %1$s is a period using common_x_months and %2$s is a price for first period
         Example:
             "Get 1 month for $1"
             "Get 12 months for $60"
     -->
-  <string name="promo_upsell_claim_offer_button">Get %1$s for %2$s</string>
+  <string name="promo_upsell_claim_offer_button">%1$s에 %2$s 구독하기</string>
   <!--
         Variable %1$s is an application name
         Example:
             "Enjoying Proton Drive?"
     -->
-  <string name="promo_app_title">Enjoying %1$s?</string>
+  <string name="promo_app_title">%1$s를 즐기고 계신가요?</string>
   <!--
         Variable %1$s is an application name
         Example:
             "If you're enjoying Proton Drive, we would greatly..."
     -->
-  <string name="promo_app_description">If you\'re enjoying %1$s, we would greatly appreciate an app review!\nIf you are having an issue our Help Docs and support team are here to help!</string>
-  <string name="promo_app_positive_button">I like it</string>
+  <string name="promo_app_description">%1$s를 재밌게 즐기고 계신다면 앱을 리뷰해 주시기 바랍니다!\n만약 문제를 겪고 계시다면 지원 문서나 지원 팀으로 언제든지 문의해 주세요!</string>
+  <string name="promo_app_positive_button">좋아요</string>
   <string name="promo_app_negative_button">Could be better</string>
-  <!-- tag(q2campaign2026) -->
-  <string name="promo_summer_sale_drawer_title">여름 세일</string>
-  <!-- tag(q2campaign2026) -->
-  <string name="promo_storage_200_GB_title">200 GB 저장공간: 현재 요금제의 40배</string>
 </resources>

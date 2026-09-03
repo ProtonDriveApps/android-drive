@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">ファイルコンテンツのプレビュー</string>
-  <string name="content_description_more_options">ファイルの他のオプションを表示</string>
+  <string name="content_description_more_options">Show more options for the file</string>
   <string name="preview_downloading_state">ダウンロード中…</string>
   <string name="preview_processing_state">処理中...</string>
   <string name="preview_empty">プレビューするものがありません...</string>

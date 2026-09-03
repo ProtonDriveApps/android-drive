@@ -22,18 +22,16 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
-import me.proton.core.drive.upload.data.handler.ObservabilityUploadErrorHandler
+import me.proton.core.drive.upload.data.handler.UploadWorkerCancellationHandler
 import me.proton.core.drive.upload.data.manager.UploadErrorManagerImpl
 import me.proton.core.drive.upload.data.provider.FileProviderImpl
 import me.proton.core.drive.upload.data.resolver.AggregatedUriResolver
-import me.proton.core.drive.upload.data.usecase.UploadMetricsNotifierImpl
 import me.proton.core.drive.upload.data.usecase.XAttrPhotoAdditionalMetadata
 import me.proton.core.drive.upload.domain.handler.UploadErrorHandler
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.provider.FileProvider
 import me.proton.core.drive.upload.domain.resolver.UriResolver
 import me.proton.core.drive.upload.domain.usecase.PhotoAdditionalMetadata
-import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -54,11 +52,7 @@ interface UploadBindModule {
 
     @Binds
     @IntoSet
-    fun bindUploadErrorHandler(impl: ObservabilityUploadErrorHandler): UploadErrorHandler
-
-    @Binds
-    @Singleton
-    fun bindsUploadMetricsNotifierImpl(impl: UploadMetricsNotifierImpl): UploadMetricsNotifier
+    fun bindUploadWorkerCancellationHandler(impl: UploadWorkerCancellationHandler): UploadErrorHandler
 
     @Binds
     @Singleton

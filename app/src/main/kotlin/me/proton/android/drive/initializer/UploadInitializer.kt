@@ -45,8 +45,6 @@ import me.proton.core.drive.base.data.extension.hasConnectivity
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.LogTag.TRACKING
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.drivelink.domain.usecase.UseSdkForUpload
-import me.proton.core.drive.linkupload.domain.extension.fileId
 import me.proton.core.drive.linkupload.domain.manager.UploadSpeedManager
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksCount
 import me.proton.core.drive.upload.data.exception.UploadWorkerException
@@ -83,14 +81,11 @@ class UploadInitializer : Initializer<Unit> {
                         CoroutineScope(Dispatchers.IO + Job())
                     }
                     uploadErrorManager.errors
-                        .map { uploadError -> uploadError.uploadFileLink.fileId to context.hasNotConnectivity(uploadError) }
-                        .onEach { (fileId, noConnectivity) ->
+                        .map { uploadError -> context.hasNotConnectivity(uploadError) }
+                        .onEach { noConnectivity ->
                             if (noConnectivity && uploadSpeedManager.isRunning()) {
                                 CoreLogger.v(TRACKING, "Pausing, no network to upload")
-                                val usedSdk = fileId?.let {
-                                    useSdkForUpload(fileId).getOrElse { false }
-                                } ?: false
-                                uploadSpeedManager.pause(userId, usedSdk)
+                                uploadSpeedManager.pause(userId)
                             }
                         }
                         .launchIn(scope)
@@ -153,6 +148,5 @@ class UploadInitializer : Initializer<Unit> {
         val getUploadFileLinksCount: GetUploadFileLinksCount
         val uploadSpeedManager: UploadSpeedManager
         val accountManager: AccountManager
-        val useSdkForUpload: UseSdkForUpload
     }
 }

@@ -23,18 +23,15 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import me.proton.core.drive.drivelink.download.data.handler.DownloadSpeedErrorHandler
-import me.proton.core.drive.drivelink.download.data.handler.ObservabilityDownloadErrorHandler
 import me.proton.core.drive.drivelink.download.data.manager.DownloadErrorManagerImpl
 import me.proton.core.drive.drivelink.download.data.repository.DownloadFileRepositoryImpl
 import me.proton.core.drive.drivelink.download.data.repository.DownloadParentLinkRepositoryImpl
 import me.proton.core.drive.drivelink.download.data.repository.DriveLinkDownloadRepositoryImpl
-import me.proton.core.drive.drivelink.download.data.usecase.DownloadMetricsNotifierImpl
 import me.proton.core.drive.drivelink.download.domain.handler.DownloadErrorHandler
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadErrorManager
 import me.proton.core.drive.drivelink.download.domain.repository.DownloadFileRepository
 import me.proton.core.drive.drivelink.download.domain.repository.DownloadParentLinkRepository
 import me.proton.core.drive.drivelink.download.domain.repository.DriveLinkDownloadRepository
-import me.proton.core.drive.drivelink.download.domain.usecase.DownloadMetricsNotifier
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -59,12 +56,5 @@ interface DownloadBindModule {
 
     @Binds
     @IntoSet
-    fun bindsObservabilityDownloadErrorHandler(impl: ObservabilityDownloadErrorHandler): DownloadErrorHandler
-    @Binds
-    @IntoSet
     fun bindsDownloadSpeedErrorHandler(impl: DownloadSpeedErrorHandler): DownloadErrorHandler
-
-    @Binds
-    @Singleton
-    fun bindsDownloadMetricsNotifier(impl: DownloadMetricsNotifierImpl): DownloadMetricsNotifier
 }

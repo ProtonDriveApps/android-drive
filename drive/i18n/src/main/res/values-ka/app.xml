@@ -287,7 +287,7 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">განაახლეთ %1$s-ად</string>
-  <string name="support_contact_options_title">Help us enhance your experience</string>
-  <string name="support_contact_options_description">If you are having an issue our Help Docs and support team are here to help!</string>
-  <string name="support_contact_options_action_button">Contact us</string>
+  <string name="support_contact_options_title">დაგვეხმარეთ, გავაუმჯობესოთ თქვენი გამოცდილება</string>
+  <string name="support_contact_options_description">თუ პრობლემები გაქვთ ჩვენი დახმარების დოკკუმენტაცია და მხარდაჭერის გუნდი ყოველთვის მზადაა, დაგეხმაროთ!</string>
+  <string name="support_contact_options_action_button">დაგვიკავშირდით</string>
 </resources>

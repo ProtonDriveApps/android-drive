@@ -46,10 +46,6 @@ sealed class FeatureFlagId(open val userId: UserId, open val id: String) {
         const val DOCS_CREATE_NEW_SHEET_ON_MOBILE_ENABLED = "DocsCreateNewSheetOnMobileEnabled"
         const val DOCS_SHEETS_DISABLED = "DocsSheetsDisabled"
         const val DRIVE_PHOTOS_TAGS_MIGRATION_DISABLED = "DrivePhotosTagsMigrationDisabled"
-        const val DRIVE_ANDROID_SDK_UPLOAD_MAIN = "DriveAndroidSDKUploadMain"
-        const val DRIVE_ANDROID_SDK_UPLOAD_PHOTO = "DriveAndroidSDKUploadPhoto"
-        const val DRIVE_ANDROID_SDK_DOWNLOAD_MAIN = "DriveAndroidSDKDownloadMain"
-        const val DRIVE_ANDROID_SDK_DOWNLOAD_PHOTO = "DriveAndroidSDKDownloadPhoto"
         const val DRIVE_ANDROID_SDK_THUMBNAIL_MAIN = "DriveAndroidSDKThumbnailMain"
         const val DRIVE_ANDROID_SDK_THUMBNAIL_PHOTO = "DriveAndroidSDKThumbnailPhoto"
         const val DRIVE_ANDROID_SDK_AVAILABLE_NAME = "DriveAndroidSDKAvailableName"
@@ -58,12 +54,13 @@ sealed class FeatureFlagId(open val userId: UserId, open val id: String) {
         const val DRIVE_ANDROID_SDK_TRASH_NODE = "DriveAndroidSDKTrashNode"
         const val DRIVE_ANDROID_SDK_TRASH_OPERATIONS = "DriveAndroidSDKTrashOperations"
         const val DRIVE_ANDROID_SDK_DEVICES = "DriveAndroidSDKDevices"
+        const val DRIVE_ANDROID_SDK_LEAVE_SHARED_NODE = "DriveAndroidSDKLeaveSharedNode"
+        const val DRIVE_ANDROID_SDK_MOVE_ONLY = "DriveAndroidSDKMoveOnly"
         const val DRIVE_DOWNLOAD_VERIFICATION_DISABLED = "DriveDownloadVerificationDisabled"
         const val DRIVE_UPLOAD_VERIFICATION_DISABLED = "DriveUploadVerificationDisabled"
         const val DRIVE_ANDROID_DOWNLOAD_FILE_PROGRESS_NOTIFICATION_DISABLED = "DriveAndroidDownloadFileProgressNotificationDisabled"
-        const val DRIVE_ANDROID_SUMMER_SALE_2026 = "DriveAndroidSummerSale2026"
+        const val DRIVE_ANDROID_Q3_CAMPAIGN_2026 = "DriveAndroidQ3Sale2026"
         const val DRIVE_MOBILE_UPSELL_PLAN = "DriveMobileUpsellPlan"
-
 
         internal var developments : List<String> = listOf(
         )
@@ -87,10 +84,6 @@ sealed class FeatureFlagId(open val userId: UserId, open val id: String) {
         fun docsCreateNewSheetOnMobileEnabled(userId: UserId) = Unleash(userId, DOCS_CREATE_NEW_SHEET_ON_MOBILE_ENABLED)
         fun docsSheetsDisabled(userId: UserId) = Unleash(userId, DOCS_SHEETS_DISABLED)
         fun drivePhotosTagsMigrationDisabled(userId: UserId) = Unleash(userId, DRIVE_PHOTOS_TAGS_MIGRATION_DISABLED)
-        fun driveAndroidSDKUploadMain(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_UPLOAD_MAIN)
-        fun driveAndroidSDKUploadPhoto(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_UPLOAD_PHOTO)
-        fun driveAndroidSDKDownloadMain(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_DOWNLOAD_MAIN)
-        fun driveAndroidSDKDownloadPhoto(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_DOWNLOAD_PHOTO)
         fun driveAndroidSDKThumbnailMain(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_THUMBNAIL_MAIN)
         fun driveAndroidSDKThumbnailPhoto(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_THUMBNAIL_PHOTO)
         fun driveAndroidSDKAvailableName(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_AVAILABLE_NAME)
@@ -99,10 +92,12 @@ sealed class FeatureFlagId(open val userId: UserId, open val id: String) {
         fun driveAndroidSDKTrashNode(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_TRASH_NODE)
         fun driveAndroidSDKTrashOperations(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_TRASH_OPERATIONS)
         fun driveAndroidSDKDevices(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_DEVICES)
+        fun driveAndroidSDKLeaveSharedNode(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_LEAVE_SHARED_NODE)
+        fun driveAndroidSDKMoveOnly(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_MOVE_ONLY)
         fun driveDownloadVerificationDisabled(userId: UserId) = Unleash(userId, DRIVE_DOWNLOAD_VERIFICATION_DISABLED)
         fun driveUploadVerificationDisabled(userId: UserId) = Unleash(userId, DRIVE_UPLOAD_VERIFICATION_DISABLED)
         fun driveAndroidDownloadFileProgressNotificationDisabled(userId: UserId) = Unleash(userId, DRIVE_ANDROID_DOWNLOAD_FILE_PROGRESS_NOTIFICATION_DISABLED)
-        fun driveAndroidSummerSale2026(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SUMMER_SALE_2026)
+        fun driveAndroidQ3Campaign2026(userId: UserId) = Unleash(userId, DRIVE_ANDROID_Q3_CAMPAIGN_2026)
         fun driveMobileUpsellPlan(userId: UserId) = Unleash(userId, DRIVE_MOBILE_UPSELL_PLAN)
     }
 }

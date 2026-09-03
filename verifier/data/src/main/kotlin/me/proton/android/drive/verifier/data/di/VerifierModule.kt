@@ -23,10 +23,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.android.drive.verifier.data.api.VerifierApiDataSource
-import me.proton.android.drive.verifier.data.factory.VerifierFactoryImpl
-import me.proton.android.drive.verifier.domain.factory.VerifierFactory
-import me.proton.core.drive.base.domain.usecase.GetCacheTempFolder
-import me.proton.core.drive.crypto.domain.usecase.file.DecryptFiles
 import me.proton.core.network.data.ApiProvider
 import javax.inject.Singleton
 
@@ -37,12 +33,4 @@ object VerifierModule {
     @Provides
     fun provideVerifierApiDataSource(apiProvider: ApiProvider) =
         VerifierApiDataSource(apiProvider)
-
-    @Singleton
-    @Provides
-    fun provideVerifierFactory(
-        decryptFiles: DecryptFiles,
-        getCacheTempFolder: GetCacheTempFolder,
-    ): VerifierFactory =
-        VerifierFactoryImpl(decryptFiles, getCacheTempFolder)
 }

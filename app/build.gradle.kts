@@ -79,6 +79,8 @@ driveModule(
     implementation(libs.sentry)
     implementation(libs.timber)
     implementation(libs.treessence)
+    implementation(libs.ufc.android.payment.billing.google)
+    implementation(libs.ufc.android.payment.ui)
 
     androidTestImplementation(libs.dagger.hilt.android.testing)
     add("kspAndroidTest", libs.dagger.hilt.android.compiler)
@@ -93,6 +95,7 @@ driveModule(
     androidTestImplementation(libs.androidx.navigation.compose)
     androidTestImplementation(libs.androidx.test.espresso.contrib)
     androidTestImplementation(libs.bundles.core.test)
+    androidTestImplementation(libs.core.payment.iap)
     androidTestImplementation(libs.fusion)
     androidTestImplementation(libs.okhttpLoggingInterceptor)
     androidTestImplementation(project(":drive:backup:data"))
@@ -120,6 +123,10 @@ val privateProperties = Properties().apply {
 
 val lastAlpha = tags.countSubstrings("${Config.versionName}-alpha")
 val lastBeta = tags.countSubstrings("${Config.versionName}-beta")
+
+// Drive SDK: dev & alpha use Rust crypto, beta & prod use Go crypto (catalog default).
+val driveSdkRustFlavors = setOf("dev", "alpha")
+val driveSdkRustVersion = "${libs.versions.drive.sdk.get()}-rust"
 
 android {
     namespace = "me.proton.android.drive"
@@ -186,6 +193,9 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev ($gitHash)"
             isDefault = true
+            buildConfigField("String", "SDK_VERSION_NAME", "\"$driveSdkRustVersion\"")
+            // Rust crypto flavor when the SDK is a local composite build.
+            missingDimensionStrategy("crypto", "rust")
 
             val testEnvironment = System.getenv("TEST_ENV_DOMAIN")
             val dynamicEnvironment = privateProperties.getProperty("HOST", "proton.black")
@@ -218,6 +228,8 @@ android {
         create("alpha") {
             versionCode = (versionCodeFromGitCommitCount * 10) + 3
             versionNameSuffix = "-alpha ($gitCommitCount)"
+            buildConfigField("String", "SDK_VERSION_NAME", "\"$driveSdkRustVersion\"")
+            missingDimensionStrategy("crypto", "rust")
             androidLocales(Config.incubatingResourceConfigurations)
         }
         create("beta") {
@@ -253,6 +265,24 @@ android {
 
     androidResources {
         generateLocaleConfig = true
+    }
+}
+
+// Force the "-rust" SDK version on dev & alpha classpaths, including the SDK pulled
+// in transitively by the :drive modules. Applies only to the Maven artifact.
+androidComponents {
+    onVariants { variant ->
+        if (driveSdkRustFlavors.any { variant.name.startsWith(it) }) {
+            configurations
+                .matching { it.name.startsWith(variant.name) }
+                .configureEach {
+                    resolutionStrategy.eachDependency {
+                        if (requested.group == "me.proton.drive" && requested.name == "sdk") {
+                            useVersion(driveSdkRustVersion)
+                        }
+                    }
+                }
+        }
     }
 }
 
