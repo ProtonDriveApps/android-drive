@@ -1,0 +1,1 @@
+Enhanced File Upload Verification: We've added extra security to ensure your files are safely uploaded to Proton Drive. Your data's integrity is our top priority, and this new verification process guarantees it.
