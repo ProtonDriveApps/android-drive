@@ -22,4 +22,4 @@ import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.drive.sdk.entity.LegacyNodeUid
 import me.proton.drive.sdk.entity.NodeUid
 
-val NodeUid.volumeId get() = (this as LegacyNodeUid).volumeId.let(::VolumeId)
+val NodeUid.volumeId get() = (this as? LegacyNodeUid ?: LegacyNodeUid(value)).volumeId.let(::VolumeId)

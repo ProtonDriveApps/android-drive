@@ -21,8 +21,8 @@ import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.link.domain.entity.Folder
+import me.proton.core.drive.link.domain.entity.FolderContext
 import me.proton.core.drive.link.domain.entity.FolderId
-import me.proton.core.drive.linkupload.domain.entity.CacheOption
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
 import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
@@ -32,11 +32,9 @@ import me.proton.core.drive.volume.domain.entity.VolumeId
 
 interface UploadWorkManager {
     suspend fun upload(
-        userId: UserId,
-        volumeId: VolumeId,
-        folderId: FolderId,
+        parentFolderContext: FolderContext,
+        shareId: ShareId,
         uploadFileDescriptions: List<UploadFileDescription>,
-        cacheOption: CacheOption,
         shouldDeleteSource: Boolean,
         networkTypeProviderType: NetworkTypeProviderType,
         shouldAnnounceEvent: Boolean,
@@ -62,7 +60,7 @@ interface UploadWorkManager {
 
     suspend fun cancelAll(userId: UserId)
 
-    suspend fun cancelAllByShare(userId: UserId, shareId: ShareId)
+    suspend fun cancelAllByVolume(userId: UserId, volumeId: VolumeId)
 
     suspend fun cancelAllByFolder(userId: UserId, folderId: FolderId)
 

@@ -19,28 +19,31 @@
 package me.proton.core.drive.upload.domain.usecase
 
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.toInstant
-import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.LogTag.UploadTag.logTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.usecase.ReportError
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.file.GetFileName
-import me.proton.core.drive.link.domain.extension.nodeUid
 import me.proton.core.drive.link.domain.extension.toSdkPhotoTag
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.link.domain.entity.NodeContext
+import me.proton.core.drive.linkupload.domain.extension.parentFolderUid
 import me.proton.core.drive.linkupload.domain.entity.UploadState
+import me.proton.core.drive.linkupload.domain.extension.parentLinkId
 import me.proton.core.drive.linkupload.domain.usecase.GetPhotoTags
 import me.proton.core.drive.linkupload.domain.usecase.UpdateSize
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadFileCreationTime
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
-import me.proton.core.drive.share.domain.entity.Share
-import me.proton.core.drive.share.domain.usecase.GetShare
+import me.proton.core.drive.volume.domain.entity.Volume
+import me.proton.core.drive.upload.domain.exception.ContentSizeChangedException
 import me.proton.core.drive.upload.domain.manager.UploadSdkManager
 import me.proton.drive.sdk.entity.FileUploaderRequest
 import me.proton.drive.sdk.entity.PhotosUploaderRequest
@@ -54,10 +57,10 @@ class CreateNewFileSdk @Inject constructor(
     private val updateUploadFileCreationTime: UpdateUploadFileCreationTime,
     private val configurationProvider: ConfigurationProvider,
     private val getPhotoTags: GetPhotoTags,
-    private val getShare: GetShare,
     private val photoAdditionalMetadata: PhotoAdditionalMetadata,
     private val getInputStreamSize: GetInputStreamSize,
     private val updateSize: UpdateSize,
+    private val reportError: ReportError,
 ) {
 
     suspend operator fun invoke(
@@ -66,48 +69,59 @@ class CreateNewFileSdk @Inject constructor(
     ) = coRunCatching {
         coroutineScope {
             val id = uploadFileLink.id
+            var shouldResetToIdle = false
             try {
                 updateUploadState(id, UploadState.CREATING_NEW_FILE).getOrThrow()
                 updateUploadFileCreationTime(id, TimestampS()).getOrThrow()
+                val size = uploadFileLink.getOrUpdateSize(uriString).getOrThrow()
                 val fileName = getFileName(
                     name = uploadFileLink.name,
                     folderId = uploadFileLink.parentLinkId,
                 ).getOrThrow()
-                val size = uploadFileLink.getOrUpdateSize(uriString).getOrThrow()
                 val lastModified = uploadFileLink.lastModified?.toInstant()
-                if (uploadFileLink.isPhoto()) {
+                val nodeContext = uploadFileLink.parentFolderContext
+                if (nodeContext.volumeType == Volume.Type.PHOTO) {
                     uploadFileLink.enqueuePhoto(
+                        nodeContext = nodeContext,
                         name = fileName,
                         size = size,
                         lastModified = lastModified,
                     )
                 } else {
                     uploadFileLink.enqueue(
+                        nodeContext = nodeContext,
                         name = fileName,
                         size = size,
                         lastModified = lastModified,
                     )
                 }
+            } catch (exception: TimeoutCancellationException) {
+                reportError(
+                    tag = id.logTag(),
+                    error = exception,
+                    message = "Enqueue timed out after ${configurationProvider.sdkQueueTimeout}",
+                )
+                shouldResetToIdle = true
+                throw exception
             } finally {
-                if (!isActive) {
-                    withContext(NonCancellable) {
-                        updateUploadState(id, UploadState.IDLE)
-                    }
+                if (!isActive || shouldResetToIdle) {
+                    resetToIdle(id)
                 }
             }
         }
     }
 
     private suspend fun UploadFileLink.enqueue(
+        nodeContext: NodeContext,
         name: String,
         size: Bytes,
         lastModified: Instant?,
-    ) = uploadSdkManager.enqueue(this@enqueue) { client ->
+    ) = uploadSdkManager.enqueue(nodeContext, id) { client ->
         // TODO implement enqueue without timeout and noWaiting = true
         withTimeout(configurationProvider.sdkQueueTimeout) {
             client.uploader(
                 FileUploaderRequest(
-                    parentFolderUid = parentLinkId.nodeUid(volumeId),
+                    parentFolderUid = parentFolderUid,
                     name = name,
                     mediaType = mimeType,
                     fileSize = size.value,
@@ -120,10 +134,11 @@ class CreateNewFileSdk @Inject constructor(
     }
 
     private suspend fun UploadFileLink.enqueuePhoto(
+        nodeContext: NodeContext,
         name: String,
         size: Bytes,
         lastModified: Instant?,
-    ) = uploadSdkManager.enqueuePhoto(this@enqueuePhoto) { client ->
+    ) = uploadSdkManager.enqueuePhoto(nodeContext, id) { client ->
         val tags = getPhotoTags(this@enqueuePhoto.id).getOrThrow()
         // TODO implement enqueue without timeout and noWaiting = true
         withTimeout(configurationProvider.sdkQueueTimeout) {
@@ -144,11 +159,6 @@ class CreateNewFileSdk @Inject constructor(
         }
     }
 
-    private suspend fun UploadFileLink.isPhoto(): Boolean {
-        val share = getShare(shareId, flowOf(false)).toResult().getOrThrow()
-        return share.type == Share.Type.PHOTO
-    }
-
     private suspend fun UploadFileLink.getOrUpdateSize(
         uriString: String
     ): Result<Bytes> = coRunCatching {
@@ -158,6 +168,13 @@ class CreateNewFileSdk @Inject constructor(
             return@coRunCatching uploadFileLinkSize
         }
         updateSize(id, uriSize).getOrThrow()
-        uriSize
+        throw ContentSizeChangedException(
+            previousSize = uploadFileLinkSize,
+            currentSize = uriSize,
+        )
+    }
+
+    private suspend fun resetToIdle(uploadFileLinkId: Long) = withContext(NonCancellable) {
+        updateUploadState(uploadFileLinkId, UploadState.IDLE)
     }
 }

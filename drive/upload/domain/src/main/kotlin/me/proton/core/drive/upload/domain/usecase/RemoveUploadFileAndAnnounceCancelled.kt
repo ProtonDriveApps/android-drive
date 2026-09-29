@@ -33,7 +33,7 @@ class RemoveUploadFileAndAnnounceCancelled @Inject constructor(
     private val uriResolver: UriResolver,
 ) {
     suspend operator fun invoke(uploadFileLink: UploadFileLink) = coRunCatching {
-        uploadSdkManager.cancel(uploadFileLink)
+        uploadSdkManager.cancel(uploadFileLink.id)
         uploadFileLink.uriString?.let { uriResolver.release(it) }
         removeUploadFile(uploadFileLink).getOrThrow()
         announceUploadEvent(

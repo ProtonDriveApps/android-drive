@@ -25,7 +25,7 @@ import me.proton.core.drive.base.domain.usecase.GetPermanentFolder
 import me.proton.core.drive.file.base.domain.coroutines.FileScope
 import me.proton.core.drive.file.base.domain.entity.ThumbnailType
 import me.proton.core.drive.file.base.domain.extension.nameDecFile
-import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.drive.sdk.entity.RevisionUid
 import java.io.File
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -37,30 +37,28 @@ class GetThumbnailDecryptedFile @Inject constructor(
 
     suspend operator fun invoke(
         userId: UserId,
-        volumeId: VolumeId,
-        revisionId: String,
+        revisionUid: RevisionUid,
         type: ThumbnailType,
         coroutineContext: CoroutineContext = FileScope.coroutineContext,
     ) = withContext(coroutineContext) {
         type.getDecFileIn(
-            getPermanentFolder(userId, volumeId.id, revisionId),
-            getCacheFolder(userId, volumeId.id, revisionId),
+            getPermanentFolder(userId, revisionUid),
+            getCacheFolder(userId, revisionUid),
         )
     }
 
     suspend operator fun invoke(
         userId: UserId,
-        volumeId: VolumeId,
-        revisionId: String,
+        revisionUid: RevisionUid,
         type: ThumbnailType,
         inCacheFolder: Boolean,
         coroutineContext: CoroutineContext = FileScope.coroutineContext,
     ): File = withContext(coroutineContext) {
         File(
             if (inCacheFolder) {
-                getCacheFolder(userId, volumeId.id, revisionId)
+                getCacheFolder(userId, revisionUid)
             } else {
-                getPermanentFolder(userId, volumeId.id, revisionId)
+                getPermanentFolder(userId, revisionUid)
             },
             type.nameDecFile
         )

@@ -47,9 +47,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -84,11 +82,13 @@ import me.proton.core.drive.base.presentation.component.EncryptedItem
 import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
 import me.proton.core.drive.base.presentation.component.list.ListEmpty
 import me.proton.core.drive.base.presentation.component.list.ListError
+import me.proton.core.drive.base.presentation.extension.aroundVisibleItems
 import me.proton.core.drive.base.presentation.extension.isPortrait
 import me.proton.core.drive.base.presentation.extension.onContent
 import me.proton.core.drive.base.presentation.extension.onEmpty
 import me.proton.core.drive.base.presentation.extension.onError
 import me.proton.core.drive.base.presentation.extension.onLoading
+import me.proton.core.drive.base.presentation.extension.rememberVisibleItems
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.files.presentation.component.files.OfflineIcon
 import me.proton.core.drive.files.presentation.extension.LayoutType
@@ -99,6 +99,7 @@ import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.entity.OwnedBy
 import me.proton.core.drive.photo.domain.entity.AlbumListing
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
@@ -272,22 +273,16 @@ fun AlbumsContent(
     onClick: (DriveLink.Album) -> Unit,
 ) {
     val gridState = rememberLazyGridState()
-    val firstVisibleItemIndex by remember(gridState) { derivedStateOf { gridState.firstVisibleItemIndex } }
-    LaunchedEffect(firstVisibleItemIndex, items) {
+    val visibleItems = gridState.rememberVisibleItems()
+    LaunchedEffect(visibleItems, items) {
         onScroll(
             items
-                .takeIf { list -> list.isNotEmpty() && list.size > firstVisibleItemIndex }
-                ?.let { list ->
-                    val sizeRange = IntRange(0, list.size - 1)
-                    val fromIndex = (firstVisibleItemIndex - 10).coerceIn(sizeRange)
-                    val toIndex = (firstVisibleItemIndex + 20).coerceIn(sizeRange)
-                    list.subList(fromIndex, toIndex + 1)
-                        .filterIsInstance<AlbumsItem.Listing>()
-                        .flatMap { albumListing ->
-                            listOfNotNull(albumListing.id, albumListing.album?.coverLinkId)
-                        }
-                        .toSet()
-                } ?: emptySet(),
+                .aroundVisibleItems(visibleItems, leadingItemCount = 1)
+                .filterIsInstance<AlbumsItem.Listing>()
+                .flatMap { albumListing ->
+                    listOfNotNull(albumListing.id, albumListing.album?.coverLinkId)
+                }
+                .toSet(),
         )
     }
     LazyVerticalGrid(
@@ -570,6 +565,7 @@ private fun PreviewAlbumItem() {
                 isAnyAncestorMarkedAsOffline = false,
                 downloadState = null,
                 trashState = null,
+                volumeType = Volume.Type.PHOTO,
                 shareInvitationCount = null,
                 shareMemberCount = null,
                 cryptoName = CryptoProperty.Decrypted("My album", VerificationStatus.Success),

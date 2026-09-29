@@ -107,12 +107,8 @@ class UploadEventWorker @AssistedInject constructor(
                     userId = userId,
                     states = setOf(
                         UploadState.CREATING_NEW_FILE,
-                        UploadState.SPLITTING_URI_TO_BLOCKS,
                         UploadState.EXTRACTING_TAGS,
-                        UploadState.ENCRYPTING_BLOCKS,
-                        UploadState.GETTING_UPLOAD_LINKS,
                         UploadState.UPLOADING_BLOCKS,
-                        UploadState.UPDATING_REVISION,
                     ),
                     count = configurationProvider.uploadsInParallelPerVolume * 4,
                 ), getUploadFileLinksCount(userId)) { uploadFileLinks, count ->
@@ -226,7 +222,6 @@ class UploadEventWorker @AssistedInject constructor(
 
     private fun UploadState.toPercentage(percentage: Percentage): Percentage = when (this) {
         UploadState.UPLOADING_BLOCKS -> percentage
-        UploadState.UPDATING_REVISION -> Percentage(100)
         else -> Percentage(0)
     }
 

@@ -18,75 +18,51 @@
 
 package me.proton.core.drive.thumbnail.domain.usecase
 
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.crypto.domain.usecase.DecryptThumbnail
-import me.proton.core.drive.drivelink.domain.usecase.UseSdkForThumbnail
-import me.proton.core.drive.file.base.domain.entity.ThumbnailId
-import me.proton.core.drive.link.domain.entity.FileId
-import me.proton.core.drive.link.domain.extension.userId
-import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.drive.file.base.domain.entity.ThumbnailType
+import me.proton.core.drive.link.domain.entity.RevisionContext
+import me.proton.core.drive.volume.domain.entity.Volume
+import me.proton.core.drive.link.domain.extension.nodeUid
+import me.proton.drive.sdk.entity.RevisionUid
 import java.io.InputStream
 import javax.inject.Inject
 
 class GetThumbnailCachedInputStream @Inject constructor(
-    private val getThumbnailInputStream: GetThumbnailInputStream,
     private val getThumbnailSdk: GetThumbnailSdk,
-    private val getThumbnailFile: GetThumbnailFile,
     private val getThumbnailDecryptedFile: GetThumbnailDecryptedFile,
-    private val decryptThumbnail: DecryptThumbnail,
-    private val useSdkForThumbnail: UseSdkForThumbnail,
 ) {
 
     suspend operator fun invoke(
-        fileId: FileId,
-        volumeId: VolumeId,
-        revisionId: String,
-        thumbnailId: ThumbnailId,
-        inCacheFolder: Boolean
+        userId: UserId,
+        revisionUid: RevisionUid,
+        volumeType: Volume.Type,
+        type: ThumbnailType,
+        inCacheFolder: Boolean,
     ): Result<InputStream> = coRunCatching {
-        val encryptedThumbnailFile = getThumbnailFile(
-            userId = fileId.userId,
-            volumeId = volumeId,
-            revisionId = revisionId,
-            type = thumbnailId.type,
-        )
-        val decryptedThumbnailFile = getThumbnailDecryptedFile(
-            userId = fileId.userId,
-            volumeId = volumeId,
-            revisionId = revisionId,
-            type = thumbnailId.type,
+        val thumbnailFile = getThumbnailDecryptedFile(
+            userId = userId,
+            revisionUid = revisionUid,
+            type = type,
             inCacheFolder = inCacheFolder,
         )
-        if (decryptedThumbnailFile.exists() && decryptedThumbnailFile.length() > 0) {
-            decryptedThumbnailFile.inputStream()
-        } else if (encryptedThumbnailFile != null
-            && encryptedThumbnailFile.exists()
-            && encryptedThumbnailFile.length() > 0
-        ) {
-            decryptedThumbnailFile.outputStream().use { outputStream ->
-                outputStream.write(
-                    decryptThumbnail(fileId, encryptedThumbnailFile.inputStream()).getOrThrow()
-                )
-            }
-            decryptedThumbnailFile.inputStream()
+        if (thumbnailFile.exists() && thumbnailFile.length() > 0) {
+            thumbnailFile.inputStream()
         } else {
-            decryptedThumbnailFile.createNewFile()
-            decryptedThumbnailFile.outputStream().use { outputStream ->
-                if (useSdkForThumbnail(fileId).getOrThrow()) {
-                    getThumbnailSdk(
-                        volumeId = volumeId,
-                        fileId = fileId,
-                        thumbnailType = thumbnailId.type
-                    ).getOrThrow().use { inputStream ->
-                        inputStream.copyTo(outputStream)
-                    }
-                } else {
-                    getThumbnailInputStream(thumbnailId).getOrThrow().use { inputStream ->
-                        outputStream.write(decryptThumbnail(fileId, inputStream).getOrThrow())
-                    }
+            thumbnailFile.createNewFile()
+            thumbnailFile.outputStream().use { outputStream ->
+                getThumbnailSdk(
+                    revisionContext = RevisionContext(
+                        userId = userId,
+                        revisionUid = revisionUid,
+                        volumeType = volumeType,
+                    ),
+                    thumbnailType = type,
+                ).getOrThrow().use { inputStream ->
+                    inputStream.copyTo(outputStream)
                 }
             }
-            decryptedThumbnailFile.inputStream()
+            thumbnailFile.inputStream()
         }
     }
 }

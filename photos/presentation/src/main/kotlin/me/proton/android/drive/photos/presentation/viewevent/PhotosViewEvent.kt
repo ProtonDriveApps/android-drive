@@ -20,6 +20,8 @@ package me.proton.android.drive.photos.presentation.viewevent
 
 import android.content.Context
 import androidx.paging.CombinedLoadStates
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.FileId
@@ -38,6 +40,8 @@ interface PhotosViewEvent {
     val onSelectedOptions: () -> Unit get() = {}
     val onSelectDriveLink: (DriveLink) -> Unit get() = {}
     val onDeselectDriveLink: (DriveLink) -> Unit get() = {}
+    val onSeparator: (year: Int, month: Int) -> Unit get() = { _, _ -> }
+    val getSeparatorFileIds: (year: Int, month: Int) -> Flow<List<FileId>> get() = { _, _ -> emptyFlow() }
     val onBack: () -> Unit get() = {}
 
     val onPermissionsChanged: (BackupPermissions) -> Unit get() = {}

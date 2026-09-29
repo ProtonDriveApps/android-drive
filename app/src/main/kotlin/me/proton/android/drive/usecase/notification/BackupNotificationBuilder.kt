@@ -88,6 +88,9 @@ class BackupNotificationBuilder @Inject constructor(
             Event.Backup.BackupState.FAILED ->
                 appContext.getString(I18N.string.notification_content_text_backup_failed)
 
+            Event.Backup.BackupState.FAILED_FOLDER_NOT_FOUND ->
+                appContext.getString(I18N.string.notification_content_text_backup_failed_folder_not_found)
+
             Event.Backup.BackupState.FAILED_CONNECTIVITY ->
                 appContext.getString(I18N.string.notification_content_text_backup_failed_connectivity)
 

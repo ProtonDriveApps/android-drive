@@ -112,8 +112,11 @@ class RequestBatcher<K, I, R>(
         } catch (cancellationException: CancellationException) {
             requests.completeExceptionally { cancellationException }
             throw cancellationException
-        } catch (throwable: Throwable) {
-            requests.completeExceptionally { throwable }
+        } catch (error: Exception) {
+            requests.completeExceptionally { error }
+        } catch (error: Throwable) {
+            requests.completeExceptionally { error }
+            throw error
         }
     }
 

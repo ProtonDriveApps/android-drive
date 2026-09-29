@@ -27,6 +27,6 @@ import me.proton.drive.sdk.ProtonSdkClient
 interface ProtonSdkClientProvider {
 
     suspend fun getOrCreate(linkId: LinkId): Result<ProtonSdkClient>
-    suspend fun getOrCreate(userId: UserId, volumeType: Volume.Type?): Result<ProtonSdkClient>
+    suspend fun getOrCreate(userId: UserId, volumeType: Volume.Type): Result<ProtonSdkClient>
     suspend fun getOrCreate(userId: UserId, volumeId: VolumeId): Result<ProtonSdkClient>
 }

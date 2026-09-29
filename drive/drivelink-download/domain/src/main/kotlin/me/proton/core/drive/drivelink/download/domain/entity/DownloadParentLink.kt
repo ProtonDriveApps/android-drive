@@ -19,11 +19,11 @@
 package me.proton.core.drive.drivelink.download.domain.entity
 
 import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.drive.link.domain.entity.NodeContext
 
 data class DownloadParentLink(
     val id: Long = 0,
-    val volumeId: VolumeId,
+    val nodeContext: NodeContext,
     val linkId: LinkId,
     val priority: Long,
     val retryable: Boolean,

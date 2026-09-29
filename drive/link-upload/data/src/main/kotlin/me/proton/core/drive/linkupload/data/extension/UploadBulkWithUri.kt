@@ -17,26 +17,31 @@
  */
 package me.proton.core.drive.linkupload.data.extension
 
-import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.FolderContext
 import me.proton.core.drive.linkupload.data.db.entity.UploadBulkWithUri
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
 import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.drive.volume.data.extension.toVolumeType
+import me.proton.drive.sdk.entity.LegacyNodeUid
 
 fun UploadBulkWithUri.toUploadBulk() =
     UploadBulk(
         id = uploadBulkEntity.id,
-        userId = uploadBulkEntity.userId,
-        volumeId = VolumeId(uploadBulkEntity.volumeId),
+        parentFolderContext = FolderContext(
+            userId = uploadBulkEntity.userId,
+            nodeUid = LegacyNodeUid(
+                volumeId = uploadBulkEntity.volumeId,
+                linkId = uploadBulkEntity.parentId,
+            ),
+            volumeType = uploadBulkEntity.volumeType.toVolumeType(),
+        ),
         shareId = ShareId(uploadBulkEntity.userId, uploadBulkEntity.shareId),
-        parentLinkId = FolderId(ShareId(uploadBulkEntity.userId, uploadBulkEntity.shareId), uploadBulkEntity.parentId),
         uploadFileDescriptions = uploadBulkUriStringEntity
             .sortedBy { entity -> entity.key }
             .map { entity -> entity.toUploadFileDescription() },
         shouldDeleteSourceUri = uploadBulkEntity.shouldDeleteSourceUri,
         networkTypeProviderType = uploadBulkEntity.networkTypeProviderType,
         shouldAnnounceEvent = uploadBulkEntity.shouldAnnounceEvent,
-        cacheOption = uploadBulkEntity.cacheOption,
         priority = uploadBulkEntity.priority,
         shouldBroadcastErrorMessage = uploadBulkEntity.shouldBroadcastErrorMessage,
     )

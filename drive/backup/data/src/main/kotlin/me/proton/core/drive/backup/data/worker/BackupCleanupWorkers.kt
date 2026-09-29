@@ -24,6 +24,7 @@ import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.linkupload.domain.extension.userId
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.upload.data.worker.CleanupWorkers
 import javax.inject.Inject

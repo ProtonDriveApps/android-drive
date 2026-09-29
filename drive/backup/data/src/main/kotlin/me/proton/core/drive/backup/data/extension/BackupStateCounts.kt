@@ -30,8 +30,8 @@ import me.proton.core.drive.backup.domain.entity.BackupStatus
 fun List<BackupStateCount>.toEntity(): BackupStatus {
     val preparing =
         filter { it.backupFileState in listOf(IDLE, POSSIBLE_DUPLICATE) }.sumOf { it.count }
-    val pending = filter { it.backupFileState in listOf(READY, ENQUEUED) }.sumOf { it.count }
-    val failed = filter { it.backupFileState in listOf(FAILED) }.sumOf { it.count }
+    val pending = filter { it.isOwnedByPipeline }.sumOf { it.count }
+    val failed = filter { it.backupFileState == FAILED || it.isOrphaned }.sumOf { it.count }
     val total = filterNot { it.backupFileState in listOf(DUPLICATED) }.sumOf { it.count }
     return when {
         preparing != 0 -> BackupStatus.Preparing(
@@ -65,3 +65,9 @@ fun List<BackupStateCount>.toEntity(): BackupStatus {
         )
     }
 }
+
+private val BackupStateCount.isOwnedByPipeline: Boolean
+    get() = backupFileState == READY || (backupFileState == ENQUEUED && isUploadQueued)
+
+private val BackupStateCount.isOrphaned: Boolean
+    get() = backupFileState == ENQUEUED && !isUploadQueued

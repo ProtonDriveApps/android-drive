@@ -42,6 +42,7 @@ driveModule(
     implementation(project(":drive:link-trash:domain"))
     implementation(project(":drive:observability:data"))
     implementation(project(":drive:thumbnail:domain"))
+    implementation(project(":drive:volume:data"))
     implementation(project(":drive:worker:data"))
     implementation(project(":verifier:data"))
     implementation(libs.androidx.lifecycle.livedata.ktx)

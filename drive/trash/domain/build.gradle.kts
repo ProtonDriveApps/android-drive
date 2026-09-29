@@ -37,7 +37,6 @@ driveModule(
     implementation(project(":drive:message-queue:domain"))
     implementation(project(":drive:share:domain"))
 
-    testImplementation(project(":drive:file:base:data"))
     testImplementation(project(":drive:message-queue:data"))
     testImplementation(project(":drive:trash:data-test"))
 }

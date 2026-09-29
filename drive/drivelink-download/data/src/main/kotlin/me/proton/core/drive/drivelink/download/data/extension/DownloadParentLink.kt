@@ -20,16 +20,19 @@ package me.proton.core.drive.drivelink.download.data.extension
 
 import me.proton.core.drive.drivelink.download.data.db.entity.ParentLinkDownloadEntity
 import me.proton.core.drive.drivelink.download.domain.entity.DownloadParentLink
+import me.proton.core.drive.drivelink.download.domain.extension.volumeId
 import me.proton.core.drive.link.data.api.entity.LinkDto
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.volume.data.extension.toLong
 
 fun DownloadParentLink.toParentLinkDownloadEntity() = ParentLinkDownloadEntity(
     id = id,
     userId = linkId.userId,
     volumeId = volumeId.id,
+    volumeType = nodeContext.volumeType.toLong(),
     shareId = linkId.shareId.id,
     linkId = linkId.id,
     linkType = when (linkId) {

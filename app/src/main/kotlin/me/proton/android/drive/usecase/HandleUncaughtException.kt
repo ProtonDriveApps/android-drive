@@ -24,6 +24,7 @@ import kotlinx.coroutines.runBlocking
 import me.proton.android.drive.log.DriveLogTag
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
+import me.proton.core.drive.base.domain.extension.isFatal
 import me.proton.core.drive.base.domain.usecase.ClearCacheFolder
 import me.proton.core.drive.base.domain.usecase.GetInternalStorageInfo
 import me.proton.core.drive.base.domain.util.coRunCatching
@@ -37,19 +38,24 @@ class HandleUncaughtException @Inject constructor(
     private val announceEvent: AnnounceEvent,
 ) {
 
-    operator fun invoke(error: Throwable, isFromMainThread: Boolean): Result<Boolean> = coRunCatching {
-        val isNoSpaceLeftOnDevice = getInternalStorageInfo().getOrThrow().available.value == 0L
-        if (isNoSpaceLeftOnDevice) runBlocking {
-            announceEvent(Event.NoSpaceLeftOnDevice)
-            clearCacheFolder()
+    operator fun invoke(error: Throwable, isFromMainThread: Boolean): Result<Boolean> {
+        if (error.isFatal) {
+            return Result.success(false)
         }
-        val isCursorWindowError = error.isCursorWindowError
-        CoreLogger.d(DriveLogTag.CRASH, "HandleUncaughtException isCursorWindowError=$isCursorWindowError, isFromMainThread=$isFromMainThread")
-        when (error) {
-            is IOException,
-            is SQLiteDiskIOException,
-            is SQLiteFullException -> isNoSpaceLeftOnDevice
-            else -> false
+        return coRunCatching {
+            val isNoSpaceLeftOnDevice = getInternalStorageInfo().getOrThrow().available.value == 0L
+            if (isNoSpaceLeftOnDevice) runBlocking {
+                announceEvent(Event.NoSpaceLeftOnDevice)
+                clearCacheFolder()
+            }
+            val isCursorWindowError = error.isCursorWindowError
+            CoreLogger.d(DriveLogTag.CRASH, "HandleUncaughtException isCursorWindowError=$isCursorWindowError, isFromMainThread=$isFromMainThread")
+            when (error) {
+                is IOException,
+                is SQLiteDiskIOException,
+                is SQLiteFullException -> isNoSpaceLeftOnDevice
+                else -> false
+            }
         }
     }
 

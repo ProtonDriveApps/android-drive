@@ -157,7 +157,7 @@ fun PdfPreview(
                     item = reader.renderPage(index, density, maxWidth)
                 } catch (e: CancellationException) {
                     throw e
-                } catch (e: Throwable) {
+                } catch (e: Exception) {
                     onRenderFailed(e, uri)
                 }
             }

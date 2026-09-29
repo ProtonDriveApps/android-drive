@@ -37,10 +37,10 @@ import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.drivelink.upload.domain.entity.Notifications
 import me.proton.core.drive.drivelink.upload.domain.usecase.UploadFiles
 import me.proton.core.drive.link.domain.extension.userId
-import me.proton.core.drive.linkupload.domain.entity.CacheOption
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.linkupload.domain.entity.UploadFileProperties
+import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksCount
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksPaged
 import me.proton.core.user.domain.usecase.GetUser
 import me.proton.core.util.kotlin.CoreLogger
@@ -55,10 +55,9 @@ class UploadFolder @Inject constructor(
     private val uploadFiles: UploadFiles,
     private val cleanUpCompleteBackup: CleanUpCompleteBackup,
     private val getDriveLink: GetDriveLink,
-    private val getUploadFileLinks: GetUploadFileLinksPaged,
+    private val getUploadFileLinksCount: GetUploadFileLinksCount,
     private val getUser: GetUser,
     private val markAsEnqueued: MarkAsEnqueued,
-    private val getInternalStorageInfo: GetInternalStorageInfo,
 ) {
 
     suspend operator fun invoke(
@@ -68,8 +67,12 @@ class UploadFolder @Inject constructor(
         val bucketId = backupFolder.bucketId
         val folderId = backupFolder.folderId
         val userId = folderId.userId
-        val uploading = getUploadFileLinks(userId, folderId).size
+        val uploading = getUploadFileLinksCount(folderId).first().total
         val count = configurationProvider.uploadLimitThreshold - uploading
+        if (count <= 0) {
+            CoreLogger.i(BACKUP, "Upload limit reached, $uploading in progress")
+            return@coRunCatching
+        }
         val user = getUser(userId, false)
         val availableSpace = user.availableSpace
         CoreLogger.i(BACKUP, "Available space: $availableSpace")
@@ -87,7 +90,6 @@ class UploadFolder @Inject constructor(
         val filesToBackup = getFilesToBackup(
             folderId = folderId,
             bucketId = bucketId,
-            maxAttempts = configurationProvider.backupMaxAttempts,
             fromIndex = 0,
             count = count,
         ).getOrThrow()
@@ -109,28 +111,20 @@ class UploadFolder @Inject constructor(
                 CoreLogger.d(BACKUP, "First excluded file size: ${excludeFiles.first().size}")
             }
             val uris = files
-                .toUploadFileDescriptionPriorityCacheOption()
-                .groupBy({ (_, uploadPriority, _) -> uploadPriority }) { (uriString, _, cacheOption) ->
-                    uriString to cacheOption
-                }
+                .toUploadFileDescriptionsByPriority()
             val driveLinkFolder: DriveLink.Folder =
                 getDriveLink(userId, folderId).mapSuccessValueOrNull().filterNotNull().first()
-            uris.forEach { (priority, uploadFileDescriptionsWithCacheOption) ->
-                uploadFileDescriptionsWithCacheOption
-                    .groupBy({ (_, cacheOption) -> cacheOption }) { (descriptions, _) -> descriptions }
-                    .forEach { (cacheOption, uploadFileDescriptions) ->
-                        uploadFiles(
-                            folder = driveLinkFolder,
-                            uploadFileDescriptions = uploadFileDescriptions,
-                            shouldDeleteSource = false,
-                            notifications = Notifications.TurnedOff,
-                            cacheOption = cacheOption,
-                            background = true,
-                            networkTypeProviderType = NetworkTypeProviderType.BACKUP,
-                            shouldBroadcastErrorMessage = false,
-                            priority = priority,
-                        ).getOrThrow()
-                    }
+            uris.forEach { (priority, uploadFileDescriptions) ->
+                uploadFiles(
+                    folder = driveLinkFolder,
+                    uploadFileDescriptions = uploadFileDescriptions,
+                    shouldDeleteSource = false,
+                    notifications = Notifications.TurnedOff,
+                    background = true,
+                    networkTypeProviderType = NetworkTypeProviderType.BACKUP,
+                    shouldBroadcastErrorMessage = false,
+                    priority = priority,
+                ).getOrThrow()
             }
             markAsEnqueued(folderId, files.map { backupFile -> backupFile.uriString }).getOrThrow()
         } else if (filesToBackup.isNotEmpty()) {
@@ -143,37 +137,22 @@ class UploadFolder @Inject constructor(
         }
     }
 
-    private fun List<BackupFile>.toUploadFileDescriptionPriorityCacheOption(
-    ): List<Triple<UploadFileDescription, Long, CacheOption>> = with(configurationProvider) {
-        val defaultThumbnailsCacheLimit = getInternalStorageInfo()
-            .getOrNull()
-            ?.takeIf { storageInfo ->
-                storageInfo.available.value > backupDefaultThumbnailsCacheLocalStorageThreshold.value
-            }
-            ?.let {
-                backupDefaultThumbnailsCacheLimit
-            }
-            ?: 0
-        this@toUploadFileDescriptionPriorityCacheOption
-            .sortedBy { backupFile -> backupFile.uploadPriority }
-            .mapIndexed { index, backupFile ->
-                Triple(
-                    UploadFileDescription(
-                        uri = backupFile.uriString,
-                        properties = backupFile.lastModified?.let { lastModified ->
-                            UploadFileProperties(
-                                name = backupFile.name,
-                                mimeType = backupFile.mimeType,
-                                size = backupFile.size,
-                                lastModified = lastModified.toTimestampMs()
-                            )
-                        }
-                    ),
-                    backupFile.uploadPriority,
-                    if (index < defaultThumbnailsCacheLimit) CacheOption.THUMBNAIL_DEFAULT else CacheOption.NONE,
-                )
-            }
-    }
+    private fun List<BackupFile>.toUploadFileDescriptionsByPriority(
+    ): Map<Long, List<UploadFileDescription>> = this
+        .sortedBy { backupFile -> backupFile.uploadPriority }
+        .groupBy({ backupFile -> backupFile.uploadPriority }) { backupFile ->
+            UploadFileDescription(
+                uri = backupFile.uriString,
+                properties = backupFile.lastModified?.let { lastModified ->
+                    UploadFileProperties(
+                        name = backupFile.name,
+                        mimeType = backupFile.mimeType,
+                        size = backupFile.size,
+                        lastModified = lastModified.toTimestampMs()
+                    )
+                }
+            )
+        }
 }
 
 private fun List<BackupFile>.takeToSize(availableSpace: Bytes): List<BackupFile> {

@@ -30,6 +30,7 @@ interface PreviewViewEvent {
     val onRenderFailed: (Throwable, Any) -> Unit
     val mediaControllerVisibility: (Boolean) -> Unit
     val onOpenInBrowser: () -> Unit
+    val onDownload: () -> Unit
     val onProtonDocsDownloadResult: (Result<String>) -> Unit
     val onProtonDocsShowFileChooser: (ValueCallback<Array<Uri>>?, FileChooserParams?) -> Boolean
     val onWebViewRelease: (String) -> Unit

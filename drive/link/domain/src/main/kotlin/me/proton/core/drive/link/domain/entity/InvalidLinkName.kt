@@ -18,7 +18,7 @@
 
 package me.proton.core.drive.link.domain.entity
 
-sealed class InvalidLinkName : Throwable() {
+sealed class InvalidLinkName : RuntimeException() {
     data object Empty : InvalidLinkName()
     data class ExceedsMaxLength(val maxLength: Int) : InvalidLinkName()
     data object Periods : InvalidLinkName()

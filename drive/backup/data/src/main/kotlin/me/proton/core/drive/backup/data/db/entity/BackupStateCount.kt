@@ -22,5 +22,6 @@ import me.proton.core.drive.backup.domain.entity.BackupFileState
 
 data class BackupStateCount(
     val backupFileState: BackupFileState,
+    val isUploadQueued: Boolean,
     val count: Int,
 )

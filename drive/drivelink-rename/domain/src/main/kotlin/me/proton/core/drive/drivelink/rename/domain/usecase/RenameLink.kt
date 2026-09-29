@@ -20,7 +20,7 @@ package me.proton.core.drive.drivelink.rename.domain.usecase
 
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidSDKRenameNode
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidSDKMove
 import me.proton.core.drive.feature.flag.domain.extension.on
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -46,7 +46,7 @@ class RenameLink @Inject constructor(
         link: Link,
         linkName: String,
     ): Result<Unit> = coRunCatching {
-        if (getFeatureFlag(driveAndroidSDKRenameNode(link.userId)).on) {
+        if (getFeatureFlag(driveAndroidSDKMove(link.userId)).on) {
             val share = getShare(link.id.shareId).toResult().getOrThrow()
             renameLinkSdk(
                 userId = link.userId,
@@ -69,27 +69,19 @@ class RenameLink @Inject constructor(
     ): Result<Unit> = coRunCatching {
         require(rootFolder.parentId == null) { "Use this method only for renaming a root folder" }
 
-        if (getFeatureFlag(driveAndroidSDKRenameNode(rootFolder.userId)).on) {
-            val share = getShare(rootFolder.id.shareId).toResult().getOrThrow()
-            renameLinkSdk(
-                userId = rootFolder.userId,
-                nodeUid = rootFolder.nodeUid(share.volumeId),
-                linkName = folderName,
-            ).getOrThrow()
-        } else {
-            renameLinkLegacy(
-                rootFolder = rootFolder,
-                folderName = folderName,
-                nameValidator = nameValidator,
-            ).getOrThrow()
-        }
+        // SDK renames through moveNodes which requires a parent, so root folders stay on the legacy route
+        renameLinkLegacy(
+            rootFolder = rootFolder,
+            folderName = folderName,
+            nameValidator = nameValidator,
+        ).getOrThrow()
     }
 
     suspend operator fun invoke(
         linkId: LinkId,
         linkName: String,
     ): Result<Unit> = coRunCatching {
-        if (getFeatureFlag(driveAndroidSDKRenameNode(linkId.userId)).on) {
+        if (getFeatureFlag(driveAndroidSDKMove(linkId.userId)).on) {
             val share = getShare(linkId.shareId).toResult().getOrThrow()
             renameLinkSdk(
                 userId = linkId.userId,

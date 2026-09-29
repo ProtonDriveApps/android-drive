@@ -46,6 +46,7 @@ import me.proton.core.drive.upload.data.extension.retryOrAbort
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_ID
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_URI_STRING
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
+import me.proton.core.drive.upload.domain.exception.ContentSizeChangedException
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.CreateNewFileSdk
 import me.proton.core.drive.worker.domain.usecase.CanRun
@@ -91,22 +92,31 @@ class CreateNewFileSdkWorker @AssistedInject constructor(
             uriString = uriString,
         ).fold(
             onFailure = { error ->
-                if (error is FileNotFoundException) {
-                    setUploadAsCancelled()
-                    error.log(
-                        tag = logTag(),
-                        message = "File does not exist anymore, cancelling upload",
-                        level = LoggerLevel.WARNING,
-                    )
-                    throw UploadCleanupException(error, uploadFileLink.name)
-                } else {
-                    val retryable = error.isRetryable || error.handle(uploadFileLink)
-                    uploadFileLink.retryOrAbort(
-                        retryable = retryable,
+                when (error) {
+                    is FileNotFoundException -> {
+                        setUploadAsCancelled()
+                        error.log(
+                            tag = logTag(),
+                            message = "File does not exist anymore, cancelling upload",
+                            level = LoggerLevel.WARNING,
+                        )
+                        throw UploadCleanupException(error, uploadFileLink.name)
+                    }
+                    is ContentSizeChangedException -> uploadFileLink.retryOrAbort(
+                        retryable = true,
                         canRetry = canRetry(),
                         error = error,
-                        message = "Creating upload file via SDK failed",
+                        message = "Content size changed while creating upload file via SDK",
                     )
+                    else -> {
+                        val retryable = error.isRetryable || error.handle(uploadFileLink)
+                        uploadFileLink.retryOrAbort(
+                            retryable = retryable,
+                            canRetry = canRetry(),
+                            error = error,
+                            message = "Creating upload file via SDK failed",
+                        )
+                    }
                 }
             },
             onSuccess = {

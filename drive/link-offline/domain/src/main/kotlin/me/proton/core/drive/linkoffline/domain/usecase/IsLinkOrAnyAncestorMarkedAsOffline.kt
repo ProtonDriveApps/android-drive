@@ -17,19 +17,23 @@
  */
 package me.proton.core.drive.linkoffline.domain.usecase
 
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.usecase.FindLinkIdsByNodeUid
 import me.proton.core.drive.linknode.domain.entity.LinkNode
 import me.proton.core.drive.linknode.domain.extension.ancestors
 import me.proton.core.drive.linknode.domain.usecase.GetLinkNode
 import me.proton.core.drive.linkoffline.domain.repository.LinkOfflineRepository
+import me.proton.drive.sdk.entity.NodeUid
 import javax.inject.Inject
 
 class IsLinkOrAnyAncestorMarkedAsOffline @Inject constructor(
     private val linkOfflineRepository: LinkOfflineRepository,
     private val getLinkNode: GetLinkNode,
+    private val findLinkIdsByNodeUid: FindLinkIdsByNodeUid,
 ) {
     suspend operator fun invoke(linkNode: LinkNode): Boolean = when {
         linkOfflineRepository.isMarkedOffline(linkNode.link.id) -> true
@@ -49,4 +53,10 @@ class IsLinkOrAnyAncestorMarkedAsOffline @Inject constructor(
             invoke(linkNode)
         } ?: false
     }
+
+    suspend operator fun invoke(userId: UserId, nodeUid: NodeUid): Boolean =
+        findLinkIdsByNodeUid(userId, nodeUid)
+            .getOrNull()
+            .orEmpty()
+            .any { linkId -> invoke(linkId) }
 }

@@ -25,11 +25,7 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
@@ -44,7 +40,7 @@ import me.proton.core.accountmanager.presentation.observe
 import me.proton.core.accountmanager.presentation.onAccountReady
 import me.proton.core.accountmanager.presentation.onAccountRemoved
 import me.proton.core.domain.arch.mapSuccessValueOrNull
-import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.coroutines.UserSupervisorIOScopes
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.PHOTO
 import me.proton.core.drive.base.domain.log.logId
@@ -69,7 +65,7 @@ import me.proton.core.util.kotlin.CoreLogger
 @Suppress("unused")
 class TagsMigrationInitializer : Initializer<Unit> {
 
-    private val scopes = mutableMapOf<UserId, CoroutineScope>()
+    private val scopes = UserSupervisorIOScopes(PHOTO)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun create(context: Context) {
@@ -82,9 +78,7 @@ class TagsMigrationInitializer : Initializer<Unit> {
             accountManager.observe(appLifecycleProvider.lifecycle, Lifecycle.State.CREATED)
                 .onAccountReady { account ->
                     val userId = account.userId
-                    val scope = scopes.getOrPut(userId) {
-                        CoroutineScope(Dispatchers.IO + Job())
-                    }
+                    val scope = scopes[userId]
                     val enabledFlow = getFeatureFlagFlow(drivePhotosTagsMigrationDisabled(userId))
                         .map { killSwitch -> !killSwitch.on }
                     val volumeIdFlow = getOldestActiveVolume(userId, Volume.Type.PHOTO)
@@ -168,7 +162,7 @@ class TagsMigrationInitializer : Initializer<Unit> {
                         }.launchIn(scope)
                 }
                 .onAccountRemoved { account ->
-                    scopes.remove(account.userId)?.cancel()
+                    scopes.remove(account.userId)
                 }
         }
     }

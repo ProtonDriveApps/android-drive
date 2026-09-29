@@ -31,7 +31,6 @@ import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linknode.domain.extension.withAncestorsFromRoot
 import me.proton.core.drive.linknode.domain.usecase.GetLinkNode
-import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import javax.inject.Inject
 
 class BuildNodeKey @Inject constructor(
@@ -57,27 +56,6 @@ class BuildNodeKey @Inject constructor(
         }
         key ?: throw error
     }
-
-    suspend operator fun invoke(
-        userId: UserId,
-        parentKey: Key,
-        uploadFileLink: UploadFileLink,
-        signatureAddress: String,
-    ): Result<Key.Node> =
-        coRunCatching {
-            NodeKey(
-                key = decryptNestedPrivateKey(
-                    decryptKey = parentKey.keyHolder,
-                    key = uploadFileLink.nestedPrivateKey,
-                    verifySignatureKey = getPublicAddressKeys(
-                        userId = userId,
-                        email = signatureAddress,
-                    ).getOrThrow().keyHolder,
-                    allowCompromisedVerificationKeys = true,
-                ).getOrThrow(),
-                parent = parentKey,
-            )
-        }
 
     private suspend fun buildKey(parentKey: Key?, link: Link): Result<Key.Node> =
         if (parentKey != null) buildNodeKey(parentKey, link)

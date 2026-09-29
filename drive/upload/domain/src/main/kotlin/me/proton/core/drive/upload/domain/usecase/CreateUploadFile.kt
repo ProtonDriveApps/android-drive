@@ -17,15 +17,15 @@
  */
 package me.proton.core.drive.upload.domain.usecase
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.link.domain.entity.FolderId
-import me.proton.core.drive.linkupload.domain.entity.CacheOption
+import me.proton.core.drive.link.domain.entity.FolderContext
+import me.proton.core.drive.link.domain.entity.NodeContext
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
-import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.Volume
 import javax.inject.Inject
 
 class CreateUploadFile @Inject constructor(
@@ -38,28 +38,24 @@ class CreateUploadFile @Inject constructor(
     private val getUploadFileUriInfo: GetUploadFileUriInfo,
 ) {
     suspend operator fun invoke(
-        userId: UserId,
-        volumeId: VolumeId,
-        parentId: FolderId,
+        parentFolderContext: FolderContext,
+        shareId: ShareId,
         name: String,
         mimeType: String,
         networkTypeProviderType: NetworkTypeProviderType,
         shouldAnnounceEvent: Boolean,
-        cacheOption: CacheOption,
         priority: Long,
         shouldBroadcastErrorMessage: Boolean,
     ): Result<UploadFileLink> = coRunCatching {
+        parentFolderContext.requireKnownVolumeType()
         linkUploadRepository.insertUploadFileLink(
             UploadFileLink(
-                userId = userId,
-                volumeId = volumeId,
-                shareId = parentId.shareId,
-                parentLinkId = parentId,
+                parentFolderContext = parentFolderContext,
+                shareId = shareId,
                 name = name,
                 mimeType = mimeType,
                 networkTypeProviderType = networkTypeProviderType,
                 shouldAnnounceEvent = shouldAnnounceEvent,
-                cacheOption = cacheOption,
                 priority = priority,
                 shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
             )
@@ -67,17 +63,16 @@ class CreateUploadFile @Inject constructor(
     }
 
     suspend operator fun invoke(
-        userId: UserId,
-        volumeId: VolumeId,
-        parentId: FolderId,
+        parentFolderContext: FolderContext,
+        shareId: ShareId,
         uploadFileDescriptions: List<UploadFileDescription>,
         shouldDeleteSourceUri: Boolean,
         networkTypeProviderType: NetworkTypeProviderType,
         shouldAnnounceEvent: Boolean,
-        cacheOption: CacheOption,
         priority: Long,
         shouldBroadcastErrorMessage: Boolean,
     ): Result<List<UploadFileLink>> = coRunCatching {
+        parentFolderContext.requireKnownVolumeType()
         linkUploadRepository.insertUploadFileLinks(
             uploadFileDescriptions.filter { description ->
                 isUploadFileExist(description)
@@ -86,10 +81,8 @@ class CreateUploadFile @Inject constructor(
                 val uriInfo = takeIf { description.properties == null }?.let { getUploadFileUriInfo(uriString) }
                 val mimeType = getUploadFileMimeType(description, uriInfo)
                 UploadFileLink(
-                    userId = userId,
-                    volumeId = volumeId,
-                    shareId = parentId.shareId,
-                    parentLinkId = parentId,
+                    parentFolderContext = parentFolderContext,
+                    shareId = shareId,
                     name = getUploadFileName(description, uriInfo),
                     mimeType = mimeType,
                     size = getUploadFileSize(description, uriInfo),
@@ -98,11 +91,16 @@ class CreateUploadFile @Inject constructor(
                     shouldDeleteSourceUri = shouldDeleteSourceUri,
                     networkTypeProviderType = networkTypeProviderType,
                     shouldAnnounceEvent = shouldAnnounceEvent,
-                    cacheOption = cacheOption,
                     priority = priority,
                     shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
                 )
             }
         )
     }
+
+
+    private fun NodeContext.requireKnownVolumeType() =
+        require(volumeType != Volume.Type.UNKNOWN) {
+            "Cannot queue an upload for an unknown volume type"
+        }
 }

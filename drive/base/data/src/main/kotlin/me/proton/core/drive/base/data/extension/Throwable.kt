@@ -20,6 +20,7 @@ package me.proton.core.drive.base.data.extension
 import android.content.Context
 import android.database.SQLException
 import android.system.ErrnoException
+import android.system.OsConstants
 import kotlinx.coroutines.CancellationException
 import me.proton.core.crypto.common.pgp.exception.CryptoException
 import me.proton.core.drive.base.data.entity.LoggerLevel
@@ -62,13 +63,12 @@ fun Throwable.getDefaultMessage(
         is UnsupportedOperationException -> getDefaultMessage(context)
         is IOException -> getDefaultMessage(context)
         is SecurityException -> getDefaultMessage(context)
-        is RuntimeException -> {
-            cause?.getDefaultMessage(context, useExceptionMessage)
-                ?: getDefaultMessage(context)
-        }
-
         is ProtonDriveSdkException -> getDefaultMessage(context, useExceptionMessage)
         is OperationAbortedException -> getDefaultMessage(context, useExceptionMessage)
+        is RuntimeException -> {
+            cause?.getDefaultMessage(context, useExceptionMessage, unhandled) ?: unhandled
+        }
+
         else -> unhandled
     }
 }
@@ -92,9 +92,9 @@ fun Throwable.log(
         is UnsupportedOperationException -> log(tag, message, level)
         is IOException -> log(tag, message, level)
         is SecurityException -> log(tag, message, level)
-        is RuntimeException -> log(tag, message, level)
         is ProtonDriveSdkException -> log(tag, message, level)
         is OperationAbortedException -> log(tag, message, level)
+        is RuntimeException -> log(tag, message, level)
         else -> level.log(tag, this, message)
     }
 }
@@ -112,6 +112,11 @@ fun <T : Throwable> T.logDefaultMessage(
 
 val Throwable.isRetryable: Boolean
     get() = when (this) {
+        is ProtonDriveSdkException -> when (error?.domain) {
+            ErrorDomain.SuccessfulCancellation -> true
+            else -> toApiException()?.isDriveRetryable() ?: false
+        }
+
         is RuntimeException -> {
             val runtimeCause = cause
             if (runtimeCause is ApiException) {
@@ -119,11 +124,6 @@ val Throwable.isRetryable: Boolean
             } else {
                 false
             }
-        }
-
-        is ProtonDriveSdkException -> when (error?.domain) {
-            ErrorDomain.SuccessfulCancellation -> true
-            else -> toApiException()?.isDriveRetryable() ?: false
         }
 
         is ApiException -> isDriveRetryable()
@@ -150,6 +150,14 @@ fun Throwable.isErrno(errno: Int): Boolean = if (this is ErrnoException) {
 } else {
     cause?.isErrno(errno) ?: false
 }
+
+private const val NO_SPACE_LEFT_ON_DEVICE = "No space left on device"
+
+// The SDK surfaces the out-of-space failure only as a message, without an ErrnoException
+val Throwable.isNoSpaceLeftOnDevice: Boolean
+    get() = isErrno(OsConstants.ENOSPC) ||
+            message?.contains(NO_SPACE_LEFT_ON_DEVICE, ignoreCase = true) == true ||
+            cause?.isNoSpaceLeftOnDevice == true
 
 fun <T> ApiResult<T>.isHttpError(range: IntRange): Boolean {
     val httpError = this as? ApiResult.Error.Http

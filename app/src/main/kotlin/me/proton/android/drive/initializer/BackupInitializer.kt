@@ -28,11 +28,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
@@ -59,9 +57,11 @@ import me.proton.core.drive.backup.domain.usecase.HasFolders
 import me.proton.core.drive.backup.domain.usecase.ObserveConfigurationChanges
 import me.proton.core.drive.backup.domain.usecase.SchedulePeriodicSync
 import me.proton.core.drive.backup.domain.usecase.StartBackupAfterErrorResolved
+import me.proton.core.drive.backup.domain.usecase.StopBackupAfterPermissionsLost
 import me.proton.core.drive.backup.domain.usecase.SyncStaleFolders
 import me.proton.core.drive.backup.domain.usecase.UnwatchFolders
 import me.proton.core.drive.backup.domain.usecase.WatchFolders
+import me.proton.core.drive.base.domain.coroutines.UserSupervisorIOScopes
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
@@ -71,7 +71,7 @@ import me.proton.core.util.kotlin.CoreLogger
 
 class BackupInitializer : Initializer<Unit> {
 
-    private val scopes = mutableMapOf<UserId, CoroutineScope>()
+    private val scopes = UserSupervisorIOScopes(BACKUP)
 
     override fun create(context: Context) {
 
@@ -83,9 +83,7 @@ class BackupInitializer : Initializer<Unit> {
             accountManager.observe(appLifecycleProvider.lifecycle, Lifecycle.State.CREATED)
                 .onAccountReady { account ->
                     val userId = account.userId
-                    val scope = scopes.getOrPut(userId) {
-                        CoroutineScope(Dispatchers.IO + Job())
-                    }
+                    val scope = scopes[userId]
                     markOrphanedEnqueuedFilesAsFailed(userId = userId).onSuccess {
                         CoreLogger.i(BACKUP, "Marked $it enqueued files without upload as failed")
                     }.onFailure { error ->
@@ -101,6 +99,19 @@ class BackupInitializer : Initializer<Unit> {
                             type = BackupErrorType.PERMISSION,
                         ).onFailure { error ->
                             error.log(BACKUP, "Cannot restart the backup")
+                        }
+                    }.launchIn(scope)
+
+                    combine(
+                        hasFolders(userId),
+                        backupPermissionsManager.backupPermissions,
+                    ) { hasFolders, permissions ->
+                        hasFolders && permissions is BackupPermissions.Denied
+                    }.distinctUntilChanged().filter { lostPermissions ->
+                        lostPermissions
+                    }.onEach {
+                        stopBackupAfterPermissionsLost(userId).onFailure { error ->
+                            error.log(BACKUP, "Cannot stop the backup after losing permissions")
                         }
                     }.launchIn(scope)
 
@@ -147,7 +158,7 @@ class BackupInitializer : Initializer<Unit> {
                 .onAccountRemoved { account ->
                     unwatchFolders(account.userId)
                     cancelPeriodicSync(account.userId)
-                    scopes.remove(account.userId)?.cancel()
+                    scopes.remove(account.userId)
                 }
         }
     }
@@ -193,6 +204,7 @@ class BackupInitializer : Initializer<Unit> {
         val cancelPeriodicSync: CancelPeriodicSync
         val backupPermissionsManager: BackupPermissionsManager
         val startBackupAfterErrorResolved: StartBackupAfterErrorResolved
+        val stopBackupAfterPermissionsLost: StopBackupAfterPermissionsLost
         val appLifecycleProvider: AppLifecycleProvider
         val rescanOnMediaStoreUpdate: RescanOnMediaStoreUpdate
         val observeConfigurationChanges: ObserveConfigurationChanges

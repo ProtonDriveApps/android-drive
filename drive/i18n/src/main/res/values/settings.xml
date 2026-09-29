@@ -89,6 +89,9 @@
     <string name="debug_settings_feature_flag_fresh_duration" translatable="false">Feature flag fresh duration (in minutes)</string>
     <string name="debug_settings_reset" translatable="false">Reset</string>
     <string name="debug_settings_reset_description" translatable="false">Restore default value for debug settings</string>
+    <string name="debug_settings_change_environment" translatable="false">Change environment</string>
+    <string name="debug_settings_change_environment_description" translatable="false">Changes Host/Base URL, then signs out and restarts the app to fully apply it</string>
+    <string name="debug_settings_change_environment_apply" translatable="false">Apply</string>
     <string name="debug_settings_use_exception_message" translatable="false">Show exception as error message</string>
     <string name="debug_settings_use_exception_message_description" translatable="false">When enabled, instead of user friendly error message, exception error message will be shown</string>
     <string name="debug_settings_log_to_file" translatable="false">Log to file</string>

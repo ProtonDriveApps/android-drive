@@ -61,17 +61,16 @@ class AppProtonSdkClientProvider @Inject constructor(
 
     override suspend fun getOrCreate(
         userId: UserId,
-        volumeType: Volume.Type?,
+        volumeType: Volume.Type,
     ): Result<ProtonSdkClient> = coRunCatching {
         when (volumeType) {
-            null -> error("Cannot create sdk client for null volume type")
             Volume.Type.UNKNOWN -> error("Cannot create sdk client for unknown volume type")
             Volume.Type.REGULAR -> driveClientProvider.getOrCreate(userId).getOrThrow()
             Volume.Type.PHOTO -> photosClientProvider.getOrCreate(userId).getOrThrow()
         }
     }
 
-    fun remove(userId: UserId) {
+    suspend fun remove(userId: UserId) {
         driveClientProvider.remove(userId)
         photosClientProvider.remove(userId)
     }

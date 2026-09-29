@@ -40,3 +40,9 @@ fun Long.toVolumeType() = when (this) {
     VolumeDto.TYPE_PHOTO -> Volume.Type.PHOTO
     else -> Volume.Type.UNKNOWN
 }
+
+fun Volume.Type.toLong() = when (this) {
+    Volume.Type.REGULAR -> VolumeDto.TYPE_REGULAR
+    Volume.Type.PHOTO -> VolumeDto.TYPE_PHOTO
+    Volume.Type.UNKNOWN -> VolumeDto.TYPE_UNKNOWN
+}

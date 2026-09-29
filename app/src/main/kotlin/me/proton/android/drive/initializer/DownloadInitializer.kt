@@ -26,9 +26,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -39,7 +36,8 @@ import me.proton.core.accountmanager.presentation.onAccountRemoved
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.drive.base.data.extension.log
-import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.coroutines.UserSupervisorIOScopes
+import me.proton.core.drive.base.domain.log.LogTag.DOWNLOAD
 import me.proton.core.drive.base.domain.log.LogTag.TRACKING
 import me.proton.core.drive.base.domain.usecase.GetDownloadStagingTempFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
@@ -52,7 +50,7 @@ import me.proton.core.util.kotlin.CoreLogger
 
 class DownloadInitializer : Initializer<Unit> {
 
-    private val scopes = mutableMapOf<UserId, CoroutineScope>()
+    private val scopes = UserSupervisorIOScopes(DOWNLOAD)
 
     override fun create(context: Context) {
         with(
@@ -71,9 +69,7 @@ class DownloadInitializer : Initializer<Unit> {
             )
                 .onAccountReady { account ->
                     val userId = account.userId
-                    val scope = scopes.getOrPut(userId) {
-                        CoroutineScope(Dispatchers.IO + Job())
-                    }
+                    val scope = scopes[userId]
                     deleteTempFolder(userId, scope)
                     isDownloading(userId).onEach { downloading ->
                         if (downloading) {
@@ -86,7 +82,7 @@ class DownloadInitializer : Initializer<Unit> {
                     }.launchIn(scope)
                 }
                 .onAccountRemoved { account ->
-                    scopes.remove(account.userId)?.cancel()
+                    scopes.remove(account.userId)
                 }
         }
     }
@@ -102,7 +98,7 @@ class DownloadInitializer : Initializer<Unit> {
             coRunCatching {
                 handler.onError(downloadError)
             }.onFailure { error ->
-                error.log(LogTag.DOWNLOAD, "Failed to handle download error")
+                error.log(DOWNLOAD, "Failed to handle download error")
             }
         }
     }
@@ -115,7 +111,7 @@ class DownloadInitializer : Initializer<Unit> {
             coRunCatching {
                 getDownloadStagingTempFolder(userId).deleteRecursively()
             }.onFailure { error ->
-                error.log(LogTag.DOWNLOAD, "Cannot delete temp folder", LoggerLevel.WARNING)
+                error.log(DOWNLOAD, "Cannot delete temp folder", LoggerLevel.WARNING)
             }
         }
     }

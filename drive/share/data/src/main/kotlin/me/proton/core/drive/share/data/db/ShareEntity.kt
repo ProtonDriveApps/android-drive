@@ -66,7 +66,7 @@ data class ShareEntity(
     @ColumnInfo(name = VOLUME_ID)
     val volumeId: String,
     @ColumnInfo(name = VOLUME_TYPE)
-    val volumeType: Long? = null,
+    val volumeType: Long,
     @ColumnInfo(name = ADDRESS_ID)
     val addressId: AddressId? = null,
     @ColumnInfo(name = FLAGS)

@@ -46,6 +46,14 @@ interface PhotoRepository {
         tag: PhotoTag? = null,
     ): Flow<Int>
 
+    suspend fun getPhotoListingIds(
+        userId: UserId,
+        volumeId: VolumeId,
+        tag: PhotoTag? = null,
+        captureTimeFrom: TimestampS,
+        captureTimeTo: TimestampS,
+    ): List<FileId>
+
     suspend fun fetchPhotoListings(
         userId: UserId,
         volumeId: VolumeId,

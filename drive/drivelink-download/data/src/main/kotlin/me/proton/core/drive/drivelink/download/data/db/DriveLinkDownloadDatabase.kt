@@ -114,5 +114,95 @@ interface DriveLinkDownloadDatabase : Database {
                 )
             }
         }
+
+        val MIGRATION_2 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `FileDownloadEntity_new` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `link_id` TEXT NOT NULL,
+                    `user_id` TEXT NOT NULL, `share_id` TEXT NOT NULL, `volume_id` TEXT NOT NULL,
+                    `revision_id` TEXT NOT NULL, `priority` INTEGER NOT NULL,
+                    `retryable` INTEGER NOT NULL, `state` TEXT NOT NULL, `parent_id` TEXT,
+                    `number_of_retries` INTEGER NOT NULL, `run_at` INTEGER,
+                    `network_type` TEXT NOT NULL, `volume_type` INTEGER NOT NULL,
+                    FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`)
+                        ON UPDATE NO ACTION ON DELETE CASCADE ,
+                    FOREIGN KEY(`user_id`, `share_id`) REFERENCES `ShareEntity`(`user_id`, `id`)
+                        ON UPDATE NO ACTION ON DELETE CASCADE ,
+                    FOREIGN KEY(`user_id`, `share_id`, `link_id`)
+                        REFERENCES `LinkEntity`(`user_id`, `share_id`, `id`)
+                        ON UPDATE NO ACTION ON DELETE CASCADE )
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    INSERT INTO `FileDownloadEntity_new` (
+                    `id`,`link_id`,`user_id`,`share_id`,`volume_id`,`revision_id`,`priority`,
+                    `retryable`,`state`,`parent_id`,`number_of_retries`,`run_at`,`network_type`,
+                    `volume_type`
+                    ) SELECT
+                    `id`,`link_id`,`user_id`,`share_id`,`volume_id`,`revision_id`,`priority`,
+                    `retryable`,`state`,`parent_id`,`number_of_retries`,`run_at`,`network_type`,
+                    COALESCE((
+                        SELECT `ShareEntity`.`volume_type` FROM `ShareEntity`
+                        WHERE `ShareEntity`.`user_id` = `FileDownloadEntity`.`user_id`
+                          AND `ShareEntity`.`id` = `FileDownloadEntity`.`share_id`
+                    ), 1)
+                    FROM `FileDownloadEntity`
+                    """.trimIndent()
+                )
+                database.execSQL("DROP TABLE `FileDownloadEntity`")
+                database.execSQL("ALTER TABLE `FileDownloadEntity_new` RENAME TO `FileDownloadEntity`")
+                listOf(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS `index_FileDownloadEntity_user_id_volume_id_share_id_link_id_revision_id` ON `FileDownloadEntity` (`user_id`, `volume_id`, `share_id`, `link_id`, `revision_id`)",
+                    "CREATE INDEX IF NOT EXISTS `index_FileDownloadEntity_user_id` ON `FileDownloadEntity` (`user_id`)",
+                    "CREATE INDEX IF NOT EXISTS `index_FileDownloadEntity_priority` ON `FileDownloadEntity` (`priority`)",
+                    "CREATE INDEX IF NOT EXISTS `index_FileDownloadEntity_user_id_state` ON `FileDownloadEntity` (`user_id`, `state`)",
+                ).forEach(database::execSQL)
+
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `ParentLinkDownloadEntity_new` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `link_id` TEXT NOT NULL,
+                    `user_id` TEXT NOT NULL, `share_id` TEXT NOT NULL, `volume_id` TEXT NOT NULL,
+                    `volume_type` INTEGER NOT NULL, `type` INTEGER NOT NULL,
+                    `priority` INTEGER NOT NULL, `retryable` INTEGER NOT NULL,
+                    FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`)
+                        ON UPDATE NO ACTION ON DELETE CASCADE ,
+                    FOREIGN KEY(`user_id`, `share_id`) REFERENCES `ShareEntity`(`user_id`, `id`)
+                        ON UPDATE NO ACTION ON DELETE CASCADE ,
+                    FOREIGN KEY(`user_id`, `share_id`, `link_id`)
+                        REFERENCES `LinkEntity`(`user_id`, `share_id`, `id`)
+                        ON UPDATE NO ACTION ON DELETE CASCADE )
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    INSERT INTO `ParentLinkDownloadEntity_new` (
+                    `id`,`link_id`,`user_id`,`share_id`,`volume_id`,`volume_type`,`type`,`priority`,
+                    `retryable`
+                    ) SELECT
+                    `id`,`link_id`,`user_id`,`share_id`,`volume_id`,
+                    COALESCE((
+                        SELECT `ShareEntity`.`volume_type` FROM `ShareEntity`
+                        WHERE `ShareEntity`.`user_id` = `ParentLinkDownloadEntity`.`user_id`
+                          AND `ShareEntity`.`id` = `ParentLinkDownloadEntity`.`share_id`
+                    ), 1),
+                    `type`,`priority`,`retryable`
+                    FROM `ParentLinkDownloadEntity`
+                    """.trimIndent()
+                )
+                database.execSQL("DROP TABLE `ParentLinkDownloadEntity`")
+                database.execSQL(
+                    "ALTER TABLE `ParentLinkDownloadEntity_new` RENAME TO `ParentLinkDownloadEntity`"
+                )
+                listOf(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS `index_ParentLinkDownloadEntity_user_id_volume_id_share_id_link_id` ON `ParentLinkDownloadEntity` (`user_id`, `volume_id`, `share_id`, `link_id`)",
+                    "CREATE INDEX IF NOT EXISTS `index_ParentLinkDownloadEntity_user_id` ON `ParentLinkDownloadEntity` (`user_id`)",
+                ).forEach(database::execSQL)
+            }
+        }
+
     }
 }

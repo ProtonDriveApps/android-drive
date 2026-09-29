@@ -18,7 +18,6 @@
   -->
 <resources>
   <string name="files_upload_stage_waiting">Čakanie na nahranie</string>
-  <string name="files_upload_stage_encrypting">Šifrovanie</string>
   <string name="files_upload_stage_uploading">Nahrávanie</string>
   <!--
         Variable %1$s is a string representation of a percentage

@@ -18,7 +18,7 @@
 
 package me.proton.android.drive.verifier.domain.exception
 
-sealed class VerifierException(override val cause: Throwable) : Throwable() {
+sealed class VerifierException(override val cause: Throwable) : RuntimeException() {
 
     data class VerifyBlock(override val cause: Throwable) : VerifierException(cause)
 

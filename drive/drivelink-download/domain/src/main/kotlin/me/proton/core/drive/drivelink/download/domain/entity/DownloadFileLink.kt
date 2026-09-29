@@ -18,8 +18,15 @@
 
 package me.proton.core.drive.drivelink.download.domain.entity
 
+import me.proton.core.drive.link.domain.entity.RevisionContext
 import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.extension.nodeUid
+import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.link.domain.extension.revisionUid
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.drive.sdk.entity.NodeUid
+import me.proton.drive.sdk.entity.RevisionUid
 
 data class DownloadFileLink(
     val id: Long = 0,
@@ -32,6 +39,7 @@ data class DownloadFileLink(
     val numberOfRetries: Int,
     val lastRunTimestamp: Long? = null,
     val networkType: NetworkType = NetworkType.ANY,
+    val volumeType: Volume.Type,
 ) {
     enum class State {
         IDLE,
@@ -44,3 +52,13 @@ data class DownloadFileLink(
         const val AVAILABLE_OFFLINE_PRIORITY = 10_000L
     }
 }
+
+val DownloadFileLink.revisionUid: RevisionUid get() = fileId.revisionUid(volumeId, revisionId)
+
+val DownloadFileLink.nodeUid: NodeUid get() = fileId.nodeUid(volumeId)
+
+val DownloadFileLink.revisionContext: RevisionContext get() = RevisionContext(
+    userId = fileId.userId,
+    revisionUid = revisionUid,
+    volumeType = volumeType,
+)

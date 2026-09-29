@@ -19,10 +19,6 @@
 package me.proton.core.drive.eventmanager.presentation
 
 import androidx.lifecycle.Lifecycle
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
@@ -38,7 +34,9 @@ import me.proton.core.accountmanager.presentation.onAccountDisabled
 import me.proton.core.accountmanager.presentation.onAccountReady
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.coroutines.UserSupervisorIOScopes
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
+import me.proton.core.drive.base.domain.log.LogTag.EVENTS
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.eventmanager.entity.VolumeConfig
 import me.proton.core.drive.eventmanager.repository.VolumeConfigRepository
@@ -69,18 +67,19 @@ class DriveEventManager @Inject constructor(
     private val getFeatureFlag: GetFeatureFlagFlow,
     private val repository: VolumeConfigRepository
 ) {
-    private val scopes = mutableMapOf<UserId, CoroutineScope>()
+    private val scopes = UserSupervisorIOScopes(EVENTS)
     private val startedConfigs: MutableSet<VolumeConfig> =
         Collections.newSetFromMap(ConcurrentHashMap())
 
-    fun start() {
+    fun start(onUserDisabled: suspend (UserId) -> Unit) {
         accountManager.observe(appLifecycleProvider.lifecycle, minActiveState = Lifecycle.State.CREATED)
             .onAccountReady { account ->
                 eventManagerProvider.get(EventManagerConfig.Core(account.userId)).start()
                 account.startListeningToVolumesEvents()
             }
             .onAccountDisabled { account ->
-                scopes.remove(account.userId)?.cancel()
+                onUserDisabled(account.userId)
+                scopes.remove(account.userId)
                 eventManagerProvider.get(EventManagerConfig.Core(account.userId)).stop()
                 account.stopListeningToVolumesEvents()
             }
@@ -157,9 +156,7 @@ class DriveEventManager @Inject constructor(
                 ).stop()
                 startedConfigs.remove(config)
             }
-        }.launchIn(scopes.getOrPut(userId) {
-            CoroutineScope(Dispatchers.IO + Job())
-        })
+        }.launchIn(scopes[userId])
     }
 
     private suspend fun Account.stopListeningToVolumesEvents() {

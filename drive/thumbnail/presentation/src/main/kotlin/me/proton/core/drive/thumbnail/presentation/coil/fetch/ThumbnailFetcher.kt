@@ -30,91 +30,52 @@ import coil.key.Keyer
 import coil.request.Options
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.log.LogTag.THUMBNAIL
-import me.proton.core.drive.crypto.domain.usecase.DecryptThumbnail
-import me.proton.core.drive.drivelink.domain.usecase.UseSdkForThumbnail
-import me.proton.core.drive.link.domain.entity.FileId
-import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.link.domain.extension.nodeUid
 import me.proton.core.drive.linkoffline.domain.usecase.IsLinkOrAnyAncestorMarkedAsOffline
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailDecryptedFile
-import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailFile
-import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailInputStream
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailSdk
 import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
+import me.proton.core.drive.thumbnail.presentation.extension.cacheKey
+import me.proton.core.drive.thumbnail.presentation.extension.revisionContext
 import me.proton.core.util.kotlin.CoreLogger
 import okio.BufferedSource
 import okio.buffer
 import okio.source
-import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
 
 object ThumbnailKeyer : Keyer<ThumbnailVO> {
-    override fun key(data: ThumbnailVO, options: Options): String = with(data) {
-        "$volumeId-$revisionId-${thumbnailId.type}"
-    }
+    override fun key(data: ThumbnailVO, options: Options): String = data.cacheKey
 }
 
 @OptIn(ExperimentalCoilApi::class)
 class ThumbnailFetcher(
     private val context: Context,
-    private val getThumbnailInputStream: GetThumbnailInputStream,
-    private val getThumbnailFile: GetThumbnailFile,
     private val getThumbnailDecryptedFile: GetThumbnailDecryptedFile,
     private val getThumbnailSdk: GetThumbnailSdk,
-    private val decryptThumbnail: DecryptThumbnail,
     private val isLinkOrAnyAncestorMarkedAsOffline: IsLinkOrAnyAncestorMarkedAsOffline,
-    private val useSdkForThumbnail: UseSdkForThumbnail,
     private val data: ThumbnailVO,
     private val options: Options
 ) : Fetcher {
 
-    class ThumbnailMetadata(val fileId: FileId) : ImageSource.Metadata()
-
-    private fun getSource(data: ThumbnailVO, bufferedSource: BufferedSource) = ImageSource(
+    private fun getSource(bufferedSource: BufferedSource) = ImageSource(
         source = bufferedSource,
         context = context,
-        metadata = ThumbnailMetadata(data.fileId)
     )
 
     override suspend fun fetch(): FetchResult {
-        requireNotNull(data.revisionId) { "A file without a revision doesn't have a thumbnail" }
-        val encryptedThumbnailFile = getThumbnailFile(data.fileId.userId, data.volumeId, data.revisionId, data.thumbnailId.type)
-        val decryptedThumbnailFile = getThumbnailDecryptedFile(
-            userId = data.fileId.userId,
-            volumeId = data.volumeId,
-            revisionId = data.revisionId,
-            type = data.thumbnailId.type,
-            inCacheFolder = !isLinkOrAnyAncestorMarkedAsOffline(data.fileId)
+        val thumbnailFile = getThumbnailDecryptedFile(
+            userId = data.userId,
+            revisionUid = data.revisionUid,
+            type = data.type,
+            inCacheFolder = !isLinkOrAnyAncestorMarkedAsOffline(data.userId, data.revisionUid.nodeUid),
         )
         val allowNetwork = options.networkCachePolicy.readEnabled
         val allowDiskRead = options.diskCachePolicy.readEnabled
-        val allowDiskWrite = options.diskCachePolicy.writeEnabled
         return when {
-            allowDiskRead && decryptedThumbnailFile.existsAndNotEmpty() -> {
+            allowDiskRead && thumbnailFile.existsAndNotEmpty() -> {
                 SourceResult(
-                    getSource(data, decryptedThumbnailFile.source().buffer()),
-                    mimeType = null,
-                    dataSource = DataSource.DISK,
-                )
-            }
-
-            allowDiskRead && allowDiskWrite && encryptedThumbnailFile.existsAndNotEmpty() -> {
-                if (encryptedThumbnailFile != null && encryptedThumbnailFile.existsAndNotEmpty()) {
-                    if (!decryptedThumbnailFile.exists()) {
-                        decryptedThumbnailFile.createNewFile()
-                    }
-                    decryptedThumbnailFile.outputStream().use { outputStream ->
-                        outputStream.write(
-                            decryptThumbnail(
-                                data.fileId,
-                                encryptedThumbnailFile.inputStream()
-                            ).getOrThrow()
-                        )
-                    }
-                    encryptedThumbnailFile.delete()
-                }
-                SourceResult(
-                    getSource(data, decryptedThumbnailFile.source().buffer()),
+                    getSource(thumbnailFile.source().buffer()),
                     mimeType = null,
                     dataSource = DataSource.DISK,
                 )
@@ -123,7 +84,7 @@ class ThumbnailFetcher(
             allowNetwork -> fetchFromNetwork(
                 data = data,
                 options = options,
-                cacheFile = decryptedThumbnailFile
+                cacheFile = thumbnailFile,
             )
 
             else -> throw IllegalArgumentException("Couldn't access the thumbnail")
@@ -136,45 +97,24 @@ class ThumbnailFetcher(
         data: ThumbnailVO,
         options: Options,
         cacheFile: File,
-    ): SourceResult = if (useSdkForThumbnail(data.fileId).getOrThrow()) {
-        getThumbnailSdk(
-            volumeId = data.volumeId,
-            fileId = data.fileId,
-            thumbnailType = data.thumbnailId.type,
-        ).map { inputStream ->
-            inputStream.use {
-                writeOnDiskIfNeeded(
-                    options = options,
-                    cacheFile = cacheFile,
-                    data = data,
-                    inputStream = inputStream,
-                )
-            }
-        }.onFailure { error ->
-            error.log(
-                THUMBNAIL,
-                "Error while fetching thumbnail with sdk ${data.thumbnailId.id}"
+    ): SourceResult = getThumbnailSdk(
+        revisionContext = data.revisionContext,
+        thumbnailType = data.type,
+    ).map { inputStream ->
+        inputStream.use {
+            writeOnDiskIfNeeded(
+                options = options,
+                cacheFile = cacheFile,
+                data = data,
+                inputStream = inputStream,
             )
-        }.getOrThrow()
-    } else {
-        getThumbnailInputStream(
-            thumbnailId = data.thumbnailId,
-        ).map { inputStream ->
-            inputStream.use {
-                writeOnDiskIfNeeded(
-                    options = options,
-                    cacheFile = cacheFile,
-                    data = data,
-                    inputStream = ByteArrayInputStream(decryptThumbnail(data.fileId, inputStream).getOrThrow())
-                )
-            }
-        }.onFailure { error ->
-            error.log(
-                THUMBNAIL,
-                "Error while fetching thumbnail with legacy ${data.thumbnailId.id}"
-            )
-        }.getOrThrow()
-    }
+        }
+    }.onFailure { error ->
+        error.log(
+            THUMBNAIL,
+            "Error while fetching thumbnail for ${data.revisionUid.value}"
+        )
+    }.getOrThrow()
 
     private fun writeOnDiskIfNeeded(
         options: Options,
@@ -190,13 +130,16 @@ class ThumbnailFetcher(
             cacheFile.outputStream().use { outputStream ->
                 inputStream.copyTo(outputStream)
             }
-            CoreLogger.d(THUMBNAIL, "Thumbnail cache file size: ${cacheFile.length()} bytes for ${data.thumbnailId.id}")
+            CoreLogger.d(
+                THUMBNAIL,
+                "Thumbnail cache file size: ${cacheFile.length()} bytes for ${data.revisionUid.value}"
+            )
             cacheFile.inputStream()
         } else {
             inputStream
         }.let { inputStream ->
             SourceResult(
-                source = getSource(data, inputStream.source().buffer()),
+                source = getSource(inputStream.source().buffer()),
                 mimeType = null,
                 dataSource = DataSource.NETWORK,
             )
@@ -205,35 +148,23 @@ class ThumbnailFetcher(
 
     class Factory constructor(
         private val context: Context,
-        private val getThumbnailInputStream: GetThumbnailInputStream,
-        private val getThumbnailFile: GetThumbnailFile,
         private val getThumbnailDecryptedFile: GetThumbnailDecryptedFile,
         private val getThumbnailSdk: GetThumbnailSdk,
-        private val useSdkForThumbnail: UseSdkForThumbnail,
-        private val decryptThumbnail: DecryptThumbnail,
         private val isLinkOrAnyAncestorMarkedAsOffline: IsLinkOrAnyAncestorMarkedAsOffline,
     ) : Fetcher.Factory<ThumbnailVO> {
         override fun create(
             data: ThumbnailVO,
             options: Options,
             imageLoader: ImageLoader
-        ): Fetcher? {
+        ): Fetcher {
             return ThumbnailFetcher(
                 context = context,
-                getThumbnailInputStream = getThumbnailInputStream,
-                getThumbnailFile = getThumbnailFile,
                 getThumbnailDecryptedFile = getThumbnailDecryptedFile,
                 getThumbnailSdk = getThumbnailSdk,
-                useSdkForThumbnail = useSdkForThumbnail,
-                decryptThumbnail = decryptThumbnail,
                 isLinkOrAnyAncestorMarkedAsOffline = isLinkOrAnyAncestorMarkedAsOffline,
                 data = data,
                 options = options,
             )
         }
-    }
-
-    companion object {
-        const val MIME_TYPE = "image/proton-encrypted"
     }
 }

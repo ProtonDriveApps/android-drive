@@ -26,10 +26,21 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 import coil.size.Size
+import me.proton.core.drive.link.domain.entity.RevisionContext
+import me.proton.core.drive.link.domain.extension.nodeUid
+import me.proton.core.drive.link.domain.extension.revisionId
 import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
 import me.proton.core.drive.thumbnail.presentation.painter.ThumbnailPainterWrapper
+import me.proton.core.drive.volume.domain.extension.volumeId
 
-val ThumbnailVO.cacheKey: String get() = "$volumeId-$revisionId-${thumbnailId.type}"
+val ThumbnailVO.revisionContext: RevisionContext get() = RevisionContext(
+    userId = userId,
+    revisionUid = revisionUid,
+    volumeType = volumeType,
+)
+
+val ThumbnailVO.cacheKey: String get() =
+    "${revisionUid.nodeUid.volumeId}-${revisionUid.revisionId}-$type"
 
 fun ThumbnailVO.preCache(context: Context, imageLoader: ImageLoader) = imageLoader.enqueue(
     request = ImageRequest.Builder(context)

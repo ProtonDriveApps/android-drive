@@ -50,6 +50,8 @@ import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.extension.nodeContext
+import me.proton.core.drive.drivelink.domain.extension.nodeUid
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.drivelink.download.data.extension.observeNetworkTypes
 import me.proton.core.drive.drivelink.download.data.manager.DownloadManagerImpl.DownloadFileTask
@@ -59,6 +61,7 @@ import me.proton.core.drive.drivelink.download.domain.entity.DownloadFileLink
 import me.proton.core.drive.drivelink.download.domain.entity.DownloadParentLink
 import me.proton.core.drive.drivelink.download.domain.entity.NetworkType
 import me.proton.core.drive.drivelink.download.domain.extension.post
+import me.proton.core.drive.drivelink.download.domain.extension.volumeId
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadErrorManager
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadManager
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadSdkManager
@@ -66,15 +69,20 @@ import me.proton.core.drive.drivelink.download.domain.manager.PipelineManager
 import me.proton.core.drive.drivelink.download.domain.repository.DownloadFileRepository
 import me.proton.core.drive.drivelink.download.domain.repository.DownloadParentLinkRepository
 import me.proton.core.drive.drivelink.download.domain.usecase.DownloadCleanup
+import me.proton.core.drive.drivelink.download.domain.entity.nodeUid
+import me.proton.core.drive.drivelink.download.domain.entity.revisionContext
+import me.proton.core.drive.drivelink.download.domain.entity.revisionUid
 import me.proton.core.drive.drivelink.download.domain.usecase.DownloadFile
 import me.proton.core.drive.folder.domain.usecase.GetDescendants
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.File
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.Folder
+import me.proton.core.drive.link.domain.entity.FolderContext
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.extension.isProtonCloudFile
+import me.proton.core.drive.link.domain.extension.nodeUid
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.linkdownload.domain.usecase.AreAllAlbumPhotosDownloaded
@@ -85,6 +93,7 @@ import me.proton.core.drive.linktrash.domain.usecase.IsLinkOrAnyAncestorTrashed
 import me.proton.core.drive.photo.domain.usecase.GetAllAlbumChildren
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.util.kotlin.CoreLogger
+import me.proton.drive.sdk.entity.RevisionUid
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.CoroutineContext
@@ -185,12 +194,12 @@ class DownloadManagerImpl @Inject constructor(
         downloadParentLinkRepository.deleteAll(userId)
     }
 
-    override fun getProgressFlow(fileId: FileId): Flow<Percentage>? =
+    override fun getProgressFlow(revisionUid: RevisionUid): Flow<Percentage>? =
         runningTasks
-            .takeIf { runningTasks -> runningTasks.value.firstOrNull(fileId) != null }
+            .takeIf { runningTasks -> runningTasks.value.firstOrNull(revisionUid) != null }
             ?.transform { runningTasks ->
                 runningTasks
-                    .firstOrNull(fileId)
+                    .firstOrNull(revisionUid)
                     ?.let { task -> emitAll(task.progress) }
             }
 
@@ -250,11 +259,7 @@ class DownloadManagerImpl @Inject constructor(
     private suspend fun taskCompleteSuccessfully(task: DownloadFileTask) {
         CoreLogger.d(task.downloadFileLink.fileId.logTag, "taskCompleted pipelineId=${task.pipelineId}")
         setDownloadState(task.downloadFileLink.fileId, DownloadState.Ready)
-        downloadSdkManager.close(
-            volumeId = task.downloadFileLink.volumeId,
-            fileId = task.downloadFileLink.fileId,
-            revisionId = task.downloadFileLink.revisionId,
-        )
+        downloadSdkManager.close(task.downloadFileLink.revisionUid)
         runningTasks.value -= task
         downloadFileRepository.delete(task.downloadFileLink.id)
     }
@@ -281,23 +286,19 @@ class DownloadManagerImpl @Inject constructor(
         networkType: NetworkType,
     ) = when (this) {
             is DriveLink.File -> downloadFile(
-                volumeId = volumeId,
-                fileId = id,
-                revisionId = activeRevisionId,
+                driveLink = this,
                 priority = priority,
                 retryable = retryable,
                 networkType = networkType,
             )
             is DriveLink.Folder -> downloadFolder(
-                volumeId = volumeId,
-                parentLink = link,
+                driveLink = this,
                 priority = priority,
                 retryable = retryable,
                 networkType = networkType,
             )
             is DriveLink.Album -> downloadAlbum(
-                volumeId = volumeId,
-                albumId = id,
+                driveLink = this,
                 priority = priority,
                 retryable = retryable,
                 networkType = networkType,
@@ -308,9 +309,7 @@ class DownloadManagerImpl @Inject constructor(
     }
 
     private suspend fun downloadFile(
-        volumeId: VolumeId,
-        fileId: FileId,
-        revisionId: String,
+        driveLink: DriveLink.File,
         priority: Long,
         retryable: Boolean,
         networkType: NetworkType,
@@ -319,29 +318,28 @@ class DownloadManagerImpl @Inject constructor(
         downloadFileRepository.add(
             DownloadFileLink(
                 id = 0,
-                volumeId = volumeId,
-                fileId = fileId,
-                revisionId = revisionId,
+                volumeId = driveLink.volumeId,
+                fileId = driveLink.id,
+                revisionId = driveLink.activeRevisionId,
                 priority = priority,
                 retryable = retryable,
                 state = state,
                 numberOfRetries = 0,
                 networkType = networkType,
+                volumeType = driveLink.volumeType,
             )
         )
     }
 
     private suspend fun downloadFolder(
-        volumeId: VolumeId,
-        parentLink: Link.Folder,
+        driveLink: DriveLink.Folder,
         priority: Long,
         retryable: Boolean,
         networkType: NetworkType,
     ) {
+        val volumeId = driveLink.volumeId
+        val parentLink = driveLink.link
         getDescendants(parentLink, true).onFailure { error ->
-            if (error is OutOfMemoryError) {
-                System.gc()
-            }
             error.log(LogTag.DOWNLOAD, "Failed to get descendants", ERROR)
         }.getOrNull()
             ?.filterNot { link -> link.isProtonCloudFile }
@@ -353,7 +351,7 @@ class DownloadManagerImpl @Inject constructor(
                     downloadParentLinkRepository.add(
                         DownloadParentLink(
                             id = 0L,
-                            volumeId = volumeId,
+                            nodeContext = driveLink.nodeContext,
                             linkId = parentLink.id,
                             priority = priority,
                             retryable = retryable,
@@ -367,9 +365,7 @@ class DownloadManagerImpl @Inject constructor(
                         is File -> getDriveLink(link.id).toResult().getOrNull(LogTag.DOWNLOAD)
                             ?.let { driveLink ->
                                 downloadFile(
-                                    volumeId = volumeId,
-                                    fileId = link.id,
-                                    revisionId = driveLink.activeRevisionId,
+                                    driveLink = driveLink,
                                     priority = priority,
                                     retryable = retryable,
                                     networkType = networkType,
@@ -380,7 +376,11 @@ class DownloadManagerImpl @Inject constructor(
                             downloadParentLinkRepository.add(
                                 DownloadParentLink(
                                     id = 0L,
-                                    volumeId = volumeId,
+                                    nodeContext = FolderContext(
+                                        userId = link.id.userId,
+                                        nodeUid = link.id.nodeUid(volumeId),
+                                        volumeType = driveLink.volumeType,
+                                    ),
                                     linkId = link.id,
                                     priority = priority,
                                     retryable = retryable,
@@ -394,12 +394,13 @@ class DownloadManagerImpl @Inject constructor(
     }
 
     private suspend fun downloadAlbum(
-        volumeId: VolumeId,
-        albumId: AlbumId,
+        driveLink: DriveLink.Album,
         priority: Long,
         retryable: Boolean,
         networkType: NetworkType,
     ) {
+        val volumeId = driveLink.volumeId
+        val albumId = driveLink.id
         getAllAlbumChildren(
             volumeId = volumeId,
             albumId = albumId,
@@ -411,7 +412,7 @@ class DownloadManagerImpl @Inject constructor(
                     downloadParentLinkRepository.add(
                         DownloadParentLink(
                             id = 0L,
-                            volumeId = volumeId,
+                            nodeContext = driveLink.nodeContext,
                             linkId = albumId,
                             priority = priority,
                             retryable = retryable,
@@ -423,9 +424,7 @@ class DownloadManagerImpl @Inject constructor(
                 photos.forEach { fileId ->
                     getDriveLink(fileId).toResult().getOrNull(fileId.logTag)?.let { driveLink ->
                         downloadFile(
-                            volumeId = driveLink.volumeId,
-                            fileId = fileId,
-                            revisionId = driveLink.activeRevisionId,
+                            driveLink = driveLink,
                             priority = priority,
                             retryable = retryable,
                             networkType = networkType,
@@ -552,9 +551,6 @@ class DownloadManagerImpl @Inject constructor(
             downloadCleanup(volumeId, parentLink.id)
             downloadParentLinkRepository.delete(volumeId, parentLink.id)
             getDescendants(parentLink, false).onFailure { error ->
-                if (error is OutOfMemoryError) {
-                    System.gc()
-                }
                 error.log(LogTag.DOWNLOAD, "Failed to get descendants", ERROR)
             }.getOrNull()
                 ?.filterNot { link -> link.isProtonCloudFile }
@@ -644,6 +640,12 @@ class DownloadManagerImpl @Inject constructor(
         fileId: FileId,
     ): DownloadFileTask? = firstOrNull { task ->
         task.downloadFileLink.fileId == fileId
+    }
+
+    private fun Set<DownloadFileTask>.firstOrNull(
+        revisionUid: RevisionUid,
+    ): DownloadFileTask? = firstOrNull { task ->
+        task.downloadFileLink.revisionUid == revisionUid
     }
 
     private val FileId.logTag: String get() = "${LogTag.DOWNLOAD}.${id.logId()}"
@@ -773,10 +775,7 @@ class DownloadManagerImpl @Inject constructor(
             setDownloadState(downloadFileLink.fileId, DownloadState.Downloading)
 
             downloadFile(
-                volumeId = downloadFileLink.volumeId,
-                fileId = downloadFileLink.fileId,
-                revisionId = downloadFileLink.revisionId,
-                isCancelled = isCancelled,
+                revisionContext = downloadFileLink.revisionContext,
                 progress = progress,
             ).getOrThrow()
         }

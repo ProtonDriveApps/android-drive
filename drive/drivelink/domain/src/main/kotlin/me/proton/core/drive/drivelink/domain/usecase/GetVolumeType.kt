@@ -18,18 +18,13 @@
 
 package me.proton.core.drive.drivelink.domain.usecase
 
-import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.share.domain.repository.ShareRepository
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class GetVolumeType @Inject constructor(
     private val shareRepository: ShareRepository,
 ) {
     suspend operator fun invoke(linkId: LinkId) =
         shareRepository.getVolumeType(linkId.shareId)
-
-    suspend operator fun invoke(driveLink: DriveLink) =
-        invoke(driveLink.id)
 }

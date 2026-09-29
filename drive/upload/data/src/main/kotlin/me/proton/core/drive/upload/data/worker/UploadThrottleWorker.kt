@@ -24,25 +24,32 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import androidx.work.await
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag.UPLOAD
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
+import me.proton.core.drive.linkupload.domain.extension.parentLinkId
+import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksWithUriByPriority
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
 import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.data.extension.uniqueUploadWorkName
 import me.proton.core.drive.upload.data.provider.NetworkTypeProvider
 import me.proton.core.drive.upload.domain.usecase.GetNextUploadFileLinks
+import me.proton.core.drive.upload.domain.usecase.RemoveUploadFile
 import me.proton.core.util.kotlin.CoreLogger
 
 @HiltWorker
@@ -54,11 +61,14 @@ class UploadThrottleWorker @AssistedInject constructor(
     private val getNextUploadFileLinks: GetNextUploadFileLinks,
     private val networkTypeProviders: @JvmSuppressWildcards Map<NetworkTypeProviderType, NetworkTypeProvider>,
     private val cleanupWorkers: CleanupWorkers,
+    private val getUploadFileLinksWithUriByPriority: GetUploadFileLinksWithUriByPriority,
+    private val removeUploadFile: RemoveUploadFile,
 ) : CoroutineWorker(appContext, workerParams) {
     private val userId =
         UserId(requireNotNull(inputData.getString(WorkerKeys.KEY_USER_ID)) { "User id is required" })
 
     override suspend fun doWork(): Result = coRunCatching {
+        cleanupOrphanedUploadFileLinks()
         getNextUploadFileLinks(userId).getOrThrow().also { uploadFileLinks ->
             CoreLogger.d(
                 UPLOAD,
@@ -118,8 +128,39 @@ class UploadThrottleWorker @AssistedInject constructor(
                 ).enqueueWork(
                     uploadTags = listOf("sdk", id.uniqueUploadWorkName),
                     uriString = requireNotNull(uriString),
-                )
+                ).await()
             }
+    }
+
+    private suspend fun cleanupOrphanedUploadFileLinks() = coRunCatching {
+        getUploadFileLinksWithUriByPriority(
+            userId = userId,
+            states = UploadState.entries.toSet() - UploadState.UNPROCESSED,
+            count = Int.MAX_VALUE,
+        ).firstOrNull()
+            ?.filter { uploadFileLink -> uploadFileLink.isNotEnqueued() }
+            ?.forEach { uploadFileLink -> uploadFileLink.cleanupOrphaned() }
+    }.onFailure { error ->
+        error.log(UPLOAD, "Cannot clean up orphaned upload file links", WARNING)
+    }
+
+    private suspend fun UploadFileLink.cleanupOrphaned() {
+        CoreLogger.w(logTag(), "Orphaned upload file link in state $state, cleaning up")
+        if (state == UploadState.CLEANUP) {
+            removeUploadFile(this).getOrNull(
+                tag = logTag(),
+                message = "Cannot remove orphaned upload file link",
+            )
+        } else {
+            workManager.enqueue(
+                UploadCleanupWorker.getWorkRequest(
+                    userId = userId,
+                    uploadFileLinkId = id,
+                    reason = Event.Upload.Reason.ERROR_OTHER,
+                    tags = listOf(id.uniqueUploadWorkName),
+                )
+            ).await()
+        }
     }
 
     private suspend fun UploadFileLink.isNotEnqueued(): Boolean {

@@ -37,5 +37,7 @@
     <string name="log_origin_backup">Backup</string>
     <string name="log_origin_user">User</string>
     <string name="log_origin_device">Device</string>
+    <!-- Represent logs from cryptographic operations like encryption/decryption,
+         signature verification etc. -->
     <string name="log_origin_crypto">Crypto</string>
 </resources>

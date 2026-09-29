@@ -20,6 +20,7 @@ package me.proton.android.drive.stats
 
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.linkupload.domain.extension.parentLinkId
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.stats.domain.entity.UploadStats
 import me.proton.core.drive.stats.domain.usecase.UpdateUploadStats

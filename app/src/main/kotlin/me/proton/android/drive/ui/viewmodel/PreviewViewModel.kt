@@ -87,11 +87,11 @@ import me.proton.core.drive.base.domain.usecase.ReportError
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
+import me.proton.core.drive.documentsprovider.domain.usecase.ExportToDownload
 import me.proton.core.drive.documentsprovider.domain.usecase.GetDocumentUri
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetSessionForkProtonDocumentUriString
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
-import me.proton.core.drive.drivelink.domain.extension.getThumbnailId
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLinksCount
@@ -132,6 +132,7 @@ import me.proton.core.drive.sorting.domain.entity.Direction
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
 import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
 import me.proton.core.drive.thumbnail.presentation.extension.thumbnailVO
+import me.proton.core.drive.thumbnail.presentation.extension.thumbnailVOOrNull
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.core.util.kotlin.startsWith
 import me.proton.core.util.kotlin.takeIfNotEmpty
@@ -151,6 +152,7 @@ class PreviewViewModel @Inject constructor(
     private val getDocumentUri: GetDocumentUri,
     private val getSessionForkProtonDocumentUriString: GetSessionForkProtonDocumentUriString,
     private val openProtonDocumentInBrowser: OpenProtonDocumentInBrowser,
+    private val exportToDownload: ExportToDownload,
     private val broadcastMessages: BroadcastMessages,
     getDecryptedDriveLinks: GetDecryptedDriveLinks,
     getDecryptedOfflineDriveLinks: GetDecryptedOfflineDriveLinks,
@@ -270,6 +272,7 @@ class PreviewViewModel @Inject constructor(
         currentIndex = 0,
         host = configurationProvider.host,
         appVersionHeader = configurationProvider.appVersionHeader,
+        maxTextPreviewSize = configurationProvider.maxTextPreviewSize,
     )
     val viewState: Flow<PreviewViewState> = driveLinks.filterNotNull().transformLatest { driveLinks ->
         if (driveLinks.isEmpty() && currentIndex.value != -1) {
@@ -330,6 +333,7 @@ class PreviewViewModel @Inject constructor(
             }
         }
         override val onOpenInBrowser = { openInBrowser() }
+        override val onDownload = { downloadCurrentFile() }
         override val onProtonDocsDownloadResult = { result: Result<String> ->
             result
                 .onSuccess { name ->
@@ -464,6 +468,10 @@ class PreviewViewModel @Inject constructor(
         contentStatesCache.getOrPut(id) {
             if (mimeType.toFileTypeCategory().toComposable() == PreviewComposable.Unknown) {
                 NO_PREVIEW_SUPPORTED
+            } else if (mimeType.toFileTypeCategory() == FileTypeCategory.Text &&
+                size > configurationProvider.maxTextPreviewSize
+            ) {
+                flowOf(ContentState.TooLargeToPreview)
             } else if (isProtonDocument || isProtonSpreadsheet) {
                 trigger.map {
                     getProtonDocumentUriString(this@getContentStateFlow, it.retry)
@@ -524,8 +532,8 @@ class PreviewViewModel @Inject constructor(
 
     private val DriveLink.File.previewFallbackSources: Map<Any, Any?> get() {
         val uri = getUri(id)
-        val photoThumbnailVO = getThumbnailId(ThumbnailType.PHOTO)?.let { thumbnailVO(ThumbnailType.PHOTO) }
-        val defaultThumbnailVO = getThumbnailId(ThumbnailType.DEFAULT)?.let { thumbnailVO(ThumbnailType.DEFAULT) }
+        val photoThumbnailVO = thumbnailVOOrNull(ThumbnailType.PHOTO)
+        val defaultThumbnailVO = thumbnailVOOrNull(ThumbnailType.DEFAULT)
         return when {
             photoThumbnailVO == null -> mapOf(uri to null)
             defaultThumbnailVO == null -> mapOf(
@@ -543,8 +551,7 @@ class PreviewViewModel @Inject constructor(
     private val DriveLink.File.photoThumbnailSource: ThumbnailVO? get() =
         takeIf { mimeType.toFileTypeCategory() == FileTypeCategory.Image }
             ?.let {
-                getThumbnailId(ThumbnailType.PHOTO)?.let { thumbnailVO(ThumbnailType.PHOTO) } ?:
-                    getThumbnailId(ThumbnailType.DEFAULT)?.let { thumbnailVO(ThumbnailType.DEFAULT) }
+                thumbnailVOOrNull(ThumbnailType.PHOTO) ?: thumbnailVOOrNull(ThumbnailType.DEFAULT)
             }
 
     private fun openInBrowser() {
@@ -569,6 +576,23 @@ class PreviewViewModel @Inject constructor(
                         }
                 }
             }
+    }
+
+    private fun downloadCurrentFile() {
+        viewModelScope.launch {
+            exportToDownload(listOf(fileId))
+                .onFailure { error ->
+                    error.log(VIEW_MODEL, "Failed to export to download for ${fileId.id}")
+                    broadcastMessages(
+                        userId = userId,
+                        message = error.getDefaultMessage(
+                            context = appContext,
+                            useExceptionMessage = configurationProvider.useExceptionMessage,
+                        ),
+                        type = BroadcastMessage.Type.ERROR,
+                    )
+                }
+        }
     }
 
     private fun handleRenderSuccess(source: Any) {
@@ -928,6 +952,7 @@ private fun PhotoListing.placeholderDriveLink(
         mainPhotoLinkId = null,
     ),
     volumeId = photoShare.volumeId,
+    volumeType = photoShare.volumeType,
     isMarkedAsOffline = false,
     isAnyAncestorMarkedAsOffline = false,
     downloadState = null,

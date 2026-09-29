@@ -160,6 +160,7 @@ class MoveFileWorker @AssistedInject constructor(
         )
     }
 
+    // TODO: Match on ProtonSdkError.Data.NodeNameConflict once the legacy move is removed
     private fun Throwable.handledFileAlreadyExists(): Boolean =
         onProtonHttpException { protonData ->
             if (protonData.code == ProtonApiCode.ALREADY_EXISTS) {

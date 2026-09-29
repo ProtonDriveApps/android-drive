@@ -20,29 +20,41 @@ package me.proton.core.drive.photo.domain.usecase
 
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidSDKUpdatePhotos
+import me.proton.core.drive.feature.flag.domain.extension.on
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
 import me.proton.core.drive.link.domain.entity.FileId
-import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.entity.PhotoTag
-import me.proton.core.drive.photo.domain.repository.TagRepository
+import me.proton.core.drive.link.domain.extension.nodeUid
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.drive.sdk.entity.NodeResultPair
 import javax.inject.Inject
 
 class AddPhotoTag @Inject constructor(
-    private val repository: TagRepository,
+    private val addPhotoTagLegacy: AddPhotoTagLegacy,
+    private val addPhotoTagSdk: AddPhotoTagSdk,
     private val getShare: GetShare,
-    private val updateEventAction: UpdateEventAction,
+    private val getFeatureFlag: GetFeatureFlag,
 ) {
     suspend operator fun invoke(fileId: FileId, tags: Set<PhotoTag>) = coRunCatching {
         checkTags(tags)
         val share = getShare(fileId.shareId).toResult().getOrThrow()
         invoke(share.volumeId, fileId, tags).getOrThrow()
     }
+
     suspend operator fun invoke(volumeId: VolumeId, fileId: FileId, tags: Set<PhotoTag>) = coRunCatching {
         checkTags(tags)
-        updateEventAction(fileId.userId, volumeId) {
-            repository.addTags(volumeId, fileId, tags)
+        if (getFeatureFlag(driveAndroidSDKUpdatePhotos(fileId.userId)).on) {
+            val nodeUid = fileId.nodeUid(volumeId)
+            val resultPair = addPhotoTagSdk(fileId.userId, nodeUid, tags)
+                .getOrThrow().first { pair -> pair.nodeUid == nodeUid }
+            if (resultPair is NodeResultPair.Failure) {
+                throw resultPair.error
+            }
+        } else {
+            addPhotoTagLegacy(volumeId, fileId, tags).getOrThrow()
         }
     }
 

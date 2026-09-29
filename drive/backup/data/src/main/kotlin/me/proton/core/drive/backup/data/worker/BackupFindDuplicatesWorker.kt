@@ -85,7 +85,7 @@ class BackupFindDuplicatesWorker @AssistedInject constructor(
                     tag = BACKUP,
                     message = "Cannot find duplicates for: ${folderId.id} retryable $retryable, max retries reached $canRetry"
                 )
-                handleBackupError(folderId, error.toBackupError(retryable))
+                handleBackupError(folderId, error.toBackupError(folderId, retryable))
                 Result.failure()
             }
         }

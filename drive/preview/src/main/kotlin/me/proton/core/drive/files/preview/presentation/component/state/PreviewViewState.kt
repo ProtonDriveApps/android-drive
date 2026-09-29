@@ -19,6 +19,7 @@ package me.proton.core.drive.files.preview.presentation.component.state
 
 import androidx.compose.runtime.Immutable
 import kotlinx.coroutines.flow.Flow
+import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.FileTypeCategory
 
 @Immutable
@@ -31,6 +32,7 @@ data class PreviewViewState(
     val currentIndex: Int,
     val host: String,
     val appVersionHeader: String,
+    val maxTextPreviewSize: Bytes,
 ) {
 
     @Immutable

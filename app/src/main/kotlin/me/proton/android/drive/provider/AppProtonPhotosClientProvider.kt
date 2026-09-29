@@ -19,9 +19,6 @@
 package me.proton.android.drive.provider
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import me.proton.android.drive.sdk.DriveMetricCallback
@@ -30,8 +27,9 @@ import me.proton.android.drive.sdk.SdkMetricsNotifier
 import me.proton.android.drive.usecase.GetOrCreateSdkLoggerProvider
 import me.proton.core.crypto.common.context.CryptoContext
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.coroutines.UserSupervisorIOScopes
 import me.proton.core.drive.base.domain.extension.getOrNull
-import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.LogTag.DRIVE_SDK
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.provider.ProtonPhotosClientProvider
@@ -67,15 +65,13 @@ class AppProtonPhotosClientProvider @Inject constructor(
     private val getOrCreateSdkLoggerProvider: GetOrCreateSdkLoggerProvider,
 ) : ProtonPhotosClientProvider {
     private val mutex = Mutex()
-    private val scopes = mutableMapOf<UserId?, CoroutineScope>()
+    private val scopes = UserSupervisorIOScopes(DRIVE_SDK)
     private val clients = mutableMapOf<UserId, ProtonPhotosClient>()
 
     override suspend fun getOrCreate(userId: UserId): Result<ProtonPhotosClient> = coRunCatching {
         mutex.withLock {
             clients.getOrPut(userId) {
-                val scope = scopes.getOrPut(userId) {
-                    CoroutineScope(Dispatchers.IO + Job())
-                }
+                val scope = scopes[userId]
                 createProtonPhotosClient(
                     coroutineScope = scope,
                     userId = userId
@@ -84,9 +80,11 @@ class AppProtonPhotosClientProvider @Inject constructor(
         }
     }
 
-    fun remove(userId: UserId) {
-        clients.remove(userId)?.close()
-        scopes.remove(userId)?.cancel("Account $userId is removed")
+    suspend fun remove(userId: UserId) {
+        mutex.withLock {
+            clients.remove(userId)?.close()
+            scopes.remove(userId)
+        }
     }
 
     private suspend fun createProtonPhotosClient(
@@ -94,7 +92,7 @@ class AppProtonPhotosClientProvider @Inject constructor(
         userId: UserId
     ): Result<ProtonPhotosClient> = coRunCatching {
         CoreLogger.d(
-            LogTag.DRIVE_SDK,
+            DRIVE_SDK,
             "Creating sdk proton photos client for ${userId.id.logId()}"
         )
         val userDir = getPermanentFolder(userId)
@@ -107,7 +105,7 @@ class AppProtonPhotosClientProvider @Inject constructor(
                 loggerProvider = getOrCreateSdkLoggerProvider().getOrThrow(),
                 bindingsLanguage = "kotlin",
                 uid = getOrCreateClientUid().getOrNull(
-                    tag = LogTag.DRIVE_SDK,
+                    tag = DRIVE_SDK,
                     message = "Failed to get or create client Uid",
                 )
             ),

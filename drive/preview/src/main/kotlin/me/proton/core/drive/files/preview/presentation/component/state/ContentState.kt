@@ -25,6 +25,7 @@ import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
 
 sealed class ContentState {
     object NotFound : ContentState()
+    object TooLargeToPreview : ContentState()
     data class Downloading(val progress: Flow<Percentage>?, val thumbnail: ThumbnailVO? = null) : ContentState()
     data class Decrypting(val thumbnail: ThumbnailVO? = null) : ContentState()
     data class Available(val source: Any, val thumbnailSource: Any? = null) : ContentState()
@@ -38,7 +39,7 @@ sealed class ContentState {
             is Downloading -> "(${if (progress == null) "null" else "flow"})"
             is Available -> when(source) {
                 is Uri -> "(${source.path})"
-                is ThumbnailVO -> "(${source.revisionId}_${source.thumbnailId.type})"
+                is ThumbnailVO -> "(${source.revisionUid.value}_${source.type})"
                 else -> error("Unhandled source")
             }
             else -> ""

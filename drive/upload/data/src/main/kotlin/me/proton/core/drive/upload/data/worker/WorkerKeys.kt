@@ -29,7 +29,7 @@ object WorkerKeys {
     const val KEY_URI_STRING = "key.uriString"
     const val KEY_UPLOAD_FILE_LINK_ID = "key.uploadFileLinkId"
     const val KEY_SHOULD_DELETE_SOURCE = "key.shouldDeleteSource"
-    const val KEY_UPLOAD_FILE_ID = "key.uploadFileId"
+    const val KEY_NODE_UID = "key.nodeUid"
     const val KEY_IS_CANCELLED = "key.isCancelled"
     const val KEY_UPLOAD_BULK_ID = "key.uploadBulkId"
     const val KEY_FOLDER_NAME = "key.folderName"

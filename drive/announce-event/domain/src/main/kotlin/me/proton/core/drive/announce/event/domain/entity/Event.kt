@@ -110,6 +110,7 @@ sealed class Event {
             FAILED_LOCAL_STORAGE,
             FAILED_DRIVE_STORAGE,
             FAILED_PHOTOS_UPLOAD_NOT_ALLOWED,
+            FAILED_FOLDER_NOT_FOUND,
             PAUSED_DISABLED,
             UNCOMPLETED,
             PAUSE_BACKGROUND_RESTRICTIONS,

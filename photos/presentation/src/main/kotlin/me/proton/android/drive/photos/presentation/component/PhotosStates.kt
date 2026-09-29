@@ -396,6 +396,18 @@ fun BackupFailedState(
 }
 
 @Composable
+fun BackupFolderNotFoundState(
+    modifier: Modifier = Modifier,
+) {
+    BackupStateCard(
+        modifier = modifier,
+        icon = CorePresentation.drawable.ic_proton_exclamation_circle,
+        tint = ProtonTheme.colors.notificationError,
+        text = I18N.string.photos_error_backup_folder_not_found,
+    )
+}
+
+@Composable
 fun BackgroundRestrictions(
     modifier: Modifier = Modifier,
     onIgnoreBackgroundRestrictions: () -> Unit,
@@ -709,6 +721,16 @@ fun BackupMissingFolderStatePreview() {
     ProtonTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupMissingFolderState(onMore = { })
+        }
+    }
+}
+
+@Preview
+@Composable
+fun BackupFolderNotFoundStatePreview() {
+    ProtonTheme {
+        Surface(color = ProtonTheme.colors.backgroundNorm) {
+            BackupFolderNotFoundState()
         }
     }
 }

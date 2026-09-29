@@ -114,8 +114,11 @@ class PipelineManagerImpl<T : PipelineManager.Task>(
                                     )
                                     taskProvider.taskCancelled(task, e is PipelineManager.StopCancelledException)
                                     throw e
+                                } catch (e: Exception) {
+                                    taskProvider.taskCompleted(task, e)
                                 } catch (e: Throwable) {
                                     taskProvider.taskCompleted(task, e)
+                                    throw e
                                 }
                             }
                             ?: break

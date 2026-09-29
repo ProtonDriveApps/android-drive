@@ -17,22 +17,17 @@
  */
 package me.proton.core.drive.linkupload.domain.entity
 
-import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.FolderContext
 import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.volume.domain.entity.VolumeId
 
 data class UploadBulk(
     val id: Long = 0,
-    val userId: UserId,
-    val volumeId: VolumeId,
+    val parentFolderContext: FolderContext,
     val shareId: ShareId,
-    val parentLinkId: FolderId,
     val uploadFileDescriptions: List<UploadFileDescription>,
     val shouldDeleteSourceUri: Boolean = false,
     val networkTypeProviderType: NetworkTypeProviderType,
     val shouldAnnounceEvent: Boolean = true,
-    val cacheOption: CacheOption = CacheOption.ALL,
     val priority: Long,
     val shouldBroadcastErrorMessage: Boolean = true,
 )

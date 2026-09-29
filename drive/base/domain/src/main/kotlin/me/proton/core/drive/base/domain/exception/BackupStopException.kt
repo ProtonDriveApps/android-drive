@@ -21,4 +21,4 @@ package me.proton.core.drive.base.domain.exception
 class BackupStopException(
     message: String? = null,
     cause: Throwable? = null,
-) : Throwable(message, cause)
+) : RuntimeException(message, cause)

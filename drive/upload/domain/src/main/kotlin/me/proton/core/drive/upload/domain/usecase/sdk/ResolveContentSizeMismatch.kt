@@ -20,6 +20,7 @@ package me.proton.core.drive.upload.domain.usecase.sdk
 
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.upload.domain.exception.ContentSizeMismatchUnresolvedException
 import me.proton.core.drive.upload.domain.usecase.GetInputStreamSize
 import me.proton.drive.sdk.ProtonSdkError
 import javax.inject.Inject
@@ -36,8 +37,12 @@ class ResolveContentSizeMismatch @Inject constructor(
             val uploadedSize = checkNotNull(data.uploadedSize) { "Uploaded size must not be null" }
             val uri = checkNotNull(uriString) { "Uri must not be null" }
             val uriSize = getInputStreamSize(uri).getOrThrow()
-            check(uriSize.value == uploadedSize) {
-                "Upload and conflict size are not matching: ${uploadedSize - uriSize.value}"
+            if (uriSize.value != uploadedSize) {
+                throw ContentSizeMismatchUnresolvedException(
+                    uploadedSize = uploadedSize,
+                    expectedSize = data.expectedSize,
+                    currentSize = uriSize.value,
+                )
             }
         }
     }

@@ -21,7 +21,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.VolumeWithRevision
+import me.proton.core.drive.base.domain.extension.volumeWithRevision
 import me.proton.core.drive.base.domain.provider.StorageLocationProvider
+import me.proton.drive.sdk.entity.RevisionUid
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -44,6 +46,17 @@ class GetDownloadStagingTempFolder @Inject constructor(
         storageLocationProvider.getPermanentTempFolder(
             userId = userId,
             path = "download/" + VolumeWithRevision(volumeId, revisionId).path
+        )
+    }
+
+    suspend operator fun invoke(
+        userId: UserId,
+        revisionUid: RevisionUid,
+        coroutineContext: CoroutineContext = Dispatchers.IO
+    ) = withContext(coroutineContext) {
+        storageLocationProvider.getPermanentTempFolder(
+            userId = userId,
+            path = "download/" + revisionUid.volumeWithRevision.path
         )
     }
 }

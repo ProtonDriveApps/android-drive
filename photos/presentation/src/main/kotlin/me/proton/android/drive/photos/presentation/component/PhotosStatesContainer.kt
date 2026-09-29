@@ -78,6 +78,7 @@ internal fun PhotosStatesContainer(
                             BackupErrorType.LOCAL_STORAGE -> LocalStorageState(onRetry = onRetry)
                             BackupErrorType.DRIVE_STORAGE -> BackupFailedState(onRetry = onRetry)
                             BackupErrorType.OTHER -> BackupFailedState(onRetry = onRetry)
+                            BackupErrorType.FOLDER_NOT_FOUND -> BackupFolderNotFoundState()
                             BackupErrorType.CONNECTIVITY -> NoConnectivityState()
                             BackupErrorType.WIFI_CONNECTIVITY -> WaitingConnectivityState(
                                 onChangeNetwork = onChangeNetwork

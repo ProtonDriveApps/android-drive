@@ -28,6 +28,7 @@ driveModule(
     hilt = true,
 ) {
     api(project(":drive:announce-event:domain"))
+    api(project(":photos:domain"))
     api(project(":drive:documentsprovider:domain"))
     api(project(":drive:drivelink:domain"))
     api(project(":drive:drivelink-download:domain"))

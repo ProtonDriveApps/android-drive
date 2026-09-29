@@ -18,7 +18,6 @@
 
 <resources>
     <string name="files_upload_stage_waiting">Waiting to upload</string>
-    <string name="files_upload_stage_encrypting">Encrypting</string>
     <string name="files_upload_stage_uploading">Uploading</string>
     <!--
         Variable %1$s is a string representation of a percentage

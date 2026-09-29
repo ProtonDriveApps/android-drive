@@ -27,22 +27,29 @@ inline fun <T> ProtonDriveSdkException.onProtonHttpException(
     block: (protonData: ApiResult.Error.ProtonData) -> T
 ): T? =
     error
-        ?.firstErrorDomainApiOrNull
+        ?.firstErrorWithProtonApiCodeOrNull
         ?.toProtonData()
         ?.let { protonData ->
             block(protonData)
         }
 
-val ProtonSdkError?.firstErrorDomainApiOrNull: ProtonSdkError? get() =
-    firstErrorDomainOrNull(ProtonSdkError.ErrorDomain.Api)
+val ProtonSdkError?.firstErrorWithProtonApiCodeOrNull: ProtonSdkError? get() =
+    firstErrorOrNull { error ->
+        error.primaryCode != null && error.domain == ProtonSdkError.ErrorDomain.Api
+    } ?: firstErrorOrNull { error ->
+        error.primaryCode != null && error.domain == ProtonSdkError.ErrorDomain.BusinessLogic
+    }
 
-fun ProtonSdkError?.firstErrorDomainOrNull(errorDomain: ProtonSdkError.ErrorDomain): ProtonSdkError? {
+fun ProtonSdkError?.firstErrorDomainOrNull(errorDomain: ProtonSdkError.ErrorDomain): ProtonSdkError? =
+    firstErrorOrNull { error -> error.domain == errorDomain }
+
+fun ProtonSdkError?.firstErrorOrNull(predicate: (ProtonSdkError) -> Boolean): ProtonSdkError? {
     var protonSdkError: ProtonSdkError? = this
-    do {
-        if (protonSdkError?.domain == errorDomain) return protonSdkError
-        protonSdkError = protonSdkError?.innerError
-    } while (protonSdkError != null)
-    return protonSdkError
+    while (protonSdkError != null) {
+        if (predicate(protonSdkError)) return protonSdkError
+        protonSdkError = protonSdkError.innerError
+    }
+    return null
 }
 
 fun ProtonSdkError.toProtonData(): ApiResult.Error.ProtonData? =

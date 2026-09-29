@@ -17,24 +17,12 @@
  */
 package me.proton.core.drive.upload.domain.extension
 
-import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.log.LogTag
-import me.proton.core.drive.upload.domain.outputstream.MultipleFileOutputStream
 import me.proton.core.util.kotlin.CoreLogger
-import java.io.File
 import java.io.InputStream
 import java.security.DigestInputStream
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-
-fun InputStream.saveToBlocks(
-    destinationFolder: File,
-    blockMaxSize: Bytes,
-    listener: MultipleFileOutputStream.Listener? = null,
-): List<File> =
-    MultipleFileOutputStream(destinationFolder, blockMaxSize, listener)
-        .apply { use { outputStream -> copyTo(outputStream) } }
-        .files
 
 internal fun InputStream.injectMessageDigests(algorithms: List<String>): Pair<InputStream, List<MessageDigest>> {
     val messageDigests = algorithms.mapNotNull { algorithm ->

@@ -26,11 +26,14 @@ import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.linktrash.domain.extension.isProcessing
 import me.proton.core.drive.share.user.domain.entity.ShareUser
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
 sealed class DriveLink : BaseLink {
     abstract val link: Link
     abstract val volumeId: VolumeId
+
+    abstract val volumeType: Volume.Type
     abstract val cryptoName: CryptoProperty<String>
     abstract val cryptoXAttr: CryptoProperty<String?>
     abstract val isMarkedAsOffline: Boolean
@@ -53,6 +56,7 @@ sealed class DriveLink : BaseLink {
     data class File(
         override val link: Link.File,
         override val volumeId: VolumeId,
+        override val volumeType: Volume.Type,
         override val isMarkedAsOffline: Boolean,
         override val isAnyAncestorMarkedAsOffline: Boolean,
         override val downloadState: DownloadState?,
@@ -73,6 +77,7 @@ sealed class DriveLink : BaseLink {
     data class Folder(
         override val link: Link.Folder,
         override val volumeId: VolumeId,
+        override val volumeType: Volume.Type,
         override val isMarkedAsOffline: Boolean,
         override val isAnyAncestorMarkedAsOffline: Boolean,
         override val downloadState: DownloadState?,
@@ -96,6 +101,7 @@ sealed class DriveLink : BaseLink {
     data class Album(
         override val link: Link.Album,
         override val volumeId: VolumeId,
+        override val volumeType: Volume.Type,
         override val isMarkedAsOffline: Boolean,
         override val isAnyAncestorMarkedAsOffline: Boolean,
         override val downloadState: DownloadState?,

@@ -44,7 +44,7 @@ core-test-quark = "14.1.0"
 dagger = "2.58"
 # Drive
 # Go crypto build; dev & alpha use the "-rust" variant (see app/build.gradle.kts).
-drive-sdk = "0.24.0"
+drive-sdk = "0.28.1"
 # Desugar
 desugar = "2.0.4"
 # Github

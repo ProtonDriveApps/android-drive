@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -39,6 +38,8 @@ import me.proton.android.drive.ui.viewmodel.ShareMultiplePhotosOptionsViewModel
 import me.proton.android.drive.ui.viewstate.ShareMultiplePhotosOptionsViewState
 import me.proton.core.drive.base.presentation.component.BottomSheetEntry
 import me.proton.core.drive.base.presentation.component.RunAction
+import me.proton.core.drive.base.presentation.extension.aroundVisibleItems
+import me.proton.core.drive.base.presentation.extension.rememberVisibleItems
 import me.proton.core.drive.files.presentation.entry.OptionEntry
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -97,23 +98,16 @@ fun ShareMultiplePhotosOptions(
     onScroll: (Set<LinkId>) -> Unit,
 ) {
     val listState = rememberLazyListState()
-    val firstVisibleItemIndex by remember(
-        listState
-    ) { derivedStateOf { listState.firstVisibleItemIndex } }
-    LaunchedEffect(firstVisibleItemIndex, sharedAlbums) {
+    val visibleItems = listState.rememberVisibleItems()
+    val sharedAlbumsLeadingItemCount = shareOptions.size + 2
+    LaunchedEffect(visibleItems, sharedAlbums, sharedAlbumsLeadingItemCount) {
         onScroll(
             sharedAlbums
-                .takeIf { list -> list.isNotEmpty() && list.size > firstVisibleItemIndex }
-                ?.let { list ->
-                    val sizeRange = IntRange(0, list.size - 1)
-                    val fromIndex = (firstVisibleItemIndex - 10).coerceIn(sizeRange)
-                    val toIndex = (firstVisibleItemIndex + 20).coerceIn(sizeRange)
-                    list.subList(fromIndex, toIndex + 1)
-                        .flatMap { albumListing ->
-                            listOfNotNull(albumListing.id, albumListing.album?.coverLinkId)
-                        }
-                        .toSet()
-                } ?: emptySet(),
+                .aroundVisibleItems(visibleItems, sharedAlbumsLeadingItemCount)
+                .flatMap { albumListing ->
+                    listOfNotNull(albumListing.id, albumListing.album?.coverLinkId)
+                }
+                .toSet(),
         )
     }
     LazyColumn(

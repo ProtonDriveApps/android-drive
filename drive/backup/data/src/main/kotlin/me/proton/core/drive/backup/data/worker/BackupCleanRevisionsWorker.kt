@@ -77,7 +77,7 @@ class BackupCleanRevisionsWorker @AssistedInject constructor(
                     tag = BACKUP,
                     message = "Cannot clean revisions for: ${folderId.id} retryable $retryable, max retries reached $canRetry"
                 )
-                handleBackupError(folderId, error.toBackupError(retryable))
+                handleBackupError(folderId, error.toBackupError(folderId, retryable))
                 Result.failure()
             }
         }

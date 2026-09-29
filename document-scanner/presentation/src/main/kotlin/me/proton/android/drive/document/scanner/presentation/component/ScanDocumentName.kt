@@ -102,7 +102,7 @@ fun ScanDocumentName(
     onValueChanged: (String) -> Unit,
     onDone: () -> Unit,
 ) {
-    val state = remember(name) {
+    val state = remember {
         mutableStateOf(
             TextFieldValue(
                 text = name,

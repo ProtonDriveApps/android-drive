@@ -29,6 +29,7 @@ import io.sentry.SentryOptions
 import io.sentry.android.core.SentryAndroid
 import me.proton.android.drive.BuildConfig
 import me.proton.android.drive.log.ApiExceptionProcessor
+import me.proton.android.drive.log.PiiScrubber
 import me.proton.android.drive.log.ProtonDriveSdkExceptionProcessor
 import me.proton.core.usersettings.domain.UsersSettingsHandler
 import me.proton.core.util.android.sentry.TimberLoggerIntegration
@@ -49,8 +50,8 @@ class SentryInitializer : Initializer<Unit> {
         ) { crashReports ->
             isCrashReportEnabled = crashReports
         }
-        val beforeSendCallback = SentryOptions.BeforeSendCallback { event, _ ->
-            if (isCrashReportEnabled) event else null
+        val beforeSendCallback = SentryOptions.BeforeSendCallback { event, hint ->
+            if (isCrashReportEnabled) PiiScrubber.scrub(event, hint) else null
         }
         SentryAndroid.init(context) { options ->
             options.dsn = BuildConfig.SENTRY_DSN.takeIf { !BuildConfig.DEBUG }.orEmpty()

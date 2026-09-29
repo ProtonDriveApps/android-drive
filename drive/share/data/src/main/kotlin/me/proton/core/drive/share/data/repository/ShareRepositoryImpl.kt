@@ -115,7 +115,7 @@ class ShareRepositoryImpl @Inject constructor(
     override suspend fun hasShareWithKey(shareId: ShareId): Boolean =
         dao.hasShareEntityWithKey(shareId.userId, shareId.id)
 
-    override suspend fun fetchShare(shareId: ShareId) {
+    override suspend fun fetchShare(shareId: ShareId): Share {
         val response = api.getShareBootstrap(shareId)
         val membershipAndEmail = response.memberships.firstOrNull()?.let { membershipDto ->
             membershipDto to getUserEmail(
@@ -123,8 +123,9 @@ class ShareRepositoryImpl @Inject constructor(
                 addressId = AddressId(membershipDto.addressId),
             ).getOrThrow()
         }
-        db.inTransaction {
-            dao.insertOrUpdate(response.toShareEntity(shareId.userId))
+        return db.inTransaction {
+            val shareEntity = response.toShareEntity(shareId.userId)
+            dao.insertOrUpdate(shareEntity)
             if (membershipAndEmail != null) {
                 val (membershipDto, email) = membershipAndEmail.first to membershipAndEmail.second
                 db.shareMembershipDao.insertOrUpdate(
@@ -134,6 +135,7 @@ class ShareRepositoryImpl @Inject constructor(
                     )
                 )
             }
+            shareEntity.toShare(shareId.userId)
         }
     }
 
@@ -183,21 +185,7 @@ class ShareRepositoryImpl @Inject constructor(
 
     override suspend fun getVolumeType(shareId: ShareId): Result<Volume.Type> = coRunCatching {
         volumeTypeCache[shareId] ?: run {
-            val cached = dao.get(
-                userId = shareId.userId,
-                shareId = shareId.id,
-            )?.volumeType?.toVolumeType()
-
-            val type = if (cached != null) {
-                cached
-            } else {
-                fetchShare(shareId)
-                dao.get(
-                    userId = shareId.userId,
-                    shareId = shareId.id,
-                )?.volumeType?.toVolumeType()
-            } ?: error("Cannot find volume type for ${shareId.id}")
-
+            val type = volumeType(shareId) ?: fetchShare(shareId).volumeType
             volumeTypeCache.putIfAbsent(shareId, type) ?: type
         }
     }
@@ -206,6 +194,11 @@ class ShareRepositoryImpl @Inject constructor(
         shareId: ShareId,
         editorsCanShare: Boolean,
     ): Unit = api.setEditorsCanShare(shareId, editorsCanShare)
+
+    private suspend fun volumeType(shareId: ShareId): Volume.Type? = dao.get(
+        userId = shareId.userId,
+        shareId = shareId.id,
+    )?.let { entity -> entity.volumeType.toVolumeType() }
 
     override fun getMembership(shareId: ShareId): Flow<DataResult<ShareMembership>> =
         db.shareMembershipDao.getAll(

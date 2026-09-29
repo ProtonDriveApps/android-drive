@@ -54,12 +54,13 @@ import me.proton.core.drive.base.domain.extension.toPercentString
 import me.proton.core.drive.base.presentation.component.LinearProgressIndicator
 import me.proton.core.drive.base.presentation.extension.currentLocale
 import me.proton.core.drive.base.presentation.extension.iconResId
-import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.FolderContext
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.drive.sdk.entity.LegacyNodeUid
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.util.kotlin.exhaustive
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -185,12 +186,8 @@ fun DetailsSubtitle(
 private fun UploadState.title(progress: Percentage? = null): String = when (this) {
     UploadState.UNPROCESSED,
     UploadState.IDLE,
-    UploadState.CREATING_NEW_FILE -> stringResource(id = I18N.string.files_upload_stage_waiting)
-    UploadState.SPLITTING_URI_TO_BLOCKS,
-    UploadState.EXTRACTING_TAGS,
-    UploadState.ENCRYPTING_BLOCKS,
-         -> stringResource(id = I18N.string.files_upload_stage_encrypting)
-    UploadState.GETTING_UPLOAD_LINKS -> stringResource(id = I18N.string.files_upload_stage_uploading)
+    UploadState.CREATING_NEW_FILE,
+    UploadState.EXTRACTING_TAGS -> stringResource(id = I18N.string.files_upload_stage_waiting)
     UploadState.UPLOADING_BLOCKS -> progress?.let {
         stringResource(
             id = I18N.string.files_upload_stage_uploading_with_progress, progress.toPercentString(
@@ -198,7 +195,6 @@ private fun UploadState.title(progress: Percentage? = null): String = when (this
             )
         )
     } ?: stringResource(id = I18N.string.files_upload_stage_uploading)
-    UploadState.UPDATING_REVISION,
     UploadState.CLEANUP -> stringResource(
         id = I18N.string.files_upload_stage_uploading_with_progress, Percentage(100).toPercentString(
             locale = LocalContext.current.currentLocale
@@ -235,20 +231,14 @@ val ProgressHeight = 3.dp
 
 private val DEFAULT_UPLOAD_FILE_LINK = UploadFileLink(
     id = 0L,
-    userId = UserId("1"),
-    volumeId = VolumeId("volume_id"),
+    parentFolderContext = FolderContext(
+        userId = UserId("1"),
+        nodeUid = LegacyNodeUid(volumeId = "volume_id", linkId = "folder_id"),
+        volumeType = Volume.Type.REGULAR,
+    ),
     shareId = ShareId(UserId("1"), "share_id"),
-    parentLinkId = FolderId(ShareId(UserId("1"),"share_id"), "folder_id"),
-    linkId = "file_id",
-    draftRevisionId = "revision_id",
     name = "IMG-1234567890.jpg",
     mimeType = "image/jpeg",
-    nodeKey = "",
-    nodePassphrase = "",
-    nodePassphraseSignature = "",
-    contentKeyPacket = "",
-    contentKeyPacketSignature = "",
-    manifestSignature = "",
     state = UploadState.IDLE,
     size = 123.bytes,
     lastModified = null,

@@ -19,7 +19,13 @@
 package me.proton.core.drive.link.domain.extension
 
 import me.proton.drive.sdk.entity.LegacyRevisionUid
+import me.proton.drive.sdk.entity.NodeUid
 import me.proton.drive.sdk.entity.RevisionUid
 
-val RevisionUid.linkId: String get() = (this as LegacyRevisionUid).nodeUid.linkId
-val RevisionUid.revisionId: String get() = (this as LegacyRevisionUid).revisionId
+private val RevisionUid.legacy: LegacyRevisionUid get() = this as? LegacyRevisionUid ?: LegacyRevisionUid(value)
+
+val RevisionUid.nodeUid: NodeUid get() = legacy.nodeUid
+val RevisionUid.linkId: String get() = legacy.nodeUid.linkId
+val RevisionUid.revisionId: String get() = legacy.revisionId
+
+val RevisionUid.decryptedFileName: String get() = linkId

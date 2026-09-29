@@ -88,6 +88,8 @@ class UploadSuccessCleanupWorker @AssistedInject constructor(
     done = done,
 ) {
 
+    override suspend fun onRetriesExhausted() = Unit
+
     override suspend fun doLimitedRetryUploadWork(
         uploadFileLink: UploadFileLink,
     ): Result = with(uploadFileLink) {
@@ -106,7 +108,7 @@ class UploadSuccessCleanupWorker @AssistedInject constructor(
                 shouldShow = uploadFileLink.shouldAnnounceEvent,
             )
         )
-        uploadSdkManager.close(uploadFileLink)
+        uploadSdkManager.close(uploadFileLink.id)
         uriString?.let { uriResolver.release(it) }
         removeUploadFile(uploadFileLink = this).onFailure { error ->
             error.log(uploadFileLink.logTag(), "Cannot remove upload file")

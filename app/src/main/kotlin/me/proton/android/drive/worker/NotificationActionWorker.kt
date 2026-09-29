@@ -36,8 +36,9 @@ import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.download.domain.usecase.CancelAllDownload
 import me.proton.core.drive.notification.domain.entity.NotificationId
 import me.proton.core.drive.notification.domain.usecase.RemoveNotification
-import me.proton.core.drive.share.domain.usecase.GetMainShare
 import me.proton.core.drive.upload.domain.usecase.CancelAllUpload
+import me.proton.core.drive.volume.domain.entity.Volume
+import me.proton.core.drive.volume.domain.usecase.GetOldestActiveVolume
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.core.util.kotlin.deserialize
 
@@ -46,7 +47,7 @@ class NotificationActionWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
     private val removeNotification: RemoveNotification,
-    private val getMainShare: GetMainShare,
+    private val getOldestActiveVolume: GetOldestActiveVolume,
     private val cancelAllUpload: CancelAllUpload,
     private val cancelAllDownload: CancelAllDownload,
 ) : CoroutineWorker(appContext, params) {
@@ -76,10 +77,13 @@ class NotificationActionWorker @AssistedInject constructor(
         if (notificationId is NotificationId.User) {
             when (action) {
                 ACTION_DELETE -> removeNotification(notificationId)
-                ACTION_CANCEL_ALL -> getMainShare(notificationId.channel.userId).resultValueOrNull()?.id?.let { shareId ->
+                ACTION_CANCEL_ALL -> getOldestActiveVolume(
+                    userId = notificationId.channel.userId,
+                    type = Volume.Type.REGULAR,
+                ).resultValueOrNull()?.id?.let { volumeId ->
                     cancelAllUpload(
                         notificationId.channel.userId,
-                        shareId,
+                        volumeId,
                     )
                 }
                 ACTION_CANCEL_ALL_DOWNLOADS -> cancelAllDownload(notificationId.channel.userId)

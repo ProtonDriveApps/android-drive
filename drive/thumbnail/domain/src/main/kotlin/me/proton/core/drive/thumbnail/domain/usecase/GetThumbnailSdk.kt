@@ -24,19 +24,14 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.withIndex
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.coroutines.unhandledErrorHandler
 import me.proton.core.drive.base.domain.log.LogTag.THUMBNAIL
-import me.proton.core.drive.base.domain.provider.ProtonDriveClientProvider
-import me.proton.core.drive.base.domain.provider.ProtonPhotosClientProvider
 import me.proton.core.drive.base.domain.util.RequestBatcher
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.drivelink.domain.usecase.GetVolumeType
 import me.proton.core.drive.file.base.domain.entity.ThumbnailType
-import me.proton.core.drive.link.domain.entity.FileId
-import me.proton.core.drive.link.domain.extension.nodeUid
-import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.link.domain.entity.RevisionContext
 import me.proton.core.drive.link.domain.provider.ProtonSdkClientProvider
 import me.proton.core.drive.volume.domain.entity.Volume
-import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.drive.sdk.entity.NodeUid
 import java.util.concurrent.atomic.AtomicInteger
@@ -50,12 +45,11 @@ import me.proton.drive.sdk.entity.ThumbnailType as SdkThumbnailType
 @Singleton
 class GetThumbnailSdk @Inject constructor(
     private val protonSdkClientProvider: ProtonSdkClientProvider,
-    private val getVolumeType: GetVolumeType,
 ) {
     private data class BatchKey(
         val userId: UserId,
         val type: SdkThumbnailType,
-        val volumeType: Volume.Type?,
+        val volumeType: Volume.Type,
     )
 
     private val batchCounter = AtomicInteger(0)
@@ -65,7 +59,7 @@ class GetThumbnailSdk @Inject constructor(
     }
 
     private val batcher = RequestBatcher<BatchKey, NodeUid, InputStream>(
-        scope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
+        scope = CoroutineScope(SupervisorJob() + Dispatchers.IO + unhandledErrorHandler(THUMBNAIL)),
         delay = 50.milliseconds,
         timeout = 30.seconds,
     ) { key, uids ->
@@ -97,17 +91,16 @@ class GetThumbnailSdk @Inject constructor(
     }
 
     suspend operator fun invoke(
-        volumeId: VolumeId,
-        fileId: FileId,
+        revisionContext: RevisionContext,
         thumbnailType: ThumbnailType,
     ): Result<InputStream> = coRunCatching {
         batcher.enqueue(
             key = BatchKey(
-                userId = fileId.userId,
+                userId = revisionContext.userId,
                 type = thumbnailType.toSdkType(),
-                volumeType = getVolumeType(fileId).getOrThrow(),
+                volumeType = revisionContext.volumeType,
             ),
-            item = fileId.nodeUid(volumeId)
+            item = revisionContext.nodeUid,
         )
     }
 }

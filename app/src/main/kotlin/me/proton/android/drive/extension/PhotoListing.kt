@@ -18,25 +18,21 @@
 
 package me.proton.android.drive.extension
 
-import me.proton.core.drive.file.base.domain.entity.ThumbnailId
 import me.proton.core.drive.file.base.domain.entity.ThumbnailType
+import me.proton.core.drive.link.domain.extension.revisionUid
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.photo.domain.entity.PhotoListing
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
 
 val PhotoListing.thumbnailVO: ThumbnailVO? get() =
     activeRevisionId?.let { revisionId ->
-        defaultThumbnailId?.let { thumbnailId ->
+        defaultThumbnailId?.let {
             ThumbnailVO(
-                volumeId = volumeId,
-                fileId = linkId,
-                revisionId = revisionId,
-                thumbnailId = ThumbnailId.File(
-                    id = thumbnailId,
-                    userId = linkId.userId,
-                    volumeId = volumeId,
-                    type = ThumbnailType.DEFAULT,
-                )
+                userId = linkId.userId,
+                revisionUid = linkId.revisionUid(volumeId, revisionId),
+                volumeType = Volume.Type.PHOTO,
+                type = ThumbnailType.DEFAULT,
             )
         }
     }

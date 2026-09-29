@@ -59,7 +59,7 @@ class BackupSyncFoldersWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         syncFolders(folderId, uploadPriority).onFailure { error ->
             error.log(LogTag.BACKUP, "Cannot sync folders")
-            addBackupError(folderId, error.toBackupError())
+            addBackupError(folderId, error.toBackupError(folderId))
             return Result.failure()
         }
         return Result.success()

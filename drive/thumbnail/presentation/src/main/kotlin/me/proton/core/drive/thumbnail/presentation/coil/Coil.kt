@@ -32,12 +32,8 @@ import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.crypto.domain.usecase.DecryptThumbnail
-import me.proton.core.drive.drivelink.domain.usecase.UseSdkForThumbnail
 import me.proton.core.drive.linkoffline.domain.usecase.IsLinkOrAnyAncestorMarkedAsOffline
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailDecryptedFile
-import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailFile
-import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailInputStream
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailSdk
 import me.proton.core.drive.thumbnail.presentation.coil.fetch.ThumbnailFetcher
 import me.proton.core.drive.thumbnail.presentation.coil.fetch.ThumbnailKeyer
@@ -54,12 +50,8 @@ fun ThumbnailEnabled(
         val injections = EntryPointAccessors.fromApplication(context, HiltEntryPoint::class.java)
         val thumbnailFetcherFactory = ThumbnailFetcher.Factory(
             context = context,
-            getThumbnailInputStream = injections.getThumbnailInputStream,
-            getThumbnailFile = injections.getThumbnailFile,
             getThumbnailDecryptedFile = injections.getThumbnailDecryptedFile,
             getThumbnailSdk = injections.getThumbnailSdk,
-            useSdkForThumbnail = injections.useSdkForThumbnail,
-            decryptThumbnail = injections.decryptThumbnail,
             isLinkOrAnyAncestorMarkedAsOffline = injections.isLinkOrAnyAncestorMarkedAsOffline,
         )
         currentImageLoader.newBuilder()
@@ -80,11 +72,7 @@ fun ThumbnailEnabled(
 @EntryPoint
 @InstallIn(SingletonComponent::class)
 interface HiltEntryPoint {
-    val getThumbnailInputStream: GetThumbnailInputStream
-    val getThumbnailFile: GetThumbnailFile
-    val decryptThumbnail: DecryptThumbnail
     val getThumbnailDecryptedFile: GetThumbnailDecryptedFile
     val getThumbnailSdk: GetThumbnailSdk
-    val useSdkForThumbnail: UseSdkForThumbnail
     val isLinkOrAnyAncestorMarkedAsOffline: IsLinkOrAnyAncestorMarkedAsOffline
 }

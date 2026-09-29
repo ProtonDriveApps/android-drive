@@ -42,6 +42,7 @@ data class VolumeDto(
     val type: Long,
 ) {
     companion object {
+        const val TYPE_UNKNOWN = 0L
         const val TYPE_REGULAR = 1L
         const val TYPE_PHOTO = 2L
     }

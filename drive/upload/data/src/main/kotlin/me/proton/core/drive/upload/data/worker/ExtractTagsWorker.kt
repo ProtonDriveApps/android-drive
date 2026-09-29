@@ -28,22 +28,20 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.workmanager.addTags
-import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.linkupload.domain.extension.volumeType
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
-import me.proton.core.drive.share.domain.entity.Share
-import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.upload.data.extension.isRetryable
 import me.proton.core.drive.upload.data.extension.retryOrAbort
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_ID
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.UploadExtractTags
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
@@ -59,7 +57,6 @@ class ExtractTagsWorker @AssistedInject constructor(
     getUploadFileLink: GetUploadFileLink,
     uploadErrorManager: UploadErrorManager,
     private val uploadExtractTags: UploadExtractTags,
-    private val getShare: GetShare,
     configurationProvider: ConfigurationProvider,
     canRun: CanRun,
     run: Run,
@@ -78,8 +75,8 @@ class ExtractTagsWorker @AssistedInject constructor(
 ) {
 
     override suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result {
-        if (uploadFileLink.isPhotoShare()) {
-            uploadFileLink.logWorkState("Extract tags for file in photo share")
+        if (uploadFileLink.volumeType == Volume.Type.PHOTO) {
+            uploadFileLink.logWorkState("Extract tags for file in photo volume")
             uploadExtractTags(
                 uploadFileLink = uploadFileLink,
             ).onFailure { error ->
@@ -91,14 +88,9 @@ class ExtractTagsWorker @AssistedInject constructor(
                 )
             }
         } else {
-            uploadFileLink.logWorkState("Ignore extracting tags for non photo share")
+            uploadFileLink.logWorkState("Ignore extracting tags for non photo volume")
         }
         return Result.success()
-    }
-
-    private suspend fun UploadFileLink.isPhotoShare(): Boolean {
-        val share = getShare(shareId, flowOf(false)).toResult().getOrThrow()
-        return share.type == Share.Type.PHOTO
     }
 
     companion object {

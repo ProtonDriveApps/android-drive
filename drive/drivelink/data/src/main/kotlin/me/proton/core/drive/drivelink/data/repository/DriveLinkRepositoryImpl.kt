@@ -19,10 +19,12 @@
 package me.proton.core.drive.drivelink.data.repository
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.drivelink.data.db.dao.DriveLinkDao
 import me.proton.core.drive.drivelink.data.extension.toDriveLinks
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -38,6 +40,7 @@ import javax.inject.Inject
 
 class DriveLinkRepositoryImpl @Inject constructor(
     private val driveLinkDao: DriveLinkDao,
+    private val configurationProvider: ConfigurationProvider,
 ) : DriveLinkRepository {
 
     override fun getDriveLink(linkId: LinkId): Flow<DriveLink?> =
@@ -64,12 +67,17 @@ class DriveLinkRepositoryImpl @Inject constructor(
 
     override fun getDriveLinks(linkIds: List<LinkId>): Flow<List<DriveLink>> =
         linkIds
-            .map { linkId -> linkId.id }
             .takeIf { list -> list.isNotEmpty() }
             ?.let { list ->
-                val shareIdLinkIdList = linkIds.map { linkId -> linkId.shareId.id to linkId.id }
-                driveLinkDao
-                    .getLinks(linkIds.first().userId, list)
+                val shareIdLinkIdList = list.map { linkId -> linkId.shareId.id to linkId.id }
+                val userId = list.first().userId
+                combine(
+                    list.chunked(configurationProvider.dbPageSize).map { chunk ->
+                        driveLinkDao.getLinks(userId, chunk.map { linkId -> linkId.id })
+                    }
+                ) { chunks ->
+                    chunks.toList().flatten()
+                }
                     .map { entities ->
                         entities
                             .filter { entity ->

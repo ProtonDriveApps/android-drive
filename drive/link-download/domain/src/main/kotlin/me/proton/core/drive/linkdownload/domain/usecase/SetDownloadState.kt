@@ -19,7 +19,6 @@ package me.proton.core.drive.linkdownload.domain.usecase
 
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.usecase.GetLink
@@ -35,24 +34,20 @@ class SetDownloadState @Inject constructor(
     suspend operator fun invoke(
         link: Link,
         downloadState: DownloadState,
-        blocks: List<Block>? = null,
     ) =
         linkDownloadRepository.insertOrUpdateDownloadState(
             linkId = link.id,
             revisionId = link.revisionId,
             downloadState = downloadState,
-            blocks = blocks,
         )
 
     suspend operator fun invoke(
         linkId: LinkId,
         downloadState: DownloadState,
-        blocks: List<Block>? = null,
     ): Result<Unit> = coRunCatching {
             invoke(
                 link = getLink(linkId).toResult().getOrThrow(),
                 downloadState = downloadState,
-                blocks = blocks,
-            )
+                )
         }
 }

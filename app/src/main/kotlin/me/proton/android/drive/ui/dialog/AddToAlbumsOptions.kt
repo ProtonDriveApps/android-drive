@@ -26,7 +26,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -44,6 +43,8 @@ import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.component.BottomSheetEntry
 import me.proton.core.drive.base.presentation.component.RunAction
+import me.proton.core.drive.base.presentation.extension.aroundVisibleItems
+import me.proton.core.drive.base.presentation.extension.rememberVisibleItems
 import me.proton.core.drive.files.presentation.entry.OptionEntry
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -98,23 +99,16 @@ fun AddToAlbumsOptions(
     onScroll: (Set<LinkId>) -> Unit,
 ) {
     val listState = rememberLazyListState()
-    val firstVisibleItemIndex by remember(
-        listState
-    ) { derivedStateOf { listState.firstVisibleItemIndex } }
-    LaunchedEffect(firstVisibleItemIndex, albums) {
+    val visibleItems = listState.rememberVisibleItems()
+    val albumsLeadingItemCount = options.size + 1
+    LaunchedEffect(visibleItems, albums, albumsLeadingItemCount) {
         onScroll(
             albums
-                .takeIf { list -> list.isNotEmpty() && list.size > firstVisibleItemIndex }
-                ?.let { list ->
-                    val sizeRange = IntRange(0, list.size - 1)
-                    val fromIndex = (firstVisibleItemIndex - 10).coerceIn(sizeRange)
-                    val toIndex = (firstVisibleItemIndex + 20).coerceIn(sizeRange)
-                    list.subList(fromIndex, toIndex + 1)
-                        .flatMap { albumListing ->
-                            listOfNotNull(albumListing.id, albumListing.album?.coverLinkId)
-                        }
-                        .toSet()
-                } ?: emptySet(),
+                .aroundVisibleItems(visibleItems, albumsLeadingItemCount)
+                .flatMap { albumListing ->
+                    listOfNotNull(albumListing.id, albumListing.album?.coverLinkId)
+                }
+                .toSet(),
         )
     }
 

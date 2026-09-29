@@ -33,6 +33,7 @@ import me.proton.core.drive.link.domain.entity.OwnedBy
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
 val BASE_FILE_LINK = Link.File(
@@ -110,6 +111,7 @@ fun Link.File.toDriveLink(
     DriveLink.File(
         link = this,
         volumeId = VolumeId("VOLUME_ID"),
+        volumeType = Volume.Type.REGULAR,
         isMarkedAsOffline = isMarkedAsOffline,
         isAnyAncestorMarkedAsOffline = isAnyAncestorMarkedAsOffline,
         downloadState = downloadState,
@@ -135,6 +137,7 @@ fun Link.toDriveLink(
     is Link.Folder -> DriveLink.Folder(
         link = this,
         volumeId = VolumeId("VOLUME_ID"),
+        volumeType = Volume.Type.REGULAR,
         isMarkedAsOffline = false,
         isAnyAncestorMarkedAsOffline = false,
         downloadState = null,
@@ -148,6 +151,7 @@ fun Link.toDriveLink(
     is Link.Album -> DriveLink.Album(
         link = this,
         volumeId = VolumeId("VOLUME_ID"),
+        volumeType = Volume.Type.PHOTO,
         isMarkedAsOffline = false,
         isAnyAncestorMarkedAsOffline = false,
         downloadState = null,

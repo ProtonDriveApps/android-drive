@@ -54,11 +54,11 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
         DELETE FROM LinkUploadEntity 
         WHERE 
             user_id = :userId AND 
-            share_id = :shareId AND 
+            volume_id = :volumeId AND 
             state = :uploadState
         """
     )
-    abstract suspend fun deleteAllByShareId(userId: UserId, shareId: String, uploadState: UploadState)
+    abstract suspend fun deleteAllByVolumeId(userId: UserId, volumeId: String, uploadState: UploadState)
 
     @Query(
         """
@@ -101,9 +101,14 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
     abstract fun getFlow(id: Long): Flow<LinkUploadEntity?>
 
     @Query(
-        "SELECT * FROM LinkUploadEntity WHERE user_id = :userId AND share_id = :shareId AND link_id = :linkId"
+        "SELECT * FROM LinkUploadEntity WHERE user_id = :userId AND volume_id = :volumeId AND link_id = :linkId"
     )
-    abstract suspend fun get(userId: UserId, shareId: String, linkId: String): LinkUploadEntity?
+    abstract suspend fun get(userId: UserId, volumeId: String, linkId: String): LinkUploadEntity?
+
+    @Query("""
+        UPDATE LinkUploadEntity SET link_id = :linkId WHERE id = :id
+    """)
+    abstract fun updateLinkId(id: Long, linkId: String)
 
     @Query("""
         SELECT * FROM LinkUploadEntity WHERE user_id = :userId
@@ -133,14 +138,14 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
         """
         SELECT * FROM LinkUploadEntity 
         WHERE user_id = :userId AND 
-            share_id = :shareId
+            volume_id = :volumeId
         ORDER BY id ASC
         LIMIT :limit OFFSET :offset
         """
     )
-    abstract suspend fun getAllByShareId(
+    abstract suspend fun getAllByVolumeId(
         userId: UserId,
-        shareId: String,
+        volumeId: String,
         limit: Int,
         offset: Int,
     ): List<LinkUploadEntity>
@@ -195,40 +200,16 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
 
     @Transaction
     @Query("""
-        SELECT LinkUploadEntity.* FROM LinkUploadEntity
-        INNER JOIN ShareEntity ON
-            LinkUploadEntity.share_id = ShareEntity.id AND
-            LinkUploadEntity.user_id = ShareEntity.user_id
+        SELECT * FROM LinkUploadEntity
         WHERE
-            LinkUploadEntity.user_id = :userId AND
-            ShareEntity.type = :type AND
-            LinkUploadEntity.uri IS NOT NULL AND LinkUploadEntity.uri != "" AND
-            LinkUploadEntity.state IN (:states)
-        ORDER BY LinkUploadEntity.priority ASC, LinkUploadEntity.id ASC
+            user_id = :userId AND
+            volume_type = :type AND
+            uri IS NOT NULL AND uri != "" AND
+            state IN (:states)
+        ORDER BY priority ASC, id ASC
         LIMIT :count
     """)
-    abstract fun getAllWithUriByPriorityWithShareType(userId: UserId, states: Set<UploadState>, type: Long, count: Int): Flow<List<LinkUploadEntity>>
-
-    @Transaction
-    @Query("""
-        SELECT LinkUploadEntity.* FROM LinkUploadEntity
-        LEFT JOIN ShareEntity ON
-            LinkUploadEntity.share_id = ShareEntity.id AND
-            LinkUploadEntity.user_id = ShareEntity.user_id
-        WHERE
-            LinkUploadEntity.user_id = :userId AND
-            COALESCE(ShareEntity.type, 0) != :type AND
-            LinkUploadEntity.uri IS NOT NULL AND LinkUploadEntity.uri != "" AND
-            LinkUploadEntity.state IN (:states)
-        ORDER BY LinkUploadEntity.priority ASC, LinkUploadEntity.id ASC
-        LIMIT :count
-    """)
-    abstract fun getAllWithUriByPriorityWithoutShareType(userId: UserId, states: Set<UploadState>, type: Long, count: Int): Flow<List<LinkUploadEntity>>
-
-    @Query("""
-        SELECT COUNT(*) FROM (SELECT * FROM LinkUploadEntity WHERE user_id = :userId)
-    """)
-    abstract fun getCountFlow(userId: UserId): Flow<Int>
+    abstract fun getAllWithUriByPriorityWithVolumeType(userId: UserId, states: Set<UploadState>, type: Long, count: Int): Flow<List<LinkUploadEntity>>
 
     @Query("""
         SELECT COUNT(*) FROM (
@@ -306,15 +287,12 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
             ) AS ${Column.TOTAL_UNPROCESSED_WITH_URI_NON_USER_PRIORITY},
             COUNT(CASE WHEN LinkUploadEntity.should_announce_event = 1 THEN 1 ELSE NULL END) AS ${Column.TOTAL_WITH_ANNOUNCE}
         FROM LinkUploadEntity
-        INNER JOIN ShareEntity ON
-            LinkUploadEntity.share_id = ShareEntity.id AND
-            LinkUploadEntity.user_id = ShareEntity.user_id
         WHERE
             LinkUploadEntity.user_id = :userId AND
-            ShareEntity.type = :type
+            LinkUploadEntity.volume_type = :type
     """
     )
-    abstract fun getUploadCountWithShareType(
+    abstract fun getUploadCountWithVolumeType(
         userId: UserId,
         type: Long,
         userPriority: Long
@@ -343,17 +321,16 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
             ) AS ${Column.TOTAL_UNPROCESSED_WITH_URI_NON_USER_PRIORITY},
             COUNT(CASE WHEN LinkUploadEntity.should_announce_event = 1 THEN 1 ELSE NULL END) AS ${Column.TOTAL_WITH_ANNOUNCE}
         FROM LinkUploadEntity
-        LEFT JOIN ShareEntity ON
-            LinkUploadEntity.share_id = ShareEntity.id AND
-            LinkUploadEntity.user_id = ShareEntity.user_id
         WHERE
             LinkUploadEntity.user_id = :userId AND
-            COALESCE(ShareEntity.type, 0) != :type
+            LinkUploadEntity.share_id = :shareId AND
+            LinkUploadEntity.parent_id = :parentId
     """
     )
-    abstract fun getUploadCountWithoutShareType(
+    abstract fun getUploadCountWithParentId(
         userId: UserId,
-        type: Long,
+        shareId: String,
+        parentId: String,
         userPriority: Long
     ): Flow<LinkUploadCountEntity>
 
@@ -374,40 +351,6 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
         UPDATE LinkUploadEntity SET upload_creation_time = :creationTime WHERE id = :id
     """)
     abstract fun updateUploadCreationTime(id: Long, creationTime: Long?)
-
-    @Query("""
-        UPDATE LinkUploadEntity SET
-            link_id = :linkId,
-            revision_id = :revisionId,
-            name = :name,
-            node_key = :nodeKey,
-            node_passphrase = :nodePassphrase,
-            node_passphrase_signature = :nodePassphraseSignature,
-            content_key_packet = :contentKeyPacket,
-            content_key_packet_signature = :contentKeyPacketSignature
-        WHERE id = :id
-    """)
-    abstract fun updateLinkIdAndRevisionId(
-        id: Long,
-        linkId: String,
-        revisionId: String,
-        name: String,
-        nodeKey: String,
-        nodePassphrase: String,
-        nodePassphraseSignature: String,
-        contentKeyPacket: String,
-        contentKeyPacketSignature: String,
-    )
-
-    @Query("""
-        UPDATE LinkUploadEntity SET link_id = :linkId, revision_id = :revisionId WHERE id = :id
-    """)
-    abstract fun updateLinkIdAndRevisionId(id: Long, linkId: String, revisionId: String)
-
-    @Query("""
-        UPDATE LinkUploadEntity SET manifest_signature = :manifestSignature WHERE id = :id
-    """)
-    abstract fun updateManifestSignature(id: Long, manifestSignature: String)
 
     @Query("""
         UPDATE LinkUploadEntity SET name = :name WHERE id = :id
@@ -440,13 +383,6 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
         WHERE id = :id
     """)
     abstract fun updateMediaResolution(id: Long, mediaResolutionWidth: Long, mediaResolutionHeight: Long)
-
-    @Query("""
-        UPDATE LinkUploadEntity SET
-            digests = :digests
-        WHERE id = :id
-    """)
-    abstract fun updateDigests(id: Long, digests: String)
 
     @Query("""
         UPDATE LinkUploadEntity SET

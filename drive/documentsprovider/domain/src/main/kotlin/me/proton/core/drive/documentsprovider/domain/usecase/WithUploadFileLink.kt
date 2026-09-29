@@ -23,7 +23,7 @@ import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.documentsprovider.domain.entity.DocumentId
-import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.drivelink.domain.extension.nodeUid
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.util.kotlin.CoreLogger
@@ -41,13 +41,10 @@ class WithUploadFileLink @Inject constructor(
         crossinline block: suspend (UserId, UploadFileLink) -> T,
     ): T? = coRunCatching {
         CoreLogger.d(LogTag.DOCUMENTS_PROVIDER, "Trying to retrieve UploadFileLink: $documentId")
-        documentId.linkId?.let { linkId ->
-            val fileId = FileId(linkId.shareId, linkId.id)
-            block(documentId.userId, getUploadFileLink(fileId).toResult().getOrThrow())
-        } ?: documentId.uploadId?.let { uploadId ->
+        documentId.uploadId?.let { uploadId ->
             block(documentId.userId, getUploadFileLink(uploadId.toLong()).toResult().getOrThrow())
         } ?: withDriveLinkFile(documentId) { userId, driveLink ->
-            block(userId, getUploadFileLink(driveLink.id).toResult().getOrThrow())
+            block(userId, getUploadFileLink(userId, driveLink.nodeUid).toResult().getOrThrow())
         }
     }.getOrNull()
 }

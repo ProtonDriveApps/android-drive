@@ -63,5 +63,10 @@ data class BackupError(
             type = BackupErrorType.BACKGROUND_RESTRICTIONS,
             retryable = true,
         )
+
+        fun FolderNotFound() = BackupError(
+            type = BackupErrorType.FOLDER_NOT_FOUND,
+            retryable = false,
+        )
     }
 }

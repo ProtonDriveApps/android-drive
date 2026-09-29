@@ -62,6 +62,7 @@ import me.proton.core.drive.backup.data.db.entity.BackupDuplicateEntity
 import me.proton.core.drive.backup.data.db.entity.BackupErrorEntity
 import me.proton.core.drive.backup.data.db.entity.BackupFileEntity
 import me.proton.core.drive.backup.data.db.entity.BackupFolderEntity
+import me.proton.core.drive.base.data.db.DriveUidConverters
 import me.proton.core.drive.base.data.db.LoggingOpenHelperFactory
 import me.proton.core.drive.base.data.db.entity.UrlLastFetchEntity
 import me.proton.core.drive.device.data.db.DeviceDatabase
@@ -98,7 +99,6 @@ import me.proton.core.drive.link.selection.data.db.LinkSelectionConverters
 import me.proton.core.drive.link.selection.data.db.LinkSelectionDatabase
 import me.proton.core.drive.link.selection.data.db.entity.LinkSelectionEntity
 import me.proton.core.drive.linkdownload.data.db.LinkDownloadDatabase
-import me.proton.core.drive.linkdownload.data.db.entity.DownloadBlockEntity
 import me.proton.core.drive.linkdownload.data.db.entity.LinkDownloadFileSignatureVerificationFailedEntity
 import me.proton.core.drive.linkdownload.data.db.entity.LinkDownloadStateEntity
 import me.proton.core.drive.linknode.data.db.LinkAncestorDatabase
@@ -110,8 +110,6 @@ import me.proton.core.drive.linktrash.data.db.entity.TrashMetadataEntity
 import me.proton.core.drive.linktrash.data.db.entity.TrashWorkEntity
 import me.proton.core.drive.linkupload.data.db.LinkUploadDatabase
 import me.proton.core.drive.linkupload.data.db.entity.LinkUploadEntity
-import me.proton.core.drive.linkupload.data.db.entity.RawBlockEntity
-import me.proton.core.drive.linkupload.data.db.entity.UploadBlockEntity
 import me.proton.core.drive.linkupload.data.db.entity.UploadBulkEntity
 import me.proton.core.drive.linkupload.data.db.entity.UploadBulkUriStringEntity
 import me.proton.core.drive.linkupload.data.db.entity.UploadTagEntity
@@ -270,7 +268,6 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         LinkOfflineEntity::class,
         LinkDownloadStateEntity::class,
         LinkDownloadFileSignatureVerificationFailedEntity::class,
-        DownloadBlockEntity::class,
         LinkTrashStateEntity::class,
         FileDownloadEntity::class,
         ParentLinkDownloadEntity::class,
@@ -286,13 +283,11 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         SortingEntity::class,
         // Upload
         LinkUploadEntity::class,
-        UploadBlockEntity::class,
         UploadBulkEntity::class,
         UploadBulkUriStringEntity::class,
         UploadTagEntity::class,
         FolderMetadataEntity::class,
         TrashMetadataEntity::class,
-        RawBlockEntity::class,
         // Backup
         BackupConfigurationEntity::class,
         BackupDuplicateEntity::class,
@@ -381,7 +376,8 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
     // Drive
     EventConverters::class,
     LinkSelectionConverters::class,
-    BackupErrorTypeConverters::class
+    BackupErrorTypeConverters::class,
+    DriveUidConverters::class,
 )
 abstract class DriveDatabase :
     BaseDatabase(),
@@ -445,7 +441,7 @@ abstract class DriveDatabase :
     DocumentScannerDatabase {
 
     companion object {
-        const val VERSION = 108
+        const val VERSION = 109
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -555,6 +551,7 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_105_106,
             DriveDatabaseMigrations.MIGRATION_106_107,
             DriveDatabaseMigrations.MIGRATION_107_108,
+            DriveDatabaseMigrations.MIGRATION_108_109,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

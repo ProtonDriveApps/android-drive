@@ -21,7 +21,6 @@ package me.proton.core.drive.upload.domain.usecase
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.isActive
@@ -31,8 +30,8 @@ import me.proton.core.drive.base.domain.entity.FileTypeCategory
 import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
-import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.util.closeOnFailure
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveUploadVerificationDisabled
@@ -41,16 +40,17 @@ import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
 import me.proton.core.drive.file.base.domain.entity.ThumbnailType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
+import me.proton.core.drive.linkupload.domain.extension.userId
+import me.proton.core.drive.linkupload.domain.extension.volumeId
+import me.proton.core.drive.linkupload.domain.extension.volumeType
 import me.proton.core.drive.linkupload.domain.manager.UploadSpeedManager
-import me.proton.core.drive.linkupload.domain.usecase.UpdateLinkIdAndRevisionId
+import me.proton.core.drive.linkupload.domain.usecase.UpdateLinkId
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
-import me.proton.core.drive.share.domain.entity.Share
-import me.proton.core.drive.share.domain.usecase.GetShare
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.thumbnail.domain.usecase.CreateThumbnail
 import me.proton.core.drive.upload.domain.extension.injectMessageDigests
 import me.proton.core.drive.base.domain.extension.memorizedDigest
 import me.proton.core.drive.link.domain.extension.linkId
-import me.proton.core.drive.link.domain.extension.revisionId
 import me.proton.core.drive.upload.domain.manager.UploadSdkManager
 import me.proton.core.drive.upload.domain.resolver.UriResolver
 import okio.FileNotFoundException
@@ -65,10 +65,9 @@ class UploadFileSdk @Inject constructor(
     private val uriResolver: UriResolver,
     private val updateEventAction: UpdateEventAction,
     private val createThumbnail: CreateThumbnail,
+    private val updateLinkId: UpdateLinkId,
     private val updateUploadState: UpdateUploadState,
-    private val updateLinkIdAndRevisionId: UpdateLinkIdAndRevisionId,
     private val configurationProvider: ConfigurationProvider,
-    private val getShare: GetShare,
     private val getFeatureFlag: GetFeatureFlag,
     private val uploadSpeedManager: UploadSpeedManager,
 ) {
@@ -80,16 +79,18 @@ class UploadFileSdk @Inject constructor(
     ) = coRunCatching {
         coroutineScope {
             try {
-                val controller = uploadSdkManager.controller(uploadFileLink) { uploader ->
+                val controller = uploadSdkManager.controller(uploadFileLink.id) { uploader ->
                     val (inputStream, messageDigests) = uploadFileLink.getInputStream(uriString)
-                    uploader.uploadFromStream(
-                        coroutineScope = this,
-                        channel = Channels.newChannel(inputStream),
-                        thumbnails = uploadFileLink.createThumbnails(uriString),
-                        sha1Provider = messageDigests.firstOrNull {
-                            it.algorithm == configurationProvider.contentDigestAlgorithm
-                        }?.memorizedDigest()
-                    )
+                    inputStream.closeOnFailure { stream ->
+                        uploader.uploadFromStream(
+                            coroutineScope = this,
+                            channel = Channels.newChannel(stream),
+                            thumbnails = uploadFileLink.createThumbnails(uriString),
+                            sha1Provider = messageDigests.firstOrNull {
+                                it.algorithm == configurationProvider.contentDigestAlgorithm
+                            }?.memorizedDigest()
+                        )
+                    }
                 }
                 val job = controller.progressFlow
                     .filterNotNull()
@@ -109,13 +110,9 @@ class UploadFileSdk @Inject constructor(
                 } finally {
                     job.cancel()
                 }
-                updateLinkIdAndRevisionId(
-                    uploadFileLinkId = uploadFileLink.id,
-                    linkId = result.nodeUid.linkId,
-                    revisionId = result.revisionUid.revisionId,
-                ).getOrThrow()
+                updateLinkId(uploadFileLink.id, result.nodeUid.linkId).getOrThrow()
                 updateEventAction(uploadFileLink.userId, uploadFileLink.volumeId) {
-                    uploadSdkManager.close(uploadFileLink)
+                    uploadSdkManager.close(uploadFileLink.id)
                     result
                 }
             } finally {
@@ -149,7 +146,7 @@ class UploadFileSdk @Inject constructor(
             mimeType = mimeType,
             type = ThumbnailType.DEFAULT,
         ).getOrThrow()
-        val photoThumbnail = if (isBiggerThenPhotoThumbnail && isImagePhoto()) {
+        val photoThumbnail = if (isBiggerThenPhotoThumbnail && isImagePhoto) {
             this@UploadFileSdk.createThumbnail(
                 uri = uriString,
                 mimeType = mimeType,
@@ -170,12 +167,9 @@ class UploadFileSdk @Inject constructor(
                     resolution.height > configurationProvider.thumbnailPhoto.maxHeight
         } ?: false
 
-    private suspend fun UploadFileLink.isPhoto(): Boolean {
-        val share = getShare(shareId, flowOf(false)).toResult().getOrThrow()
-        return share.type == Share.Type.PHOTO
-    }
+    private val UploadFileLink.isPhoto: Boolean get() = volumeType == Volume.Type.PHOTO
 
     private val UploadFileLink.isImage: Boolean get() = mimeType.toFileTypeCategory() == FileTypeCategory.Image
 
-    private suspend fun UploadFileLink.isImagePhoto(): Boolean = isPhoto() && isImage
+    private val UploadFileLink.isImagePhoto: Boolean get() = isPhoto && isImage
 }

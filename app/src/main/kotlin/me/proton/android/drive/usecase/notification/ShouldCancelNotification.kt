@@ -19,6 +19,7 @@
 package me.proton.android.drive.usecase.notification
 
 import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.announce.event.domain.entity.Event.Backup.BackupState
 import me.proton.core.drive.announce.event.domain.entity.Event.Upload.UploadState
 import me.proton.core.drive.base.domain.extension.requireIsInstance
 import me.proton.core.drive.notification.domain.entity.NotificationId
@@ -54,7 +55,9 @@ class ShouldCancelNotification @Inject constructor(
         is Event.DownloadFileProgress -> event.downloadingCount == 0
         is Event.ForcedSignOut -> false
         is Event.NoSpaceLeftOnDevice -> false
-        is Event.Backup -> false
+        is Event.Backup ->
+            event.state == BackupState.COMPLETE && event.total == 0
+
         else -> false
     }
 

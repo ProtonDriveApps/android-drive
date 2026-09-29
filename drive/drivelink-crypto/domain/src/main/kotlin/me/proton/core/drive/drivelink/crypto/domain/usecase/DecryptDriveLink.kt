@@ -28,7 +28,9 @@ import me.proton.core.drive.cryptobase.domain.entity.UnlockedKey
 import me.proton.core.drive.cryptobase.domain.usecase.UnlockKey
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.updateLastModified
+import me.proton.core.drive.drivelink.domain.extension.updateMimeType
 import me.proton.core.drive.drivelink.domain.usecase.GetLastModified
+import me.proton.core.drive.drivelink.domain.usecase.GetMimeType
 import me.proton.core.drive.key.domain.extension.keyHolder
 import me.proton.core.drive.key.domain.usecase.GetLinkParentKey
 import me.proton.core.drive.link.domain.entity.Link
@@ -41,6 +43,7 @@ class DecryptDriveLink @Inject constructor(
     private val decryptLinkName: DecryptLinkName,
     private val decryptLinkXAttr: DecryptLinkXAttr,
     private val getLastModified: GetLastModified,
+    private val getMimeType: GetMimeType,
 ) {
 
     suspend operator fun invoke(
@@ -80,6 +83,14 @@ class DecryptDriveLink @Inject constructor(
         driveLink
             .decryptXAttrAndUpdateLastModified()
             .decryptName(unlockedParentKey, failOnError)
+            .updateMissingMimeType()
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private suspend fun <T : DriveLink> T.updateMissingMimeType(): T = when {
+        this !is DriveLink.File -> this
+        mimeType.isNotBlank() -> this
+        else -> copy(link = updateMimeType(getMimeType(this)) as Link.File) as T
     }
 
     @Suppress("UNCHECKED_CAST")

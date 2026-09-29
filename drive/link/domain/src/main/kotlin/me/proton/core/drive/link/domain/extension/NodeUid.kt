@@ -21,4 +21,4 @@ package me.proton.core.drive.link.domain.extension
 import me.proton.drive.sdk.entity.LegacyNodeUid
 import me.proton.drive.sdk.entity.NodeUid
 
-val NodeUid.linkId: String get() = (this as LegacyNodeUid).linkId
+val NodeUid.linkId: String get() = (this as? LegacyNodeUid ?: LegacyNodeUid(value)).linkId

@@ -48,6 +48,8 @@ import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.usecase.ClearCacheFolder
+import me.proton.core.drive.base.domain.usecase.SignOutAndResetEnvironment
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
@@ -65,6 +67,7 @@ import me.proton.drive.android.settings.domain.entity.ThemeStyle
 import me.proton.drive.android.settings.domain.usecase.GetThemeStyle
 import me.proton.drive.android.settings.domain.usecase.UpdateThemeStyle
 import javax.inject.Inject
+import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.minutes
 import me.proton.core.drive.base.domain.extension.combine as baseCombine
 import me.proton.core.drive.i18n.R as I18N
@@ -83,6 +86,7 @@ class SettingsViewModel @Inject constructor(
     getAutoLockDuration: GetAutoLockDuration,
     private val hasEnableAppLockTimestamp: HasEnableAppLockTimestamp,
     private val clearCacheFolder: ClearCacheFolder,
+    private val signOutAndResetEnvironment: SignOutAndResetEnvironment,
     private val broadcastMessages: BroadcastMessages,
     private val configurationProvider: ConfigurationProvider,
     private val sendDebugLog: SendDebugLog,
@@ -98,8 +102,6 @@ class SettingsViewModel @Inject constructor(
     ).stateIn(viewModelScope, SharingStarted.Eagerly, FeatureFlag(driveAndroidUserLogDisabled(userId), NOT_FOUND))
 
     private val debugSettingsViewEvent = object : DebugSettingsViewEvent {
-        override val onUpdateHost = { host: String -> debugSettings.host = host }
-        override val onUpdateBaseUrl = { baseUrl: String -> debugSettings.baseUrl = baseUrl }
         override val onUpdateAppVersionHeader = { header: String -> debugSettings.appVersionHeader = header }
         override val onToggleUseExceptionMessage = { useExceptionMessage: Boolean ->
             debugSettings.useExceptionMessage = useExceptionMessage
@@ -128,6 +130,27 @@ class SettingsViewModel @Inject constructor(
             Unit
         }
         override val onReset = { debugSettings.reset(viewModelScope) }
+        override val onApplyEnvironmentChange = { host: String, baseUrl: String ->
+            viewModelScope.launch {
+                coRunCatching {
+                    signOutAndResetEnvironment(userId)
+                    debugSettings.host = host
+                    debugSettings.baseUrl = baseUrl
+                    restartApp()
+                }.onFailure { error ->
+                    error.log(VIEW_MODEL)
+                    broadcastMessages(
+                        userId = userId,
+                        message = error.getDefaultMessage(
+                            context = context,
+                            useExceptionMessage = true,
+                        ),
+                        type = BroadcastMessage.Type.ERROR,
+                    )
+                }
+            }
+            Unit
+        }
         override val onUpdateFeatureFlagFreshDuration = { featureFlagFreshDuration: String ->
             debugSettings.featureFlagFreshDuration = (featureFlagFreshDuration.toLong()).minutes
         }
@@ -334,5 +357,11 @@ class SettingsViewModel @Inject constructor(
         ThemeStyle.SYSTEM -> I18N.string.settings_theme_system_default
         ThemeStyle.DARK -> I18N.string.settings_theme_dark
         ThemeStyle.LIGHT -> I18N.string.settings_theme_light
+    }
+
+    private fun restartApp() {
+        val launchIntent = requireNotNull(context.packageManager.getLaunchIntentForPackage(context.packageName))
+        context.startActivity(Intent.makeRestartActivityTask(launchIntent.component))
+        exitProcess(0)
     }
 }

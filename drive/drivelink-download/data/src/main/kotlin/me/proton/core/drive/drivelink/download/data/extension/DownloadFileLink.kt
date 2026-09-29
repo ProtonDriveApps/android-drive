@@ -21,6 +21,7 @@ package me.proton.core.drive.drivelink.download.data.extension
 import me.proton.core.drive.drivelink.download.data.db.entity.FileDownloadEntity
 import me.proton.core.drive.drivelink.download.domain.entity.DownloadFileLink
 import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.volume.data.extension.toLong
 
 fun DownloadFileLink.toFileDownloadEntity() = FileDownloadEntity(
     id = id,
@@ -35,4 +36,5 @@ fun DownloadFileLink.toFileDownloadEntity() = FileDownloadEntity(
     numberOfRetries = numberOfRetries,
     lastRunTimestamp = lastRunTimestamp,
     networkType = networkType,
+    volumeType = volumeType.toLong(),
 )

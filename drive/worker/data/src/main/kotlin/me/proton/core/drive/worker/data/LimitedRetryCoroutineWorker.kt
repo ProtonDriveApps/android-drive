@@ -43,6 +43,7 @@ abstract class LimitedRetryCoroutineWorker(
     final override suspend fun doWork(): Result {
         if (isLimitOverreached()) {
             CoreLogger.w(logTag, "Max retries already reached, hard stop")
+            onRetriesExhausted()
             return Result.failure()
         }
         try {
@@ -53,6 +54,7 @@ abstract class LimitedRetryCoroutineWorker(
                 } else {
                     CoreLogger.d(logTag, "Max retries reached, giving up")
                     done()
+                    onRetriesExhausted()
                     Result.failure()
                 }
                 else -> {
@@ -67,6 +69,8 @@ abstract class LimitedRetryCoroutineWorker(
     }
 
     abstract suspend fun doLimitedRetryWork(): Result
+
+    protected open suspend fun onRetriesExhausted() = Unit
 
     suspend fun canRetry(): Boolean = withContext(NonCancellable) {
         canRun(userId, id.toString()).getOrNull(logTag) ?: true

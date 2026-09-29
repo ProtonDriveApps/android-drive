@@ -23,10 +23,13 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.api.Dto
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.toResult
+import kotlinx.coroutines.launch
+import me.proton.core.drive.base.domain.coroutines.UserSupervisorIOScopes
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.eventmanager.api.response.CreateLinksEvent
@@ -73,6 +76,9 @@ class LinkEventListener @Inject constructor(
     private val onEventEndpointFetchError: OnEventEndpointFetchError,
 ) : EventListener<LinkId, LinkEventVO>() {
     private var stopEventLoop: (suspend (EventManagerConfig.Drive.Volume) -> Unit)? = null
+
+    // Handling a fetch error stops the event loop, cancelling this listener's scope.
+    private val scopes = UserSupervisorIOScopes(LogTag.EVENTS)
     internal var onFailure: (Throwable, String) -> Unit = { error, body ->
         error.log(LogTag.EVENTS, "Cannot parse event from response: $body")
     }
@@ -126,6 +132,10 @@ class LinkEventListener @Inject constructor(
         this.stopEventLoop = stopEventLoop
     }
 
+    fun remove(userId: UserId) {
+        scopes.remove(userId)
+    }
+
     private fun WithLinkDto.getEvent(volumeId: VolumeId, shareId: ShareId): Event<LinkId, LinkEventVO> {
         val vo = LinkEventVO(
             volumeId = volumeId,
@@ -156,10 +166,16 @@ class LinkEventListener @Inject constructor(
     override suspend fun onResetAll(config: EventManagerConfig) {
         if (getEventMetadata(config).refresh == RefreshType.Mail) {
             // Drive BE sent refresh: 1 i.e. clients need to refresh all data
-            when (config) {
-                is EventManagerConfig.Drive.Share -> onResetAllEvent(ShareId(config.userId, config.shareId))
-                is EventManagerConfig.Drive.Volume -> onResetAllEvent(config.userId, VolumeId(config.volumeId))
-                else -> error("Unexpected event manager config")
+            scopes[config.userId].launch {
+                when (config) {
+                    is EventManagerConfig.Drive.Share ->
+                        onResetAllEvent(ShareId(config.userId, config.shareId))
+
+                    is EventManagerConfig.Drive.Volume ->
+                        onResetAllEvent(config.userId, VolumeId(config.volumeId))
+
+                    else -> error("Unexpected event manager config")
+                }
             }
         }
     }
@@ -167,12 +183,14 @@ class LinkEventListener @Inject constructor(
     override suspend fun onFetchError(config: EventManagerConfig, error: Throwable) {
         (config as? EventManagerConfig.Drive.Volume)
             ?.let { driveVolumeConfig ->
-                onEventEndpointFetchError(
-                    userId = driveVolumeConfig.userId,
-                    volumeId = VolumeId(driveVolumeConfig.volumeId),
-                    error = error,
-                ) { stopEventLoop?.invoke(driveVolumeConfig) }
-                    .getOrNull(LogTag.EVENTS)
+                scopes[driveVolumeConfig.userId].launch {
+                    onEventEndpointFetchError(
+                        userId = driveVolumeConfig.userId,
+                        volumeId = VolumeId(driveVolumeConfig.volumeId),
+                        error = error,
+                    ) { stopEventLoop?.invoke(driveVolumeConfig) }
+                        .getOrNull(LogTag.EVENTS)
+                }
             }
     }
 

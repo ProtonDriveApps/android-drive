@@ -21,6 +21,7 @@ import androidx.room.DeleteColumn
 import androidx.room.migration.AutoMigrationSpec
 import androidx.sqlite.db.SupportSQLiteDatabase
 import me.proton.core.data.room.db.Database
+import me.proton.core.data.room.db.extension.recreateTable
 import me.proton.core.data.room.db.migration.DatabaseMigration
 import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.base.data.db.Column.BLOCK_SIZE
@@ -164,6 +165,82 @@ interface ShareDatabase : Database {
                     """
                     ALTER TABLE `ShareEntity` ADD COLUMN ${Column.EDITORS_CAN_SHARE} INTEGER DEFAULT NULL
                     """.trimIndent()
+                )
+            }
+        }
+
+        val MIGRATION_6 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    UPDATE `ShareEntity` SET ${Column.VOLUME_TYPE} = (
+                        SELECT `VolumeEntity`.`type` FROM `VolumeEntity`
+                        WHERE `VolumeEntity`.`user_id` = `ShareEntity`.`user_id`
+                          AND `VolumeEntity`.`id` = `ShareEntity`.${Column.VOLUME_ID}
+                    )
+                    WHERE ${Column.VOLUME_TYPE} IS NULL
+                    """.trimIndent()
+                )
+                database.execSQL("DELETE FROM `ShareEntity` WHERE ${Column.VOLUME_TYPE} IS NULL")
+                database.recreateTable(
+                    table = "ShareEntity",
+                    createTable = {
+                        database.execSQL(
+                            """
+                                CREATE TABLE IF NOT EXISTS `ShareEntity` (
+                                `id` TEXT NOT NULL,
+                                `user_id` TEXT NOT NULL,
+                                `volume_id` TEXT NOT NULL,
+                                `volume_type` INTEGER NOT NULL,
+                                `address_id` TEXT,
+                                `flags` INTEGER NOT NULL,
+                                `link_id` TEXT NOT NULL,
+                                `locked` INTEGER NOT NULL,
+                                `key` TEXT NOT NULL,
+                                `passphrase` TEXT NOT NULL,
+                                `passphrase_signature` TEXT NOT NULL,
+                                `creation_time` INTEGER,
+                                `type` INTEGER NOT NULL,
+                                `creator_email` TEXT NOT NULL,
+                                `editors_can_share` INTEGER,
+
+                                PRIMARY KEY(`user_id`, `id`),
+                                FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`)
+                                ON UPDATE NO ACTION ON DELETE CASCADE )
+                            """.trimIndent()
+                        )
+                    },
+                    createIndices = {
+                        database.execSQL(
+                            "CREATE INDEX IF NOT EXISTS `index_ShareEntity_user_id` ON `ShareEntity` (`user_id`)"
+                        )
+                        database.execSQL(
+                            "CREATE INDEX IF NOT EXISTS `index_ShareEntity_volume_id` ON `ShareEntity` (`volume_id`)"
+                        )
+                        database.execSQL(
+                            "CREATE INDEX IF NOT EXISTS `index_ShareEntity_link_id` ON `ShareEntity` (`link_id`)"
+                        )
+                        database.execSQL(
+                            "CREATE UNIQUE INDEX IF NOT EXISTS `index_ShareEntity_id` ON `ShareEntity` (`id`)"
+                        )
+                    },
+                    columns = listOf(
+                        Column.ID,
+                        Column.USER_ID,
+                        Column.VOLUME_ID,
+                        Column.VOLUME_TYPE,
+                        Column.ADDRESS_ID,
+                        Column.FLAGS,
+                        Column.LINK_ID,
+                        Column.LOCKED,
+                        Column.KEY,
+                        Column.PASSPHRASE,
+                        Column.PASSPHRASE_SIGNATURE,
+                        Column.CREATION_TIME,
+                        Column.TYPE,
+                        Column.CREATOR_EMAIL,
+                        Column.EDITORS_CAN_SHARE,
+                    ),
                 )
             }
         }

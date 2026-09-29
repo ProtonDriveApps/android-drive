@@ -38,7 +38,6 @@ import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.onProtonHttpException
-import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -48,21 +47,23 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.upload.data.provider.DocumentFileProvider
 import me.proton.core.drive.folder.create.domain.usecase.CreateFolder
 import me.proton.core.drive.link.data.api.response.AlreadyExistsErrorResponseDetails
+import me.proton.core.drive.link.domain.entity.FolderContext
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.nodeUid
 import me.proton.core.drive.link.domain.extension.userId
-import me.proton.core.drive.link.domain.usecase.GetLink
-import me.proton.core.drive.linkupload.domain.entity.CacheOption
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
 import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadFileProperties
+import me.proton.core.drive.linkupload.domain.extension.parentLinkId
 import me.proton.core.drive.linkupload.domain.usecase.CreateUploadBulk
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.trash.domain.usecase.SendToTrash
 import me.proton.core.drive.upload.domain.exception.NotEnoughSpaceException
 import me.proton.core.drive.upload.domain.manager.UploadWorkManager
 import me.proton.core.drive.upload.domain.usecase.HasEnoughAvailableSpace
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.core.util.kotlin.takeIfNotEmpty
@@ -77,7 +78,6 @@ class CreateFolderTreeAndScheduleUpload @Inject constructor(
     private val sendToTrash: SendToTrash,
     private val uploadWorkManager: UploadWorkManager,
     private val createUploadBulk: CreateUploadBulk,
-    private val getLink: GetLink,
     private val broadcastMessages: BroadcastMessages,
     private val announceEvent: AnnounceEvent,
     private val configurationProvider: ConfigurationProvider,
@@ -104,6 +104,7 @@ class CreateFolderTreeAndScheduleUpload @Inject constructor(
         checkAvailableSpace(folder.id.userId, rootFolder)
         createFoldersAndUploadBulks(
             volumeId = folder.volumeId,
+            volumeType = folder.volumeType,
             folderId = folder.id,
             root = rootFolder,
             shouldBroadcastMessage = shouldBroadcastMessage,
@@ -155,6 +156,7 @@ class CreateFolderTreeAndScheduleUpload @Inject constructor(
 
     private suspend fun createFoldersAndUploadBulks(
         volumeId: VolumeId,
+        volumeType: Volume.Type,
         folderId: FolderId,
         root: DocumentFile,
         shouldBroadcastMessage: Boolean,
@@ -197,8 +199,12 @@ class CreateFolderTreeAndScheduleUpload @Inject constructor(
                         ?.let { files ->
                             uploadBulks.add(
                                 createUploadBulk(
-                                    volumeId = volumeId,
-                                    parent = getLink(parentFolderId).toResult().getOrThrow(),
+                                    parentFolderContext = FolderContext(
+                                        userId = parentFolderId.userId,
+                                        nodeUid = parentFolderId.nodeUid(volumeId),
+                                        volumeType = volumeType,
+                                    ),
+                                    shareId = parentFolderId.shareId,
                                     uploadFileDescriptions = files
                                         .map { documentFile ->
                                             UploadFileDescription(
@@ -211,7 +217,6 @@ class CreateFolderTreeAndScheduleUpload @Inject constructor(
                                                 )
                                             )
                                         },
-                                    cacheOption = CacheOption.THUMBNAIL_DEFAULT,
                                     shouldDeleteSource = false,
                                     networkTypeProviderType = NetworkTypeProviderType.DEFAULT,
                                     shouldAnnounceEvent = true,

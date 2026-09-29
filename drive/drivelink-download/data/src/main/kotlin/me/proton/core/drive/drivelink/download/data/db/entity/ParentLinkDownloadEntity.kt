@@ -34,6 +34,7 @@ import me.proton.core.drive.base.data.db.Column.SHARE_ID
 import me.proton.core.drive.base.data.db.Column.TYPE
 import me.proton.core.drive.base.data.db.Column.USER_ID
 import me.proton.core.drive.base.data.db.Column.VOLUME_ID
+import me.proton.core.drive.base.data.db.Column.VOLUME_TYPE
 import me.proton.core.drive.link.data.db.entity.LinkEntity
 import me.proton.core.drive.share.data.db.ShareEntity
 
@@ -75,6 +76,8 @@ data class ParentLinkDownloadEntity(
     val shareId: String,
     @ColumnInfo(VOLUME_ID)
     val volumeId: String,
+    @ColumnInfo(VOLUME_TYPE)
+    val volumeType: Long,
     @ColumnInfo(TYPE)
     val linkType: Long,
     @ColumnInfo(PRIORITY)

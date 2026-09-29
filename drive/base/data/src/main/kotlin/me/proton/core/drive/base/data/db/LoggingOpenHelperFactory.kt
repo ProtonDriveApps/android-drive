@@ -67,7 +67,7 @@ class LoggingOpenHelperFactory<T : RoomDatabase>(
 private class SlowQueryException(
     message: String? = null,
     cause: Throwable? = null,
-) : Throwable(message, cause)
+) : RuntimeException(message, cause)
 
 private class LoggingDatabase<T : RoomDatabase>(
     private val activityManager: ActivityManager,
@@ -121,7 +121,7 @@ private class LoggingDatabase<T : RoomDatabase>(
     }
 
     override fun query(query: SupportSQLiteQuery): Cursor {
-        val sql = try { query.sql } catch (_: Throwable) { "<unknown>" }
+        val sql = try { query.sql } catch (_: Exception) { "<unknown>" }
         val cursor: Cursor
         measureNanoTime { cursor = delegate.query(query) }
             .nanoseconds

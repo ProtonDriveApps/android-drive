@@ -34,9 +34,7 @@ class GetPendingUploadFileLinksSize @Inject constructor(
         uploadStates = setOf(
             UploadState.IDLE,
             UploadState.CREATING_NEW_FILE,
-            UploadState.SPLITTING_URI_TO_BLOCKS,
             UploadState.EXTRACTING_TAGS,
-            UploadState.ENCRYPTING_BLOCKS,
         ),
     )
 }

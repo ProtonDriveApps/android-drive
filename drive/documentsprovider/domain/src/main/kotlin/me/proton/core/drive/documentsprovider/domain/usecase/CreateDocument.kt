@@ -22,8 +22,8 @@ import android.provider.DocumentsContract
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.documentsprovider.domain.entity.DocumentId
+import me.proton.core.drive.drivelink.domain.extension.folderContext
 import me.proton.core.drive.folder.create.domain.usecase.CreateFolder
-import me.proton.core.drive.linkupload.domain.entity.CacheOption
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.upload.domain.usecase.CreateUploadFile
@@ -54,14 +54,12 @@ class CreateDocument @Inject constructor(
                 DocumentId(userId, folderId)
             } else {
                 val uploadFileLink = createUploadFile(
-                    userId = userId,
-                    volumeId = driveLink.volumeId,
-                    parentId = driveLink.id,
+                    parentFolderContext = driveLink.folderContext,
+                    shareId = driveLink.id.shareId,
                     name = displayName,
                     mimeType = mimeType,
                     networkTypeProviderType = NetworkTypeProviderType.DEFAULT,
                     shouldAnnounceEvent = true,
-                    cacheOption = CacheOption.ALL,
                     priority = UploadFileLink.USER_PRIORITY,
                     shouldBroadcastErrorMessage = true,
                 ).getOrThrow()

@@ -61,7 +61,6 @@ class GetFile @Inject constructor(
     private val getPermanentFolder: GetPermanentFolder,
     private val getDriveLink: GetDriveLink,
     private val isConnectedToNetwork: isConnectedToNetwork,
-    private val verifyDownloadedState: VerifyDownloadedState,
     private val removeDownloadState: RemoveDownloadState,
     private val isLinkOrAnyAncestorMarkedAsOffline: IsLinkOrAnyAncestorMarkedAsOffline,
     private val hasSignatureVerificationFailed: HasSignatureVerificationFailed,
@@ -107,11 +106,7 @@ class GetFile @Inject constructor(
             return@flow
         }
         CoreLogger.d(LogTag.GET_FILE, "File for ${driveLink.id.id.logId()} doesn't exists")
-        val verifiedDriveLink = verifyDownloadedState(driveLink)
-            .onFailure { error ->
-                CoreLogger.d(LogTag.GET_FILE, error, "Downloaded state verification failed")
-            }.getOrThrow()
-        removeDownloadState(verifiedDriveLink.link)
+        removeDownloadState(driveLink.link)
         CoreLogger.d(LogTag.GET_FILE, "File ${driveLink.id.id.logId()} is not downloaded yet, let's download it!")
         if (!retryable && !isConnectedToNetwork()) {
             CoreLogger.w(LogTag.GET_FILE, "Download ${driveLink.id.id} failed as it is not retryable and there is no network connection")
@@ -145,7 +140,7 @@ class GetFile @Inject constructor(
         if (checkSignature && hasSignatureVerificationFailed(driveLink.id).getOrDefault(false)) {
             emit(State.Error.VerifyingSignature(RuntimeException("Throwable is not available")))
         } else {
-            emit(State.Ready(Uri.fromFile(targetFile), driveLink.id))
+            emit(State.Ready(Uri.fromFile(targetFile)))
         }
         checkFileSignature(driveLink, targetFile, checkSignature)
     }.flowOn(Dispatchers.IO)
@@ -158,7 +153,7 @@ class GetFile @Inject constructor(
         if (checkSignature && hasSignatureVerificationFailed(driveLink.id).getOrDefault(false)) {
             emit(State.Error.VerifyingSignature(RuntimeException("Throwable is not available")))
         } else {
-            emit(State.Ready(Uri.fromFile(file), driveLink.id))
+            emit(State.Ready(Uri.fromFile(file)))
         }
     }
 
@@ -248,7 +243,7 @@ class GetFile @Inject constructor(
     sealed class State {
         data class Downloading(val progress: Flow<Percentage>) : State()
         object Decrypting : State()
-        data class Ready(val uri: Uri, val fileId: FileId) : State()
+        data class Ready(val uri: Uri) : State()
         sealed class Error : State() {
             object NoConnection : Error()
             object NotFound : Error()

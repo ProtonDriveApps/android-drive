@@ -27,6 +27,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.crypto.common.pgp.exception.CryptoException
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.data.extension.logDefaultMessage
 import me.proton.core.drive.base.data.extension.stopReasonAsEnum
 import me.proton.core.drive.base.domain.extension.toResult
@@ -42,6 +43,7 @@ import me.proton.core.drive.upload.data.exception.UploadWorkerException
 import me.proton.core.drive.upload.data.extension.getDefaultMessage
 import me.proton.core.drive.upload.data.extension.log
 import me.proton.core.drive.upload.data.extension.toEventUploadReason
+import me.proton.core.drive.upload.data.extension.uniqueUploadWorkName
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_ID
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
@@ -123,7 +125,8 @@ abstract class UploadCoroutineWorker(
                             userId = userId,
                             uploadFileLinkId = uploadFileLinkId,
                             reason = reason,
-                            isCancelled = isCancelled ?: false
+                            isCancelled = isCancelled ?: false,
+                            tags = listOf(uploadFileLinkId.uniqueUploadWorkName),
                         )
                     )
                     uploadFileLink.broadcastMessages(e)
@@ -140,6 +143,19 @@ abstract class UploadCoroutineWorker(
                 )
             }
         }
+    }
+
+    override suspend fun onRetriesExhausted() {
+        CoreLogger.w(logTag(), "Retries exhausted in ${javaClass.simpleName}, cleaning up")
+        workManager.enqueue(
+            UploadCleanupWorker.getWorkRequest(
+                userId = userId,
+                uploadFileLinkId = uploadFileLinkId,
+                reason = Event.Upload.Reason.ERROR_OTHER,
+                isCancelled = isCancelled ?: false,
+                tags = listOf(uploadFileLinkId.uniqueUploadWorkName),
+            )
+        )
     }
 
     private fun UploadFileLink?.broadcastMessages(e: Exception) {

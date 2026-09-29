@@ -17,4 +17,4 @@
  */
 package me.proton.core.drive.base.domain.exception
 
-open class DriveException : Throwable()
+open class DriveException : RuntimeException()

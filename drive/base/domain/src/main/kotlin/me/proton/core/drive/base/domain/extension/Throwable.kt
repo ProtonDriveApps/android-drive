@@ -60,3 +60,7 @@ inline fun <reified T : Throwable> Throwable?.findThrowable(): T? {
         }
     }
 }
+
+/** Errors that leave the VM unusable, so continuing only produces cascading, unactionable failures. */
+val Throwable.isFatal: Boolean get() =
+    this is VirtualMachineError || this is LinkageError || this is ThreadDeath

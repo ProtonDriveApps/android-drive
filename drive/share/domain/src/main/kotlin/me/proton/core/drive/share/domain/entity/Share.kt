@@ -30,7 +30,7 @@ data class ShareId(val userId: UserId, val id: String)
 data class Share(
     val id: ShareId,
     val volumeId: VolumeId,
-    val volumeType: Volume.Type? = null,
+    val volumeType: Volume.Type,
     val rootLinkId: String,
     val addressId: AddressId?,
     val isMain: Boolean,

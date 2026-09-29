@@ -18,37 +18,32 @@
 
 package me.proton.android.drive.telemetry
 
-import kotlinx.coroutines.flow.flowOf
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.entity.Event.Upload.Reason
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.FileTypeCategory
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.entity.toFileTypeCategory
-import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.toResult
-import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.linkupload.domain.extension.volumeType
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
-import me.proton.core.drive.share.domain.entity.Share
-import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.telemetry.domain.event.PhotosEvent
+import me.proton.core.drive.volume.domain.entity.Volume
 import javax.inject.Inject
 
 class UploadEventMapper(
     private val getUploadFileLink: GetUploadFileLink,
-    private val getShare: GetShare,
     private val clock: () -> TimestampS,
 ) {
     @Inject
     constructor(
         getUploadFileLink: GetUploadFileLink,
-        getShare: GetShare,
-    ) : this(getUploadFileLink, getShare, clock = { TimestampS() })
+    ) : this(getUploadFileLink, clock = { TimestampS() })
 
     suspend operator fun invoke(event: Event.Upload) =
         if (event.state in finalState) {
             getUploadFileLink(event.uploadFileLinkId).toResult().getOrThrow()
-                .takeIf { uploadFileLink -> uploadFileLink.isPhoto() }
+                .takeIf { uploadFileLink -> uploadFileLink.volumeType == Volume.Type.PHOTO }
                 ?.let { uploadFileLink ->
                     val uploadCreationDateTime = requireNotNull(uploadFileLink.uploadCreationDateTime) {
                         "upload creation date time is required"
@@ -79,14 +74,6 @@ class UploadEventMapper(
 
     @Suppress("MagicNumber")
     private fun Bytes.toKiB() = value / 1024
-
-    private suspend fun UploadFileLink.isPhoto() = getShare(shareId, flowOf(false))
-        .filterSuccessOrError()
-        .toResult()
-        .getOrThrow()
-        .let { share ->
-            share.type == Share.Type.PHOTO
-        }
 
 
     companion object {

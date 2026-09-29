@@ -26,6 +26,4 @@ android {
 
 driveModule(hilt = true) {
     api(project(":drive:share:domain"))
-
-    implementation(project(":drive:event-manager:base:domain"))
 }

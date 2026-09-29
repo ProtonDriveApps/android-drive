@@ -701,4 +701,16 @@ object DriveDatabaseMigrations {
             LinkUploadDatabase.MIGRATION_9.migrate(db)
         }
     }
+
+    val MIGRATION_108_109 = object : Migration(108, 109) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            LinkDownloadDatabase.MIGRATION_2.migrate(db)
+            ShareDatabase.MIGRATION_6.migrate(db)
+            OrphanedShareDataCleanup.migrate(db)
+            DriveLinkDownloadDatabase.MIGRATION_2.migrate(db)
+            LinkUploadDatabase.MIGRATION_10.migrate(db)
+            LinkUploadDatabase.MIGRATION_11.migrate(db)
+            LinkUploadDatabase.MIGRATION_12.migrate(db)
+        }
+    }
 }

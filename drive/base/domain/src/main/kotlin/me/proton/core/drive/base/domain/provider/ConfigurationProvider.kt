@@ -42,6 +42,7 @@ interface ConfigurationProvider {
     val cacheMaxEntries: Int get() = 10_000
     val linkMaxNameLength: Int get() = 255
     val blockMaxSize: Bytes get() = 4.MiB
+    val maxTextPreviewSize: Bytes get() = 2.MiB
     val thumbnailDefault: Thumbnail get() = Thumbnail(
         maxWidth = 512,
         maxHeight = 512,
@@ -88,8 +89,6 @@ interface ConfigurationProvider {
     val featureFlagFreshDuration: Duration get() = 10.minutes
     val featureFlagLegacyFreshDuration: Duration get() = 1.days
     val useVerifier: Boolean get() = true
-    val backupDefaultThumbnailsCacheLimit: Int get() = 1000
-    val backupDefaultThumbnailsCacheLocalStorageThreshold: Bytes get() = 500.MiB
     val maxFreeSpace: Bytes get() = 5.GiB
     val activeUserPingDuration: Duration get() = 6.hours
     val disableFeatureFlagInDevelopment: Boolean get() = true
@@ -121,9 +120,6 @@ interface ConfigurationProvider {
     val contentDigestsInParallel: Int get() = 10
     val savePhotoToStreamLimit: Long get() = 100
     val sendPhotoTagsInCommit: Boolean get() = true
-    val preferSdkForUpload: Boolean get() = true
-    val preferSdkForDownload: Boolean get() = true
-    val preferSdkForThumbnail: Boolean get() = true
     val createFolderInParallel: Int get() = 16
     val sdkQueueTimeout: Duration get() = 30.seconds
     val tabsLoadTimeout: Duration get() = 3.seconds

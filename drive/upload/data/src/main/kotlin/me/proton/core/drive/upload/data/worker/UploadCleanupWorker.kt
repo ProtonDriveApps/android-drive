@@ -39,14 +39,12 @@ import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
 import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.data.manager.uniqueUploadThrottleWorkName
-import me.proton.core.drive.upload.data.provider.NetworkTypeProvider
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_IS_CANCELLED
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_REASON
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_ID
@@ -56,12 +54,10 @@ import me.proton.core.drive.upload.domain.manager.UploadSdkManager
 import me.proton.core.drive.upload.domain.provider.FileProvider
 import me.proton.core.drive.upload.domain.resolver.UriResolver
 import me.proton.core.drive.upload.domain.usecase.AnnounceUploadEvent
-import me.proton.core.drive.upload.domain.usecase.GetBlockFolder
 import me.proton.core.drive.upload.domain.usecase.RemoveUploadFile
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
-import me.proton.core.util.kotlin.CoreLogger
 import me.proton.core.util.kotlin.deserializeOrNull
 import me.proton.core.util.kotlin.serialize
 import java.util.concurrent.TimeUnit
@@ -77,11 +73,9 @@ class UploadCleanupWorker @AssistedInject constructor(
     getUploadFileLink: GetUploadFileLink,
     uploadErrorManager: UploadErrorManager,
     private val updateUploadState: UpdateUploadState,
-    private val getBlockFolder: GetBlockFolder,
     private val removeUploadFile: RemoveUploadFile,
     private val uriResolver: UriResolver,
     private val announceUploadEvent: AnnounceUploadEvent,
-    private val networkTypeProviders: @JvmSuppressWildcards Map<NetworkTypeProviderType, NetworkTypeProvider>,
     private val uploadSdkManager: UploadSdkManager,
     private val fileProvider: FileProvider,
     configurationProvider: ConfigurationProvider,
@@ -104,6 +98,8 @@ class UploadCleanupWorker @AssistedInject constructor(
     private val reason: Event.Upload.Reason = inputData.getString(KEY_REASON)
         ?.deserializeOrNull() ?: Event.Upload.Reason.ERROR_OTHER
 
+    override suspend fun onRetriesExhausted() = Unit
+
     override suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result {
         uploadFileLink.logWorkState(
             "UploadCleanupWorker clean ${uploadFileLink.uriString}",
@@ -117,63 +113,31 @@ class UploadCleanupWorker @AssistedInject constructor(
         }.onFailure { error ->
             error.log(uploadFileLink.logTag(), "Cannot enqueue UploadThrottleWorker")
         }
-        try {
-            uploadFileLink.deleteSourceFile(fileProvider).getOrNull(
-                tag = uploadFileLink.logTag(),
-                message = "Failed deleting source file",
+        uploadFileLink.deleteSourceFile(fileProvider).getOrNull(
+            tag = uploadFileLink.logTag(),
+            message = "Failed deleting source file",
+        )
+        updateUploadState(uploadFileLink.id, UploadState.CLEANUP).getOrThrow()
+        announceUploadEvent(
+            uploadFileLink = uploadFileLink,
+            uploadEvent = Event.Upload(
+                state = if (isCancelled) {
+                    Event.Upload.UploadState.UPLOAD_CANCELLED
+                } else {
+                    Event.Upload.UploadState.UPLOAD_FAILED
+                },
+                uploadFileLinkId = uploadFileLink.id,
+                percentage = Percentage(0),
+                shouldShow = uploadFileLink.shouldAnnounceEvent,
+                reason = reason,
             )
-            updateUploadState(uploadFileLink.id, UploadState.CLEANUP).getOrThrow()
-            announceUploadEvent(
-                uploadFileLink = uploadFileLink,
-                uploadEvent = Event.Upload(
-                    state = if (isCancelled) {
-                        Event.Upload.UploadState.UPLOAD_CANCELLED
-                    } else {
-                        Event.Upload.UploadState.UPLOAD_FAILED
-                    },
-                    uploadFileLinkId = uploadFileLink.id,
-                    percentage = Percentage(0),
-                    shouldShow = uploadFileLink.shouldAnnounceEvent,
-                    reason = reason,
-                )
-            )
-            uploadSdkManager.cancel(uploadFileLink)
-            getBlockFolder(userId, uploadFileLink).getOrNull(
-                tag = uploadFileLink.logTag(),
-                message = "Cannot get block to delete them",
-            )?.let { file ->
-                if (!file.deleteRecursively()) {
-                    CoreLogger.w(uploadFileLink.logTag(), "Cannot delete all the files")
-                }
-            }
-            uploadFileLink.uriString?.let { uriResolver.release(it) }
-            removeUploadFile(uploadFileLink).onFailure { error ->
-                error.log(uploadFileLink.logTag(), "Cannot remove file")
-            }
-        } finally {
-            uploadFileLink.deleteOnServer().onFailure { error ->
-                error.log(uploadFileLink.logTag(), "Cannot delete file on server")
-            }
+        )
+        uploadSdkManager.cancel(uploadFileLink.id)
+        uploadFileLink.uriString?.let { uriResolver.release(it) }
+        removeUploadFile(uploadFileLink).onFailure { error ->
+            error.log(uploadFileLink.logTag(), "Cannot remove file")
         }
         return Result.success()
-    }
-
-    private suspend fun UploadFileLink.deleteOnServer() = coRunCatching {
-        val linkId = linkId
-        if (!linkId.isNullOrEmpty()) {
-            logWorkState("Upload cleanup worker continue with delete on server")
-            val networkType =
-                requireNotNull(networkTypeProviders[networkTypeProviderType]).get(parentLinkId)
-            workManager.enqueue(
-                DeleteFileLinkWorker.getWorkRequest(
-                    userId = userId,
-                    shareId = shareId.id,
-                    folderId = parentLinkId.id,
-                    uploadFileId = linkId,
-                    networkType = networkType,
-                )
-            ).await()
-        }
     }
 
     companion object {

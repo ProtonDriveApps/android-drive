@@ -17,7 +17,7 @@
  */
 package me.proton.core.drive.folder.domain.usecase
 
-import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.base.domain.util.coRunCatchingException
 import me.proton.core.drive.link.domain.entity.Link
 import javax.inject.Inject
 
@@ -27,7 +27,18 @@ class GetDescendants @Inject constructor(
     suspend operator fun invoke(
         folderLink: Link.Folder,
         refresh: Boolean? = null,
-    ): Result<List<Link>> = coRunCatching {
+    ): Result<List<Link>> = try {
+        collectDescendants(folderLink, refresh)
+    } catch (error: OutOfMemoryError) {
+        // every descendant is held in one list, so an obscene count can exhaust the heap on its own
+        System.gc()
+        Result.failure(error)
+    }
+
+    private suspend fun collectDescendants(
+        folderLink: Link.Folder,
+        refresh: Boolean?,
+    ): Result<List<Link>> = coRunCatchingException {
         val folders = mutableListOf(folderLink)
         val descendants = mutableListOf<Link>()
         while (folders.isNotEmpty()) {

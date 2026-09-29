@@ -19,4 +19,8 @@ package me.proton.core.drive.base.domain.provider
 
 interface MimeTypeProvider {
     suspend fun getMimeTypeFromExtension(extension: String): String?
+
+    companion object {
+        const val DEFAULT_MIME_TYPE = "application/octet-stream"
+    }
 }

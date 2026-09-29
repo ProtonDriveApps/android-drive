@@ -65,7 +65,7 @@ class BackupClearFileWorker @AssistedInject constructor(
             .onSuccess { folderId ->
                 markAsCompleted(folderId, uriString).onFailure { error ->
                     error.log(LogTag.BACKUP, "Cannot mark file as completed with uri: $uriString")
-                    addBackupError(folderId, error.toBackupError())
+                    addBackupError(folderId, error.toBackupError(folderId))
                     return Result.failure()
                 }
                 postBackupNotification(folderId).onFailure { error ->

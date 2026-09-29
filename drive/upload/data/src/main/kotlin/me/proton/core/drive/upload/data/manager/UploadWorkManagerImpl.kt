@@ -41,14 +41,15 @@ import me.proton.core.drive.base.domain.log.LogTag.UPLOAD
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.link.domain.entity.Folder
+import me.proton.core.drive.link.domain.entity.FolderContext
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
-import me.proton.core.drive.linkupload.domain.entity.CacheOption
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
 import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
+import me.proton.core.drive.linkupload.domain.extension.userId
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksPaged
 import me.proton.core.drive.linkupload.domain.usecase.RemoveAllUploadFileLinks
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
@@ -58,7 +59,6 @@ import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.data.extension.uniqueUploadWorkName
 import me.proton.core.drive.upload.data.usecase.BroadcastFilesBeingUploaded
 import me.proton.core.drive.upload.data.worker.CreateUploadFileLinkWorker
-import me.proton.core.drive.upload.data.worker.UploadCleanupWorker
 import me.proton.core.drive.upload.data.worker.UploadEventWorker
 import me.proton.core.drive.upload.data.worker.UploadThrottleWorker
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_SIZE
@@ -88,11 +88,9 @@ class UploadWorkManagerImpl @Inject constructor(
 ) : UploadWorkManager {
 
     override suspend fun upload(
-        userId: UserId,
-        volumeId: VolumeId,
-        folderId: FolderId,
+        parentFolderContext: FolderContext,
+        shareId: ShareId,
         uploadFileDescriptions: List<UploadFileDescription>,
-        cacheOption: CacheOption,
         shouldDeleteSource: Boolean,
         networkTypeProviderType: NetworkTypeProviderType,
         shouldAnnounceEvent: Boolean,
@@ -100,14 +98,12 @@ class UploadWorkManagerImpl @Inject constructor(
         shouldBroadcastErrorMessage: Boolean,
     ): List<UploadFileLink> {
         val uploadFileLinks = createUploadFile(
-            userId = userId,
-            volumeId = volumeId,
-            parentId = folderId,
+            parentFolderContext = parentFolderContext,
+            shareId = shareId,
             uploadFileDescriptions = uploadFileDescriptions,
             shouldDeleteSourceUri = shouldDeleteSource,
             networkTypeProviderType = networkTypeProviderType,
             shouldAnnounceEvent = shouldAnnounceEvent,
-            cacheOption = cacheOption,
             priority = priority,
             shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
         )
@@ -125,7 +121,7 @@ class UploadWorkManagerImpl @Inject constructor(
                 }
             }.getOrNull().orEmpty()
         if (uploadFileLinks.isNotEmpty()) {
-            workManager.enqueueUpload(userId, shouldAnnounceEvent)
+            workManager.enqueueUpload(parentFolderContext.userId, shouldAnnounceEvent)
         }
         return uploadFileLinks
     }
@@ -169,19 +165,8 @@ class UploadWorkManagerImpl @Inject constructor(
 
     override suspend fun cancel(uploadFileLink: UploadFileLink): Unit = with(uploadFileLink) {
         workManager.cancelAllWorkByTag(id.uniqueUploadWorkName).await()
-        if (!linkId.isNullOrEmpty()) {
-            CoreLogger.i(uploadFileLink.logTag(), "Cancelling")
-            workManager.enqueue(
-                UploadCleanupWorker.getWorkRequest(
-                    userId = userId,
-                    uploadFileLinkId = id,
-                    isCancelled = true
-                )
-            ).await()
-        } else {
-            CoreLogger.i(uploadFileLink.logTag(), "Cleaning")
-            removeUploadFileAndAnnounceCancelled(uploadFileLink).getOrThrow()
-        }
+        CoreLogger.i(uploadFileLink.logTag(), "Cleaning")
+        removeUploadFileAndAnnounceCancelled(uploadFileLink).getOrThrow()
     }
 
     override suspend fun cancelAll(userId: UserId) = withContext(Job() + Dispatchers.IO) {
@@ -206,10 +191,10 @@ class UploadWorkManagerImpl @Inject constructor(
             .first()
     }
 
-    override suspend fun cancelAllByShare(userId: UserId, shareId: ShareId) {
+    override suspend fun cancelAllByVolume(userId: UserId, volumeId: VolumeId) {
         workManager.cancelAllByTag(userId.uniqueUploadBulkTag)
-        removeAllUploadFileLinks(userId, shareId, UploadState.UNPROCESSED)
-        getUploadFileLinks(userId, shareId).forEach { uploadFileLink ->
+        removeAllUploadFileLinks(userId, volumeId, UploadState.UNPROCESSED)
+        getUploadFileLinks(userId, volumeId).forEach { uploadFileLink ->
             cancel(uploadFileLink)
         }
     }

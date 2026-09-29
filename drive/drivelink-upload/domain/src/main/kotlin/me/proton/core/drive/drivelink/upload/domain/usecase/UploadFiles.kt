@@ -20,9 +20,10 @@ package me.proton.core.drive.drivelink.upload.domain.usecase
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.extension.folderContext
+import me.proton.core.drive.drivelink.domain.usecase.GetNodeContext
 import me.proton.core.drive.drivelink.upload.domain.entity.Notifications
 import me.proton.core.drive.link.domain.extension.userId
-import me.proton.core.drive.linkupload.domain.entity.CacheOption
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.linkupload.domain.usecase.CreateUploadBulk
@@ -35,6 +36,7 @@ import javax.inject.Inject
 class UploadFiles @Inject constructor(
     private val hasEnoughAvailableSpace: HasEnoughAvailableSpace,
     private val uploadWorkManager: UploadWorkManager,
+    private val getNodeContext: GetNodeContext,
     private val createUploadBulk: CreateUploadBulk,
     private val configurationProvider: ConfigurationProvider,
     private val validateUploadLimit: ValidateUploadLimit,
@@ -44,7 +46,6 @@ class UploadFiles @Inject constructor(
         folder: DriveLink.Folder,
         uploadFileDescriptions: List<UploadFileDescription>,
         notifications: Notifications = Notifications.TurnedOn,
-        cacheOption: CacheOption = CacheOption.ALL,
         shouldDeleteSource: Boolean = false,
         background: Boolean = false,
         networkTypeProviderType: NetworkTypeProviderType = NetworkTypeProviderType.DEFAULT,
@@ -67,7 +68,6 @@ class UploadFiles @Inject constructor(
                 folder = folder,
                 uploadFileDescriptions = uploadFileDescriptions,
                 notifications = notifications,
-                cacheOption = cacheOption,
                 networkTypeProviderType = networkTypeProviderType,
                 priority = priority,
                 shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
@@ -78,7 +78,6 @@ class UploadFiles @Inject constructor(
                 folder = folder,
                 uploadFileDescriptions = uploadFileDescriptions,
                 notifications = notifications,
-                cacheOption = cacheOption,
                 networkTypeProviderType = networkTypeProviderType,
                 priority = priority,
                 shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
@@ -91,7 +90,6 @@ class UploadFiles @Inject constructor(
         folder: DriveLink.Folder,
         uploadFileDescriptions: List<UploadFileDescription>,
         notifications: Notifications,
-        cacheOption: CacheOption,
         networkTypeProviderType: NetworkTypeProviderType,
         priority: Long,
         shouldBroadcastErrorMessage: Boolean,
@@ -107,14 +105,12 @@ class UploadFiles @Inject constructor(
         } else {
             with(uploadWorkManager) {
                 val uploadFileLinks = upload(
-                    userId = folder.userId,
-                    volumeId = folder.volumeId,
-                    folderId = folder.id,
+                    parentFolderContext = folder.folderContext,
+                    shareId = folder.id.shareId,
                     uploadFileDescriptions = uploadFileDescriptions,
                     shouldDeleteSource = shouldDeleteSource,
                     networkTypeProviderType = networkTypeProviderType,
                     shouldAnnounceEvent = notifications.system.announceUpload,
-                    cacheOption = cacheOption,
                     priority = priority,
                     shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
                 )
@@ -133,7 +129,6 @@ class UploadFiles @Inject constructor(
         folder: DriveLink.Folder,
         uploadFileDescriptions: List<UploadFileDescription>,
         notifications: Notifications,
-        cacheOption: CacheOption,
         networkTypeProviderType: NetworkTypeProviderType,
         priority: Long,
         shouldDeleteSource: Boolean = false,
@@ -141,13 +136,12 @@ class UploadFiles @Inject constructor(
     ) =
         uploadWorkManager.upload(
             createUploadBulk(
-                volumeId = folder.volumeId,
-                parent = folder,
+                parentFolderContext = folder.folderContext,
+                shareId = folder.id.shareId,
                 uploadFileDescriptions = uploadFileDescriptions,
                 shouldDeleteSource = shouldDeleteSource,
                 networkTypeProviderType = networkTypeProviderType,
                 shouldAnnounceEvent = notifications.system.announceUpload,
-                cacheOption = cacheOption,
                 priority = priority,
                 shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
             ).getOrThrow(),

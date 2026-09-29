@@ -41,6 +41,7 @@ class RefreshVolume @Inject constructor(
             .recoverCatching { error ->
                 if (error.hasThrowableOrCauseProtonErrorCode(NOT_EXISTS)) {
                     repository.removeVolume(userId, volumeId)
+                    null
                 } else {
                     throw error
                 }

@@ -76,6 +76,7 @@ import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.OwnedBy
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.thumbnail.presentation.extension.thumbnailPainter
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -284,6 +285,7 @@ fun PreviewFileInfoContent() {
         isAnyAncestorMarkedAsOffline = false,
         downloadState = null,
         trashState = null,
+        volumeType = Volume.Type.REGULAR,
         cryptoName = CryptoProperty.Decrypted("Link name", VerificationStatus.Success),
         shareInvitationCount = null,
         shareMemberCount = null,

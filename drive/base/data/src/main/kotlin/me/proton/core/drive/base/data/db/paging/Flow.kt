@@ -115,7 +115,7 @@ fun <T : Any> Flow<Result<List<T>>>.asPagingSource(
             } catch (e: CancellationException) {
                 CoreLogger.d(LogTag.PAGING, e, "load (key=$pageKey) from flow failed due to CancellationException")
                 LoadResult.Invalid()
-            } catch (e: Throwable) {
+            } catch (e: Exception) {
                 val error = e.cause ?: e
                 CoreLogger.d(LogTag.PAGING, e, "load (key=$pageKey) from flow failed with $error")
                 LoadResult.Error(error)
@@ -227,7 +227,7 @@ fun <T : Any> ((fromIndex: Int, count: Int) -> Flow<Result<List<T>>>).asPagingSo
             } catch (e: CancellationException) {
                 CoreLogger.d(LogTag.PAGING, e, "load (key=$pageKey) from flow failed due to CancellationException")
                 LoadResult.Invalid()
-            } catch (e: Throwable) {
+            } catch (e: Exception) {
                 val error = e.cause ?: e
                 CoreLogger.d(LogTag.PAGING, e, "load (key=$pageKey) from flow failed with $error")
                 LoadResult.Error(error)

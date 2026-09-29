@@ -20,6 +20,10 @@ package me.proton.core.drive.settings.presentation.component
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -47,16 +51,25 @@ fun DebugSettings(
     ) {
         ProtonSettingsHeader(title = I18N.string.debug_settings_section)
 
-        EditableSettingsEntry(
-            label = I18N.string.debug_settings_host,
-            value = viewState.host,
-            onUpdate = viewEvent.onUpdateHost
-        )
-        EditableSettingsEntry(
-            label = I18N.string.debug_settings_base_url,
-            value = viewState.baseUrl,
-            onUpdate = viewEvent.onUpdateBaseUrl
-        )
+        var showChangeEnvironmentDialog by remember { mutableStateOf(false) }
+        ProtonSettingsItem(
+            name = stringResource(id = I18N.string.debug_settings_change_environment),
+            hint = stringResource(id = I18N.string.debug_settings_change_environment_description),
+        ) {
+            showChangeEnvironmentDialog = true
+        }
+        if (showChangeEnvironmentDialog) {
+            ChangeEnvironmentDialog(
+                host = viewState.host,
+                baseUrl = viewState.baseUrl,
+                onDismiss = { showChangeEnvironmentDialog = false },
+                onApply = { host, baseUrl ->
+                    showChangeEnvironmentDialog = false
+                    viewEvent.onApplyEnvironmentChange(host, baseUrl)
+                },
+            )
+        }
+
         EditableSettingsEntry(
             label = I18N.string.debug_settings_app_version_header,
             value = viewState.appVersionHeader,

@@ -18,38 +18,65 @@
 
 package me.proton.core.drive.backup.data.extension
 
-import android.system.OsConstants
 import me.proton.core.drive.backup.domain.entity.BackupError
-import me.proton.core.drive.base.data.extension.isErrno
+import me.proton.core.drive.base.data.extension.isNoSpaceLeftOnDevice
+import me.proton.core.drive.base.domain.extension.firstErrorOrNull
 import me.proton.core.drive.base.domain.extension.toApiException
+import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.linkId
 import me.proton.core.network.domain.ApiException
 import me.proton.drive.sdk.OperationAbortedException
 import me.proton.drive.sdk.ProtonDriveSdkException
+import me.proton.drive.sdk.ProtonSdkError
 
-fun Throwable.toBackupError(retryable: Boolean = true): BackupError = when (this) {
+// A missing link alone does not mean the backup folder is gone, the error has to name the folder
+private fun ProtonDriveSdkException.isFolderNotFound(folderId: FolderId): Boolean =
+    error.firstErrorOrNull { sdkError -> sdkError.missingLinkId == folderId.id } != null
+
+private val ProtonSdkError.missingLinkId: String?
+    get() = (additionalData as? ProtonSdkError.Data.NodeNotFound)
+        ?.nodeUid
+        ?.linkId
+
+internal val Throwable.isMissingMediaLocationPermission: Boolean
+    get() = this is UnsupportedOperationException &&
+            message?.contains(ACCESS_MEDIA_LOCATION) == true
+
+fun Throwable.toBackupError(folderId: FolderId, retryable: Boolean = true): BackupError = when (this) {
     is SecurityException -> BackupError.Permissions()
+    is UnsupportedOperationException -> if (isMissingMediaLocationPermission) {
+        BackupError.Permissions()
+    } else {
+        BackupError.Other(retryable)
+    }
     is ApiException -> toBackupError(retryable)
     is OperationAbortedException -> {
         val errorCause = cause
-        if (errorCause is ProtonDriveSdkException) {
-            errorCause.toBackupError(retryable)
-        } else {
-            BackupError.Other(retryable)
+        when {
+            errorCause is ProtonDriveSdkException -> errorCause.toBackupError(folderId, retryable)
+            isNoSpaceLeftOnDevice -> BackupError.LocalStorage()
+            else -> BackupError.Other(retryable)
         }
     }
 
-    is ProtonDriveSdkException -> when (val error = toApiException()) {
-        is ApiException -> error.toBackupError(retryable)
-        else -> if (message?.contains("No space left on device") == true) {
-            BackupError.LocalStorage()
-        } else {
-            BackupError.Other(retryable)
+    is ProtonDriveSdkException -> if (isFolderNotFound(folderId)) {
+        BackupError.FolderNotFound()
+    } else {
+        when (val error = toApiException()) {
+            is ApiException -> error.toBackupError(retryable)
+            else -> if (isNoSpaceLeftOnDevice) {
+                BackupError.LocalStorage()
+            } else {
+                BackupError.Other(retryable)
+            }
         }
     }
 
-    else -> if (isErrno(OsConstants.ENOSPC)) {
+    else -> if (isNoSpaceLeftOnDevice) {
         BackupError.LocalStorage()
     } else {
         BackupError.Other(retryable)
     }
 }
+
+private const val ACCESS_MEDIA_LOCATION = "ACCESS_MEDIA_LOCATION"

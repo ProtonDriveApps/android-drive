@@ -20,8 +20,10 @@ package me.proton.core.drive.linkupload.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.linkupload.domain.entity.UploadCount
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
+import me.proton.core.drive.volume.domain.entity.Volume
 import javax.inject.Inject
 
 class GetUploadFileLinksCount @Inject constructor(
@@ -30,6 +32,9 @@ class GetUploadFileLinksCount @Inject constructor(
     operator fun invoke(userId: UserId): Flow<UploadCount> =
         linkUploadRepository.getUploadFileLinksCount(userId)
 
-    operator fun invoke(userId: UserId, isPhotoShare: Boolean): Flow<UploadCount> =
-        linkUploadRepository.getUploadFileLinksCount(userId, isPhotoShare)
+    operator fun invoke(userId: UserId, volumeType: Volume.Type): Flow<UploadCount> =
+        linkUploadRepository.getUploadFileLinksCount(userId, volumeType)
+
+    operator fun invoke(parentId: ParentId): Flow<UploadCount> =
+        linkUploadRepository.getUploadFileLinksCount(parentId)
 }

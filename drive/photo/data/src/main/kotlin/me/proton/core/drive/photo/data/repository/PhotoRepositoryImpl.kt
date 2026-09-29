@@ -77,6 +77,31 @@ class PhotoRepositoryImpl @Inject constructor(
         db.taggedPhotoListingDao.getPhotoListingCount(userId, volumeId.id, tag.value)
     }
 
+    override suspend fun getPhotoListingIds(
+        userId: UserId,
+        volumeId: VolumeId,
+        tag: PhotoTag?,
+        captureTimeFrom: TimestampS,
+        captureTimeTo: TimestampS,
+    ): List<FileId> = if (tag == null) {
+        db.photoListingDao.getPhotoListingIds(
+            userId = userId,
+            volumeId = volumeId.id,
+            captureTimeFrom = captureTimeFrom.value,
+            captureTimeTo = captureTimeTo.value,
+        )
+    } else {
+        db.taggedPhotoListingDao.getPhotoListingIds(
+            userId = userId,
+            volumeId = volumeId.id,
+            tag = tag.value,
+            captureTimeFrom = captureTimeFrom.value,
+            captureTimeTo = captureTimeTo.value,
+        )
+    }.map { linkIds ->
+        FileId(ShareId(userId, linkIds.shareId), linkIds.linkId)
+    }
+
     override suspend fun fetchPhotoListings(
         userId: UserId,
         volumeId: VolumeId,

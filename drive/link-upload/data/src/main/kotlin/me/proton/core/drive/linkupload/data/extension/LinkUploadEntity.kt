@@ -17,43 +17,34 @@
  */
 package me.proton.core.drive.linkupload.data.extension
 
-import kotlinx.serialization.SerializationException
-import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.CameraExifTags
 import me.proton.core.drive.base.domain.entity.Location
 import me.proton.core.drive.base.domain.entity.MediaResolution
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
-import me.proton.core.drive.base.domain.log.LogTag.UploadTag.logTag
-import me.proton.core.drive.link.domain.entity.FolderId
-import me.proton.core.drive.linkupload.data.BuildConfig
+import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.entity.FolderContext
 import me.proton.core.drive.linkupload.data.db.entity.LinkUploadEntity
-import me.proton.core.drive.linkupload.domain.entity.UploadDigests
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.volume.domain.entity.VolumeId
-import me.proton.core.util.kotlin.deserialize
+import me.proton.core.drive.volume.data.extension.toVolumeType
+import me.proton.drive.sdk.entity.LegacyNodeUid
 import me.proton.core.util.kotlin.takeIfNotEmpty
 import kotlin.time.Duration.Companion.seconds
 
 fun LinkUploadEntity.toUploadFileLink() =
     UploadFileLink(
         id = id,
-        userId = userId,
-        volumeId = VolumeId(volumeId),
+        parentFolderContext = FolderContext(
+            userId = userId,
+            nodeUid = LegacyNodeUid(volumeId = volumeId, linkId = parentId),
+            volumeType = volumeType.toVolumeType(),
+        ),
         shareId = ShareId(userId, shareId),
-        parentLinkId = FolderId(ShareId(userId, shareId), parentId),
-        linkId = linkId.takeIfNotEmpty(),
-        draftRevisionId = revisionId,
+        linkId = linkId.takeIfNotEmpty()?.let { FileId(ShareId(userId, shareId), it) },
         name = name,
         mimeType = mimeType,
-        nodeKey = nodeKey,
-        nodePassphrase = nodePassphrase,
-        nodePassphraseSignature = nodePassphraseSignature,
-        contentKeyPacket = contentKeyPacket,
-        contentKeyPacketSignature = contentKeyPacketSignature,
-        manifestSignature = manifestSignature,
         state = state,
         size = size?.bytes,
         lastModified = lastModified?.let { TimestampMs(lastModified) },
@@ -65,17 +56,6 @@ fun LinkUploadEntity.toUploadFileLink() =
                 height = requireNotNull(mediaResolutionHeight),
             )
         },
-        digests = digests?.let { json ->
-            try {
-                UploadDigests(json.deserialize())
-            } catch (e: SerializationException) {
-                if (BuildConfig.DEBUG) {
-                    throw e
-                }
-                e.log(id.logTag(), "Cannot parse digest")
-                UploadDigests()
-            }
-        } ?: UploadDigests(),
         networkTypeProviderType = networkTypeProviderType,
         mediaDuration = mediaDuration?.seconds,
         fileCreationDateTime = cameraCreationDateTime?.let(::TimestampS),
@@ -93,7 +73,6 @@ fun LinkUploadEntity.toUploadFileLink() =
             )
         },
         shouldAnnounceEvent = shouldAnnounceEvent,
-        cacheOption = cacheOption,
         priority = priority,
         uploadCreationDateTime = uploadCreationDateTime?.let(::TimestampS),
         shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,

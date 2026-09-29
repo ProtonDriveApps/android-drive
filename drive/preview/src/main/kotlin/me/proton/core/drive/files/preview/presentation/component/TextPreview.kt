@@ -18,101 +18,152 @@
 package me.proton.core.drive.files.preview.presentation.component
 
 import android.net.Uri
+import android.view.ViewGroup
+import android.widget.ScrollView
+import android.widget.TextView
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.takeOrElse
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.text.PrecomputedTextCompat
+import androidx.core.widget.TextViewCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.compose.theme.defaultSmall
-import java.io.BufferedReader
-import java.io.InputStream
+import me.proton.core.compose.theme.defaultSmallNorm
+import me.proton.core.drive.base.domain.entity.Bytes
+import me.proton.core.drive.base.domain.entity.FileTypeCategory
+import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun TextPreview(
     uri: Uri,
+    maxSize: Bytes,
     modifier: Modifier = Modifier,
     onRenderSucceeded: (Any) -> Unit,
     onRenderFailed: (Throwable, Any) -> Unit,
+    onDownload: () -> Unit,
 ) {
-    var content by remember { mutableStateOf(listOf<String>()) }
+    var content by remember { mutableStateOf("") }
+    var isTooLargeToPreview by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     LaunchedEffect(uri) {
         withContext(Dispatchers.IO) {
             try {
-                content =
-                    context.contentResolver.openAssetFileDescriptor(uri, "r").use { fd ->
-                        fd?.createInputStream()?.readTextLines().orEmpty()
+                context.contentResolver.openAssetFileDescriptor(uri, "r").use { fd ->
+                    if (fd != null && fd.length > maxSize.value) {
+                        isTooLargeToPreview = true
+                    } else {
+                        content = fd?.createInputStream()?.bufferedReader()?.use { it.readText() }.orEmpty()
                     }
-            } catch (t: Throwable) {
+                }
+            } catch (t: Exception) {
                 onRenderFailed(t, uri)
             }
         }
     }
-    TextPreview(
-        content = content,
-        onRenderSucceeded = { onRenderSucceeded(uri) },
-        modifier = modifier,
-    )
-}
-
-internal fun InputStream.readTextLines(): List<String> = mutableListOf<String>().apply {
-    BufferedReader(reader()).use { reader ->
-        var line = reader.readLine()
-        while (line != null) {
-            if (line.isEmpty()) {
-                add(line)
-            } else {
-                addAll(line.chunked(MAX_CHARS_BY_LINES))
-            }
-            line = reader.readLine()
-        }
+    if (isTooLargeToPreview) {
+        TooLargeToPreview(
+            fileTypeCategory = FileTypeCategory.Text,
+            onDownload = onDownload,
+            modifier = modifier,
+        )
+    } else {
+        TextPreview(
+            content = content,
+            onRenderSucceeded = { onRenderSucceeded(uri) },
+            modifier = modifier,
+        )
     }
 }
 
 @Composable
 fun TextPreview(
-    content: List<String>,
+    content: String,
     onRenderSucceeded: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LaunchedEffect(content) {
         if (content.isNotEmpty()) onRenderSucceeded()
     }
-    SelectionContainer {
-        LazyColumn(
-            modifier = modifier
+    val textStyle = ProtonTheme.typography.defaultSmallNorm
+    val textColor = textStyle.color.takeOrElse { ProtonTheme.colors.textNorm }.toArgb()
+    val textSizeSp = textStyle.fontSize.value
+    var textView by remember { mutableStateOf<TextView?>(null) }
+    var renderState by remember(content) { mutableStateOf(RenderState.Loading) }
+
+    LaunchedEffect(content, textView) {
+        val currentTextView = textView ?: return@LaunchedEffect
+        if (content.length <= INSTANT_RENDER_MAX_CHARS) {
+            currentTextView.text = content
+        } else {
+            val params = TextViewCompat.getTextMetricsParams(currentTextView)
+            val precomputedText = withContext(Dispatchers.Default) {
+                PrecomputedTextCompat.create(content, params)
+            }
+            renderState = RenderState.Preparing
+            withFrameNanos {}
+            TextViewCompat.setPrecomputedText(currentTextView, precomputedText)
+        }
+        renderState = RenderState.Ready
+    }
+
+    Box(modifier = modifier.fillMaxSize()) {
+        AndroidView(
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(
                     horizontal = ProtonDimens.MediumSpacing,
                     vertical = ProtonDimens.SmallSpacing
-                )
-        ) {
-            items(content.size) { i ->
-                Text(
-                    text = content[i],
-                    style = ProtonTheme.typography.defaultSmall,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+                ),
+            factory = { context ->
+                ScrollView(context).apply {
+                    addView(
+                        TextView(context).apply {
+                            setTextIsSelectable(true)
+                            layoutParams = ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT,
+                            )
+                        }.also { textView = it }
+                    )
+                }
+            },
+            update = { scrollView ->
+                val currentTextView = scrollView.getChildAt(0) as TextView
+                currentTextView.setTextColor(textColor)
+                currentTextView.textSize = textSizeSp
+            },
+        )
+        when (renderState) {
+            RenderState.Loading, RenderState.Preparing -> PreviewPlaceholder(
+                fileTypeCategory = FileTypeCategory.Text,
+                message = stringResource(id = I18N.string.preview_processing_state),
+            )
+            RenderState.Ready -> Unit
         }
     }
 }
+
+private enum class RenderState { Loading, Preparing, Ready }
+
+private const val INSTANT_RENDER_MAX_CHARS = 50_000
 
 @Preview
 @Composable
@@ -120,12 +171,9 @@ fun PreviewTextPreview() {
     ProtonTheme {
         Surface {
             TextPreview(
-                content = listOf("Preview text"),
+                content = "Preview text",
                 onRenderSucceeded = {},
             )
         }
     }
 }
-
-// Arbitrary number to prevent crashes from very long lines of text
-private const val MAX_CHARS_BY_LINES = 5000

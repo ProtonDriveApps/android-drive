@@ -18,16 +18,27 @@
 
 package me.proton.core.drive.linkdownload.domain.usecase
 
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.usecase.FindLinkIdsByNodeUid
 import me.proton.core.drive.linkdownload.domain.repository.LinkDownloadRepository
+import me.proton.drive.sdk.entity.NodeUid
 import javax.inject.Inject
 
 class SetSignatureVerificationFailed @Inject constructor(
     private val linkDownloadRepository: LinkDownloadRepository,
+    private val findLinkIdsByNodeUid: FindLinkIdsByNodeUid,
 ) {
 
     suspend operator fun invoke(fileId: FileId): Result<Unit> = coRunCatching {
         linkDownloadRepository.setSignatureVerificationFailed(fileId)
+    }
+
+    suspend operator fun invoke(userId: UserId, nodeUid: NodeUid): Result<Unit> = coRunCatching {
+        findLinkIdsByNodeUid(userId, nodeUid)
+            .getOrThrow()
+            .filterIsInstance<FileId>()
+            .forEach { fileId -> linkDownloadRepository.setSignatureVerificationFailed(fileId) }
     }
 }

@@ -19,12 +19,10 @@
 package me.proton.core.drive.test.provider
 
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.provider.ProtonPhotosClientProvider
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.provider.ProtonSdkClientProvider
 import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
-import me.proton.drive.sdk.ProtonPhotosClient
 import me.proton.drive.sdk.ProtonSdkClient
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -37,7 +35,7 @@ class TestProtonSdkClientProvider @Inject constructor() : ProtonSdkClientProvide
 
     override suspend fun getOrCreate(
         userId: UserId,
-        volumeType: Volume.Type?,
+        volumeType: Volume.Type,
     ): Result<ProtonSdkClient> {
         error("Cannot use SDK in test")
     }

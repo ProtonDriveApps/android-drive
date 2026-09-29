@@ -39,9 +39,12 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.linkupload.domain.extension.parentLinkId
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.IncrementAttempts
 import me.proton.core.drive.linkupload.domain.usecase.sdk.ResolveNameConflict
+import me.proton.core.drive.upload.data.exception.UploadCleanupException
+import me.proton.core.drive.upload.data.extension.getFileSize
 import me.proton.core.drive.upload.data.extension.getSizeData
 import me.proton.core.drive.upload.data.extension.isRetryable
 import me.proton.core.drive.upload.data.extension.log
@@ -65,6 +68,7 @@ import me.proton.core.util.kotlin.CoreLogger
 import me.proton.drive.sdk.ProtonDriveSdkException
 import me.proton.drive.sdk.ProtonSdkError
 import me.proton.drive.sdk.UploadAbortedException
+import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
 
 @HiltWorker
@@ -110,6 +114,15 @@ class UploadFileSdkWorker @AssistedInject constructor(
             setSize(size.value)
         }.fold(
             onFailure = { error ->
+                if (error is FileNotFoundException) {
+                    setUploadAsCancelled()
+                    error.log(
+                        tag = uploadFileLink.logTag(),
+                        message = "File does not exist anymore, cancelling upload",
+                        level = LoggerLevel.WARNING,
+                    )
+                    throw UploadCleanupException(error, uploadFileLink.name)
+                }
                 if (error.handle(uploadFileLink)) {
                     Result.failure()
                 } else {
@@ -162,7 +175,7 @@ class UploadFileSdkWorker @AssistedInject constructor(
                                     message = "Retrying upload after resolving name conflict",
                                     level = LoggerLevel.INFO,
                                 )
-                                uploadSdkManager.cancel(uploadFileLink)
+                                uploadSdkManager.cancel(uploadFileLink.id)
                                 uploadFileLink.recreateFileSdk()
                                 true
                             }
@@ -174,7 +187,8 @@ class UploadFileSdkWorker @AssistedInject constructor(
                                 error.addSuppressed(this)
                                 error.log(
                                     tag = uploadFileLink.logTag(),
-                                    message = "Failed to resolve content size mismatch, will not retry",
+                                    message = "Failed to resolve content size mismatch, " +
+                                            "will not retry, size ${uploadFileLink.getFileSize()}",
                                 )
                                 false
                             },
@@ -183,7 +197,7 @@ class UploadFileSdkWorker @AssistedInject constructor(
                                     tag = uploadFileLink.logTag(),
                                     message = "Retrying upload after resolving content size mismatch",
                                 )
-                                uploadSdkManager.cancel(uploadFileLink)
+                                uploadSdkManager.cancel(uploadFileLink.id)
                                 uploadFileLink.recreateFileSdk()
                                 true
                             }
@@ -199,7 +213,7 @@ class UploadFileSdkWorker @AssistedInject constructor(
                                 tag = uploadFileLink.logTag(),
                                 message = "Retrying upload after $type",
                             )
-                            uploadSdkManager.cancel(uploadFileLink)
+                            uploadSdkManager.cancel(uploadFileLink.id)
                             uploadFileLink.recreateFileSdk()
                             true
                         } else {

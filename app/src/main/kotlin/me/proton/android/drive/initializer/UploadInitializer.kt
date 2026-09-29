@@ -27,10 +27,6 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -40,10 +36,10 @@ import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.presentation.observe
 import me.proton.core.accountmanager.presentation.onAccountReady
 import me.proton.core.accountmanager.presentation.onAccountRemoved
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.extension.hasConnectivity
-import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.coroutines.UserSupervisorIOScopes
 import me.proton.core.drive.base.domain.log.LogTag.TRACKING
+import me.proton.core.drive.base.domain.log.LogTag.UPLOAD
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.manager.UploadSpeedManager
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksCount
@@ -57,7 +53,7 @@ import me.proton.core.util.kotlin.CoreLogger
 
 class UploadInitializer : Initializer<Unit> {
 
-    private val scopes = mutableMapOf<UserId, CoroutineScope>()
+    private val scopes = UserSupervisorIOScopes(UPLOAD)
 
     override fun create(context: Context) {
         with(
@@ -77,9 +73,7 @@ class UploadInitializer : Initializer<Unit> {
             )
                 .onAccountReady { account ->
                     val userId = account.userId
-                    val scope = scopes.getOrPut(userId) {
-                        CoroutineScope(Dispatchers.IO + Job())
-                    }
+                    val scope = scopes[userId]
                     uploadErrorManager.errors
                         .map { uploadError -> context.hasNotConnectivity(uploadError) }
                         .onEach { noConnectivity ->
@@ -102,7 +96,7 @@ class UploadInitializer : Initializer<Unit> {
                     }.launchIn(scope)
                 }
                 .onAccountRemoved { account ->
-                    scopes.remove(account.userId)?.cancel()
+                    scopes.remove(account.userId)
                 }
         }
     }
@@ -134,7 +128,7 @@ class UploadInitializer : Initializer<Unit> {
             coRunCatching {
                 uploadErrorHandler.onError(uploadError)
             }.onFailure { error ->
-                error.log(LogTag.UPLOAD, "Failed to handle upload error")
+                error.log(UPLOAD, "Failed to handle upload error")
             }
         }
     }

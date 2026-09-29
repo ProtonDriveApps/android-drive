@@ -18,7 +18,6 @@
   -->
 <resources>
   <string name="files_upload_stage_waiting">Очікування вивантаження</string>
-  <string name="files_upload_stage_encrypting">Шифрування</string>
   <string name="files_upload_stage_uploading">Вивантаження</string>
   <!--
         Variable %1$s is a string representation of a percentage

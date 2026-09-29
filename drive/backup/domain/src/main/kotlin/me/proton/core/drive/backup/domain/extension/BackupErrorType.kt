@@ -32,4 +32,5 @@ fun BackupErrorType.toEventBackupState() = when (this) {
     -> Event.Backup.BackupState.FAILED_PHOTOS_UPLOAD_NOT_ALLOWED
 
     BackupErrorType.BACKGROUND_RESTRICTIONS -> Event.Backup.BackupState.PAUSE_BACKGROUND_RESTRICTIONS
+    BackupErrorType.FOLDER_NOT_FOUND -> Event.Backup.BackupState.FAILED_FOLDER_NOT_FOUND
 }

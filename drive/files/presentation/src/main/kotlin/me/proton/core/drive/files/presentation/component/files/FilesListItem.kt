@@ -686,7 +686,7 @@ fun PreviewDownloadedAndFavoriteListItem() {
             FilesListItem(
                 link = PREVIEW_DRIVELINK.copy(
                     isMarkedAsOffline = true,
-                    downloadState = DownloadState.Downloaded(),
+                    downloadState = DownloadState.Downloaded,
                     link = PREVIEW_LINK.copy(
                         tags = listOf(PhotoTag.Favorites),
                     )
@@ -710,7 +710,7 @@ fun PreviewDwnldAndFavShrdListItem() {
             FilesListItem(
                 link = PREVIEW_DRIVELINK.copy(
                     isMarkedAsOffline = true,
-                    downloadState = DownloadState.Downloaded(),
+                    downloadState = DownloadState.Downloaded,
                     link = PREVIEW_LINK.copy(
                         isShared = true,
                         sharingDetails = SharingDetails(

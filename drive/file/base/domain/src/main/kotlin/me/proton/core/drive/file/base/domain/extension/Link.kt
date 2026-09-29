@@ -18,40 +18,14 @@
 
 package me.proton.core.drive.file.base.domain.extension
 
-import me.proton.core.drive.file.base.domain.entity.ThumbnailId
 import me.proton.core.drive.file.base.domain.entity.ThumbnailType
 import me.proton.core.drive.link.domain.entity.Link
-import me.proton.core.drive.link.domain.extension.userId
-import me.proton.core.drive.volume.domain.entity.VolumeId
 
-fun Link.File.getThumbnailIds(volumeId: VolumeId): Set<ThumbnailId> = when {
+val Link.File.thumbnailTypes: Set<ThumbnailType> get() = when {
     !hasThumbnail -> emptySet()
-    defaultThumbnailId == null && photoThumbnailId == null -> setOf(
-        ThumbnailId.Legacy(
-            volumeId = volumeId,
-            fileId = id,
-            revisionId = activeRevisionId,
-        )
-    )
+    defaultThumbnailId == null && photoThumbnailId == null -> setOf(ThumbnailType.DEFAULT)
     else -> setOfNotNull(
-        defaultThumbnailId?.let { thumbnailId ->
-            ThumbnailId.File(
-                id = thumbnailId,
-                userId = userId,
-                volumeId = volumeId,
-                type = ThumbnailType.DEFAULT,
-            )
-        },
-        photoThumbnailId?.let { thumbnailId ->
-            ThumbnailId.File(
-                id = thumbnailId,
-                userId = userId,
-                volumeId = volumeId,
-                type = ThumbnailType.PHOTO,
-            )
-        }
+        defaultThumbnailId?.let { ThumbnailType.DEFAULT },
+        photoThumbnailId?.let { ThumbnailType.PHOTO },
     )
 }
-
-fun Link.File.getThumbnailId(volumeId: VolumeId, thumbnailType: ThumbnailType): ThumbnailId? =
-    getThumbnailIds(volumeId).firstOrNull { thumbnailId -> thumbnailId.type == thumbnailType }

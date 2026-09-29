@@ -18,6 +18,7 @@
 package me.proton.core.drive.drivelink.download.domain.usecase
 
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.extension.revisionUid
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadManager
 import javax.inject.Inject
 
@@ -26,5 +27,5 @@ class GetDownloadProgress @Inject constructor(
 ) {
     operator fun invoke(
         driveLink: DriveLink.File,
-    ) = downloadManager.getProgressFlow(driveLink.id)
+    ) = downloadManager.getProgressFlow(driveLink.revisionUid)
 }

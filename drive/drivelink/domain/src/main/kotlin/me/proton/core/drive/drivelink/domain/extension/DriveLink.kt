@@ -22,14 +22,11 @@ import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
-import me.proton.core.drive.file.base.domain.entity.ThumbnailId
 import me.proton.core.drive.file.base.domain.entity.ThumbnailType
-import me.proton.core.drive.file.base.domain.extension.getThumbnailId
-import me.proton.core.drive.file.base.domain.extension.getThumbnailIds
+import me.proton.core.drive.file.base.domain.extension.thumbnailTypes
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.extension.decryptedFileName
 import me.proton.core.drive.link.domain.extension.hasShareLink
-import me.proton.core.drive.link.domain.extension.isPhoto
 import me.proton.core.drive.link.domain.extension.isSharedByLinkOrWithUsers
 import me.proton.core.drive.link.domain.extension.shareId
 import me.proton.core.drive.photo.domain.entity.PhotoListing
@@ -42,13 +39,19 @@ fun DriveLink.updateLastModified(lastModified: TimestampS) = link.let { link ->
     }
 }
 
+fun DriveLink.updateMimeType(mimeType: String) = link.let { link ->
+    when (link) {
+        is Link.File -> link.copy(mimeType = mimeType)
+        is Link.Folder -> link.copy(mimeType = mimeType)
+        is Link.Album -> link.copy(mimeType = mimeType)
+    }
+}
+
 val DriveLink?.isNameEncrypted: Boolean get() = this?.let { cryptoName is CryptoProperty.Encrypted } ?: false
 
-val DriveLink.File.thumbnailIds: Set<ThumbnailId> get() = link.getThumbnailIds(volumeId)
+val DriveLink.File.thumbnailTypes: Set<ThumbnailType> get() = link.thumbnailTypes
 
-fun DriveLink.File.getThumbnailId(type: ThumbnailType): ThumbnailId? = link.getThumbnailId(volumeId, type)
-
-val DriveLink.File.isPhoto: Boolean get() = link.isPhoto
+fun DriveLink.File.hasThumbnail(type: ThumbnailType): Boolean = type in thumbnailTypes
 
 val DriveLink.isEditor: Boolean get() = link.permissions.has(Permissions.Permission.WRITE)
 

@@ -36,6 +36,7 @@ driveModule(
     implementation(project(":drive:feature-flag:domain"))
     implementation(project(":drive:observability:domain"))
     implementation(project(":drive:thumbnail:presentation"))
+    implementation(libs.androidx.core.core.ktx)
     implementation(libs.coil.compose)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)

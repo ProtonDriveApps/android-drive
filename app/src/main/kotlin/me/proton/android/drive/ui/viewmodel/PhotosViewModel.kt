@@ -37,17 +37,18 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.transformLatest
@@ -80,6 +81,7 @@ import me.proton.android.drive.ui.effect.HomeEffect
 import me.proton.android.drive.ui.effect.HomeTabViewModel
 import me.proton.android.drive.ui.effect.PhotosEffect
 import me.proton.android.drive.usecase.GetSubscriptionAction
+import me.proton.android.drive.usecase.ObserveQ3CampaignPromoEligible
 import me.proton.android.drive.usecase.OnFilesDriveLinkError
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.onSuccess
@@ -121,11 +123,14 @@ import me.proton.core.drive.drivelink.photo.domain.entity.PhotoListingAnchor
 import me.proton.core.drive.drivelink.photo.domain.entity.PhotoListingsSyncState
 import me.proton.core.drive.drivelink.photo.domain.paging.PhotoDriveLinks
 import me.proton.core.drive.drivelink.photo.domain.usecase.GetPhotoCount
+import me.proton.core.drive.drivelink.photo.domain.usecase.GetPhotoDriveLinks
 import me.proton.core.drive.drivelink.photo.domain.usecase.GetPhotoListingsPagingData
 import me.proton.core.drive.drivelink.photo.domain.usecase.PhotoListingsLoader
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
-import me.proton.android.drive.usecase.ObserveQ3CampaignPromoEligible
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
+import me.proton.core.drive.feature.flag.domain.extension.off
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.files.domain.usecase.ToFirstItemMetricsNotifier
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -138,6 +143,8 @@ import me.proton.core.drive.link.selection.domain.usecase.SelectLinks
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink.Companion.RECENT_BACKUP_PRIORITY
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.observability.domain.metrics.common.mobile.performance.PageType
+import me.proton.core.drive.photo.domain.usecase.GetPhotoListingIdsInRange
+import me.proton.core.drive.photo.domain.usecase.GetPhotoListingIdsInRangeFlow
 import me.proton.core.drive.photo.domain.usecase.GetTagsMigrationStatusFlow
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.user.domain.entity.UserMessage
@@ -179,7 +186,7 @@ class PhotosViewModel @Inject constructor(
     hasPhotoVolume: HasPhotoVolume,
     shouldUpgradeStorage: ShouldUpgradeStorage,
     getTagsMigrationStatusFlow: GetTagsMigrationStatusFlow,
-    @ApplicationContext private val appContext: Context,
+    @param:ApplicationContext private val appContext: Context,
     private val separatorFormatter: SeparatorFormatter,
     private val backupStatusFormatter: BackupStatusFormatter,
     private val getPhotosDriveLink: GetPhotosDriveLink,
@@ -195,6 +202,10 @@ class PhotosViewModel @Inject constructor(
     private val cancelUserMessage: CancelUserMessage,
     private val toFirstItemMetricsNotifier: ToFirstItemMetricsNotifier,
     private val observeQ3CampaignPromoEligible: ObserveQ3CampaignPromoEligible,
+    private val getFeatureFlagFlow: GetFeatureFlagFlow,
+    private val getPhotoListingIdsInRange: GetPhotoListingIdsInRange,
+    private val getPhotoListingIdsInRangeFlow: GetPhotoListingIdsInRangeFlow,
+    private val getPhotoDriveLinks: GetPhotoDriveLinks,
     private val photoListingsLoader: PhotoListingsLoader,
     val backupPermissionsViewModel: BackupPermissionsViewModel,
 ) : PhotosPickerAndSelectionViewModel(
@@ -213,6 +224,12 @@ class PhotosViewModel @Inject constructor(
 
     // Shared across tabs (see ObserveQ3CampaignPromoEligible) so switching tabs doesn't re-trigger
     private val isQ3CampaignPromoEligibleFlow: StateFlow<Boolean?> = observeQ3CampaignPromoEligible(userId)
+
+    private val isSeparatorSelectionEnabledFlow: Flow<Boolean> = getFeatureFlagFlow(
+        featureFlagId = FeatureFlagId.driveAndroidPhotosSeparatorSelectionDisabled(userId),
+        emitNotFoundInitially = false,
+    ).map { featureFlag -> featureFlag.off }
+        .stateIn(viewModelScope, Eagerly, false)
 
     override val driveLinkFilter = { driveLink: DriveLink -> driveLink !is DriveLink.Album }
 
@@ -427,6 +444,17 @@ class PhotosViewModel @Inject constructor(
             ).value * 1000L
         }
 
+    private fun separatorCaptureTimeRange(year: Int, month: Int): Pair<TimestampS, TimestampS> {
+        val from = Calendar.getInstance().apply {
+            clear()
+            set(year, month, 1)
+        }
+        val to = (from.clone() as Calendar).apply {
+            add(Calendar.MONTH, 1)
+        }
+        return TimestampS(from.timeInMillis / 1000L) to TimestampS(to.timeInMillis / 1000L)
+    }
+
     val photoItems: Flow<PagingData<PhotosItem>> = combine(
         driveLink.filterNotNull(),
         photoListingsFilter,
@@ -482,7 +510,8 @@ class PhotosViewModel @Inject constructor(
         isFastScrollEnabled,
         photosFilters,
         isQ3CampaignPromoEligibleFlow,
-    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand, notificationDotRequested, photoListingsFilter, hasPhotoVolume, user, isFastScrollEnabled, photosFilters, isQ3CampaignPromoEligible ->
+        isSeparatorSelectionEnabledFlow,
+    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand, notificationDotRequested, photoListingsFilter, hasPhotoVolume, user, isFastScrollEnabled, photosFilters, isQ3CampaignPromoEligible, isSeparatorSelectionEnabled ->
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
@@ -542,6 +571,7 @@ class PhotosViewModel @Inject constructor(
             notificationDotVisible = showHamburgerMenuIcon && notificationDotRequested,
             inMultiselect = selected.isNotEmpty() || inPickerMode,
             isFastScrollEnabled = isFastScrollEnabled,
+            isSeparatorSelectionEnabled = isSeparatorSelectionEnabled,
             listContentState = listContentState,
             showEmptyList = backupState.isBackupEnabled || backupState.hasDefaultFolder == false ,
             showPhotosStateIndicator = showPhotosStateIndicator && !inPickerMode,
@@ -644,6 +674,54 @@ class PhotosViewModel @Inject constructor(
         override val onSelectDriveLink = { driveLink: DriveLink -> onSelectDriveLink(driveLink) }
         override val onDeselectDriveLink =
             { driveLink: DriveLink -> onDeselectDriveLink(driveLink) }
+        override val onSeparator = { year: Int, month: Int ->
+            viewModelScope.launch {
+                val link = driveLink.value ?: return@launch
+                val tag = photoListingsFilter.value
+                val (from, to) = separatorCaptureTimeRange(year, month)
+                val fileIds = getPhotoListingIdsInRange(userId, link.volumeId, tag, from, to)
+                if (fileIds.isEmpty()) return@launch
+                val shouldDeselect = fileIds.all { fileId -> selected.value.contains(fileId) }
+                if (inPickerMode) {
+                    val driveLinks = getPhotoDriveLinks(userId, fileIds.toSet())
+                        .first()
+                        .getOrNull(VIEW_MODEL, "Failed to resolve drive links for separator selection")
+                        ?.filterIsInstance<DriveLink.File>()
+                        .orEmpty()
+                    if (driveLinks.size != fileIds.size) {
+                        _homeEffect.emit(
+                            HomeEffect.ShowSnackbar(
+                                appContext.getString(I18N.string.photos_error_separator_selection_failed)
+                            )
+                        )
+                        return@launch
+                    }
+                    if (shouldDeselect) {
+                        removeFromAlbumAndFromSelected(driveLinks)
+                    } else {
+                        addToAlbumAndToSelected(driveLinks)
+                    }
+                } else {
+                    if (shouldDeselect) {
+                        removeSelected(fileIds)
+                    } else {
+                        addSelected(fileIds)
+                    }
+                }
+            }
+            Unit
+        }
+        override val getSeparatorFileIds: (Int, Int) -> Flow<List<FileId>> = { year, month ->
+            val (from, to) = separatorCaptureTimeRange(year, month)
+            photoListingsFilter.flatMapLatest { tag ->
+                val link = driveLink.value
+                if (link == null) {
+                    emptyFlow()
+                } else {
+                    getPhotoListingIdsInRangeFlow(userId, link.volumeId, tag, from, to)
+                }
+            }
+        }
         override val onBack = { onBack() }
         override val onEnable = this@PhotosViewModel::onEnable
         override val onPermissionsChanged = this@PhotosViewModel::onPermissionsChanged

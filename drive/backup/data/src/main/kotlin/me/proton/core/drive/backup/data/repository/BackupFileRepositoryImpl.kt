@@ -128,7 +128,6 @@ class BackupFileRepositoryImpl @Inject constructor(
     override suspend fun getFilesToBackup(
         folderId: FolderId,
         bucketId: Int,
-        maxAttempts: Long,
         fromIndex: Int,
         count: Int,
     ): List<BackupFile> =
@@ -137,7 +136,6 @@ class BackupFileRepositoryImpl @Inject constructor(
             shareId = folderId.shareId.id,
             folderId = folderId.id,
             bucketId = bucketId,
-            maxAttempts = maxAttempts,
             limit = count,
             offset = fromIndex
         ).map { entity ->
@@ -317,8 +315,8 @@ class BackupFileRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun isBackupCompleteForFolder(backupFolder: BackupFolder): Boolean {
-        return db.backupFileDao.isAllFilesInState(
+    override suspend fun isBackupCompleteForFolder(backupFolder: BackupFolder): Boolean =
+        db.backupFileDao.isAllFilesInState(
             backupFolder.folderId.userId,
             backupFolder.folderId.shareId.id,
             backupFolder.folderId.id,
@@ -326,7 +324,14 @@ class BackupFileRepositoryImpl @Inject constructor(
             DUPLICATED,
             COMPLETED
         )
-    }
+
+    override suspend fun hasFiles(backupFolder: BackupFolder): Boolean =
+        db.backupFileDao.hasFilesInFolder(
+            backupFolder.folderId.userId,
+            backupFolder.folderId.shareId.id,
+            backupFolder.folderId.id,
+            backupFolder.bucketId,
+        )
 
     override suspend fun getStatsForFolder(
         backupFolder: BackupFolder,

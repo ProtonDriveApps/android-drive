@@ -55,7 +55,6 @@ interface BackupFileRepository {
     suspend fun getFilesToBackup(
         folderId: FolderId,
         bucketId: Int,
-        maxAttempts: Long,
         fromIndex: Int,
         count: Int,
     ): List<BackupFile>
@@ -86,6 +85,7 @@ interface BackupFileRepository {
     suspend fun deleteCompletedFromFolder(backupFolder: BackupFolder)
     suspend fun deleteFailedForFolderId(folderId: FolderId)
     suspend fun isBackupCompleteForFolder(backupFolder: BackupFolder): Boolean
+    suspend fun hasFiles(backupFolder: BackupFolder): Boolean
     suspend fun getStatsForFolder(backupFolder: BackupFolder): List<BackupStateCount>
     suspend fun markOrphanedEnqueuedFilesAsFailed(userId: UserId): Int
 }

@@ -31,7 +31,7 @@ fun ShareEntity.toShare(userId: UserId) =
     Share(
         id = ShareId(userId, id),
         volumeId = VolumeId(volumeId),
-        volumeType = volumeType?.toVolumeType(),
+        volumeType = volumeType.toVolumeType(),
         rootLinkId = linkId,
         addressId = addressId,
         creatorEmail = creator,

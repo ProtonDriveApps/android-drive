@@ -24,10 +24,8 @@ import androidx.room.Index
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column.ID
 import me.proton.core.drive.base.data.db.Column.LINK_ID
-import me.proton.core.drive.base.data.db.Column.MANIFEST_SIGNATURE
 import me.proton.core.drive.base.data.db.Column.REVISION_ID
 import me.proton.core.drive.base.data.db.Column.SHARE_ID
-import me.proton.core.drive.base.data.db.Column.SIGNATURE_ADDRESS
 import me.proton.core.drive.base.data.db.Column.STATE
 import me.proton.core.drive.base.data.db.Column.USER_ID
 import me.proton.core.drive.link.data.db.entity.LinkEntity
@@ -64,8 +62,4 @@ data class LinkDownloadStateEntity(
     val revisionId: String,
     @ColumnInfo(name = STATE)
     val state: LinkDownloadState,
-    @ColumnInfo(name = MANIFEST_SIGNATURE, defaultValue = "NULL")
-    val manifestSignature: String? = null,
-    @ColumnInfo(name = SIGNATURE_ADDRESS, defaultValue = "NULL")
-    val signatureAddress: String? = null,
 )

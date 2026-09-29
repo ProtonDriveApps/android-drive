@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.Flow
 import me.proton.core.data.room.db.BaseDao
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.photo.data.db.entity.PhotoListingEntity
+import me.proton.core.drive.photo.data.db.entity.PhotoListingLinkIds
 import me.proton.core.drive.photo.data.db.entity.PhotoListingWithFileProperties
 import me.proton.core.drive.sorting.domain.entity.Direction
 
@@ -37,6 +38,23 @@ abstract class PhotoListingDao : BaseDao<PhotoListingEntity>() {
         """
     )
     abstract fun getPhotoListingCount(userId: UserId, volumeId: String): Flow<Int>
+
+    @Query(
+        """
+            SELECT share_id, id FROM PhotoListingEntity
+            WHERE
+                user_id = :userId AND
+                volume_id = :volumeId AND
+                capture_time >= :captureTimeFrom AND
+                capture_time < :captureTimeTo
+        """
+    )
+    abstract suspend fun getPhotoListingIds(
+        userId: UserId,
+        volumeId: String,
+        captureTimeFrom: Long,
+        captureTimeTo: Long,
+    ): List<PhotoListingLinkIds>
 
     suspend fun getPhotoListingWithFileProperties(
         userId: UserId,

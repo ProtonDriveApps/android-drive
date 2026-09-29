@@ -24,7 +24,6 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.asSuccess
 import me.proton.core.drive.base.domain.function.pagedList
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -34,7 +33,6 @@ import me.proton.core.drive.linkdownload.data.db.LinkDownloadDatabase
 import me.proton.core.drive.linkdownload.data.db.dao.LinkDownloadDao
 import me.proton.core.drive.linkdownload.data.db.entity.LinkDownloadFileSignatureVerificationFailedEntity
 import me.proton.core.drive.linkdownload.data.db.entity.LinkDownloadState
-import me.proton.core.drive.linkdownload.data.extension.toDownloadBlock
 import me.proton.core.drive.linkdownload.data.extension.toDownloadState
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.linkdownload.domain.repository.LinkDownloadRepository
@@ -56,34 +54,16 @@ class LinkDownloadRepositoryImpl(
         entity?.toDownloadState().asSuccess
     }
 
-    override suspend fun getDownloadBlocks(
-        linkId: LinkId,
-        revisionId: String,
-    ): List<Block> = pagedList(configurationProvider.dbPageSize) { fromIndex, count ->
-        db.linkDownloadDao.getDownloadBlocks(
-            userId = linkId.userId,
-            shareId = linkId.shareId.id,
-            linkId = linkId.id,
-            revisionId = revisionId,
-            limit = count,
-            offset = fromIndex,
-        ).map { entity ->
-            entity.toDownloadBlock()
-        }
-    }
-
     override suspend fun insertOrUpdateDownloadState(
         linkId: LinkId,
         revisionId: String,
         downloadState: DownloadState,
-        blocks: List<Block>?,
     ) = db.linkDownloadDao.insertOrUpdate(
         userId = linkId.userId,
         shareId = linkId.shareId.id,
         linkId = linkId.id,
         revisionId = revisionId,
         downloadState = downloadState,
-        blocks = blocks,
     )
 
     override suspend fun removeDownloadState(linkId: LinkId, revisionId: String) =

@@ -18,13 +18,14 @@
 
 package me.proton.core.drive.thumbnail.presentation.entity
 
-import me.proton.core.drive.file.base.domain.entity.ThumbnailId
-import me.proton.core.drive.link.domain.entity.FileId
-import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.file.base.domain.entity.ThumbnailType
+import me.proton.core.drive.volume.domain.entity.Volume
+import me.proton.drive.sdk.entity.RevisionUid
 
 data class ThumbnailVO(
-    val volumeId: VolumeId,
-    val fileId: FileId,
-    val revisionId: String,
-    val thumbnailId: ThumbnailId,
+    val userId: UserId,
+    val revisionUid: RevisionUid,
+    val type: ThumbnailType,
+    val volumeType: Volume.Type,
 )

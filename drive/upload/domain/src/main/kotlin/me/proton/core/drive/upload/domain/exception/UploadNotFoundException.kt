@@ -21,4 +21,4 @@ package me.proton.core.drive.upload.domain.exception
 class UploadNotFoundException(
     message: String? = null,
     cause: Throwable? = null
-) : Throwable(message, cause)
+) : RuntimeException(message, cause)

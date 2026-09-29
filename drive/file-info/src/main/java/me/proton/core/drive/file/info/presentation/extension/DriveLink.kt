@@ -120,10 +120,7 @@ fun DriveLink.toItems(
     }
 )
 
-fun DriveLink.toAdvancedItems(
-    context: Context,
-    contentAuthor: String? = null,
-): List<Item> {
+fun DriveLink.toAdvancedItems(context: Context): List<Item> {
     if (!BuildConfig.DEBUG) return emptyList()
 
     val xAttr = cryptoXAttr.value?.toXAttr()?.getOrNull() ?: return emptyList()
@@ -132,7 +129,6 @@ fun DriveLink.toAdvancedItems(
     val sha1 = common?.digests?.get("SHA1") ?: common?.digests?.get("sha1")
     val clearTextSize = common?.size
 
-    val contentAuthorNormalized = contentAuthor?.takeUnless { it.isBlank() }
     val keyAuthor = link.signatureEmail.takeUnless { it.isBlank() }
     val nameAuthor = link.nameSignatureEmail?.takeUnless { it.isBlank() }
     val normalizedSha1 = sha1?.takeUnless { it.isBlank() }
@@ -151,12 +147,6 @@ fun DriveLink.toAdvancedItems(
         normalizedSha1?.let {
             Item(
                 name = context.getString(I18N.string.file_info_title_sha1),
-                value = it,
-            )
-        },
-        contentAuthorNormalized?.let {
-            Item(
-                name = context.getString(I18N.string.file_info_title_content_author),
                 value = it,
             )
         },

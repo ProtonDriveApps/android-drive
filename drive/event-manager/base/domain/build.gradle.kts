@@ -26,5 +26,6 @@ android {
 
 driveModule {
     api(project(":drive:base:domain"))
+    api(project(":drive:link:domain"))
     api(project(":drive:share:domain"))
 }

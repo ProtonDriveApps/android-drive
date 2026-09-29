@@ -19,24 +19,23 @@ package me.proton.core.drive.linkupload.data.extension
 
 import me.proton.core.drive.linkupload.data.db.entity.LinkUploadEntity
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.linkupload.domain.extension.parentLinkId
+import me.proton.core.drive.linkupload.domain.extension.userId
+import me.proton.core.drive.linkupload.domain.extension.volumeId
+import me.proton.core.drive.linkupload.domain.extension.volumeType
+import me.proton.core.drive.volume.data.extension.toLong
 
 fun UploadFileLink.toLinkUploadEntity() =
     LinkUploadEntity(
         id = id,
         userId = userId,
         volumeId = volumeId.id,
+        volumeType = volumeType.toLong(),
         shareId = shareId.id,
         parentId = parentLinkId.id,
-        linkId = linkId.orEmpty(),
-        revisionId = draftRevisionId,
+        linkId = linkId?.id.orEmpty(),
         name = name,
         mimeType = mimeType,
-        nodeKey = nodeKey,
-        nodePassphrase = nodePassphrase,
-        nodePassphraseSignature = nodePassphraseSignature,
-        contentKeyPacket = contentKeyPacket,
-        contentKeyPacketSignature = contentKeyPacketSignature,
-        manifestSignature = manifestSignature,
         state = state,
         size = size?.value,
         lastModified = lastModified?.value,
@@ -53,7 +52,6 @@ fun UploadFileLink.toLinkUploadEntity() =
         cameraOrientation = cameraExifTags?.orientation?.toLong(),
         cameraSubjectArea = cameraExifTags?.subjectArea,
         shouldAnnounceEvent = shouldAnnounceEvent,
-        cacheOption = cacheOption,
         priority = priority,
         uploadCreationDateTime = uploadCreationDateTime?.value,
         shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,

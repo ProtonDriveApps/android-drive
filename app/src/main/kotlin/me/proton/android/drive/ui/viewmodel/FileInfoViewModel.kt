@@ -46,7 +46,6 @@ import me.proton.core.drive.crypto.domain.usecase.DecryptAncestorsName
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.UpdateDriveLinkDisplayName
-import me.proton.core.drive.file.base.domain.usecase.GetRevision
 import me.proton.core.drive.file.info.presentation.extension.toAdvancedItems
 import me.proton.core.drive.file.info.presentation.extension.toItems
 import me.proton.core.drive.link.domain.entity.FileId
@@ -64,7 +63,6 @@ class FileInfoViewModel @Inject constructor(
     getShare: GetShare,
     private val decryptAncestorsName: DecryptAncestorsName,
     private val updateDriveLinkDisplayName: UpdateDriveLinkDisplayName,
-    private val getRevision: GetRevision,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val shareId: ShareId = ShareId(userId, savedStateHandle.require(Screen.Info.SHARE_ID))
@@ -77,23 +75,10 @@ class FileInfoViewModel @Inject constructor(
         .mapSuccessValueOrNull()
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
-    private val contentAuthor: Flow<String?> = driveLink
-        .filterNotNull()
-        .mapLatest { driveLink ->
-            takeIf { BuildConfig.DEBUG }?.let {
-                (driveLink as? DriveLink.File)?.let { file ->
-                    getRevision(file.id, file.activeRevisionId)
-                        .getOrNull(VIEW_MODEL, "Failed to get revision")
-                        ?.signatureAddress
-                }
-            }
-        }
-
     val viewState: Flow<FileInfoViewState?> = combine(
         share.filterNotNull(),
         driveLink.filterNotNull(),
-        contentAuthor,
-    ) { share, driveLink, contentAuthor ->
+    ) { share, driveLink ->
         FileInfoViewState(
             link = driveLink,
             items = driveLink.toItems(
@@ -102,10 +87,7 @@ class FileInfoViewModel @Inject constructor(
                 capturedOn = (driveLink as? DriveLink.File)?.photoCaptureTime,
                 shareType = share.type,
             ),
-            advancedItems = driveLink.toAdvancedItems(
-                context = context,
-                contentAuthor = contentAuthor,
-            ),
+            advancedItems = driveLink.toAdvancedItems(context = context),
         )
     }
 

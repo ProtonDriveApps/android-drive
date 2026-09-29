@@ -65,7 +65,7 @@ class BackupUploadFolderWorker @AssistedInject constructor(
             backupFolder = BackupFolder(bucketId, folderId),
         ).onFailure { error ->
             error.log(LogTag.BACKUP, "Cannot upload bucket: ${bucketId.toBase36()}")
-            addBackupError(folderId, error.toBackupError())
+            addBackupError(folderId, error.toBackupError(folderId))
             return Result.failure()
         }
         return Result.success()

@@ -23,18 +23,22 @@ import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import me.proton.core.compose.activity.rememberLauncherWithInput
+import me.proton.core.drive.base.domain.provider.MimeTypeProvider
+import me.proton.core.util.kotlin.takeIfNotBlank
 
 @Composable
 fun rememberCreateDocumentLauncher(
     mimeType: String,
     onDocumentCreated: (Uri?) -> Unit,
     modifyIntent: ((Intent) -> Unit)? = null,
-) = rememberLauncherWithInput(
-    input = mimeType,
-    contracts = object : ActivityResultContracts.CreateDocument(mimeType) {
-        override fun createIntent(context: Context, input: String) = super.createIntent(context, input).apply {
-            modifyIntent?.invoke(this)
-        }
-    },
-    onResult = onDocumentCreated
-)
+) = (mimeType.takeIfNotBlank() ?: MimeTypeProvider.DEFAULT_MIME_TYPE).let { type ->
+    rememberLauncherWithInput(
+        input = type,
+        contracts = object : ActivityResultContracts.CreateDocument(type) {
+            override fun createIntent(context: Context, input: String) = super.createIntent(context, input).apply {
+                modifyIntent?.invoke(this)
+            }
+        },
+        onResult = onDocumentCreated
+    )
+}

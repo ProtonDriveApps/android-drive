@@ -19,28 +19,14 @@ package me.proton.core.drive.crypto.domain.usecase.upload
 
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.SignData
-import me.proton.core.drive.crypto.domain.usecase.file.GetManifest
 import me.proton.core.drive.cryptobase.domain.CryptoScope
 import me.proton.core.drive.key.domain.entity.Key
-import me.proton.core.drive.linkupload.domain.entity.UploadBlock
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 class ManifestSignature @Inject constructor(
-    private val getManifest: GetManifest,
     private val signData: SignData,
 ) {
-    suspend operator fun invoke(
-        signKey: Key,
-        input: List<UploadBlock>,
-        coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
-    ): Result<String> = coRunCatching(coroutineContext) {
-        signData(
-            signKey = signKey,
-            input = getManifest(input).getOrThrow(),
-        ).getOrThrow()
-    }
-
     suspend operator fun invoke(
         signKey: Key,
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,

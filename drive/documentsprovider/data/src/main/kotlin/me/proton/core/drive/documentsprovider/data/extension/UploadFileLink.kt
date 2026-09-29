@@ -23,7 +23,7 @@ import android.database.MatrixCursor
 import android.provider.DocumentsContract
 import me.proton.core.drive.documentsprovider.domain.entity.DocumentId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
-import me.proton.core.drive.linkupload.domain.extension.fileId
+import me.proton.core.drive.linkupload.domain.extension.userId
 
 @SuppressLint("InlinedApi")
 internal fun UploadFileLink.addTo(cursor: MatrixCursor.RowBuilder) {
@@ -38,7 +38,7 @@ internal fun UploadFileLink.addTo(cursor: MatrixCursor.RowBuilder) {
             DocumentsContract.Document.FLAG_SUPPORTS_THUMBNAIL
         }
 
-    val docId = fileId?.let { DocumentId(userId, it) } ?: DocumentId(userId, uploadId = id.toString())
+    val docId = linkId?.let { DocumentId(userId, it) } ?: DocumentId(userId, uploadId = id.toString())
     cursor.add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, docId.encode())
     cursor.add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, name)
     cursor.add(DocumentsContract.Document.COLUMN_MIME_TYPE, mimeType)

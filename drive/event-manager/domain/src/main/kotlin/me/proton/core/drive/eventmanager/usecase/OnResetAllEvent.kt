@@ -18,11 +18,9 @@
 
 package me.proton.core.drive.eventmanager.usecase
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
@@ -46,40 +44,35 @@ class OnResetAllEvent @Inject constructor(
     private val announceEvent: AnnounceEvent,
     private val getMainShare: GetMainShare,
 ) {
-    private val coroutineScope = CoroutineScope(Job() + Dispatchers.Main)
-
-    operator fun invoke(shareId: ShareId) {
-        coroutineScope.launch {
-            CoreLogger.d(LogTag.EVENTS, "onResetAll: shareId ${shareId.id.logId()}")
-            getShare(shareId, flowOf(false)).toResult()
-                .getOrNull(LogTag.EVENTS, "Cannot get share")?.let { share ->
-                    if (share.isMain) {
-                        signOutUser(shareId.userId)
-                    } else {
-                        deleteShare(shareId, locallyOnly = true)
-                    }
+    suspend operator fun invoke(shareId: ShareId) {
+        CoreLogger.d(LogTag.EVENTS, "onResetAll: shareId ${shareId.id.logId()}")
+        getShare(shareId, flowOf(false)).toResult()
+            .getOrNull(LogTag.EVENTS, "Cannot get share")?.let { share ->
+                if (share.isMain) {
+                    signOutUser(shareId.userId)
+                } else {
+                    deleteShare(shareId, locallyOnly = true)
                 }
-        }
+            }
     }
 
-    operator fun invoke(userId: UserId, volumeId: VolumeId) {
-        coroutineScope.launch {
-            CoreLogger.d(LogTag.EVENTS, "onResetAll: volumeId ${volumeId.id.logId()}")
-            getMainShare(userId).toResult()
-                .getOrNull(LogTag.EVENTS, "Cannot get main share")?.let { mainShare ->
-                    if (mainShare.volumeId == volumeId) {
-                        signOutUser(userId)
-                    } else {
-                        CoreLogger.d(
-                            tag = LogTag.EVENTS,
-                            message = "onResetAll: do nothing as volume (${volumeId.id.logId()}) is not main share volume (${mainShare.volumeId.id.logId()})",
-                        )
-                    }
+    suspend operator fun invoke(userId: UserId, volumeId: VolumeId) {
+        CoreLogger.d(LogTag.EVENTS, "onResetAll: volumeId ${volumeId.id.logId()}")
+        getMainShare(userId).toResult()
+            .getOrNull(LogTag.EVENTS, "Cannot get main share")?.let { mainShare ->
+                if (mainShare.volumeId == volumeId) {
+                    signOutUser(userId)
+                } else {
+                    CoreLogger.d(
+                        tag = LogTag.EVENTS,
+                        message = "onResetAll: do nothing as volume (${volumeId.id.logId()}) is not main share volume (${mainShare.volumeId.id.logId()})",
+                    )
                 }
-        }
+            }
     }
 
-    private suspend fun signOutUser(userId: UserId) {
+    // Signing out cancels the scope this runs on, the announcement must survive it.
+    private suspend fun signOutUser(userId: UserId) = withContext(NonCancellable) {
         CoreLogger.e(
             tag = LogTag.EVENTS,
             e = RuntimeException("Sign out due to reset all event"),

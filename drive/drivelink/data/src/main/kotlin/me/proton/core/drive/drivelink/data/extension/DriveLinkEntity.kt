@@ -28,12 +28,15 @@ import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.share.user.data.extension.toShareUserMember
 import me.proton.core.drive.share.user.domain.entity.ShareUser
+import me.proton.core.drive.volume.data.extension.toVolumeType
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
 fun List<DriveLinkEntity>.toDriveLinks(): List<DriveLink> = map { entity ->
     val link = entity.linkWithPropertiesEntity.toLinkWithProperties().toLink()
     link.toEncryptedDriveLink(
         volumeId = VolumeId(entity.volumeId),
+        volumeType = entity.volumeType.toVolumeType(),
         isMarkedAsOffline = entity.linkOfflineEntity != null,
         downloadState = entity.downloadStateEntity?.toDownloadState(),
         trashState = entity.trashState,
@@ -45,6 +48,7 @@ fun List<DriveLinkEntity>.toDriveLinks(): List<DriveLink> = map { entity ->
 
 fun Link.toEncryptedDriveLink(
     volumeId: VolumeId,
+    volumeType: Volume.Type,
     isMarkedAsOffline: Boolean,
     downloadState: DownloadState?,
     trashState: TrashState?,
@@ -55,6 +59,7 @@ fun Link.toEncryptedDriveLink(
     is Link.File -> DriveLink.File(
         link = this,
         volumeId = volumeId,
+        volumeType = volumeType,
         isMarkedAsOffline = isMarkedAsOffline,
         isAnyAncestorMarkedAsOffline = false,
         downloadState = downloadState,
@@ -66,6 +71,7 @@ fun Link.toEncryptedDriveLink(
     is Link.Folder -> DriveLink.Folder(
         link = this,
         volumeId = volumeId,
+        volumeType = volumeType,
         isMarkedAsOffline = isMarkedAsOffline,
         isAnyAncestorMarkedAsOffline = false,
         downloadState = downloadState,
@@ -77,6 +83,7 @@ fun Link.toEncryptedDriveLink(
     is Link.Album -> DriveLink.Album(
         link = this,
         volumeId = volumeId,
+        volumeType = volumeType,
         isMarkedAsOffline = isMarkedAsOffline,
         isAnyAncestorMarkedAsOffline = false,
         downloadState = downloadState,

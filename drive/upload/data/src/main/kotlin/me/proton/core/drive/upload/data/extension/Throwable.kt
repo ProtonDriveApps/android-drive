@@ -18,13 +18,12 @@
 package me.proton.core.drive.upload.data.extension
 
 import android.content.Context
-import android.system.OsConstants
 import me.proton.android.drive.verifier.data.extension.log
 import me.proton.android.drive.verifier.domain.exception.VerifierException
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.data.entity.LoggerLevel
-import me.proton.core.drive.base.data.extension.isErrno
 import me.proton.core.drive.base.data.extension.isHttpError
+import me.proton.core.drive.base.data.extension.isNoSpaceLeftOnDevice
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.extension.firstErrorDomainOrNull
@@ -42,6 +41,9 @@ import me.proton.drive.sdk.ProtonDriveSdkException
 import me.proton.drive.sdk.ProtonSdkError
 import me.proton.core.drive.base.data.extension.getDefaultMessage as baseGetDefaultMessage
 import me.proton.core.drive.base.data.extension.log as baseLog
+
+private val Throwable.isMissingMediaLocationPermission: Boolean
+    get() = message?.contains(ACCESS_MEDIA_LOCATION) == true
 
 internal val Throwable.isRetryable: Boolean
     get() = when (this) {
@@ -66,14 +68,19 @@ internal fun Throwable.log(
 
 internal fun Throwable.toEventUploadReason(): Event.Upload.Reason = when (this) {
     is SecurityException -> Event.Upload.Reason.ERROR_PERMISSIONS
+    is UnsupportedOperationException -> if (isMissingMediaLocationPermission) {
+        Event.Upload.Reason.ERROR_PERMISSIONS
+    } else {
+        Event.Upload.Reason.ERROR_OTHER
+    }
     is ApiException -> toEventUploadReason()
     is VerifierException, is VerificationException -> Event.Upload.Reason.ERROR_INTEGRITY
     is OperationAbortedException -> {
         val errorCause = cause
-        if (errorCause is ProtonDriveSdkException) {
-            errorCause.toEventUploadReason()
-        } else {
-            Event.Upload.Reason.ERROR_OTHER
+        when {
+            errorCause is ProtonDriveSdkException -> errorCause.toEventUploadReason()
+            isNoSpaceLeftOnDevice -> Event.Upload.Reason.ERROR_LOCAL_STORAGE
+            else -> Event.Upload.Reason.ERROR_OTHER
         }
     }
     is ProtonDriveSdkException -> {
@@ -82,10 +89,11 @@ internal fun Throwable.toEventUploadReason(): Event.Upload.Reason = when (this) 
         when {
             apiException != null -> apiException.toEventUploadReason()
             integrityError != null -> Event.Upload.Reason.ERROR_INTEGRITY
+            isNoSpaceLeftOnDevice -> Event.Upload.Reason.ERROR_LOCAL_STORAGE
             else -> Event.Upload.Reason.ERROR_OTHER
         }
     }
-    else -> if (isErrno(OsConstants.ENOSPC)) {
+    else -> if (isNoSpaceLeftOnDevice) {
         Event.Upload.Reason.ERROR_LOCAL_STORAGE
     } else {
         Event.Upload.Reason.ERROR_OTHER
@@ -115,3 +123,5 @@ fun Throwable.getDefaultMessage(
     is NotEnoughSpaceException -> this.getDefaultMessage(context, useExceptionMessage)
     else -> baseGetDefaultMessage(context, useExceptionMessage)
 }
+
+private const val ACCESS_MEDIA_LOCATION = "ACCESS_MEDIA_LOCATION"

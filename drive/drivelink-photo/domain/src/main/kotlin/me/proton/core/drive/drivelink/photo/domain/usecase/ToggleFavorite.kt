@@ -19,21 +19,31 @@ package me.proton.core.drive.drivelink.photo.domain.usecase
 
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
-import me.proton.core.drive.link.domain.entity.PhotoTag
-import me.proton.core.drive.photo.domain.usecase.RemovePhotoTag
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidSDKUpdatePhotos
+import me.proton.core.drive.feature.flag.domain.extension.on
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
+import me.proton.core.drive.link.domain.extension.nodeUid
+import me.proton.core.drive.link.domain.extension.userId
+import me.proton.drive.sdk.entity.NodeResultPair
 import javax.inject.Inject
 
 class ToggleFavorite @Inject constructor(
-    private val addPhotoFavorite: AddPhotoFavorite,
-    private val removePhotoTag: RemovePhotoTag,
+    private val toggleFavoriteLegacy: ToggleFavoriteLegacy,
+    private val toggleFavoriteSdk: ToggleFavoriteSdk,
+    private val getFeatureFlag: GetFeatureFlag,
 ) {
     suspend operator fun invoke(
         driveLink: DriveLink.File,
     ) = coRunCatching {
-        if (driveLink.isFavorite) {
-            removePhotoTag(driveLink.id, setOf(PhotoTag.Favorites)).getOrThrow()
+        if (getFeatureFlag(driveAndroidSDKUpdatePhotos(driveLink.userId)).on) {
+            val nodeUid = driveLink.id.nodeUid(driveLink.volumeId)
+            val resultPair = toggleFavoriteSdk(driveLink)
+                .getOrThrow().first { pair -> pair.nodeUid == nodeUid }
+            if (resultPair is NodeResultPair.Failure) {
+                throw resultPair.error
+            }
         } else {
-            addPhotoFavorite(driveLink).getOrThrow()
+            toggleFavoriteLegacy(driveLink).getOrThrow()
         }
     }
 }

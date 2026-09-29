@@ -23,7 +23,7 @@ import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
-import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class RemoveAllUploadFileLinks @Inject constructor(
@@ -35,10 +35,10 @@ class RemoveAllUploadFileLinks @Inject constructor(
 
     suspend operator fun invoke(
         userId: UserId,
-        shareId: ShareId,
+        volumeId: VolumeId,
         uploadState: UploadState,
     ) = coRunCatching {
-        linkUploadRepository.removeAllUploadFileLinks(userId, shareId, uploadState)
+        linkUploadRepository.removeAllUploadFileLinks(userId, volumeId, uploadState)
     }
 
     suspend operator fun invoke(

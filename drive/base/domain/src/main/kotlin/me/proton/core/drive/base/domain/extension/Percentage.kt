@@ -18,12 +18,8 @@
 package me.proton.core.drive.base.domain.extension
 
 import me.proton.core.drive.base.domain.entity.Percentage
-import java.math.RoundingMode
 import java.text.NumberFormat
 import java.util.Locale
 
 fun Percentage.toPercentString(locale: Locale): String =
     NumberFormat.getPercentInstance(locale).format(value)
-
-fun Percentage.rounded(): Percentage =
-    Percentage(value.toBigDecimal().setScale(2, RoundingMode.UP).toFloat())

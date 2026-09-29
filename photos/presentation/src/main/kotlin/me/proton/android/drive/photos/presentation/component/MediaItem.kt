@@ -74,7 +74,6 @@ import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.presentation.component.CircleSelection
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
-import me.proton.core.drive.drivelink.domain.extension.getThumbnailId
 import me.proton.core.drive.drivelink.domain.extension.isSharedByLinkOrWithUsers
 import me.proton.core.drive.file.base.domain.entity.ThumbnailType
 import me.proton.core.drive.file.base.domain.extension.mediaDuration
@@ -94,7 +93,8 @@ import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
 import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
 import me.proton.core.drive.thumbnail.presentation.extension.painter
 import me.proton.core.drive.thumbnail.presentation.extension.preCache
-import me.proton.core.drive.thumbnail.presentation.extension.thumbnailVO
+import me.proton.core.drive.thumbnail.presentation.extension.thumbnailVOOrNull
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import java.util.concurrent.TimeUnit.MINUTES
 import me.proton.core.drive.base.presentation.R as BasePresentation
@@ -105,6 +105,7 @@ import me.proton.core.presentation.R as CorePresentation
 fun MediaItem(
     link: DriveLink?,
     index: Int,
+    fileId: FileId,
     modifier: Modifier = Modifier,
     thumbnailVO: ThumbnailVO? = null,
     isSelected: Boolean = false,
@@ -121,16 +122,12 @@ fun MediaItem(
                 .aspectRatio(0.75F)
                 .background(ProtonTheme.colors.backgroundSecondary),
         ) {
-            val linkId = thumbnailVO?.fileId ?: link?.id
-            val rendered = remember(linkId) { booleanArrayOf(false) }
+            val rendered = remember(fileId) { booleanArrayOf(false) }
             Image(
                 modifier = Modifier
                     .fillMaxSize()
                     .combinedClickable(
-                        enabled = linkId != null,
-                        onClick = {
-                            (linkId as? FileId)?.let { onPhotoListingItem(linkId) }
-                        },
+                        onClick = { onPhotoListingItem(fileId) },
                         onLongClick = {},
                     )
                     .placeholder(
@@ -140,9 +137,9 @@ fun MediaItem(
                     )
                     .drawWithContent {
                         drawContent()
-                        if (linkId != null && !rendered[0]) {
+                        if (!rendered[0]) {
                             rendered[0] = true
-                            onRenderThumbnail(linkId)
+                            onRenderThumbnail(fileId)
                         }
                     },
                 painter = painterWrapper.painter,
@@ -389,9 +386,7 @@ private fun DriveLink.preCacheThumbnail(context: Context, imageLoader: ImageLoad
     (this as? DriveLink.File)
         ?.takeIf { it.mimeType.toFileTypeCategory() == FileTypeCategory.Image }
         ?.let { photoDriveLink ->
-            photoDriveLink.getThumbnailId(thumbnailType)?.let {
-                photoDriveLink.thumbnailVO(thumbnailType)
-            }
+            photoDriveLink.thumbnailVOOrNull(thumbnailType)
         }?.preCache(context, imageLoader)
 
 fun DriveLink.preCachePhotoThumbnail(context: Context, imageLoader: ImageLoader): Disposable? =
@@ -451,7 +446,7 @@ fun MediaItemPreview() {
         volumeId = VolumeId("VOLUME_ID"),
         isMarkedAsOffline = true,
         isAnyAncestorMarkedAsOffline = false,
-        downloadState = DownloadState.Downloaded(),
+        downloadState = DownloadState.Downloaded,
         trashState = null,
         cryptoName = CryptoProperty.Decrypted("Link name", VerificationStatus.Success),
         cryptoXAttr = CryptoProperty.Decrypted(
@@ -461,6 +456,7 @@ fun MediaItemPreview() {
         shareInvitationCount = null,
         shareMemberCount = null,
         shareUser = null,
+        volumeType = Volume.Type.PHOTO,
     )
 
     ProtonTheme {

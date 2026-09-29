@@ -25,11 +25,9 @@ import androidx.room.PrimaryKey
 import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column
-import me.proton.core.drive.base.data.db.Column.CACHE_OPTION
 import me.proton.core.drive.base.data.db.Column.NETWORK_TYPE_PROVIDER_TYPE
 import me.proton.core.drive.base.data.db.Column.PRIORITY
 import me.proton.core.drive.base.data.db.Column.SHOULD_ANNOUNCE_EVENT
-import me.proton.core.drive.linkupload.domain.entity.CacheOption
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 
 @Entity(
@@ -56,6 +54,8 @@ data class UploadBulkEntity(
     val userId: UserId,
     @ColumnInfo(name = Column.VOLUME_ID)
     val volumeId: String,
+    @ColumnInfo(name = Column.VOLUME_TYPE)
+    val volumeType: Long,
     @ColumnInfo(name = Column.SHARE_ID)
     val shareId: String,
     @ColumnInfo(name = Column.PARENT_ID)
@@ -66,8 +66,6 @@ data class UploadBulkEntity(
     val networkTypeProviderType: NetworkTypeProviderType = NetworkTypeProviderType.DEFAULT,
     @ColumnInfo(name = SHOULD_ANNOUNCE_EVENT, defaultValue = "true")
     val shouldAnnounceEvent: Boolean = true,
-    @ColumnInfo(name = CACHE_OPTION, defaultValue = "ALL")
-    val cacheOption: CacheOption = CacheOption.ALL,
     @ColumnInfo(name = PRIORITY, defaultValue = "${Long.MAX_VALUE}")
     val priority: Long,
     @ColumnInfo(name = Column.SHOULD_BROADCAST_ERROR_MESSAGE, defaultValue = "true")

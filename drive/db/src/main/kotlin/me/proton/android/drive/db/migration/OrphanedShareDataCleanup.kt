@@ -94,7 +94,7 @@ object OrphanedShareDataCleanup : DatabaseMigration {
     )
 
     override fun migrate(database: SupportSQLiteDatabase) {
-        tables.forEach { table ->
+        tables.filter { table -> database.hasTable(table.name) }.forEach { table ->
             database.execSQL(
                 """
                 DELETE FROM `${table.name}` WHERE NOT EXISTS (
@@ -106,4 +106,8 @@ object OrphanedShareDataCleanup : DatabaseMigration {
             )
         }
     }
+
+    private fun SupportSQLiteDatabase.hasTable(name: String): Boolean =
+        query("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?", arrayOf(name))
+            .use { cursor -> cursor.moveToFirst() }
 }

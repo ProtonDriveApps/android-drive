@@ -19,7 +19,7 @@ package me.proton.core.drive.files.domain.usecase
 
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidSDKMoveOnly
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidSDKMove
 import me.proton.core.drive.feature.flag.domain.extension.on
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -42,7 +42,7 @@ class ChangeParent @Inject constructor(
         linkId: LinkId,
         folderId: ParentId,
     ): Result<Unit> = coRunCatching {
-        if (getFeatureFlag(driveAndroidSDKMoveOnly(linkId.userId)).on) {
+        if (getFeatureFlag(driveAndroidSDKMove(linkId.userId)).on) {
             val volumeId = getShare(linkId.shareId).toResult().getOrThrow().volumeId
             val nodeUid = linkId.nodeUid(volumeId)
             val resultPair = changeParentSdk(
@@ -62,7 +62,7 @@ class ChangeParent @Inject constructor(
         parentId: ParentId,
         linkIds: Set<LinkId>,
     ): Result<LinksResult> = coRunCatching {
-        if (getFeatureFlag(driveAndroidSDKMoveOnly(parentId.userId)).on) {
+        if (getFeatureFlag(driveAndroidSDKMove(parentId.userId)).on) {
             val volumeId = getShare(parentId.shareId).toResult().getOrThrow().volumeId
             val nodeUids = linkIds.associate { linkId -> linkId.nodeUid(volumeId) to linkId }
             changeParentSdk(

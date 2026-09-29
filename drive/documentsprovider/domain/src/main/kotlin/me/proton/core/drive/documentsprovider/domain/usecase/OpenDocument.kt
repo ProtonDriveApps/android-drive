@@ -35,6 +35,9 @@ import me.proton.core.drive.drivelink.download.domain.extension.throwable
 import me.proton.core.drive.drivelink.download.domain.usecase.GetFile
 import me.proton.core.drive.drivelink.upload.domain.usecase.UploadAlreadyCreatedFiles
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.linkupload.domain.extension.parentLinkId
+import me.proton.core.drive.linkupload.domain.extension.userId
+import me.proton.core.drive.linkupload.domain.extension.volumeId
 import me.proton.core.drive.upload.domain.usecase.CancelUploadFile
 import me.proton.core.util.kotlin.CoreLogger
 import java.io.File
@@ -97,17 +100,14 @@ class OpenDocument @Inject constructor(
                 }
             }
         }
-    private suspend fun UploadFileLink.cacheFolder() = draftRevisionId.ifEmpty {
-        "upload_$id"
-    }.let { name ->
-        File(getCacheFolder(userId, volumeId.id, name), "tmp")
+
+    private suspend fun UploadFileLink.cacheFolder() =
+        File(getCacheFolder(userId, volumeId.id, "upload_$id"), "tmp")
             .apply {
                 if (!exists()) {
                     createNewFile()
                 }
             }
-    }
-
 
     private suspend fun openDriveLinkFile(
         documentId: DocumentId,

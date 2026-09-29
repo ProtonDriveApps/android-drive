@@ -22,10 +22,32 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
-inline fun <R, reified T : Throwable> Result<R>.except(): Result<R> =
-    onFailure { if (it is T) throw it }
+/** Catches [Exception], not [Throwable], and rethrows [CancellationException]. */
+inline fun <T> coRunCatchingException(block: () -> T): Result<T> =
+    try {
+        Result.success(block())
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
 
-inline fun <T> coRunCatching(block: () -> T) = runCatching(block).except<T, CancellationException>()
+suspend inline fun <T> coRunCatchingException(
+    coroutineContext: CoroutineContext,
+    crossinline block: suspend () -> T,
+) = withContext(coroutineContext) { coRunCatchingException { block() } }
 
-suspend inline fun <T> coRunCatching(coroutineContext: CoroutineContext, crossinline block: suspend () -> T) =
-    withContext(coroutineContext) { coRunCatching { block() } }
+@Deprecated(
+    "Catches Exception, not Throwable, so it no longer behaves like runCatching",
+    ReplaceWith("coRunCatchingException(block)"),
+)
+inline fun <T> coRunCatching(block: () -> T): Result<T> = coRunCatchingException(block)
+
+@Deprecated(
+    "Catches Exception, not Throwable, so it no longer behaves like runCatching",
+    ReplaceWith("coRunCatchingException(coroutineContext, block)"),
+)
+suspend inline fun <T> coRunCatching(
+    coroutineContext: CoroutineContext,
+    crossinline block: suspend () -> T,
+) = coRunCatchingException(coroutineContext, block)

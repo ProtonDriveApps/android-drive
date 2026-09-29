@@ -20,9 +20,6 @@ package me.proton.core.drive.linkdownload.domain.entity
 sealed class DownloadState(val isFinished: Boolean) {
     data object Downloading : DownloadState(false)
     data object Error : DownloadState(true)
-    data class Downloaded(
-        val manifestSignature: String? = null,
-        val signatureAddress: String? = null,
-    ) : DownloadState(false)
+    data object Downloaded : DownloadState(false)
     data object Ready : DownloadState(true)
 }

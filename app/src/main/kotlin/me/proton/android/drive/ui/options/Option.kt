@@ -25,9 +25,7 @@ import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.isViewerOrEditorOnly
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.hasShareLink
-import me.proton.core.drive.drivelink.domain.extension.isPhoto
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
-import me.proton.core.drive.feature.flag.domain.extension.off
 import me.proton.core.drive.files.presentation.entry.AddToAlbumsEntry
 import me.proton.core.drive.files.presentation.entry.AddToAlbumsFileEntry
 import me.proton.core.drive.files.presentation.entry.DeleteAlbumEntry
@@ -62,6 +60,7 @@ import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.isProtonCloudFile
 import me.proton.core.drive.link.domain.extension.isSharedUrlExpired
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.presentation.R as CorePresentation
@@ -581,7 +580,7 @@ fun DriveLink.toOptionState(): Set<State> = setOf(
 
 fun DriveLink.isApplicableTo(applicableTo: Set<ApplicableTo>): Boolean = when (this) {
     is DriveLink.File -> when {
-        isPhoto -> applicableTo.contains(ApplicableTo.FILE_PHOTO)
+        volumeType == Volume.Type.PHOTO -> applicableTo.contains(ApplicableTo.FILE_PHOTO)
         isProtonCloudFile -> applicableTo.contains(ApplicableTo.FILE_PROTON_CLOUD)
         else -> applicableTo.any { it in setOf(ApplicableTo.FILE_MAIN, ApplicableTo.FILE_DEVICE) }
     }

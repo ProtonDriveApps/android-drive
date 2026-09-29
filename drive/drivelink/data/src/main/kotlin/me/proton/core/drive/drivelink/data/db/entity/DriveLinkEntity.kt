@@ -37,6 +37,8 @@ data class DriveLinkEntity(
     val userId: UserId,
     @ColumnInfo(name = "${BASE_PREFIX}_${Column.VOLUME_ID}")
     val volumeId: String,
+    @ColumnInfo(name = "${BASE_PREFIX}_${Column.VOLUME_TYPE}")
+    val volumeType: Long,
     @Embedded
     val linkWithPropertiesEntity: LinkWithPropertiesEntity,
     @Embedded(prefix = "${OFFLINE_PREFIX}_")

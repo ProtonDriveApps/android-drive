@@ -30,7 +30,6 @@ import me.proton.core.drive.base.domain.extension.transformSuccess
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.isActive
-import me.proton.core.drive.volume.domain.repository.VolumeRepository
 import me.proton.core.drive.volume.domain.usecase.GetOldestActiveVolume
 import me.proton.core.drive.volume.domain.usecase.GetVolumes
 import me.proton.core.network.domain.hasProtonErrorCode
@@ -43,15 +42,12 @@ class GetOrCreateVolume @Inject constructor(
     private val getVolumes: GetVolumes,
     private val getOldestActiveVolume: GetOldestActiveVolume,
     private val createVolume: CreateVolume,
-    private val volumeRepository: VolumeRepository,
 ) {
     @ExperimentalCoroutinesApi
     operator fun invoke(userId: UserId, type: Volume.Type): Flow<DataResult<Volume>> =
         getVolumes(userId).transformSuccess { (_, volumes) ->
             val activeVolumes = volumes.filter { volume ->
-                volume.type == type && volume.isActive.also { isActive ->
-                    if (!isActive) volumeRepository.removeVolume(userId, volume.id)
-                }
+                volume.type == type && volume.isActive
             }
             if (activeVolumes.isEmpty()) {
                 emitAll(

@@ -21,7 +21,7 @@ package me.proton.android.drive.verifier.domain.exception
 sealed class ContentDigestVerifierException(
     message: String? = null,
     cause: Throwable? = null,
-) : Throwable(message, cause) {
+) : RuntimeException(message, cause) {
 
     class InvalidClaimed(
         message: String? = null,

@@ -42,9 +42,9 @@ class PhotoSyncLinkFolder @Inject constructor(
             val pageSize = configurationProvider.apiListingPageSize
             val minimumCaptureTime = getUploadStats(share.rootFolderId)
                 .getOrNull()
-                ?.minimumFileCreationDateTime ?: TimestampS(0)
+                ?.minimumFileCreationDateTime
             var lastLinkId: String? = null
-            var pageMinimumCaptureTime: TimestampS
+            var hasMorePagesToSync: Boolean
             do {
                 val fetched = photoRepository.fetchAndStorePhotoListings(
                     userId = userId,
@@ -52,12 +52,15 @@ class PhotoSyncLinkFolder @Inject constructor(
                     shareId = share.id,
                     pageSize = pageSize,
                     previousPageLastLinkId = lastLinkId,
-                    minimumCaptureTime = minimumCaptureTime
+                    minimumCaptureTime = minimumCaptureTime ?: TimestampS(0),
                 )
-                pageMinimumCaptureTime =
-                    fetched.minOf { photoListing -> photoListing.captureTime }
                 lastLinkId = fetched.lastOrNull()?.linkId?.id
-            } while (fetched.size == pageSize && pageMinimumCaptureTime > minimumCaptureTime)
+                hasMorePagesToSync = minimumCaptureTime != null &&
+                        fetched.size == pageSize &&
+                        fetched.all { photoListing ->
+                            photoListing.captureTime > minimumCaptureTime
+                        }
+            } while (hasMorePagesToSync)
         }
     }
 }

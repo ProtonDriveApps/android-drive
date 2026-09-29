@@ -18,7 +18,6 @@
   -->
 <resources>
   <string name="files_upload_stage_waiting">Väntar på att ladda upp</string>
-  <string name="files_upload_stage_encrypting">Kryptering</string>
   <string name="files_upload_stage_uploading">Laddar upp</string>
   <!--
         Variable %1$s is a string representation of a percentage

@@ -37,6 +37,7 @@ class BackupStoppedEventMapper @Inject constructor(
         BackupState.FAILED_LOCAL_STORAGE -> Reason.FAILED_LOCAL_STORAGE
         BackupState.FAILED_DRIVE_STORAGE -> Reason.FAILED_DRIVE_STORAGE
         BackupState.FAILED_PHOTOS_UPLOAD_NOT_ALLOWED -> Reason.FAILED_NOT_ALLOWED
+        BackupState.FAILED_FOLDER_NOT_FOUND -> Reason.FAILED_FOLDER_NOT_FOUND
         BackupState.PAUSED_DISABLED -> Reason.PAUSED_DISABLED
         BackupState.PAUSE_BACKGROUND_RESTRICTIONS -> Reason.PAUSED_BACKGROUND_RESTRICTIONS
         else -> null

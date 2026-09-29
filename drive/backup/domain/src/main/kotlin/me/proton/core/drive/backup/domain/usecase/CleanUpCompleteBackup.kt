@@ -35,9 +35,13 @@ class CleanUpCompleteBackup @Inject constructor(
 ) {
     suspend operator fun invoke(backupFolder: BackupFolder) = coRunCatching {
         if (repository.isBackupCompleteForFolder(backupFolder)) {
-            CoreLogger.d(BACKUP, "Cleanup completed files for: $backupFolder")
-            announceEvent(backupFolder.folderId.userId, Event.BackupCompleted(backupFolder.folderId))
-            repository.deleteCompletedFromFolder(backupFolder)
+            if (repository.hasFiles(backupFolder)) {
+                CoreLogger.d(BACKUP, "Cleanup completed files for: $backupFolder")
+                announceEvent(backupFolder.folderId.userId, Event.BackupCompleted(backupFolder.folderId))
+                repository.deleteCompletedFromFolder(backupFolder)
+            } else {
+                CoreLogger.d(BACKUP, "Nothing to cleanup for: $backupFolder")
+            }
         } else {
             CoreLogger.d(BACKUP, "Ignoring cleanup for: $backupFolder")
             logBackupStats(backupFolder)

@@ -20,8 +20,9 @@ package me.proton.core.drive.linkupload.domain.usecase.sdk
 
 import me.proton.core.drive.base.domain.provider.ProtonDriveClientProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.link.domain.extension.nodeUid
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.linkupload.domain.extension.parentFolderUid
+import me.proton.core.drive.linkupload.domain.extension.userId
 import me.proton.core.drive.linkupload.domain.usecase.UpdateName
 import me.proton.drive.sdk.ProtonSdkError
 import javax.inject.Inject
@@ -36,7 +37,7 @@ class ResolveNameConflict @Inject constructor(
     ) = coRunCatching {
         with(uploadFileLink) {
             val client = protonSdkClientProvider.getOrCreate(userId).getOrThrow()
-            val availableName = client.getAvailableName(parentLinkId.nodeUid(volumeId), name)
+            val availableName = client.getAvailableName(parentFolderUid, name)
             updateName(id, availableName).getOrThrow()
         }
     }

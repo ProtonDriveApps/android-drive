@@ -85,14 +85,17 @@ import me.proton.core.compose.component.ProtonSolidButton
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.compose.theme.overline
+import me.proton.core.compose.theme.captionNorm
+import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.FileTypeCategory
 import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.base.domain.extension.MiB
 import me.proton.core.drive.base.domain.extension.requireIsInstance
 import me.proton.core.drive.base.presentation.component.ActionButton
 import me.proton.core.drive.base.presentation.component.Deferred
 import me.proton.core.drive.base.presentation.component.LinearProgressIndicator
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.base.presentation.component.list.ListEmpty
 import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.base.presentation.extension.debugOnly
 import me.proton.core.drive.base.presentation.extension.iconResId
@@ -159,6 +162,7 @@ fun Preview(
                     isFullScreen,
                     viewState.host,
                     viewState.appVersionHeader,
+                    viewState.maxTextPreviewSize,
                     viewEvent,
                     with(LocalDensity.current) { topBarHeightAnimated.toDp() },
                     isFocused = pagerState.currentPage == page,
@@ -232,6 +236,7 @@ fun PreviewContent(
     isFullScreen: Boolean,
     host: String,
     appVersionHeader: String,
+    maxTextPreviewSize: Bytes,
     viewEvent: PreviewViewEvent,
     topBarHeight: Dp,
     isFocused: Boolean,
@@ -255,6 +260,7 @@ fun PreviewContent(
                     item.title,
                     host,
                     appVersionHeader,
+                    maxTextPreviewSize,
                     item.category.toComposable(),
                     isFullScreen,
                     viewEvent,
@@ -270,6 +276,7 @@ fun PreviewContent(
                         title = item.title,
                         host = host,
                         appVersionHeader = appVersionHeader,
+                        maxTextPreviewSize = maxTextPreviewSize,
                         previewComposable = item.category.toComposable(),
                         isFullScreen = isFullScreen,
                         viewEvent = viewEvent,
@@ -289,6 +296,11 @@ fun PreviewContent(
             }
         }
         ContentState.NotFound -> PreviewNotFound()
+        ContentState.TooLargeToPreview -> TooLargeToPreview(
+            fileTypeCategory = item.category,
+            onDownload = viewEvent.onDownload,
+            modifier = Modifier.padding(top = topBarHeight),
+        )
         is ContentState.Error -> {
             when (contentStateLocal) {
                 is ContentState.Error.Retryable -> PreviewErrorWithAction(
@@ -344,6 +356,7 @@ fun PreviewContent(
     title: String,
     host: String,
     appVersionHeader: String,
+    maxTextPreviewSize: Bytes,
     previewComposable: PreviewComposable,
     isFullScreen: Boolean,
     viewEvent: PreviewViewEvent,
@@ -415,9 +428,11 @@ fun PreviewContent(
         )
         PreviewComposable.Text -> TextPreview(
             uri = requireIsInstance(source),
+            maxSize = maxTextPreviewSize,
             modifier = pointerInputModifier.padding(top = topBarHeight),
             onRenderSucceeded = viewEvent.onRenderSucceeded,
             onRenderFailed = viewEvent.onRenderFailed,
+            onDownload = viewEvent.onDownload,
         )
         PreviewComposable.ProtonDoc -> when (source) {
             is String -> {
@@ -479,7 +494,7 @@ private fun isWebViewAvailable(context: Context): Boolean =
     try {
         WebView(context).destroy()
         true
-    } catch (e: Throwable) {
+    } catch (_: Throwable) {
         false
     }
 
@@ -540,6 +555,22 @@ internal fun PreviewError(
 }
 
 @Composable
+fun TooLargeToPreview(
+    fileTypeCategory: FileTypeCategory,
+    onDownload: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    ListEmpty(
+        imageResId = fileTypeCategory.iconResId,
+        titleResId = I18N.string.preview_text_too_large,
+        descriptionResId = null,
+        actionResId = I18N.string.common_download,
+        onAction = onDownload,
+        modifier = modifier,
+    )
+}
+
+@Composable
 fun PreviewPlaceholder(
     fileTypeCategory: FileTypeCategory,
     modifier: Modifier = Modifier,
@@ -571,7 +602,7 @@ fun PreviewPlaceholder(
                 if (onMessage == null) {
                     Text(
                         text = message,
-                        style = ProtonTheme.typography.overline(),
+                        style = ProtonTheme.typography.captionNorm,
                     )
                 } else {
                     ProtonSolidButton(
@@ -634,6 +665,7 @@ fun PreviewPreviewLoadingState() {
                     ),
                     host = "proton.me",
                     appVersionHeader = "android-drive@1.0.0",
+                    maxTextPreviewSize = 2.MiB,
                 ),
                 viewEvent = object : PreviewViewEvent {
                     override val onTopAppBarNavigation: () -> Unit = {}
@@ -643,6 +675,7 @@ fun PreviewPreviewLoadingState() {
                     override val onRenderFailed: (Throwable, Any) -> Unit = { _, _ -> }
                     override val mediaControllerVisibility: (Boolean) -> Unit = {}
                     override val onOpenInBrowser: () -> Unit = {}
+                    override val onDownload: () -> Unit = {}
                     override val onProtonDocsDownloadResult: (Result<String>) -> Unit = {}
                     override val onProtonDocsShowFileChooser: (ValueCallback<Array<Uri>>?, WebChromeClient.FileChooserParams?) -> Boolean = { _, _ -> false }
                     override val onWebViewRelease: (String) -> Unit = {}

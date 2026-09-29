@@ -28,7 +28,6 @@ class RemoveUploadFileImpl(
 ) : RemoveUploadFile {
 
     override suspend operator fun invoke(uploadFileLink: UploadFileLink) = coRunCatching {
-        linkUploadRepository.removeUploadBlocks(uploadFileLink)
         linkUploadRepository.removeUploadFileLink(uploadFileLink.id)
     }
 }

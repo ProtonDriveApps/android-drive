@@ -28,7 +28,7 @@ class UploadWorkerException(
     cause: Throwable? = null,
     @RequiresApi(VERSION_CODES.S)
     val stopReason: WorkInfoStopReason? = null,
-) : Throwable(message, cause) {
+) : RuntimeException(message, cause) {
     @RequiresApi(VERSION_CODES.S)
     fun hasNoConnectivity() = stopReason == WorkInfoStopReason.CONSTRAINT_CONNECTIVITY
 }

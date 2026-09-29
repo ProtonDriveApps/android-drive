@@ -61,7 +61,6 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
 import me.proton.core.drive.drivelink.rename.domain.usecase.RenameLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
-import me.proton.core.drive.linkupload.domain.extension.fileId
 import me.proton.core.drive.trash.domain.usecase.SendToTrash
 import me.proton.core.drive.upload.domain.usecase.CancelUploadFile
 import java.io.FileNotFoundException
@@ -132,7 +131,7 @@ class DriveDocumentsProvider : DocumentsProvider() {
         projection: Array<out String>?,
     ): Cursor = runBlocking {
         injections.withUploadFileLink(documentId.toDocumentId()) { userId, uploadFileLink ->
-            val fileId = uploadFileLink.fileId
+            val fileId = uploadFileLink.linkId
             if (fileId != null && uploadFileLink.state == UploadState.CLEANUP) {
                 injections.withDriveLink(DocumentId(userId, fileId)) { _, driveLink ->
                     MatrixCursor(projection ?: DEFAULT_DOCUMENT_PROJECTION).apply {

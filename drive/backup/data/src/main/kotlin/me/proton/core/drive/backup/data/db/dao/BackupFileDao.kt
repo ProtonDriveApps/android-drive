@@ -152,16 +152,13 @@ abstract class BackupFileDao : BaseDao<BackupFileEntity>() {
             BackupFileEntity.*
         FROM 
             BackupFileEntity
-        LEFT JOIN LinkUploadEntity ON
-            LinkUploadEntity.uri = BackupFileEntity.uri
         WHERE 
             BackupFileEntity.user_id = :userId AND  
             BackupFileEntity.share_id = :shareId AND
             BackupFileEntity.parent_id = :folderId AND
             BackupFileEntity.bucket_id = :bucketId AND
-            LinkUploadEntity.uri IS NULL AND
             BackupFileEntity.state == "READY" AND
-            BackupFileEntity.attempts < :maxAttempts
+            NOT $HAS_UPLOAD
         ORDER BY ${Column.CREATION_TIME} DESC
         LIMIT :limit
         OFFSET :offset"""
@@ -171,7 +168,6 @@ abstract class BackupFileDao : BaseDao<BackupFileEntity>() {
         shareId: String,
         folderId: String,
         bucketId: Int,
-        maxAttempts: Long,
         limit: Int,
         offset: Int,
     ): List<BackupFileEntity>
@@ -194,10 +190,12 @@ abstract class BackupFileDao : BaseDao<BackupFileEntity>() {
     )
 
 
+    @Transaction
     @Query(
         """
         SELECT 
             BackupFileEntity.state AS backupFileState, 
+            $IS_UPLOAD_QUEUED AS isUploadQueued,
             COUNT(*) AS count
         FROM 
             BackupFileEntity
@@ -205,8 +203,8 @@ abstract class BackupFileDao : BaseDao<BackupFileEntity>() {
             BackupFileEntity.user_id = :userId AND  
             BackupFileEntity.share_id = :shareId AND
             BackupFileEntity.parent_id = :folderId
-        GROUP BY backupFileState
-        ORDER BY backupFileState ASC
+        GROUP BY backupFileState, isUploadQueued
+        ORDER BY backupFileState, isUploadQueued ASC
         """
     )
     abstract fun getProgression(
@@ -215,10 +213,12 @@ abstract class BackupFileDao : BaseDao<BackupFileEntity>() {
         folderId: String,
     ): Flow<List<BackupStateCount>>
 
+    @Transaction
     @Query(
         """
         SELECT 
             BackupFileEntity.state AS backupFileState, 
+            $IS_UPLOAD_QUEUED AS isUploadQueued,
             COUNT(*) AS count
         FROM BackupFileEntity
         WHERE 
@@ -226,8 +226,8 @@ abstract class BackupFileDao : BaseDao<BackupFileEntity>() {
             BackupFileEntity.share_id = :shareId AND
             BackupFileEntity.parent_id = :folderId AND
             BackupFileEntity.bucket_id = :bucketId
-        GROUP BY backupFileState
-        ORDER BY backupFileState ASC
+        GROUP BY backupFileState, isUploadQueued
+        ORDER BY backupFileState, isUploadQueued ASC
         """
     )
     abstract fun getProgression(
@@ -313,7 +313,7 @@ abstract class BackupFileDao : BaseDao<BackupFileEntity>() {
 
     @Query(
         """
-        UPDATE BackupFileEntity SET state = :target
+        UPDATE BackupFileEntity SET state = :target, attempts = 0
         WHERE 
             user_id = :userId AND
             share_id = :shareId AND
@@ -440,17 +440,31 @@ abstract class BackupFileDao : BaseDao<BackupFileEntity>() {
         vararg state: BackupFileState,
     ): Boolean
 
+    @Query(
+        """
+        SELECT EXISTS (SELECT * FROM BackupFileEntity
+            WHERE user_id = :userId AND
+                share_id = :shareId AND
+                parent_id = :folderId AND
+                bucket_id = :bucketId)
+        """
+    )
+    abstract suspend fun hasFilesInFolder(
+        userId: UserId,
+        shareId: String,
+        folderId: String,
+        bucketId: Int,
+    ): Boolean
+
     @Transaction
     @Query(
         """
         SELECT 
             BackupFileEntity.state AS backupFileState, 
-            LinkUploadEntity.state AS uploadState, 
+            $UPLOAD_STATE AS uploadState, 
             COUNT(*) AS count
         FROM 
             BackupFileEntity
-        LEFT JOIN LinkUploadEntity ON
-            LinkUploadEntity.uri = BackupFileEntity.uri
         WHERE 
             BackupFileEntity.user_id = :userId AND  
             BackupFileEntity.share_id = :shareId AND
@@ -471,10 +485,38 @@ abstract class BackupFileDao : BaseDao<BackupFileEntity>() {
         """
         UPDATE BackupFileEntity SET state = "FAILED"
         WHERE user_id = :userId AND state = "ENQUEUED"
-        AND NOT EXISTS (
-            SELECT 1 FROM LinkUploadEntity WHERE LinkUploadEntity.uri = BackupFileEntity.uri
-        )
+        AND NOT $IS_UPLOAD_QUEUED
         """
     )
     abstract suspend fun markOrphanedEnqueuedFilesAsFailed(userId: UserId): Int
+
+    private companion object {
+        const val UPLOAD_MATCHES_FILE = """
+            LinkUploadEntity.uri = BackupFileEntity.uri AND
+            +LinkUploadEntity.user_id = BackupFileEntity.user_id AND
+            +LinkUploadEntity.share_id = BackupFileEntity.share_id AND
+            +LinkUploadEntity.parent_id = BackupFileEntity.parent_id
+        """
+
+        const val HAS_UPLOAD = """EXISTS (
+            SELECT 1 FROM LinkUploadEntity WHERE $UPLOAD_MATCHES_FILE
+        )"""
+
+        const val UPLOAD_STATE = """(
+            SELECT LinkUploadEntity.state FROM LinkUploadEntity
+            WHERE $UPLOAD_MATCHES_FILE
+            LIMIT 1
+        )"""
+
+        const val HAS_PENDING_BULK = """EXISTS (
+            SELECT 1 FROM UploadBulkUriStringEntity
+            JOIN UploadBulkEntity ON UploadBulkEntity.id = UploadBulkUriStringEntity.upload_bulk_id
+            WHERE UploadBulkUriStringEntity.uri = BackupFileEntity.uri AND
+                +UploadBulkEntity.user_id = BackupFileEntity.user_id AND
+                +UploadBulkEntity.share_id = BackupFileEntity.share_id AND
+                +UploadBulkEntity.parent_id = BackupFileEntity.parent_id
+        )"""
+
+        const val IS_UPLOAD_QUEUED = "($HAS_UPLOAD OR $HAS_PENDING_BULK)"
+    }
 }

@@ -47,7 +47,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -97,12 +96,14 @@ import me.proton.core.drive.base.presentation.component.list.ListError
 import me.proton.core.drive.base.presentation.component.rememberExpandableLazyVerticalGridState
 import me.proton.core.drive.base.presentation.effect.HandleListEffect
 import me.proton.core.drive.base.presentation.effect.ListEffect
+import me.proton.core.drive.base.presentation.extension.aroundVisibleItems
 import me.proton.core.drive.base.presentation.extension.isLandscape
 import me.proton.core.drive.base.presentation.extension.onContent
 import me.proton.core.drive.base.presentation.extension.onEmpty
 import me.proton.core.drive.base.presentation.extension.onError
 import me.proton.core.drive.base.presentation.extension.onLoading
 import me.proton.core.drive.base.presentation.extension.protonDriveCustomGreenButtonColors
+import me.proton.core.drive.base.presentation.extension.rememberVisibleItems
 import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserViewState
@@ -242,19 +243,13 @@ fun Album(
     modifier: Modifier = Modifier,
 ) {
     val gridState = items.rememberLazyGridState()
-    val firstVisibleItemIndex by remember(gridState) { derivedStateOf { gridState.firstVisibleItemIndex } }
-    LaunchedEffect(items.itemSnapshotList.items, firstVisibleItemIndex) {
+    val visibleItems = gridState.rememberVisibleItems()
+    LaunchedEffect(items.itemSnapshotList.items, visibleItems) {
         onScroll(
             items.itemSnapshotList.items
-                .takeIf { list -> list.isNotEmpty() && list.size > firstVisibleItemIndex }
-                ?.let { list ->
-                    val sizeRange = IntRange(0, list.size - 1)
-                    val fromIndex = (firstVisibleItemIndex - 10).coerceIn(sizeRange)
-                    val toIndex = (firstVisibleItemIndex + 20).coerceIn(sizeRange)
-                    list.subList(fromIndex, toIndex + 1)
-                        .map { photoListing -> photoListing.id }
-                        .toSet()
-                } ?: emptySet(),
+                .aroundVisibleItems(visibleItems, leadingItemCount = 1)
+                .map { photoListing -> photoListing.id }
+                .toSet(),
         )
     }
     Album(
@@ -474,6 +469,7 @@ fun Album(
                                 .clip(ProtonTheme.shapes.small),
                             link = driveLinksMap[item.id],
                             thumbnailVO = item.thumbnailVO,
+                            fileId = item.id,
                             index = index,
                             isSelected = selected,
                             inMultiselect = selected || selectedPhotos.isNotEmpty() || inMultiselect,

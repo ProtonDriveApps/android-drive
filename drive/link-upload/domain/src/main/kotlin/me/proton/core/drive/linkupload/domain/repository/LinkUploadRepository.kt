@@ -25,17 +25,16 @@ import me.proton.core.drive.base.domain.entity.Location
 import me.proton.core.drive.base.domain.entity.MediaResolution
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.entity.TimestampS
-import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.domain.entity.PhotoTag
-import me.proton.core.drive.linkupload.domain.entity.RawBlock
-import me.proton.core.drive.linkupload.domain.entity.UploadBlock
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
 import me.proton.core.drive.linkupload.domain.entity.UploadCount
-import me.proton.core.drive.linkupload.domain.entity.UploadDigests
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.linkupload.domain.entity.UploadState
-import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.drive.sdk.entity.NodeUid
 import kotlin.time.Duration
 
 interface LinkUploadRepository {
@@ -46,7 +45,10 @@ interface LinkUploadRepository {
 
     suspend fun getUploadFileLink(uploadFileLinkId: Long): UploadFileLink?
 
-    suspend fun getUploadFileLink(fileId: FileId): UploadFileLink?
+    suspend fun getUploadFileLink(userId: UserId, nodeUid: NodeUid): UploadFileLink?
+
+    suspend fun updateUploadFileLinkLinkId(uploadFileLinkId: Long, linkId: String)
+
 
     fun getUploadFileLinkFlow(uploadFileLinkId: Long): Flow<UploadFileLink?>
 
@@ -62,7 +64,7 @@ interface LinkUploadRepository {
 
     suspend fun getUploadFileLinks(
         userId: UserId,
-        shareId: ShareId,
+        volumeId: VolumeId,
         count: Int,
         fromIndex: Int,
     ): List<UploadFileLink>
@@ -89,14 +91,16 @@ interface LinkUploadRepository {
 
     suspend fun getUploadFileLinksWithUriByPriority(
         userId: UserId,
-        isPhotoShare: Boolean,
+        volumeType: Volume.Type,
         states: Set<UploadState>,
         count: Int,
     ): Flow<List<UploadFileLink>>
 
     fun getUploadFileLinksCount(userId: UserId): Flow<UploadCount>
 
-    fun getUploadFileLinksCount(userId: UserId, isPhotoShare: Boolean): Flow<UploadCount>
+    fun getUploadFileLinksCount(userId: UserId, volumeType: Volume.Type): Flow<UploadCount>
+
+    fun getUploadFileLinksCount(parentId: ParentId): Flow<UploadCount>
 
     suspend fun getUploadFileLinksSize(userId: UserId, uploadStates: Set<UploadState>): Bytes
 
@@ -110,21 +114,8 @@ interface LinkUploadRepository {
 
     suspend fun updateUploadFileLinkUploadState(uploadFileLinkIds: Set<Long>, uploadState: UploadState)
 
-    suspend fun updateUploadFileLinkFileInfo(
-        uploadFileLinkId: Long,
-        fileId: FileId,
-        revisionId: String,
-        name: String,
-        nodeKey: String,
-        nodePassphrase: String,
-        nodePassphraseSignature: String,
-        contentKeyPacket: String,
-        contentKeyPacketSignature: String,
-    )
 
-    suspend fun updateUploadFileLinkLinkIdAndRevisionId(uploadFileLinkId: Long, linkId: String, revisionId: String)
 
-    suspend fun updateUploadFileLinkManifestSignature(uploadFileLinkId: Long, manifestSignature: String)
 
     suspend fun updateUploadFileLinkName(uploadFileLinkId: Long, name: String)
 
@@ -138,7 +129,6 @@ interface LinkUploadRepository {
 
     suspend fun updateUploadFileLinkMediaResolution(uploadFileLinkId: Long, mediaResolution: MediaResolution)
 
-    suspend fun updateUploadFileLinkDigests(uploadFileLinkId: Long, digests: UploadDigests)
 
     suspend fun updateUploadFileLinkDuration(uploadFileLinkId: Long, duration: Duration)
 
@@ -156,36 +146,11 @@ interface LinkUploadRepository {
 
     suspend fun removeAllUploadFileLinks(userId: UserId, uploadState: UploadState)
 
-    suspend fun removeAllUploadFileLinks(userId: UserId, shareId: ShareId, uploadState: UploadState)
+    suspend fun removeAllUploadFileLinks(userId: UserId, volumeId: VolumeId, uploadState: UploadState)
 
     suspend fun removeAllUploadFileLinks(userId: UserId, folderId: FolderId, uploadState: UploadState)
 
     suspend fun removeAllUploadFileLinks(folderId: FolderId, uriStrings: List<String>, uploadState: UploadState)
-
-    suspend fun insertUploadBlocks(uploadFileLinkId: Long, uploadBlocks: List<UploadBlock>)
-
-    suspend fun getUploadBlock(
-        uploadFileLinkId: Long,
-        uploadBlockIndex: Long,
-    ): UploadBlock?
-
-    suspend fun getUploadBlocks(uploadFileLink: UploadFileLink): List<UploadBlock>
-
-    suspend fun updateUploadBlock(uploadFileLink: UploadFileLink, uploadBlock: UploadBlock)
-
-    suspend fun updateUploadBlockToken(
-        uploadFileLinkId: Long,
-        uploadBlockIndex: Long,
-        token: String,
-    )
-
-    suspend fun updateUploadBlockVerifierToken(
-        uploadFileLinkId: Long,
-        uploadBlockIndex: Long,
-        verifierToken: ByteArray,
-    )
-
-    suspend fun removeUploadBlocks(uploadFileLink: UploadFileLink)
 
     suspend fun insertUploadBulk(uploadBulk: UploadBulk): UploadBulk
 
@@ -194,12 +159,4 @@ interface LinkUploadRepository {
     suspend fun removeUploadBulk(uploadBulkId: Long): UploadBulk?
 
     suspend fun removeUploadBulkUriStrings(uploadBulkId: Long, uriStrings: List<String>)
-
-    suspend fun getRawBlocks(uploadFileLinkId: Long): List<RawBlock>
-
-    suspend fun removeRawBlock(uploadFileLinkId: Long, index: Long)
-
-    suspend fun removeAllRawBlocks(uploadFileLinkId: Long)
-
-    suspend fun insertOrUpdateRawBlocks(rawBlocks: Set<RawBlock>)
 }

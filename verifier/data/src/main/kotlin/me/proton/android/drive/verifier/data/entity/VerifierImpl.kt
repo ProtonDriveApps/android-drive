@@ -51,7 +51,7 @@ internal class VerifierImpl constructor(
                     keySelector = { file -> file }
                 ) { file -> verificationCode.xor(file.head(len = verificationCode.size.bytes))}
             )
-        } catch (t: Throwable) {
+        } catch (t: Exception) {
             Result.failure(VerifierException.VerifyBlock(t))
         }
 

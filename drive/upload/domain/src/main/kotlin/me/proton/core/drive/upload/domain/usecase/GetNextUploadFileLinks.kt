@@ -29,9 +29,11 @@ import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.extension.sizeOrZero
+import me.proton.core.drive.linkupload.domain.extension.volumeId
 import me.proton.core.drive.linkupload.domain.usecase.GetPendingUploadFileLinksSize
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksCount
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksWithUriByPriority
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
@@ -45,8 +47,8 @@ class GetNextUploadFileLinks @Inject constructor(
     suspend operator fun invoke(
         userId: UserId,
     ): Result<List<UploadFileLink>> = coRunCatching {
-        val photo = invoke(userId, isPhotoShare = true)
-        val drive = invoke(userId, isPhotoShare = false)
+        val photo = invoke(userId, Volume.Type.PHOTO)
+        val drive = invoke(userId, Volume.Type.REGULAR)
         val total = photo.size + drive.size
         if (total == 0) {
             CoreLogger.d(UPLOAD, "Nothing to upload")
@@ -56,8 +58,8 @@ class GetNextUploadFileLinks @Inject constructor(
         photo + drive
     }
 
-    private suspend fun invoke(userId: UserId, isPhotoShare: Boolean): List<UploadFileLink> {
-        val uploadCount = getUploadFileLinksCount(userId, isPhotoShare).first()
+    private suspend fun invoke(userId: UserId, volumeType: Volume.Type): List<UploadFileLink> {
+        val uploadCount = getUploadFileLinksCount(userId, volumeType).first()
         if (uploadCount.total == 0) {
             return emptyList()
         }
@@ -71,13 +73,13 @@ class GetNextUploadFileLinks @Inject constructor(
 
         val uploadFileLinks = getUploadFileLinksWithUriByPriority(
             userId = userId,
-            isPhotoShare = isPhotoShare,
+            volumeType = volumeType,
             states = setOf(UploadState.UNPROCESSED, UploadState.CREATING_NEW_FILE),
             count = uploadCount.totalWithUri,
         ).first()
 
         if (uploadFileLinks.isEmpty()) {
-            CoreLogger.d(UPLOAD, "Nothing to upload for isPhotoShare=$isPhotoShare (${uploadCount.totalWithUri})")
+            CoreLogger.d(UPLOAD, "Nothing to upload for volumeType=$volumeType (${uploadCount.totalWithUri})")
             return emptyList()
         }
 

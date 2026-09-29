@@ -28,7 +28,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
@@ -46,10 +45,12 @@ import me.proton.core.drive.base.presentation.component.list.ListError
 import me.proton.core.drive.base.presentation.component.list.ListLoading
 import me.proton.core.drive.base.presentation.effect.HandleListEffect
 import me.proton.core.drive.base.presentation.effect.ListEffect
+import me.proton.core.drive.base.presentation.extension.aroundVisibleItems
 import me.proton.core.drive.base.presentation.extension.onContent
 import me.proton.core.drive.base.presentation.extension.onEmpty
 import me.proton.core.drive.base.presentation.extension.onError
 import me.proton.core.drive.base.presentation.extension.onLoading
+import me.proton.core.drive.base.presentation.extension.rememberVisibleItems
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.shared.presentation.entity.SharedItem
 import me.proton.core.drive.drivelink.shared.presentation.viewevent.SharedViewEvent
@@ -174,20 +175,14 @@ private fun SharedContent(
 ) {
     val state = items.rememberLazyListState()
     val driveLinksMap by driveLinksFlow.collectAsStateWithLifecycle(initialValue = emptyMap())
-    val firstVisibleItemIndex by remember(state) { derivedStateOf { state.firstVisibleItemIndex } }
-    LaunchedEffect(firstVisibleItemIndex, items.itemSnapshotList.items) {
+    val visibleItems = state.rememberVisibleItems()
+    LaunchedEffect(visibleItems, items.itemSnapshotList.items) {
         onScroll(
             items.itemSnapshotList.items
-                .takeIf { list -> list.isNotEmpty() && list.size > firstVisibleItemIndex }
-                ?.let { list ->
-                    val sizeRange = IntRange(0, list.size - 1)
-                    val fromIndex = (firstVisibleItemIndex - 10).coerceIn(sizeRange)
-                    val toIndex = (firstVisibleItemIndex + 20).coerceIn(sizeRange)
-                    list.subList(fromIndex, toIndex + 1)
-                        .filterIsInstance<SharedItem.Listing>()
-                        .map { sharedItem -> sharedItem.linkId }
-                        .toSet()
-                } ?: emptySet(),
+                .aroundVisibleItems(visibleItems, leadingItemCount = 1)
+                .filterIsInstance<SharedItem.Listing>()
+                .map { sharedItem -> sharedItem.linkId }
+                .toSet(),
         )
     }
     LazyColumn(

@@ -31,7 +31,6 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.orOwner
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
-import me.proton.core.drive.drivelink.domain.usecase.GetVolumeType
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingAdminPermissions
 import me.proton.core.drive.feature.flag.domain.extension.on
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
@@ -43,7 +42,6 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 class CanManageSharing @Inject constructor(
     private val getDriveLink: GetDriveLink,
-    private val getVolumeType: GetVolumeType,
     private val getFeatureFlagFlow: GetFeatureFlagFlow,
 ) {
     operator fun invoke(linkId: LinkId): Flow<Boolean> =
@@ -53,7 +51,7 @@ class CanManageSharing @Inject constructor(
             .flatMapLatest { driveLink ->
                 invoke(
                     userId = driveLink.userId,
-                    volumeType = getVolumeType(driveLink).getOrThrow(),
+                    volumeType = driveLink.volumeType,
                     permissions = driveLink.sharePermissions.orOwner,
                 )
             }

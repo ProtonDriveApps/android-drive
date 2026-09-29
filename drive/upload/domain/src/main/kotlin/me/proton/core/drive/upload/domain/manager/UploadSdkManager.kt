@@ -23,7 +23,7 @@ import kotlinx.coroutines.sync.withLock
 import me.proton.core.drive.base.domain.log.LogTag.UploadTag.logTag
 import me.proton.core.drive.base.domain.provider.ProtonDriveClientProvider
 import me.proton.core.drive.base.domain.provider.ProtonPhotosClientProvider
-import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.link.domain.entity.NodeContext
 import me.proton.core.drive.upload.domain.exception.UploadNotFoundException
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.drive.sdk.ProtonDriveClient
@@ -48,13 +48,17 @@ class UploadSdkManager @Inject constructor(
 
     private val states = ConcurrentHashMap<Long, UploadState>()
 
-    suspend fun enqueue(uploadFileLink: UploadFileLink, block: suspend (ProtonDriveClient) -> Uploader) {
-        with(uploadFileLink.state()) {
+    suspend fun enqueue(
+        nodeContext: NodeContext,
+        uploadFileLinkId: Long,
+        block: suspend (ProtonDriveClient) -> Uploader,
+    ) {
+        with(uploadFileLinkId.state()) {
             mutex.withLock {
                 if (uploader == null) {
-                    CoreLogger.d(uploadFileLink.id.logTag(), "Creating file uploader")
+                    CoreLogger.d(uploadFileLinkId.logTag(), "Creating file uploader")
                     val driveClient = protonDriveClientProvider
-                        .getOrCreate(uploadFileLink.userId)
+                        .getOrCreate(nodeContext.userId)
                         .getOrThrow()
                     uploader = block(driveClient)
                 }
@@ -63,18 +67,19 @@ class UploadSdkManager @Inject constructor(
     }
 
     suspend fun enqueuePhoto(
-        uploadFileLink: UploadFileLink,
-        block: suspend (ProtonPhotosClient) -> Uploader
+        nodeContext: NodeContext,
+        uploadFileLinkId: Long,
+        block: suspend (ProtonPhotosClient) -> Uploader,
     ) {
-        with(uploadFileLink.state()) {
+        with(uploadFileLinkId.state()) {
             mutex.withLock {
                 if (uploader == null) {
                     CoreLogger.i(
-                        tag = uploadFileLink.id.logTag(),
+                        tag = uploadFileLinkId.logTag(),
                         message = "Creating photos uploader",
                     )
                     val photosClient = protonPhotosClientProvider
-                        .getOrCreate(uploadFileLink.userId)
+                        .getOrCreate(nodeContext.userId)
                         .getOrThrow()
                     uploader = block(photosClient)
                 }
@@ -83,16 +88,16 @@ class UploadSdkManager @Inject constructor(
     }
 
     suspend fun controller(
-        uploadFileLink: UploadFileLink,
+        uploadFileLinkId: Long,
         block: suspend (Uploader) -> UploadController
-    ): UploadController = with(uploadFileLink.state()) {
+    ): UploadController = with(uploadFileLinkId.state()) {
         mutex.withLock {
             val uploader = uploader
                 ?: throw UploadNotFoundException("Upload was not enqueued or cancelled")
 
             suspend fun createController(): UploadController {
                 CoreLogger.i(
-                    tag = uploadFileLink.id.logTag(),
+                    tag = uploadFileLinkId.logTag(),
                     message = "Creating controller",
                 )
                 return block(uploader)
@@ -101,8 +106,8 @@ class UploadSdkManager @Inject constructor(
         }
     }
 
-    suspend fun close(uploadFileLink: UploadFileLink) {
-        val id = uploadFileLink.id
+    suspend fun close(uploadFileLinkId: Long) {
+        val id = uploadFileLinkId
         val state = states.remove(id) ?: return
         with(state) {
             CoreLogger.d(
@@ -118,8 +123,8 @@ class UploadSdkManager @Inject constructor(
         }
     }
 
-    suspend fun cancel(uploadFileLink: UploadFileLink) {
-        val id = uploadFileLink.id
+    suspend fun cancel(uploadFileLinkId: Long) {
+        val id = uploadFileLinkId
         val state = states.remove(id) ?: return
         with(state) {
             CoreLogger.d(
@@ -141,8 +146,8 @@ class UploadSdkManager @Inject constructor(
         }
     }
 
-    private fun UploadFileLink.state(): UploadState =
-        states.computeIfAbsent(id) {
+    private fun Long.state(): UploadState =
+        states.computeIfAbsent(this) {
             UploadState(mutex = Mutex())
         }
 }

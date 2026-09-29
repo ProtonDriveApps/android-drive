@@ -21,8 +21,10 @@ import android.content.res.AssetFileDescriptor
 import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
 import me.proton.core.drive.documentsprovider.domain.entity.DocumentId
-import me.proton.core.drive.drivelink.domain.extension.getThumbnailId
+import me.proton.core.drive.drivelink.domain.extension.hasThumbnail
+import me.proton.core.drive.drivelink.domain.extension.revisionUid
 import me.proton.core.drive.file.base.domain.entity.ThumbnailType
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkoffline.domain.usecase.IsLinkOrAnyAncestorMarkedAsOffline
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailCachedInputStream
 import javax.inject.Inject
@@ -36,11 +38,14 @@ class GetDocumentThumbnail @Inject constructor(
     @Suppress("UNUSED_PARAMETER")
     suspend operator fun invoke(documentId: DocumentId, signal: CancellationSignal?): AssetFileDescriptor =
         withDriveLinkFile(documentId) { _, driveLink ->
+            require(driveLink.hasThumbnail(ThumbnailType.DEFAULT)) {
+                "File ${driveLink.id.id} has no default thumbnail"
+            }
             getThumbnailCachedInputStream(
-                fileId = driveLink.id,
-                volumeId = driveLink.volumeId,
-                revisionId = driveLink.activeRevisionId,
-                thumbnailId = requireNotNull(driveLink.getThumbnailId(ThumbnailType.DEFAULT)),
+                userId = driveLink.id.userId,
+                revisionUid = driveLink.revisionUid,
+                volumeType = driveLink.volumeType,
+                type = ThumbnailType.DEFAULT,
                 inCacheFolder = !isLinkOrAnyAncestorMarkedAsOffline(driveLink.id)
             )
                 .map { inputStream ->

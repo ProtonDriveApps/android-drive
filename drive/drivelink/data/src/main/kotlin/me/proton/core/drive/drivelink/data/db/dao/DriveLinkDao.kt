@@ -117,6 +117,7 @@ interface DriveLinkDao : LinkDao {
 
         const val DRIVE_LINK_SELECT = """
             ShareEntity.${Column.VOLUME_ID} AS ${BASE_PREFIX}_${Column.VOLUME_ID},
+            ShareEntity.${Column.VOLUME_TYPE} AS ${BASE_PREFIX}_${Column.VOLUME_TYPE},
             ShareEntity.${Column.USER_ID} AS ${BASE_PREFIX}_${Column.USER_ID},
             LinkEntity.*,
             LinkFilePropertiesEntity.*,
@@ -132,8 +133,6 @@ interface DriveLinkDao : LinkDao {
             LinkDownloadStateEntity.${Column.LINK_ID} AS ${DOWNLOAD_PREFIX}_${Column.LINK_ID},
             LinkDownloadStateEntity.${Column.REVISION_ID} AS ${DOWNLOAD_PREFIX}_${Column.REVISION_ID},
             LinkDownloadStateEntity.${Column.STATE} AS ${DOWNLOAD_PREFIX}_${Column.STATE},
-            LinkDownloadStateEntity.${Column.MANIFEST_SIGNATURE} AS ${DOWNLOAD_PREFIX}_${Column.MANIFEST_SIGNATURE},
-            LinkDownloadStateEntity.${Column.SIGNATURE_ADDRESS} AS ${DOWNLOAD_PREFIX}_${Column.SIGNATURE_ADDRESS},
             LinkTrashStateEntity.${Column.STATE} AS ${TRASH_PREFIX}_${Column.STATE},
             $DRIVE_LINK_SHARE_INVITATION_COUNT,
             $DRIVE_LINK_SHARE_MEMBER_COUNT,

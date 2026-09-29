@@ -116,44 +116,40 @@ open class PhotosPickerAndSelectionViewModel(
         }
     }
 
-    private fun addToAlbumAndToSelected(driveLink: DriveLink.File) = viewModelScope.launch {
-        val photoListings = setOf(driveLink.toVolumePhotoListing())
+    private fun addToAlbumAndToSelected(driveLink: DriveLink.File) =
+        addToAlbumAndToSelected(listOf(driveLink))
+
+    private fun removeFromAlbumAndFromSelected(driveLink: DriveLink.File) =
+        removeFromAlbumAndFromSelected(listOf(driveLink))
+
+    protected fun addToAlbumAndToSelected(driveLinks: List<DriveLink.File>) = viewModelScope.launch {
+        if (driveLinks.isEmpty()) return@launch
+        val photoListings = driveLinks.map { driveLink -> driveLink.toVolumePhotoListing() }.toSet()
         if (destinationAlbumId == null) {
             addToAlbumInfo(photoListings).onFailure { error ->
-                error.log(
-                    VIEW_MODEL,
-                    "Failed to add to album info for new album ShareId=${driveLink.id.shareId.id.logId()}, LinkId=${driveLink.id.id.logId()}"
-                )
+                error.log(VIEW_MODEL, "Failed to add to album info for new album, count=${driveLinks.size}")
             }
         } else {
             addToAlbumInfo(destinationAlbumId, photoListings).onFailure { error ->
-                error.log(
-                    VIEW_MODEL,
-                    "Failed to add to album info ShareId=${driveLink.id.shareId.id.logId()}, LinkId=${driveLink.id.id.logId()}"
-                )
+                error.log(VIEW_MODEL, "Failed to add to album info, count=${driveLinks.size}")
             }
         }
-        addSelected(listOf(driveLink.id))
+        addSelected(driveLinks.map { driveLink -> driveLink.id })
     }
 
-    private fun removeFromAlbumAndFromSelected(driveLink: DriveLink.File) = viewModelScope.launch {
-        val photoListings = setOf(driveLink.toVolumePhotoListing())
+    protected fun removeFromAlbumAndFromSelected(driveLinks: List<DriveLink.File>) = viewModelScope.launch {
+        if (driveLinks.isEmpty()) return@launch
+        val photoListings = driveLinks.map { driveLink -> driveLink.toVolumePhotoListing() }.toSet()
         if (destinationAlbumId == null) {
             removeFromAlbumInfo(photoListings).onFailure { error ->
-                error.log(
-                    VIEW_MODEL,
-                    "Failed to remove from album info for new album ShareId=${driveLink.id.shareId.id.logId()}, LinkId=${driveLink.id.id.logId()}"
-                )
+                error.log(VIEW_MODEL, "Failed to remove from album info for new album, count=${driveLinks.size}")
             }
         } else {
             removeFromAlbumInfo(destinationAlbumId, photoListings).onFailure { error ->
-                error.log(
-                    VIEW_MODEL,
-                    "Failed to remove from album info ShareId=${driveLink.id.shareId.id.logId()}, LinkId=${driveLink.id.id.logId()}"
-                )
+                error.log(VIEW_MODEL, "Failed to remove from album info, count=${driveLinks.size}")
             }
         }
-        removeSelected(listOf(driveLink.id))
+        removeSelected(driveLinks.map { driveLink -> driveLink.id })
     }
 
     companion object {

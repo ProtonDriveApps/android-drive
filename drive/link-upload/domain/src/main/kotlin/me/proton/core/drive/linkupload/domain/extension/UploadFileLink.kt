@@ -19,17 +19,32 @@
 package me.proton.core.drive.linkupload.domain.extension
 
 import me.proton.core.drive.base.domain.extension.bytes
-import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.linkId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.observability.domain.metrics.UploadInitiator
+import me.proton.core.drive.volume.domain.entity.Volume
+import me.proton.core.drive.volume.domain.extension.volumeId
+import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.drive.sdk.entity.LegacyParentNodeUid
+import me.proton.drive.sdk.entity.ParentNodeUid
 
-val UploadFileLink.fileId get() = linkId?.let { FileId(shareId, linkId) }
+val UploadFileLink.userId: UserId get() = parentFolderContext.userId
 
-fun UploadFileLink.requireFileId() = requireNotNull(fileId)
+val UploadFileLink.volumeType: Volume.Type get() = parentFolderContext.volumeType
+
+val UploadFileLink.volumeId: VolumeId get() = parentFolderContext.nodeUid.volumeId
+
+val UploadFileLink.parentFolderUid: ParentNodeUid get() = LegacyParentNodeUid(
+    volumeId = volumeId.id,
+    linkId = parentFolderContext.nodeUid.linkId,
+)
+
+val UploadFileLink.parentLinkId: FolderId get() =
+    FolderId(shareId, parentFolderContext.nodeUid.linkId)
 
 val UploadFileLink.sizeOrZero get() = size ?: 0.bytes
-
-val UploadFileLink.isFileEmpty get() = size != null && size.value == 0L
 
 fun UploadFileLink.toInitiator(): UploadInitiator = when (priority) {
     in 1..UploadFileLink.USER_PRIORITY -> UploadInitiator.explicit

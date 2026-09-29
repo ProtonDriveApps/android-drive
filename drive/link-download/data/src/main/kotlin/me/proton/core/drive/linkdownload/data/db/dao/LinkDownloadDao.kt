@@ -27,12 +27,9 @@ import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.link.data.db.LinkDao
-import me.proton.core.drive.linkdownload.data.db.entity.DownloadBlockEntity
 import me.proton.core.drive.linkdownload.data.db.entity.LinkDownloadState
 import me.proton.core.drive.linkdownload.data.db.entity.LinkDownloadStateEntity
-import me.proton.core.drive.linkdownload.data.extension.toDownloadBlockEntity
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.linktrash.data.db.dao.LinkTrashDao
 
@@ -74,46 +71,6 @@ interface LinkDownloadDao : LinkDao {
             user_id = :userId AND share_id = :shareId AND link_id = :linkId AND revision_id = :revisionId
     """)
     fun getLinkDownloadStateFlow(userId: UserId, shareId: String, linkId: String, revisionId: String): Flow<LinkDownloadStateEntity?>
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertOrIgnore(vararg downloadBlockEntities: DownloadBlockEntity)
-
-    @Query("""
-        SELECT * FROM DownloadBlockEntity WHERE
-            user_id = :userId AND 
-            share_id = :shareId AND 
-            link_id = :linkId AND 
-            revision_id = :revisionId
-            ORDER BY `index` ASC LIMIT :limit OFFSET :offset
-    """)
-    suspend fun getDownloadBlocks(
-        userId: UserId,
-        shareId: String,
-        linkId: String,
-        revisionId: String,
-        limit: Int,
-        offset: Int
-    ): List<DownloadBlockEntity>
-
-    @Query("""
-        SELECT COUNT(*) FROM DownloadBlockEntity WHERE
-            user_id = :userId AND 
-            share_id = :shareId AND 
-            link_id = :linkId AND 
-            revision_id = :revisionId
-    """)
-    fun getDownloadBlocksCountFlow(
-        userId: UserId,
-        shareId: String,
-        linkId: String,
-        revisionId: String,
-    ): Flow<Int>
-
-    @Query("""
-        DELETE FROM DownloadBlockEntity WHERE
-            user_id = :userId AND share_id = :shareId AND link_id = :linkId AND revision_id = :revisionId
-    """)
-    suspend fun deleteDownloadBlocks(userId: UserId, shareId: String, linkId: String, revisionId: String)
 
     // We cannot use "SELECT * FROM" here because otherwise room throws an exception
     // java.lang.NullPointerException: Parameter specified as non-null is null: [...] parameter shareId
@@ -204,11 +161,7 @@ interface LinkDownloadDao : LinkDao {
         linkId: String,
         revisionId: String,
         downloadState: DownloadState,
-        blocks: List<Block>?,
     ) {
-        if (downloadState is DownloadState.Downloaded) {
-            deleteDownloadBlocks(userId, shareId, linkId, revisionId)
-        }
         insertOrUpdate(
             LinkDownloadStateEntity(
                 userId = userId,
@@ -221,17 +174,8 @@ interface LinkDownloadDao : LinkDao {
                     is DownloadState.Downloaded -> LinkDownloadState.DOWNLOADED
                     is DownloadState.Ready -> LinkDownloadState.READY
                 },
-                manifestSignature = (downloadState as? DownloadState.Downloaded)?.manifestSignature,
-                signatureAddress = (downloadState as? DownloadState.Downloaded)?.signatureAddress,
             )
         )
-        if (downloadState is DownloadState.Downloaded && blocks != null) {
-            insertOrIgnore(
-                *blocks.map { block ->
-                    block.toDownloadBlockEntity(userId, shareId, linkId, revisionId)
-                }.toTypedArray()
-            )
-        }
     }
 
     companion object {

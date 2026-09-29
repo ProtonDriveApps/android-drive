@@ -19,14 +19,19 @@
 package me.proton.core.drive.backup.domain.usecase
 
 import me.proton.core.drive.backup.domain.entity.BackupError
+import me.proton.core.drive.backup.domain.entity.BackupErrorType
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FolderId
 import javax.inject.Inject
 
 class HandleBackupError @Inject constructor(
     private val addBackupError: AddBackupError,
+    private val stopBackup: StopBackup,
 ) {
     suspend operator fun invoke(folderId: FolderId, backupError: BackupError) = coRunCatching {
-        addBackupError(folderId, backupError).getOrThrow()
+        when (backupError.type) {
+            BackupErrorType.FOLDER_NOT_FOUND -> stopBackup(folderId, backupError).getOrThrow()
+            else -> addBackupError(folderId, backupError).getOrThrow()
+        }
     }
 }

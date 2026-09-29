@@ -18,24 +18,21 @@
 package me.proton.core.drive.linkupload.domain.usecase
 
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.link.domain.entity.Folder
-import me.proton.core.drive.link.domain.extension.shareId
-import me.proton.core.drive.linkupload.domain.entity.CacheOption
+import me.proton.core.drive.link.domain.entity.FolderContext
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
 import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
-import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.drive.share.domain.entity.ShareId
 import javax.inject.Inject
 
 class CreateUploadBulk @Inject constructor(
     private val linkUploadRepository: LinkUploadRepository,
 ) {
     suspend operator fun invoke(
-        volumeId: VolumeId,
-        parent: Folder,
+        parentFolderContext: FolderContext,
+        shareId: ShareId,
         uploadFileDescriptions: List<UploadFileDescription>,
-        cacheOption: CacheOption = CacheOption.ALL,
         shouldDeleteSource: Boolean = false,
         networkTypeProviderType: NetworkTypeProviderType,
         shouldAnnounceEvent: Boolean,
@@ -44,15 +41,12 @@ class CreateUploadBulk @Inject constructor(
     ): Result<UploadBulk> = coRunCatching {
         linkUploadRepository.insertUploadBulk(
             UploadBulk(
-                userId = parent.shareId.userId,
-                volumeId = volumeId,
-                shareId = parent.shareId,
-                parentLinkId = parent.id,
+                parentFolderContext = parentFolderContext,
+                shareId = shareId,
                 uploadFileDescriptions = uploadFileDescriptions,
                 shouldDeleteSourceUri = shouldDeleteSource,
                 networkTypeProviderType = networkTypeProviderType,
                 shouldAnnounceEvent = shouldAnnounceEvent,
-                cacheOption = cacheOption,
                 priority = priority,
                 shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
             )

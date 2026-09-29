@@ -21,9 +21,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import me.proton.core.drive.linkupload.data.factory.UploadBlockFactoryImpl
 import me.proton.core.drive.linkupload.data.repository.LinkUploadRepositoryImpl
-import me.proton.core.drive.linkupload.domain.factory.UploadBlockFactory
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
 import javax.inject.Singleton
 
@@ -34,8 +32,4 @@ interface LinkUploadBindModule {
     @Binds
     @Singleton
     fun bindsRepositoryImpl(impl: LinkUploadRepositoryImpl): LinkUploadRepository
-
-    @Binds
-    @Singleton
-    fun bindsFactoryImpl(impl: UploadBlockFactoryImpl): UploadBlockFactory
 }

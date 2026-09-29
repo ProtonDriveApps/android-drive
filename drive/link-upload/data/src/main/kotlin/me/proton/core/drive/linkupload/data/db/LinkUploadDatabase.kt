@@ -25,17 +25,14 @@ import me.proton.core.data.room.db.extension.recreateTable
 import me.proton.core.data.room.db.migration.DatabaseMigration
 import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.linkupload.data.db.dao.LinkUploadDao
-import me.proton.core.drive.linkupload.data.db.dao.RawBlockDao
-import me.proton.core.drive.linkupload.data.db.dao.UploadBlockDao
 import me.proton.core.drive.linkupload.data.db.dao.UploadBulkDao
 import me.proton.core.drive.linkupload.data.db.dao.UploadTagDao
+import me.proton.core.drive.volume.data.api.entity.VolumeDto
 
 
 interface LinkUploadDatabase : Database {
     val linkUploadDao: LinkUploadDao
-    val uploadBlockDao: UploadBlockDao
     val uploadBulkDao: UploadBulkDao
-    val rawBlockDao: RawBlockDao
     val uploadTagDao: UploadTagDao
 
     companion object {
@@ -255,6 +252,381 @@ interface LinkUploadDatabase : Database {
                 database.execSQL(
                     """
                         ALTER TABLE `LinkUploadEntity` ADD COLUMN ${Column.ATTEMPTS} INTEGER NOT NULL DEFAULT 0
+                    """.trimIndent()
+                )
+            }
+        }
+
+        val MIGRATION_10 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.dropTable("UploadBlockEntity")
+                database.dropTable("RawBlockEntity")
+                // An older version could still have written these, breaking the enum converter.
+                database.execSQL(
+                    """
+                    UPDATE `LinkUploadEntity` SET ${Column.STATE} = 'IDLE'
+                    WHERE ${Column.STATE} IN (
+                        'SPLITTING_URI_TO_BLOCKS', 'ENCRYPTING_BLOCKS', 'GETTING_UPLOAD_LINKS', 'UPDATING_REVISION'
+                    )
+                    """.trimIndent()
+                )
+                // Drops what the SDK made redundant; link_id stays for the DocumentsProvider.
+                database.recreateTable(
+                    table = "LinkUploadEntity",
+                    createTable = {
+                        database.execSQL(
+                            """
+                                CREATE TABLE IF NOT EXISTS `LinkUploadEntity` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                `user_id` TEXT NOT NULL,
+                                `volume_id` TEXT NOT NULL,
+                                `share_id` TEXT NOT NULL,
+                                `parent_id` TEXT NOT NULL,
+                                `link_id` TEXT NOT NULL,
+                                `name` TEXT NOT NULL,
+                                `mime_type` TEXT NOT NULL,
+                                `state` TEXT NOT NULL,
+                                `size` INTEGER DEFAULT NULL,
+                                `last_modified` INTEGER,
+                                `uri` TEXT DEFAULT NULL,
+                                `should_delete_source_uri` INTEGER NOT NULL DEFAULT false,
+                                `media_resolution_width` INTEGER DEFAULT NULL,
+                                `media_resolution_height` INTEGER DEFAULT NULL,
+                                `network_type_provider_type` TEXT NOT NULL DEFAULT 'DEFAULT',
+                                `duration` INTEGER DEFAULT NULL,
+                                `latitude` REAL DEFAULT NULL,
+                                `longitude` REAL DEFAULT NULL,
+                                `creation_time` INTEGER DEFAULT NULL,
+                                `model` TEXT DEFAULT NULL,
+                                `orientation` INTEGER DEFAULT NULL,
+                                `subject_area` TEXT DEFAULT NULL,
+                                `should_announce_event` INTEGER NOT NULL DEFAULT true,
+                                `priority` INTEGER NOT NULL DEFAULT 9223372036854775807,
+                                `upload_creation_time` INTEGER,
+                                `should_broadcast_error_message` INTEGER NOT NULL DEFAULT true,
+                                `attempts` INTEGER NOT NULL DEFAULT 0,
+                                FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`)
+                                ON UPDATE NO ACTION ON DELETE CASCADE )
+                            """.trimIndent()
+                        )
+                    },
+                    createIndices = {
+                        listOf(
+                            Column.USER_ID,
+                            Column.VOLUME_ID,
+                            Column.SHARE_ID,
+                            Column.LINK_ID,
+                            Column.PARENT_ID,
+                            Column.URI,
+                        ).forEach { column ->
+                            database.execSQL(
+                                """
+                                CREATE INDEX IF NOT EXISTS `index_LinkUploadEntity_$column` ON `LinkUploadEntity` (`$column`)
+                                """.trimIndent()
+                            )
+                        }
+                    },
+                    columns = listOf(
+                        Column.ID,
+                        Column.USER_ID,
+                        Column.VOLUME_ID,
+                        Column.SHARE_ID,
+                        Column.PARENT_ID,
+                        Column.LINK_ID,
+                        Column.NAME,
+                        Column.MIME_TYPE,
+                        Column.STATE,
+                        Column.SIZE,
+                        Column.LAST_MODIFIED,
+                        Column.URI,
+                        Column.SHOULD_DELETE_SOURCE_URI,
+                        Column.MEDIA_RESOLUTION_WIDTH,
+                        Column.MEDIA_RESOLUTION_HEIGHT,
+                        Column.NETWORK_TYPE_PROVIDER_TYPE,
+                        Column.DURATION,
+                        Column.LATITUDE,
+                        Column.LONGITUDE,
+                        Column.CREATION_TIME,
+                        Column.MODEL,
+                        Column.ORIENTATION,
+                        Column.SUBJECT_AREA,
+                        Column.SHOULD_ANNOUNCE_EVENT,
+                        Column.PRIORITY,
+                        Column.UPLOAD_CREATION_TIME,
+                        Column.SHOULD_BROADCAST_ERROR_MESSAGE,
+                        Column.ATTEMPTS,
+                    ),
+                )
+                database.recreateTable(
+                    table = "UploadBulkEntity",
+                    createTable = {
+                        database.execSQL(
+                            """
+                                CREATE TABLE IF NOT EXISTS `UploadBulkEntity` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                `user_id` TEXT NOT NULL,
+                                `volume_id` TEXT NOT NULL,
+                                `share_id` TEXT NOT NULL,
+                                `parent_id` TEXT NOT NULL,
+                                `should_delete_source_uri` INTEGER NOT NULL,
+                                `network_type_provider_type` TEXT NOT NULL DEFAULT 'DEFAULT',
+                                `should_announce_event` INTEGER NOT NULL DEFAULT true,
+                                `priority` INTEGER NOT NULL DEFAULT 9223372036854775807,
+                                `should_broadcast_error_message` INTEGER NOT NULL DEFAULT true,
+                                FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`)
+                                ON UPDATE NO ACTION ON DELETE CASCADE )
+                            """.trimIndent()
+                        )
+                    },
+                    createIndices = {
+                        listOf(
+                            Column.USER_ID,
+                            Column.VOLUME_ID,
+                            Column.SHARE_ID,
+                            Column.PARENT_ID,
+                        ).forEach { column ->
+                            database.execSQL(
+                                """
+                                CREATE INDEX IF NOT EXISTS `index_UploadBulkEntity_$column` ON `UploadBulkEntity` (`$column`)
+                                """.trimIndent()
+                            )
+                        }
+                    },
+                    columns = listOf(
+                        Column.ID,
+                        Column.USER_ID,
+                        Column.VOLUME_ID,
+                        Column.SHARE_ID,
+                        Column.PARENT_ID,
+                        Column.SHOULD_DELETE_SOURCE_URI,
+                        Column.NETWORK_TYPE_PROVIDER_TYPE,
+                        Column.SHOULD_ANNOUNCE_EVENT,
+                        Column.PRIORITY,
+                        Column.SHOULD_BROADCAST_ERROR_MESSAGE,
+                    ),
+                )
+            }
+        }
+
+        val MIGRATION_11 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.addTableColumn(
+                    table = "LinkUploadEntity",
+                    column = Column.VOLUME_TYPE,
+                    type = "INTEGER DEFAULT NULL",
+                )
+                database.execSQL(
+                    """
+                    UPDATE LinkUploadEntity SET volume_type = (
+                        SELECT ShareEntity.volume_type
+                        FROM ShareEntity
+                        WHERE ShareEntity.user_id = LinkUploadEntity.user_id
+                            AND ShareEntity.id = LinkUploadEntity.share_id
+                    )
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    DELETE FROM `UploadTagEntity` WHERE `upload_link_id` IN (
+                        SELECT `id` FROM `LinkUploadEntity`
+                        WHERE ${Column.VOLUME_TYPE} IS NULL
+                            OR ${Column.VOLUME_TYPE} NOT IN (
+                                ${VolumeDto.TYPE_REGULAR}, ${VolumeDto.TYPE_PHOTO}
+                            )
+                    )
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    DELETE FROM `LinkUploadEntity`
+                    WHERE ${Column.VOLUME_TYPE} IS NULL
+                        OR ${Column.VOLUME_TYPE} NOT IN (
+                            ${VolumeDto.TYPE_REGULAR}, ${VolumeDto.TYPE_PHOTO}
+                        )
+                    """.trimIndent()
+                )
+                database.recreateTable(
+                    table = "LinkUploadEntity",
+                    createTable = {
+                        database.execSQL(
+                            """
+                                CREATE TABLE IF NOT EXISTS `LinkUploadEntity` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                `user_id` TEXT NOT NULL,
+                                `volume_id` TEXT NOT NULL,
+                                `volume_type` INTEGER NOT NULL,
+                                `share_id` TEXT NOT NULL,
+                                `parent_id` TEXT NOT NULL,
+                                `link_id` TEXT NOT NULL,
+                                `name` TEXT NOT NULL,
+                                `mime_type` TEXT NOT NULL,
+                                `state` TEXT NOT NULL,
+                                `size` INTEGER DEFAULT NULL,
+                                `last_modified` INTEGER,
+                                `uri` TEXT DEFAULT NULL,
+                                `should_delete_source_uri` INTEGER NOT NULL DEFAULT false,
+                                `media_resolution_width` INTEGER DEFAULT NULL,
+                                `media_resolution_height` INTEGER DEFAULT NULL,
+                                `network_type_provider_type` TEXT NOT NULL DEFAULT 'DEFAULT',
+                                `duration` INTEGER DEFAULT NULL,
+                                `latitude` REAL DEFAULT NULL,
+                                `longitude` REAL DEFAULT NULL,
+                                `creation_time` INTEGER DEFAULT NULL,
+                                `model` TEXT DEFAULT NULL,
+                                `orientation` INTEGER DEFAULT NULL,
+                                `subject_area` TEXT DEFAULT NULL,
+                                `should_announce_event` INTEGER NOT NULL DEFAULT true,
+                                `priority` INTEGER NOT NULL DEFAULT 9223372036854775807,
+                                `upload_creation_time` INTEGER,
+                                `should_broadcast_error_message` INTEGER NOT NULL DEFAULT true,
+                                `attempts` INTEGER NOT NULL DEFAULT 0,
+                                FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`)
+                                ON UPDATE NO ACTION ON DELETE CASCADE )
+                            """.trimIndent()
+                        )
+                    },
+                    createIndices = {
+                        listOf(
+                            Column.USER_ID,
+                            Column.VOLUME_ID,
+                            Column.SHARE_ID,
+                            Column.LINK_ID,
+                            Column.PARENT_ID,
+                            Column.URI,
+                        ).forEach { column ->
+                            database.execSQL(
+                                """
+                                CREATE INDEX IF NOT EXISTS `index_LinkUploadEntity_$column` ON `LinkUploadEntity` (`$column`)
+                                """.trimIndent()
+                            )
+                        }
+                    },
+                    columns = listOf(
+                        Column.ID,
+                        Column.USER_ID,
+                        Column.VOLUME_ID,
+                        Column.VOLUME_TYPE,
+                        Column.SHARE_ID,
+                        Column.PARENT_ID,
+                        Column.LINK_ID,
+                        Column.NAME,
+                        Column.MIME_TYPE,
+                        Column.STATE,
+                        Column.SIZE,
+                        Column.LAST_MODIFIED,
+                        Column.URI,
+                        Column.SHOULD_DELETE_SOURCE_URI,
+                        Column.MEDIA_RESOLUTION_WIDTH,
+                        Column.MEDIA_RESOLUTION_HEIGHT,
+                        Column.NETWORK_TYPE_PROVIDER_TYPE,
+                        Column.DURATION,
+                        Column.LATITUDE,
+                        Column.LONGITUDE,
+                        Column.CREATION_TIME,
+                        Column.MODEL,
+                        Column.ORIENTATION,
+                        Column.SUBJECT_AREA,
+                        Column.SHOULD_ANNOUNCE_EVENT,
+                        Column.PRIORITY,
+                        Column.UPLOAD_CREATION_TIME,
+                        Column.SHOULD_BROADCAST_ERROR_MESSAGE,
+                        Column.ATTEMPTS,
+                    ),
+                )
+                database.addTableColumn(
+                    table = "UploadBulkEntity",
+                    column = Column.VOLUME_TYPE,
+                    type = "INTEGER DEFAULT NULL",
+                )
+                database.execSQL(
+                    """
+                    UPDATE UploadBulkEntity SET volume_type = (
+                        SELECT ShareEntity.volume_type
+                        FROM ShareEntity
+                        WHERE ShareEntity.user_id = UploadBulkEntity.user_id
+                            AND ShareEntity.id = UploadBulkEntity.share_id
+                    )
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    DELETE FROM `UploadBulkUriStringEntity` WHERE `upload_bulk_id` IN (
+                        SELECT `id` FROM `UploadBulkEntity`
+                        WHERE ${Column.VOLUME_TYPE} IS NULL
+                            OR ${Column.VOLUME_TYPE} NOT IN (
+                                ${VolumeDto.TYPE_REGULAR}, ${VolumeDto.TYPE_PHOTO}
+                            )
+                    )
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    DELETE FROM `UploadBulkEntity`
+                    WHERE ${Column.VOLUME_TYPE} IS NULL
+                        OR ${Column.VOLUME_TYPE} NOT IN (
+                            ${VolumeDto.TYPE_REGULAR}, ${VolumeDto.TYPE_PHOTO}
+                        )
+                    """.trimIndent()
+                )
+                database.recreateTable(
+                    table = "UploadBulkEntity",
+                    createTable = {
+                        database.execSQL(
+                            """
+                                CREATE TABLE IF NOT EXISTS `UploadBulkEntity` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                `user_id` TEXT NOT NULL,
+                                `volume_id` TEXT NOT NULL,
+                                `volume_type` INTEGER NOT NULL,
+                                `share_id` TEXT NOT NULL,
+                                `parent_id` TEXT NOT NULL,
+                                `should_delete_source_uri` INTEGER NOT NULL,
+                                `network_type_provider_type` TEXT NOT NULL DEFAULT 'DEFAULT',
+                                `should_announce_event` INTEGER NOT NULL DEFAULT true,
+                                `priority` INTEGER NOT NULL DEFAULT ${Long.MAX_VALUE},
+                                `should_broadcast_error_message` INTEGER NOT NULL DEFAULT true,
+                                FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`)
+                                ON UPDATE NO ACTION ON DELETE CASCADE )
+                            """.trimIndent()
+                        )
+                    },
+                    createIndices = {
+                        listOf(
+                            Column.USER_ID,
+                            Column.VOLUME_ID,
+                            Column.SHARE_ID,
+                            Column.PARENT_ID,
+                        ).forEach { column ->
+                            database.execSQL(
+                                """
+                                CREATE INDEX IF NOT EXISTS `index_UploadBulkEntity_$column` ON `UploadBulkEntity` (`$column`)
+                                """.trimIndent()
+                            )
+                        }
+                    },
+                    columns = listOf(
+                        Column.ID,
+                        Column.USER_ID,
+                        Column.VOLUME_ID,
+                        Column.VOLUME_TYPE,
+                        Column.SHARE_ID,
+                        Column.PARENT_ID,
+                        Column.SHOULD_DELETE_SOURCE_URI,
+                        Column.NETWORK_TYPE_PROVIDER_TYPE,
+                        Column.SHOULD_ANNOUNCE_EVENT,
+                        Column.PRIORITY,
+                        Column.SHOULD_BROADCAST_ERROR_MESSAGE,
+                    ),
+                )
+            }
+        }
+
+        val MIGRATION_12 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_LinkUploadEntity_user_id_share_id_parent_id`
+                    ON `LinkUploadEntity` (`user_id`, `share_id`, `parent_id`)
                     """.trimIndent()
                 )
             }

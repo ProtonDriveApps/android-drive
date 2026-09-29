@@ -24,6 +24,7 @@ import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.EVENTS
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.linkupload.domain.extension.userId
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject

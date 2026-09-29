@@ -20,15 +20,13 @@ package me.proton.core.drive.drivelink.download.domain.manager
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.LogTag.DOWNLOAD
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.provider.ProtonDriveClientProvider
 import me.proton.core.drive.base.domain.provider.ProtonPhotosClientProvider
-import me.proton.core.drive.link.domain.entity.FileId
-import me.proton.core.drive.link.domain.extension.revisionUid
-import me.proton.core.drive.link.domain.extension.userId
-import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.drive.link.domain.extension.linkId
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.drive.sdk.DownloadController
 import me.proton.drive.sdk.Downloader
@@ -54,21 +52,16 @@ class DownloadSdkManager @Inject constructor(
     private val states = ConcurrentHashMap<RevisionUid, DownloadState>()
 
     suspend fun enqueueFile(
-        volumeId: VolumeId,
-        fileId: FileId,
-        revisionId: String,
+        userId: UserId,
+        revisionUid: RevisionUid,
         block: suspend (ProtonDriveClient) -> Downloader
     ) {
-        val nodeRevisionUid = fileId.revisionUid(
-            volumeId = volumeId,
-            revisionId = revisionId,
-        )
-        with(nodeRevisionUid.state()) {
+        with(revisionUid.state()) {
             mutex.withLock {
                 if (downloader == null) {
-                    CoreLogger.d(fileId.logTag, "Creating drive downloader")
+                    CoreLogger.d(revisionUid.logTag, "Creating drive downloader")
                     val driveClient = protonDriveClientProvider
-                        .getOrCreate(fileId.userId)
+                        .getOrCreate(userId)
                         .getOrThrow()
                     downloader = block(driveClient)
                 }
@@ -77,21 +70,16 @@ class DownloadSdkManager @Inject constructor(
     }
 
     suspend fun enqueuePhoto(
-        volumeId: VolumeId,
-        fileId: FileId,
-        revisionId: String,
+        userId: UserId,
+        revisionUid: RevisionUid,
         block: suspend (ProtonPhotosClient) -> Downloader
     ) {
-        val nodeRevisionUid = fileId.revisionUid(
-            volumeId = volumeId,
-            revisionId = revisionId,
-        )
-        with(nodeRevisionUid.state()) {
+        with(revisionUid.state()) {
             mutex.withLock {
                 if (downloader == null) {
-                    CoreLogger.d(fileId.logTag, "Creating photo downloader")
+                    CoreLogger.d(revisionUid.logTag, "Creating photo downloader")
                     val photosClient = protonPhotosClientProvider
-                        .getOrCreate(fileId.userId)
+                        .getOrCreate(userId)
                         .getOrThrow()
                     downloader = block(photosClient)
                 }
@@ -100,16 +88,10 @@ class DownloadSdkManager @Inject constructor(
     }
 
     suspend fun controller(
-        volumeId: VolumeId,
-        fileId: FileId,
-        revisionId: String,
+        revisionUid: RevisionUid,
         block: suspend (Downloader) -> DownloadController
-    ): DownloadController {
-        val nodeRevisionUid = fileId.revisionUid(
-            volumeId = volumeId,
-            revisionId = revisionId,
-        )
-        return with(nodeRevisionUid.state()) {
+    ): DownloadController =
+        with(revisionUid.state()) {
             mutex.withLock {
                 val downloader = this.downloader
                     ?: error("Download was not enqueued or cancelled")
@@ -117,18 +99,9 @@ class DownloadSdkManager @Inject constructor(
                 controller ?: block(downloader).also { controller = it }
             }
         }
-    }
 
-    suspend fun close(
-        volumeId: VolumeId,
-        fileId: FileId,
-        revisionId: String,
-    ) {
-        val nodeRevisionUid = fileId.revisionUid(
-            volumeId = volumeId,
-            revisionId = revisionId,
-        )
-        val state = states.remove(nodeRevisionUid) ?: return
+    suspend fun close(revisionUid: RevisionUid) {
+        val state = states.remove(revisionUid) ?: return
         with(state) {
             CoreLogger.d(
                 DOWNLOAD, "Closing sdk: " +
@@ -143,16 +116,8 @@ class DownloadSdkManager @Inject constructor(
         }
     }
 
-    suspend fun cancel(
-        volumeId: VolumeId,
-        fileId: FileId,
-        revisionId: String,
-    ) {
-        val nodeRevisionUid = fileId.revisionUid(
-            volumeId = volumeId,
-            revisionId = revisionId,
-        )
-        val state = states.remove(nodeRevisionUid) ?: return
+    suspend fun cancel(revisionUid: RevisionUid) {
+        val state = states.remove(revisionUid) ?: return
         with(state) {
             CoreLogger.d(
                 DOWNLOAD, "Cancelling sdk: " +
@@ -172,16 +137,8 @@ class DownloadSdkManager @Inject constructor(
         }
     }
 
-    suspend fun cancelController(
-        volumeId: VolumeId,
-        fileId: FileId,
-        revisionId: String
-    ) {
-        val nodeRevisionUid = fileId.revisionUid(
-            volumeId = volumeId,
-            revisionId = revisionId,
-        )
-        val state = states.remove(nodeRevisionUid) ?: return
+    suspend fun cancelController(revisionUid: RevisionUid) {
+        val state = states[revisionUid] ?: return
         with(state) {
             CoreLogger.d(
                 DOWNLOAD, "Cancelling sdk controller: ${downloader != null}"
@@ -201,5 +158,5 @@ class DownloadSdkManager @Inject constructor(
             DownloadState(mutex = Mutex())
         }
 
-    private val FileId.logTag: String get() = "${LogTag.DOWNLOAD}.${id.logId()}"
+    private val RevisionUid.logTag: String get() = "${LogTag.DOWNLOAD}.${linkId.logId()}"
 }

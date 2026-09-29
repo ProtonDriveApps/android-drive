@@ -18,11 +18,12 @@
 package me.proton.core.drive.linkupload.domain.usecase
 
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.toDataResult
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
+import me.proton.drive.sdk.entity.NodeUid
 import javax.inject.Inject
 
 class GetUploadFileLink @Inject constructor(
@@ -33,8 +34,8 @@ class GetUploadFileLink @Inject constructor(
             ?: throw NoSuchElementException("UploadFileLink is not found by upload id")
     }.toDataResult()
 
-    suspend operator fun invoke(fileId: FileId): DataResult<UploadFileLink> = coRunCatching {
-        linkUploadRepository.getUploadFileLink(fileId)
-            ?: throw NoSuchElementException("UploadFileLink is not found by file id")
+    suspend operator fun invoke(userId: UserId, nodeUid: NodeUid): DataResult<UploadFileLink> = coRunCatching {
+        linkUploadRepository.getUploadFileLink(userId, nodeUid)
+            ?: throw NoSuchElementException("UploadFileLink is not found by node uid")
     }.toDataResult()
 }

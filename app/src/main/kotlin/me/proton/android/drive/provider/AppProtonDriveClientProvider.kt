@@ -19,9 +19,6 @@
 package me.proton.android.drive.provider
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import me.proton.android.drive.sdk.DriveMetricCallback
@@ -30,6 +27,7 @@ import me.proton.android.drive.sdk.SdkMetricsNotifier
 import me.proton.android.drive.usecase.GetOrCreateSdkLoggerProvider
 import me.proton.core.crypto.common.context.CryptoContext
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.coroutines.UserSupervisorIOScopes
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.LogTag.DRIVE_SDK
@@ -69,15 +67,13 @@ class AppProtonDriveClientProvider @Inject constructor(
 ) : ProtonDriveClientProvider {
 
     private val mutex = Mutex()
-    private val scopes = mutableMapOf<UserId?, CoroutineScope>()
+    private val scopes = UserSupervisorIOScopes(DRIVE_SDK)
     private val clients = mutableMapOf<UserId, ProtonDriveClient>()
 
     override suspend fun getOrCreate(userId: UserId): Result<ProtonDriveClient> = coRunCatching {
         mutex.withLock {
             clients.getOrPut(userId) {
-                val scope = scopes.getOrPut(userId) {
-                    CoroutineScope(Dispatchers.IO + Job())
-                }
+                val scope = scopes[userId]
                 createProtonDriveClient(
                     coroutineScope = scope,
                     userId = userId
@@ -86,9 +82,11 @@ class AppProtonDriveClientProvider @Inject constructor(
         }
     }
 
-    fun remove(userId: UserId) {
-        clients.remove(userId)?.close()
-        scopes.remove(userId)?.cancel("Account $userId is removed")
+    suspend fun remove(userId: UserId) {
+        mutex.withLock {
+            clients.remove(userId)?.close()
+            scopes.remove(userId)
+        }
     }
 
     private suspend fun createProtonDriveClient(

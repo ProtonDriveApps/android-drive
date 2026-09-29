@@ -19,17 +19,21 @@ package me.proton.core.drive.linkupload.data.extension
 
 import me.proton.core.drive.linkupload.data.db.entity.UploadBulkEntity
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
+import me.proton.core.drive.linkupload.domain.extension.parentLinkId
+import me.proton.core.drive.linkupload.domain.extension.userId
+import me.proton.core.drive.linkupload.domain.extension.volumeId
+import me.proton.core.drive.volume.data.extension.toLong
 
 fun UploadBulk.toUploadBulkEntity() =
     UploadBulkEntity(
         userId = userId,
         volumeId = volumeId.id,
+        volumeType = parentFolderContext.volumeType.toLong(),
         shareId = shareId.id,
         parentId = parentLinkId.id,
         shouldDeleteSourceUri = shouldDeleteSourceUri,
         networkTypeProviderType = networkTypeProviderType,
         shouldAnnounceEvent = shouldAnnounceEvent,
-        cacheOption = cacheOption,
         priority = priority,
         shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
     )

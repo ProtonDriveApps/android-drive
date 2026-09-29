@@ -19,6 +19,7 @@ package me.proton.core.drive.upload.domain.resolver
 
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.TimestampMs
+import me.proton.core.drive.base.domain.provider.MimeTypeProvider
 import java.io.InputStream
 
 interface UriResolver {
@@ -42,6 +43,6 @@ interface UriResolver {
     )
 
     companion object {
-        const val DEFAULT_MIME_TYPE = "application/octet-stream"
+        const val DEFAULT_MIME_TYPE = MimeTypeProvider.DEFAULT_MIME_TYPE
     }
 }

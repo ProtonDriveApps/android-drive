@@ -17,7 +17,6 @@
  */
 package me.proton.core.drive.linkupload.data.repository
 
-import android.util.Base64
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
@@ -30,45 +29,35 @@ import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.extension.iterator
-import me.proton.core.drive.base.domain.function.pagedList
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.domain.entity.PhotoTag
+import me.proton.core.drive.link.domain.extension.linkId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkupload.data.db.LinkUploadDatabase
 import me.proton.core.drive.linkupload.data.db.entity.UploadTagEntity
 import me.proton.core.drive.linkupload.data.extension.toLinkUploadEntity
 import me.proton.core.drive.linkupload.data.extension.toPhotoTag
-import me.proton.core.drive.linkupload.data.extension.toRawBlock
-import me.proton.core.drive.linkupload.data.extension.toRawBlockEntity
-import me.proton.core.drive.linkupload.data.extension.toUploadBlock
-import me.proton.core.drive.linkupload.data.extension.toUploadBlockEntity
 import me.proton.core.drive.linkupload.data.extension.toUploadBulk
 import me.proton.core.drive.linkupload.data.extension.toUploadBulkEntity
 import me.proton.core.drive.linkupload.data.extension.toUploadBulkUriStringEntity
 import me.proton.core.drive.linkupload.data.extension.toUploadCount
 import me.proton.core.drive.linkupload.data.extension.toUploadFileLink
-import me.proton.core.drive.linkupload.domain.entity.RawBlock
-import me.proton.core.drive.linkupload.domain.entity.UploadBlock
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
 import me.proton.core.drive.linkupload.domain.entity.UploadCount
-import me.proton.core.drive.linkupload.domain.entity.UploadDigests
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
-import me.proton.core.drive.linkupload.domain.factory.UploadBlockFactory
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
-import me.proton.core.drive.share.data.extension.toLong
-import me.proton.core.drive.share.domain.entity.Share
-import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.util.kotlin.serialize
+import me.proton.core.drive.volume.data.extension.toLong
+import me.proton.core.drive.volume.domain.entity.Volume
+import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.drive.volume.domain.extension.volumeId
+import me.proton.drive.sdk.entity.NodeUid
 import javax.inject.Inject
 import kotlin.time.Duration
 
 class LinkUploadRepositoryImpl @Inject constructor(
     private val db: LinkUploadDatabase,
-    private val uploadBlockFactory: UploadBlockFactory,
-    private val configurationProvider: ConfigurationProvider,
 ) : LinkUploadRepository {
 
     override suspend fun insertUploadFileLink(uploadFileLink: UploadFileLink): UploadFileLink =
@@ -84,11 +73,14 @@ class LinkUploadRepositoryImpl @Inject constructor(
             uploadFileLink.copy(id = id)
         }.toList()
 
+    override suspend fun getUploadFileLink(userId: UserId, nodeUid: NodeUid): UploadFileLink? =
+        db.linkUploadDao.get(userId, nodeUid.volumeId.id, nodeUid.linkId)?.toUploadFileLink()
+
+    override suspend fun updateUploadFileLinkLinkId(uploadFileLinkId: Long, linkId: String) =
+        db.linkUploadDao.updateLinkId(uploadFileLinkId, linkId)
+
     override suspend fun getUploadFileLink(uploadFileLinkId: Long): UploadFileLink? =
         db.linkUploadDao.get(uploadFileLinkId)?.toUploadFileLink()
-
-    override suspend fun getUploadFileLink(fileId: FileId): UploadFileLink? =
-        db.linkUploadDao.get(fileId.userId, fileId.shareId.id, fileId.id)?.toUploadFileLink()
 
     override fun getUploadFileLinkFlow(uploadFileLinkId: Long): Flow<UploadFileLink?> =
         db.linkUploadDao.getDistinctFlow(uploadFileLinkId).map { linkUploadEntity -> linkUploadEntity?.toUploadFileLink() }
@@ -120,11 +112,11 @@ class LinkUploadRepositoryImpl @Inject constructor(
 
     override suspend fun getUploadFileLinks(
         userId: UserId,
-        shareId: ShareId,
+        volumeId: VolumeId,
         count: Int,
         fromIndex: Int,
     ): List<UploadFileLink> =
-        db.linkUploadDao.getAllByShareId(userId, shareId.id, count, fromIndex)
+        db.linkUploadDao.getAllByVolumeId(userId, volumeId.id, count, fromIndex)
             .map { linkUploadEntity ->
                 linkUploadEntity.toUploadFileLink()
             }
@@ -171,24 +163,15 @@ class LinkUploadRepositoryImpl @Inject constructor(
 
     override suspend fun getUploadFileLinksWithUriByPriority(
         userId: UserId,
-        isPhotoShare: Boolean,
+        volumeType: Volume.Type,
         states: Set<UploadState>,
         count: Int,
-    ): Flow<List<UploadFileLink>> = if (isPhotoShare) {
-        db.linkUploadDao.getAllWithUriByPriorityWithShareType(
-            userId = userId,
-            states = states,
-            type = Share.Type.PHOTO.toLong(),
-            count = count,
-        )
-    } else {
-        db.linkUploadDao.getAllWithUriByPriorityWithoutShareType(
-            userId = userId,
-            states = states,
-            type = Share.Type.PHOTO.toLong(),
-            count = count,
-        )
-    }.map { linkUploadEntities -> linkUploadEntities.map { it.toUploadFileLink() } }
+    ): Flow<List<UploadFileLink>> = db.linkUploadDao.getAllWithUriByPriorityWithVolumeType(
+        userId = userId,
+        states = states,
+        type = volumeType.toLong(),
+        count = count,
+    ).map { linkUploadEntities -> linkUploadEntities.map { it.toUploadFileLink() } }
 
     override fun getUploadFileLinksCount(userId: UserId): Flow<UploadCount> =
         db.linkUploadDao.getUploadCount(userId, UploadFileLink.USER_PRIORITY).map { linkUploadCountEntity ->
@@ -197,20 +180,21 @@ class LinkUploadRepositoryImpl @Inject constructor(
 
     override fun getUploadFileLinksCount(
         userId: UserId,
-        isPhotoShare: Boolean,
-    ): Flow<UploadCount> = if (isPhotoShare) {
-        db.linkUploadDao.getUploadCountWithShareType(
-            userId = userId,
-            type = Share.Type.PHOTO.toLong(),
-            userPriority = UploadFileLink.USER_PRIORITY
-        )
-    } else {
-        db.linkUploadDao.getUploadCountWithoutShareType(
-            userId = userId,
-            type = Share.Type.PHOTO.toLong(),
-            userPriority = UploadFileLink.USER_PRIORITY
-        )
-    }.map { it.toUploadCount() }
+        volumeType: Volume.Type,
+    ): Flow<UploadCount> = db.linkUploadDao.getUploadCountWithVolumeType(
+        userId = userId,
+        type = volumeType.toLong(),
+        userPriority = UploadFileLink.USER_PRIORITY
+    ).map { it.toUploadCount() }
+
+    override fun getUploadFileLinksCount(
+        parentId: ParentId,
+    ): Flow<UploadCount> = db.linkUploadDao.getUploadCountWithParentId(
+        userId = parentId.userId,
+        shareId = parentId.shareId.id,
+        parentId = parentId.id,
+        userPriority = UploadFileLink.USER_PRIORITY
+    ).map { it.toUploadCount() }
 
     override suspend fun getUploadFileLinksSize(
         userId: UserId, uploadStates: Set<UploadState>
@@ -237,35 +221,6 @@ class LinkUploadRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun updateUploadFileLinkFileInfo(
-        uploadFileLinkId: Long,
-        fileId: FileId,
-        revisionId: String,
-        name: String,
-        nodeKey: String,
-        nodePassphrase: String,
-        nodePassphraseSignature: String,
-        contentKeyPacket: String,
-        contentKeyPacketSignature: String,
-    ) =
-        db.linkUploadDao.updateLinkIdAndRevisionId(
-            id = uploadFileLinkId,
-            linkId = fileId.id,
-            revisionId = revisionId,
-            name = name,
-            nodeKey = nodeKey,
-            nodePassphrase = nodePassphrase,
-            nodePassphraseSignature = nodePassphraseSignature,
-            contentKeyPacket = contentKeyPacket,
-            contentKeyPacketSignature = contentKeyPacketSignature,
-        )
-
-    override suspend fun updateUploadFileLinkLinkIdAndRevisionId(uploadFileLinkId: Long, linkId: String, revisionId: String) =
-        db.linkUploadDao.updateLinkIdAndRevisionId(uploadFileLinkId, linkId, revisionId)
-
-    override suspend fun updateUploadFileLinkManifestSignature(uploadFileLinkId: Long, manifestSignature: String) =
-        db.linkUploadDao.updateManifestSignature(uploadFileLinkId, manifestSignature)
-
     override suspend fun updateUploadFileLinkName(uploadFileLinkId: Long, name: String) =
         db.linkUploadDao.updateName(uploadFileLinkId, name)
 
@@ -291,12 +246,6 @@ class LinkUploadRepositoryImpl @Inject constructor(
             mediaResolutionWidth = mediaResolution.width,
             mediaResolutionHeight = mediaResolution.height,
         )
-    override suspend fun updateUploadFileLinkDigests(uploadFileLinkId: Long, digests: UploadDigests) =
-        db.linkUploadDao.updateDigests(
-            id = uploadFileLinkId,
-            digests = digests.values.serialize()
-        )
-
     override suspend fun updateUploadFileLinkDuration(uploadFileLinkId: Long, duration: Duration) =
         db.linkUploadDao.updateDuration(
             id = uploadFileLinkId,
@@ -343,8 +292,8 @@ class LinkUploadRepositoryImpl @Inject constructor(
     override suspend fun removeAllUploadFileLinks(userId: UserId, uploadState: UploadState) =
         db.linkUploadDao.deleteAll(userId, uploadState)
 
-    override suspend fun removeAllUploadFileLinks(userId: UserId, shareId: ShareId, uploadState: UploadState) =
-        db.linkUploadDao.deleteAllByShareId(userId, shareId.id, uploadState)
+    override suspend fun removeAllUploadFileLinks(userId: UserId, volumeId: VolumeId, uploadState: UploadState) =
+        db.linkUploadDao.deleteAllByVolumeId(userId, volumeId.id, uploadState)
 
     override suspend fun removeAllUploadFileLinks(userId: UserId, folderId: FolderId, uploadState: UploadState) =
         db.linkUploadDao.deleteAllByFolderId(userId, folderId.id, uploadState)
@@ -363,60 +312,6 @@ class LinkUploadRepositoryImpl @Inject constructor(
             )
         }
     }
-
-    override suspend fun insertUploadBlocks(uploadFileLinkId: Long, uploadBlocks: List<UploadBlock>) =
-        db.uploadBlockDao.insertOrIgnore(
-            *uploadBlocks.map { uploadBlock ->
-                uploadBlock.toUploadBlockEntity(
-                    uploadFileLinkId = uploadFileLinkId
-                )
-            }.toTypedArray()
-        )
-
-    override suspend fun getUploadBlock(
-        uploadFileLinkId: Long,
-        uploadBlockIndex: Long
-    ): UploadBlock? =
-        db.uploadBlockDao.get(
-            uploadLinkId = uploadFileLinkId,
-            index = uploadBlockIndex,
-        )?.toUploadBlock(uploadBlockFactory)
-
-    override suspend fun getUploadBlocks(uploadFileLink: UploadFileLink): List<UploadBlock> =
-        db.uploadBlockDao.get(uploadFileLink.id)
-            .map { uploadBlockEntity -> uploadBlockEntity.toUploadBlock(uploadBlockFactory) }
-
-    override suspend fun updateUploadBlock(uploadFileLink: UploadFileLink, uploadBlock: UploadBlock) =
-        db.uploadBlockDao.insertOrUpdate(
-            uploadBlock.toUploadBlockEntity(
-                uploadFileLinkId = uploadFileLink.id,
-            )
-        )
-
-    override suspend fun updateUploadBlockToken(
-        uploadFileLinkId: Long,
-        uploadBlockIndex: Long,
-        token: String
-    ) =
-        db.uploadBlockDao.updateToken(
-            uploadLinkId = uploadFileLinkId,
-            index = uploadBlockIndex,
-            token = token,
-        )
-
-    override suspend fun updateUploadBlockVerifierToken(
-        uploadFileLinkId: Long,
-        uploadBlockIndex: Long,
-        verifierToken: ByteArray
-    ) =
-        db.uploadBlockDao.updateVerifierToken(
-            uploadLinkId = uploadFileLinkId,
-            index = uploadBlockIndex,
-            verifierToken = Base64.encodeToString(verifierToken, Base64.NO_WRAP),
-        )
-
-    override suspend fun removeUploadBlocks(uploadFileLink: UploadFileLink) =
-        db.uploadBlockDao.delete(uploadFileLink.id)
 
     override suspend fun insertUploadBulk(uploadBulk: UploadBulk): UploadBulk = db.inTransaction {
         val uploadBulkId = db.uploadBulkDao.insert(uploadBulk.toUploadBulkEntity())
@@ -441,26 +336,5 @@ class LinkUploadRepositoryImpl @Inject constructor(
     override suspend fun removeUploadBulkUriStrings(uploadBulkId: Long, uriStrings: List<String>) =
         db.uploadBulkDao.delete(uploadBulkId, uriStrings)
 
-    override suspend fun getRawBlocks(uploadFileLinkId: Long,): List<RawBlock> =
-        db.inTransaction {
-            pagedList(
-                pageSize = configurationProvider.dbPageSize,
-            ) { fromIndex, count ->
-                db.rawBlockDao.get(uploadFileLinkId, count, fromIndex)
-            }
-        }.map { entity -> entity.toRawBlock() }
-
-    override suspend fun removeRawBlock(uploadFileLinkId: Long, index: Long) =
-        db.rawBlockDao.delete(uploadFileLinkId, index)
-
-    override suspend fun removeAllRawBlocks(uploadFileLinkId: Long) =
-        db.rawBlockDao.deleteAll(uploadFileLinkId)
-
-    override suspend fun insertOrUpdateRawBlocks(rawBlocks: Set<RawBlock>) =
-        db.rawBlockDao.insertOrUpdate(
-            *rawBlocks
-                .map { rawBlock -> rawBlock.toRawBlockEntity() }
-                .toTypedArray()
-        )
 }
 

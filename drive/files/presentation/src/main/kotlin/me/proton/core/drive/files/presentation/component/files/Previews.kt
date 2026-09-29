@@ -32,6 +32,7 @@ import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.OwnedBy
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.entity.ShareUser
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
 internal val PREVIEW_LINK = Link.File(
@@ -102,6 +103,7 @@ internal val PREVIEW_LINK_FOLDER = Link.Folder(
 internal val PREVIEW_DRIVELINK = DriveLink.File(
     link = PREVIEW_LINK,
     volumeId = VolumeId("VOLUME_ID"),
+    volumeType = Volume.Type.REGULAR,
     isMarkedAsOffline = false,
     isAnyAncestorMarkedAsOffline = false,
     downloadState = null,
@@ -113,6 +115,7 @@ internal val PREVIEW_DRIVELINK = DriveLink.File(
 internal val PREVIEW_DRIVELINK_FOLDER = DriveLink.Folder(
     link = PREVIEW_LINK_FOLDER,
     volumeId = VolumeId("VOLUME_ID"),
+    volumeType = Volume.Type.REGULAR,
     isMarkedAsOffline = false,
     isAnyAncestorMarkedAsOffline = false,
     downloadState = null,

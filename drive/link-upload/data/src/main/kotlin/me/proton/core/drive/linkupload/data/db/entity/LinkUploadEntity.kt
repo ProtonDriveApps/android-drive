@@ -26,31 +26,22 @@ import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.base.data.db.Column.ATTEMPTS
-import me.proton.core.drive.base.data.db.Column.CACHE_OPTION
-import me.proton.core.drive.base.data.db.Column.CONTENT_KEY_PACKET
-import me.proton.core.drive.base.data.db.Column.CONTENT_KEY_PACKET_SIGNATURE
 import me.proton.core.drive.base.data.db.Column.CREATION_TIME
-import me.proton.core.drive.base.data.db.Column.DIGESTS
 import me.proton.core.drive.base.data.db.Column.DURATION
 import me.proton.core.drive.base.data.db.Column.ID
 import me.proton.core.drive.base.data.db.Column.LAST_MODIFIED
 import me.proton.core.drive.base.data.db.Column.LATITUDE
 import me.proton.core.drive.base.data.db.Column.LINK_ID
 import me.proton.core.drive.base.data.db.Column.LONGITUDE
-import me.proton.core.drive.base.data.db.Column.MANIFEST_SIGNATURE
 import me.proton.core.drive.base.data.db.Column.MEDIA_RESOLUTION_HEIGHT
 import me.proton.core.drive.base.data.db.Column.MEDIA_RESOLUTION_WIDTH
 import me.proton.core.drive.base.data.db.Column.MIME_TYPE
 import me.proton.core.drive.base.data.db.Column.MODEL
 import me.proton.core.drive.base.data.db.Column.NAME
 import me.proton.core.drive.base.data.db.Column.NETWORK_TYPE_PROVIDER_TYPE
-import me.proton.core.drive.base.data.db.Column.NODE_KEY
-import me.proton.core.drive.base.data.db.Column.NODE_PASSPHRASE
-import me.proton.core.drive.base.data.db.Column.NODE_PASSPHRASE_SIGNATURE
 import me.proton.core.drive.base.data.db.Column.ORIENTATION
 import me.proton.core.drive.base.data.db.Column.PARENT_ID
 import me.proton.core.drive.base.data.db.Column.PRIORITY
-import me.proton.core.drive.base.data.db.Column.REVISION_ID
 import me.proton.core.drive.base.data.db.Column.SHARE_ID
 import me.proton.core.drive.base.data.db.Column.SHOULD_ANNOUNCE_EVENT
 import me.proton.core.drive.base.data.db.Column.SHOULD_BROADCAST_ERROR_MESSAGE
@@ -62,7 +53,7 @@ import me.proton.core.drive.base.data.db.Column.UPLOAD_CREATION_TIME
 import me.proton.core.drive.base.data.db.Column.URI
 import me.proton.core.drive.base.data.db.Column.USER_ID
 import me.proton.core.drive.base.data.db.Column.VOLUME_ID
-import me.proton.core.drive.linkupload.domain.entity.CacheOption
+import me.proton.core.drive.base.data.db.Column.VOLUME_TYPE
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 
@@ -80,9 +71,9 @@ import me.proton.core.drive.linkupload.domain.entity.UploadState
         Index(value = [VOLUME_ID]),
         Index(value = [SHARE_ID]),
         Index(value = [LINK_ID]),
-        Index(value = [REVISION_ID]),
         Index(value = [PARENT_ID]),
         Index(value = [URI]),
+        Index(value = [USER_ID, SHARE_ID, PARENT_ID]),
     ]
 )
 data class LinkUploadEntity(
@@ -93,30 +84,18 @@ data class LinkUploadEntity(
     val userId: UserId,
     @ColumnInfo(name = VOLUME_ID)
     val volumeId: String,
+    @ColumnInfo(name = VOLUME_TYPE)
+    val volumeType: Long,
     @ColumnInfo(name = SHARE_ID)
     val shareId: String,
     @ColumnInfo(name = PARENT_ID)
     val parentId: String,
     @ColumnInfo(name = LINK_ID)
     val linkId: String = "",
-    @ColumnInfo(name = REVISION_ID)
-    val revisionId: String = "",
     @ColumnInfo(name = NAME)
     val name: String,
     @ColumnInfo(name = MIME_TYPE)
     val mimeType: String = "",
-    @ColumnInfo(name = NODE_KEY)
-    val nodeKey: String = "",
-    @ColumnInfo(name = NODE_PASSPHRASE)
-    val nodePassphrase: String = "",
-    @ColumnInfo(name = NODE_PASSPHRASE_SIGNATURE)
-    val nodePassphraseSignature: String = "",
-    @ColumnInfo(name = CONTENT_KEY_PACKET)
-    val contentKeyPacket: String = "",
-    @ColumnInfo(name = CONTENT_KEY_PACKET_SIGNATURE)
-    val contentKeyPacketSignature: String = "",
-    @ColumnInfo(name = MANIFEST_SIGNATURE)
-    val manifestSignature: String = "",
     @ColumnInfo(name = STATE)
     val state: UploadState,
     @ColumnInfo(name = SIZE, defaultValue = "NULL")
@@ -131,8 +110,6 @@ data class LinkUploadEntity(
     val mediaResolutionWidth: Long? = null,
     @ColumnInfo(name = MEDIA_RESOLUTION_HEIGHT, defaultValue = "NULL")
     val mediaResolutionHeight: Long? = null,
-    @ColumnInfo(name = DIGESTS, defaultValue = "NULL")
-    val digests: String? = null,
     @ColumnInfo(name = NETWORK_TYPE_PROVIDER_TYPE, defaultValue = "DEFAULT")
     val networkTypeProviderType: NetworkTypeProviderType = NetworkTypeProviderType.DEFAULT,
     @ColumnInfo(name = DURATION, defaultValue = "NULL")
@@ -151,8 +128,6 @@ data class LinkUploadEntity(
     val cameraSubjectArea: String? = null,
     @ColumnInfo(name = SHOULD_ANNOUNCE_EVENT, defaultValue = "true")
     val shouldAnnounceEvent: Boolean = true,
-    @ColumnInfo(name = CACHE_OPTION, defaultValue = "ALL")
-    val cacheOption: CacheOption = CacheOption.ALL,
     @ColumnInfo(name = PRIORITY, defaultValue = "${Long.MAX_VALUE}")
     val priority: Long = Long.MAX_VALUE,
     @ColumnInfo(name = UPLOAD_CREATION_TIME)

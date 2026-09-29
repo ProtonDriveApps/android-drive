@@ -19,6 +19,7 @@ package me.proton.core.drive.base.data.extension
 
 import android.content.Context
 import me.proton.core.drive.base.data.entity.LoggerLevel
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.drive.sdk.ProtonDriveSdkException
 import me.proton.drive.sdk.ProtonSdkError
 import me.proton.core.drive.i18n.R as I18N
@@ -38,11 +39,25 @@ fun ProtonDriveSdkException.getDefaultMessage(
             else -> cause.message
         }
 
+        ProtonSdkError.ErrorDomain.BusinessLogic -> cause.businessLogicMessage(context)
+
         else -> (cause?.message ?: message)?.takeIf { useExceptionMessage }?.let { msg ->
             context.getString(I18N.string.common_error_sdk_with_message, msg)
         } ?: context.getString(I18N.string.common_error_sdk)
     }
 }
+
+private fun ProtonSdkError.businessLogicMessage(context: Context): String = when {
+    isNameConflict -> context.getString(
+        I18N.string.file_operation_error_file_already_exists_at_destination
+    )
+
+    else -> message
+}
+
+private val ProtonSdkError.isNameConflict: Boolean get() =
+    additionalData is ProtonSdkError.Data.NodeNameConflict ||
+        primaryCode == ProtonApiCode.ALREADY_EXISTS.toLong()
 
 fun ProtonDriveSdkException.log(
     tag: String,

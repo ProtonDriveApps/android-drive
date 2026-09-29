@@ -25,7 +25,6 @@ import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.extension.availableSpace
 import me.proton.core.drive.base.domain.extension.effectiveMaxDriveSpace
 import me.proton.core.drive.base.domain.extension.effectiveUsedDriveSpace
-import me.proton.core.drive.base.domain.extension.rounded
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.user.domain.entity.QuotaLevel
 import me.proton.core.user.domain.UserManager
@@ -40,7 +39,7 @@ class GetQuotaLevel @Inject constructor(
         userManager.observeUser(userId).filterNotNull().map { user ->
             val available = user.availableSpace
             val percentage =
-                Percentage(user.effectiveUsedDriveSpace.value.toFloat() / user.effectiveMaxDriveSpace.value).rounded()
+                Percentage(user.effectiveUsedDriveSpace.value.toFloat() / user.effectiveMaxDriveSpace.value)
             when {
                 available < configurationProvider.backupLeftSpace -> QuotaLevel.ERROR
                 percentage >= QuotaLevel.WARNING.percentage -> QuotaLevel.WARNING

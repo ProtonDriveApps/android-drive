@@ -18,48 +18,51 @@
 
 package me.proton.core.drive.drivelink.download.domain.usecase
 
-import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.usecase.GetCacheFolder
 import me.proton.core.drive.base.domain.usecase.GetPermanentFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
-import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
+import me.proton.core.drive.drivelink.domain.extension.revisionUid
 import me.proton.core.drive.file.base.domain.extension.moveTo
-import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.extension.decryptedFileName
+import me.proton.core.drive.link.domain.extension.nodeUid
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkoffline.domain.usecase.IsLinkOrAnyAncestorMarkedAsOffline
-import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.drive.sdk.entity.RevisionUid
 import java.io.File
 import javax.inject.Inject
 
 class MoveFileIfExists @Inject constructor(
     private val getCacheFolder: GetCacheFolder,
     private val getPermanentFolder: GetPermanentFolder,
-    private val getDriveLink: GetDriveLink,
     private val isLinkOrAnyAncestorMarkedAsOffline: IsLinkOrAnyAncestorMarkedAsOffline,
 ) {
-    suspend operator fun invoke(fileId: FileId): Result<File> = coRunCatching {
-        invoke(getDriveLink(fileId).toResult().getOrThrow()).getOrThrow()
-    }
-
-    suspend operator fun invoke(driveLink: DriveLink.File): Result<File> = coRunCatching {
-        invoke(driveLink.volumeId, driveLink.id, driveLink.activeRevisionId).getOrThrow()
-    }
+    suspend operator fun invoke(driveLink: DriveLink.File): Result<File> =
+        invoke(driveLink.id.userId, driveLink.revisionUid)
 
     suspend operator fun invoke(
-        volumeId: VolumeId,
-        fileId: FileId,
-        revisionId: String,
+        userId: UserId,
+        revisionUid: RevisionUid,
     ): Result<File> = coRunCatching {
-        val userId = fileId.userId
-        val cacheFolder = getCacheFolder(userId, volumeId.id, revisionId)
-        val permanentFolder = getPermanentFolder(userId, volumeId.id, revisionId)
-        val cacheFile = File(cacheFolder, fileId.decryptedFileName)
-        val permanentFile = File(permanentFolder, fileId.decryptedFileName)
+        move(
+            userId = userId,
+            revisionUid = revisionUid,
+            markedAsOffline = isLinkOrAnyAncestorMarkedAsOffline(userId, revisionUid.nodeUid),
+        )
+    }
 
-        val markedAsOffline = isLinkOrAnyAncestorMarkedAsOffline(fileId)
-        if (markedAsOffline) {
+    private suspend fun move(
+        userId: UserId,
+        revisionUid: RevisionUid,
+        markedAsOffline: Boolean,
+    ): File {
+        val cacheFolder = getCacheFolder(userId, revisionUid)
+        val permanentFolder = getPermanentFolder(userId, revisionUid)
+        val cacheFile = File(cacheFolder, revisionUid.decryptedFileName)
+        val permanentFile = File(permanentFolder, revisionUid.decryptedFileName)
+
+        return if (markedAsOffline) {
             if (cacheFile.exists()) {
                 cacheFile.moveTo(permanentFile)
             }

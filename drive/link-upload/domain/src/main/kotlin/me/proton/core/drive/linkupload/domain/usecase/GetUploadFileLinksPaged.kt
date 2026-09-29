@@ -23,7 +23,7 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
-import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class GetUploadFileLinksPaged @Inject constructor(
@@ -40,11 +40,11 @@ class GetUploadFileLinksPaged @Inject constructor(
             )
         }
 
-    suspend operator fun invoke(userId: UserId, shareId: ShareId): List<UploadFileLink> =
+    suspend operator fun invoke(userId: UserId, volumeId: VolumeId): List<UploadFileLink> =
         pagedList(configurationProvider.dbPageSize) { fromIndex, count ->
             linkUploadRepository.getUploadFileLinks(
                 userId = userId,
-                shareId = shareId,
+                volumeId = volumeId,
                 fromIndex = fromIndex,
                 count = count,
             )

@@ -155,6 +155,7 @@
     <string name="notification_content_text_backup_failed_connectivity">No internet connection</string>
     <string name="notification_content_text_backup_failed_wifi_connectivity">Waiting for Wi-Fi</string>
     <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Backup is not allowed</string>
+    <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
     <string name="notification_content_text_backup_paused_disabled">Backup was disabled</string>
     <string name="notification_content_text_backup_paused_background_restrictions">Backup cannot run in background</string>
     <string name="notification_content_text_backup_preparing">Preparing to back up</string>
@@ -188,6 +189,8 @@
     <string name="notification_content_title_transferring">Transferring data</string>
     <!-- endregion -->
     <string name="content_description_select_all">Select all items in the list</string>
+    <string name="content_description_select_separator">Select all items in %1$s</string>
+    <string name="photos_error_separator_selection_failed">Some items could not be selected, please try again</string>
     <string name="content_description_selected_options">Show more options for selected files and/or folders</string>
     <string name="content_description_files_upload_upload_file">Upload a file</string>
     <string name="content_description_albums_new">Create new album</string>

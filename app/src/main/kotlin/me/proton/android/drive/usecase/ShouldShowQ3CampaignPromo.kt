@@ -62,10 +62,10 @@ class ShouldShowQ3CampaignPromo @Inject constructor(
         userId: UserId,
         now: Instant = Instant.now()
     ): Result<Boolean> = coRunCatching {
-        isQ3CampaignPromoEligible(userId) &&
-            areNotificationsEnabled() &&
-            isWithinTimeframe(now) &&
-            wasNotAlreadyShown(userId, now)
+        isWithinTimeframe(now) &&
+                wasNotAlreadyShown(userId, now) &&
+                areNotificationsEnabled() &&
+                isQ3CampaignPromoEligible(userId)
     }
 
     private suspend fun wasNotAlreadyShown(userId: UserId, now: Instant): Boolean =

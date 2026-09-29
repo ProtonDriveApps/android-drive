@@ -31,10 +31,12 @@ import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.base.domain.extension.nullIfNotFound
 import me.proton.core.drive.base.domain.log.LogTag.UPLOAD_BULK
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
+import me.proton.core.drive.linkupload.domain.extension.userId
 import me.proton.core.drive.linkupload.domain.usecase.DeleteUploadBulk
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadBulk
 import me.proton.core.drive.upload.data.manager.enqueueUpload
@@ -68,7 +70,12 @@ class CreateUploadFileLinkWorker @AssistedInject constructor(
     private val showFilesBeingUploaded = inputData.getBoolean(KEY_SHOW_FILES_BEING_UPLOADED, true)
 
     override suspend fun doWork(): Result = coRunCatching {
-        with(getUploadBulk(uploadBulkId).getOrThrow()) {
+        val uploadBulk = getUploadBulk(uploadBulkId).nullIfNotFound().getOrThrow()
+        if (uploadBulk == null) {
+            logWorkState("Upload bulk is gone, files were already added to upload")
+            return@coRunCatching
+        }
+        with(uploadBulk) {
             val uploadFileLinks = uploadFileDescriptions
                 .chunked(configurationProvider.dbPageSize).map { uploadFileDescriptions ->
                     logWorkState("Adding ${uploadFileDescriptions.size} files to upload")
@@ -86,14 +93,12 @@ class CreateUploadFileLinkWorker @AssistedInject constructor(
                         return@with
                     }
                     val uploadFileLinks = createUploadFile(
-                        userId = userId,
-                        volumeId = volumeId,
-                        parentId = parentLinkId,
+                        parentFolderContext = parentFolderContext,
+                        shareId = shareId,
                         uploadFileDescriptions = uploadFileDescriptions,
                         shouldDeleteSourceUri = shouldDeleteSourceUri,
                         networkTypeProviderType = networkTypeProviderType,
                         shouldAnnounceEvent = shouldAnnounceEvent,
-                        cacheOption = cacheOption,
                         priority = priority,
                         shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
                     ).onFailure { error ->
@@ -136,7 +141,7 @@ class CreateUploadFileLinkWorker @AssistedInject constructor(
             workManager.enqueueUpload(userId, shouldAnnounceEvent)
             deleteUploadBulk(uploadBulkId).onFailure { error ->
                 error.log(UPLOAD_BULK, "Cannot delete upload bulk for: $uploadBulkId")
-            }.getOrThrow()
+            }
         }
     }.fold(
         onSuccess = {

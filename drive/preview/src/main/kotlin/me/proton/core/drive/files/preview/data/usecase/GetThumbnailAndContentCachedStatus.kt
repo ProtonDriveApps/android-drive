@@ -18,37 +18,47 @@
 
 package me.proton.core.drive.files.preview.data.usecase
 
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.usecase.GetCacheFolder
 import me.proton.core.drive.base.domain.usecase.GetPermanentFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.drivelink.domain.extension.revisionUid
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.file.base.domain.entity.ThumbnailType
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.extension.decryptedFileName
 import me.proton.core.drive.link.domain.extension.userId
-import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailFile
+import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailDecryptedFile
+import me.proton.drive.sdk.entity.RevisionUid
 import java.io.File
 import javax.inject.Inject
 
 class GetThumbnailAndContentCachedStatus @Inject constructor(
     private val getDriveLink: GetDriveLink,
-    private val getThumbnailFile: GetThumbnailFile,
+    private val getThumbnailDecryptedFile: GetThumbnailDecryptedFile,
     private val getPermanentFolder: GetPermanentFolder,
     private val getCacheFolder: GetCacheFolder,
 ) {
 
     suspend operator fun invoke(fileId: FileId): Result<Pair<Boolean, Boolean>> = coRunCatching {
-        val (volumeId, revisionId) = getDriveLink(fileId)
-            .toResult()
-            .getOrThrow().let { driveLink -> driveLink.volumeId to driveLink.activeRevisionId }
-        val thumbnailFile = getThumbnailFile(fileId.userId, volumeId, revisionId, ThumbnailType.PHOTO)
+        val driveLink = getDriveLink(fileId).toResult().getOrThrow()
+        invoke(fileId.userId, driveLink.revisionUid).getOrThrow()
+    }
+
+    suspend operator fun invoke(
+        userId: UserId,
+        revisionUid: RevisionUid,
+    ): Result<Pair<Boolean, Boolean>> = coRunCatching {
+        val thumbnailFile = getThumbnailDecryptedFile(
+            userId = userId,
+            revisionUid = revisionUid,
+            type = ThumbnailType.PHOTO,
+        )
         val wasThumbnailCached = thumbnailFile != null && thumbnailFile.exists()
-        val permanentFolder = getPermanentFolder(fileId.userId, volumeId.id, revisionId)
-        val cacheFolder = getCacheFolder(fileId.userId, volumeId.id, revisionId)
-        val fileName = fileId.decryptedFileName
-        val wasContentCached = File(permanentFolder, fileName).exists() ||
-                File(cacheFolder, fileName).exists()
+        val fileName = revisionUid.decryptedFileName
+        val wasContentCached = File(getPermanentFolder(userId, revisionUid), fileName).exists() ||
+                File(getCacheFolder(userId, revisionUid), fileName).exists()
         wasThumbnailCached to wasContentCached
     }
 }

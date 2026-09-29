@@ -47,6 +47,7 @@ data class PhotosViewState(
     val emptyPhotoTagState: EmptyPhotoTagState? = null,
     val showStorageBanner: Boolean = false,
     val isFastScrollEnabled: Boolean = false,
+    val isSeparatorSelectionEnabled: Boolean = false,
 )
 
 @Immutable

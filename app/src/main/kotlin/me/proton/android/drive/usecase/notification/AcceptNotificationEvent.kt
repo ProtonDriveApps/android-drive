@@ -19,6 +19,7 @@
 package me.proton.android.drive.usecase.notification
 
 import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.announce.event.domain.entity.Event.Backup.BackupState
 import me.proton.core.drive.announce.event.domain.entity.Event.Upload.UploadState
 import me.proton.core.drive.base.domain.extension.requireIsInstance
 import me.proton.core.drive.notification.domain.entity.NotificationId
@@ -38,14 +39,30 @@ class AcceptNotificationEvent @Inject constructor(
             is Event.DownloadFileProgress -> true
             is Event.ForcedSignOut -> true
             is Event.NoSpaceLeftOnDevice -> true
-            is Event.Backup -> true
+            is Event.Backup -> !newEvent.completedWithoutUpload
+                    || newEvent.resolvesShownNotification(notificationId)
+
             else -> false
         }
 
+    private suspend fun Event.Backup.resolvesShownNotification(
+        notificationId: NotificationId,
+    ): Boolean = (stored(notificationId) as? Event.Backup)?.completedWithUpload == false
+
     private suspend fun Event.exists(
         notificationId: NotificationId
+    ) = stored(notificationId) != null
+
+    private suspend fun Event.stored(
+        notificationId: NotificationId,
     ) = notificationRepository.getNotificationEvent(
         notificationId = requireIsInstance(notificationId),
         notificationEventId = id,
-    ) != null
+    )
+
+    private val Event.Backup.completedWithoutUpload: Boolean
+        get() = state == BackupState.COMPLETE && total == 0
+
+    private val Event.Backup.completedWithUpload: Boolean
+        get() = state == BackupState.COMPLETE && total > 0
 }

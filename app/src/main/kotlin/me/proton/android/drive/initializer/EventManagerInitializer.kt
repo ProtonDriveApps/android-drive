@@ -41,7 +41,7 @@ class EventManagerInitializer : Initializer<Unit> {
             linkEventListener.setStopEventLoop { config ->
                 driveEventManager.stop(config)
             }
-            driveEventManager.start()
+            driveEventManager.start { userId -> linkEventListener.remove(userId) }
         }
     }
 

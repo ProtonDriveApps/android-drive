@@ -30,10 +30,9 @@ class GetFilesToBackup @Inject constructor(
     suspend operator fun invoke(
         folderId: FolderId,
         bucketId: Int,
-        maxAttempts: Long,
         fromIndex: Int,
         count: Int,
     ) = coRunCatching {
-        repository.getFilesToBackup(folderId, bucketId, maxAttempts, fromIndex, count)
+        repository.getFilesToBackup(folderId, bucketId, fromIndex, count)
     }
 }

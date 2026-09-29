@@ -18,11 +18,14 @@
 
 package me.proton.core.drive.drivelink.rename.domain.usecase
 
+import kotlinx.coroutines.flow.toList
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.provider.ProtonDriveClientProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.link.domain.usecase.ValidateLinkName
+import me.proton.drive.sdk.entity.NodeMoveItem
+import me.proton.drive.sdk.entity.NodeResultPair
 import me.proton.drive.sdk.entity.NodeUid
 import javax.inject.Inject
 
@@ -43,13 +46,28 @@ class RenameLinkSdk @Inject constructor(
             userId = userId,
             nodeUid = nodeUid,
         ) {
-            protonDriveClientProvider
+            val client = protonDriveClientProvider
                 .getOrCreate(userId)
                 .getOrThrow()
-                .rename(
-                    nodeUid = nodeUid,
-                    name = validatedName,
-                )
+            val node = checkNotNull(client.getNode(nodeUid)) { "Node not found for rename" }
+            val parentUid = checkNotNull(node.parentUid) { "Node without parent cannot be renamed" }
+            val nodeResultPair: NodeResultPair = checkNotNull(
+                client.moveNodes(
+                    listOf(
+                        NodeMoveItem(
+                            nodeUid = nodeUid,
+                            currentParentUid = parentUid,
+                            currentName = node.name.getOrThrow(),
+                            targetName = validatedName,
+                        )
+                    ),
+                    targetParentFolderUid = parentUid
+                ).toList().firstOrNull()
+            ) { "No result returned for rename" }
+            when (nodeResultPair) {
+                is NodeResultPair.Failure -> throw nodeResultPair.error
+                is NodeResultPair.Success -> Unit
+            }
         }
     }
 }

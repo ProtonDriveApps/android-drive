@@ -21,17 +21,23 @@ package me.proton.core.drive.backup.data.handler
 import kotlinx.coroutines.flow.first
 import me.proton.android.drive.verifier.domain.exception.VerifierException
 import me.proton.core.crypto.common.pgp.exception.CryptoException
+import me.proton.core.drive.backup.data.extension.isMissingMediaLocationPermission
 import me.proton.core.drive.backup.data.extension.toBackupError
+import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupErrorType
+import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.backup.domain.manager.BackupManager
+import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
 import me.proton.core.drive.backup.domain.usecase.DeleteFile
 import me.proton.core.drive.backup.domain.usecase.HasFolders
 import me.proton.core.drive.backup.domain.usecase.MarkAsFailed
+import me.proton.core.drive.backup.domain.usecase.StopBackup
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.extension.firstErrorDomainOrNull
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.linkupload.domain.extension.parentLinkId
 import me.proton.core.drive.upload.domain.handler.UploadErrorHandler
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.network.domain.ApiException
@@ -49,6 +55,8 @@ class BackupUploadErrorHandler @Inject constructor(
     private val deleteFile: DeleteFile,
     private val hasFolders: HasFolders,
     private val markAsFailed: MarkAsFailed,
+    private val backupPermissionsManager: BackupPermissionsManager,
+    private val stopBackup: StopBackup,
 ) : UploadErrorHandler {
     override suspend fun onError(uploadError: UploadErrorManager.Error) {
         coRunCatching {
@@ -69,9 +77,10 @@ class BackupUploadErrorHandler @Inject constructor(
             is FileNotFoundException -> onFileNotFoundException(uploadError.uploadFileLink)
 
             else -> {
-                val backupError = throwable.toBackupError()
+                val backupError = throwable.toBackupError(uploadError.uploadFileLink.parentLinkId)
                 when (backupError.type) {
-                    BackupErrorType.PERMISSION,
+                    BackupErrorType.PERMISSION -> onFilePermissionError(uploadError, backupError)
+                    BackupErrorType.FOLDER_NOT_FOUND -> onFolderNotFoundError(uploadError, backupError)
                     BackupErrorType.LOCAL_STORAGE,
                     BackupErrorType.DRIVE_STORAGE,
                     BackupErrorType.PHOTOS_UPLOAD_NOT_ALLOWED,
@@ -82,6 +91,39 @@ class BackupUploadErrorHandler @Inject constructor(
                     -> Unit // Will be stopped by work manager
                 }
             }
+        }
+    }
+
+    private suspend fun onFilePermissionError(
+        uploadError: UploadErrorManager.Error,
+        backupError: BackupError,
+    ) {
+        val permissions = backupPermissionsManager.getBackupPermissions(refresh = true)
+        // ACCESS_MEDIA_LOCATION is app wide, dropping the item would empty the queue one by one
+        val shouldStop = permissions is BackupPermissions.Denied ||
+                uploadError.throwable.isMissingMediaLocationPermission
+        if (shouldStop) {
+            stopBackup(
+                folderId = uploadError.uploadFileLink.parentLinkId,
+                error = backupError,
+            ).onFailure { error ->
+                error.log(BACKUP, "Cannot stop backup after losing permissions")
+            }
+        } else {
+            onFileNotFoundException(uploadError.uploadFileLink)
+        }
+    }
+
+    // The folder is gone, every remaining file would fail the same way
+    private suspend fun onFolderNotFoundError(
+        uploadError: UploadErrorManager.Error,
+        backupError: BackupError,
+    ) {
+        stopBackup(
+            folderId = uploadError.uploadFileLink.parentLinkId,
+            error = backupError,
+        ).onFailure { error ->
+            error.log(BACKUP, "Cannot stop backup after the backup folder was not found")
         }
     }
 
@@ -122,6 +164,8 @@ private fun Throwable.hasEffectOnBackup(): Boolean {
         is UploadAbortedException,
         is VerifierException,
         -> true
+
+        is UnsupportedOperationException -> isMissingMediaLocationPermission
 
         is OperationAbortedException -> {
             val errorCause = cause

@@ -20,14 +20,13 @@ package me.proton.core.drive.settings.presentation.event
 import android.content.Context
 
 interface DebugSettingsViewEvent {
-    val onUpdateHost: (String) -> Unit
-    val onUpdateBaseUrl: (String) -> Unit
     val onUpdateAppVersionHeader: (String) -> Unit
     val onToggleUseExceptionMessage: (Boolean) -> Unit
     val onToggleLogToFileEnabled: (Boolean) -> Unit
     val onToggleAllowBackupDeletedFile: (Boolean) -> Unit
     val sendDebugLog: (Context) -> Unit
     val onReset: () -> Unit
+    val onApplyEnvironmentChange: (host: String, baseUrl: String) -> Unit
     val onUpdateFeatureFlagFreshDuration: (String) -> Unit
     val onToggleUseVerifier: (Boolean) -> Unit
     val onToggleSendPhotoTagsInCommit: (Boolean) -> Unit

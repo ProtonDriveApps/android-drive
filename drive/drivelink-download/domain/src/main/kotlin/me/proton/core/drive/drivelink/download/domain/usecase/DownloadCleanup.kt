@@ -29,6 +29,7 @@ import me.proton.core.drive.folder.domain.usecase.GetDescendants
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.decryptedFileName
+import me.proton.core.drive.link.domain.extension.revisionUid
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.linkdownload.domain.usecase.RemoveDownloadState
@@ -74,17 +75,13 @@ class DownloadCleanup @Inject constructor(
         volumeId: VolumeId,
         fileLink: Link.File,
     ) {
-        downloadSdkManager.cancel(
-            volumeId = volumeId,
-            fileId = fileLink.id,
-            revisionId = fileLink.activeRevisionId,
-        )
+        val revisionUid = fileLink.revisionUid(volumeId)
+        downloadSdkManager.cancel(revisionUid)
         removeDownloadState(fileLink)
         File(
             getDownloadStagingTempFolder(
                 userId = fileLink.userId,
-                volumeId = volumeId.id,
-                revisionId = fileLink.activeRevisionId,
+                revisionUid = revisionUid,
             ),
             fileLink.id.decryptedFileName,
         ).delete()

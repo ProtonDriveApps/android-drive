@@ -33,3 +33,5 @@ val Link.nameKey: String
     get() = parentId?.id?.let { parentId -> "name.$parentId.$hash"} ?: "name.${id.id}.$hash"
 
 fun Link.nodeUid(volumeId: VolumeId) = id.nodeUid(volumeId)
+
+fun Link.File.revisionUid(volumeId: VolumeId) = id.revisionUid(volumeId, activeRevisionId)

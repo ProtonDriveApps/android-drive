@@ -76,7 +76,7 @@ class BackupScanFolderWorker @AssistedInject constructor(
             uploadPriority
         ).onFailure { error ->
             error.log(BACKUP, "Cannot scan bucket: $bucketId")
-            addBackupError(folderId, error.toBackupError())
+            addBackupError(folderId, error.toBackupError(folderId))
             return Result.failure()
         }.onSuccess { files ->
             val min = files.minByOrNull { file -> file.date }?.date

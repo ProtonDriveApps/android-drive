@@ -33,10 +33,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,10 +62,12 @@ import me.proton.android.drive.photos.presentation.state.PhotosItem
 import me.proton.android.drive.photos.presentation.viewstate.PhotosStatusViewState
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.compose.theme.defaultWeak
 import me.proton.core.drive.base.domain.entity.FastScrollAnchor
 import me.proton.core.drive.base.presentation.component.FastScroller
 import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
+import me.proton.core.drive.base.presentation.extension.aroundVisibleItems
+import me.proton.core.drive.base.presentation.extension.offscreenAroundVisibleItems
+import me.proton.core.drive.base.presentation.extension.rememberVisibleItems
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -85,9 +85,12 @@ fun PhotosContent(
     modifier: Modifier = Modifier,
     inMultiselect: Boolean = false,
     isFastScrollEnabled: Boolean = false,
+    isSeparatorSelectionEnabled: Boolean = false,
     onClick: (DriveLink) -> Unit,
     onLongClick: (DriveLink) -> Unit,
     onPhotoListingItem: (FileId) -> Unit,
+    onSeparator: (year: Int, month: Int) -> Unit,
+    getSeparatorFileIds: (year: Int, month: Int) -> Flow<List<FileId>>,
     onEnable: () -> Unit,
     onPermissions: () -> Unit,
     onRetry: () -> Unit,
@@ -119,9 +122,12 @@ fun PhotosContent(
             modifier = modifier,
             inMultiselect= inMultiselect,
             isFastScrollEnabled = isFastScrollEnabled,
+            isSeparatorSelectionEnabled = isSeparatorSelectionEnabled,
             onClick = onClick,
             onLongClick = onLongClick,
             onPhotoListingItem = onPhotoListingItem,
+            onSeparator = onSeparator,
+            getSeparatorFileIds = getSeparatorFileIds,
             onEnable = onEnable,
             onPermissions = onPermissions,
             onRetry = onRetry,
@@ -149,9 +155,12 @@ fun PhotosContent(
     modifier: Modifier = Modifier,
     inMultiselect: Boolean = false,
     isFastScrollEnabled: Boolean = false,
+    isSeparatorSelectionEnabled: Boolean = false,
     onClick: (DriveLink) -> Unit,
     onLongClick: (DriveLink) -> Unit,
     onPhotoListingItem: (FileId) -> Unit,
+    onSeparator: (year: Int, month: Int) -> Unit,
+    getSeparatorFileIds: (year: Int, month: Int) -> Flow<List<FileId>>,
     onEnable: () -> Unit,
     onPermissions: () -> Unit,
     onRetry: () -> Unit,
@@ -167,41 +176,34 @@ fun PhotosContent(
 ) {
     val gridState = items.rememberLazyGridState()
     val driveLinksMap by driveLinksFlow.collectAsStateWithLifecycle(initialValue = emptyMap())
-    val firstVisibleItemIndex by remember(gridState) { derivedStateOf { gridState.firstVisibleItemIndex } }
-    val visibleCount by remember(gridState) { derivedStateOf { gridState.layoutInfo.visibleItemsInfo.size.coerceAtLeast(1) } }
+    val visibleItems = gridState.rememberVisibleItems()
     val localContext = LocalContext.current
     val imageLoader = LocalImageLoader.current
     val precacheDisposables = remember { mutableMapOf<LinkId, Disposable>() }
-    LaunchedEffect(firstVisibleItemIndex, visibleCount, driveLinksMap) {
+    LaunchedEffect(visibleItems, driveLinksMap) {
         items.itemSnapshotList.items
-            .takeIf { list -> list.isNotEmpty() }
-            ?.targetIds(visibleCount, firstVisibleItemIndex)
-            ?.disposeNonTargeted(precacheDisposables)
-            ?.filter { targetId -> targetId !in precacheDisposables }
-            ?.mapNotNull { targetId -> driveLinksMap[targetId]?.let { driveLink -> targetId to driveLink } }
-            ?.forEach { (id, driveLink) ->
+            .offscreenAroundVisibleItems(visibleItems)
+            .filterIsInstance<PhotosItem.PhotoListing>()
+            .map { photoListing -> photoListing.id }
+            .toSet()
+            .disposeNonTargeted(precacheDisposables)
+            .filter { targetId -> targetId !in precacheDisposables }
+            .mapNotNull { targetId -> driveLinksMap[targetId]?.let { driveLink -> targetId to driveLink } }
+            .forEach { (id, driveLink) ->
                 driveLink.preCacheDefaultThumbnail(localContext, imageLoader)
                     ?.also { precacheDisposables[id] = it }
-            } ?: return@LaunchedEffect
+            }
     }
-    LaunchedEffect(firstVisibleItemIndex, visibleCount, items.itemSnapshotList.items) {
+    LaunchedEffect(visibleItems, items.itemSnapshotList.items) {
         onScroll(
-            firstVisibleItemIndex,
+            visibleItems.firstIndex,
             items.itemSnapshotList.items
-                .takeIf { list -> list.isNotEmpty() && list.size > firstVisibleItemIndex }
-                ?.let { list ->
-                    val sizeRange = IntRange(0, list.size - 1)
-                    val offscreenPageSize = minOf(visibleCount, MAX_OFFSCREEN_PAGE_SIZE)
-                    val fromIndex = (firstVisibleItemIndex - offscreenPageSize).coerceIn(sizeRange)
-                    val toIndex = (firstVisibleItemIndex + visibleCount + offscreenPageSize - 1).coerceIn(sizeRange)
-                    list.subList(fromIndex, toIndex + 1)
-                        .filterIsInstance<PhotosItem.PhotoListing>()
-                        .map { photoListing -> photoListing.id }
-                        .toSet()
-                } ?: emptySet(),
+                .aroundVisibleItems(visibleItems)
+                .filterIsInstance<PhotosItem.PhotoListing>()
+                .map { photoListing -> photoListing.id }
+                .toSet(),
         )
     }
-
 
     var sizeInDp by remember { mutableStateOf(DpSize.Zero) }
     val density = LocalDensity.current
@@ -234,16 +236,19 @@ fun PhotosContent(
             ) { index ->
                 items.takeIf { index < it.itemCount }?.get(index)?.let { item ->
                     when (item) {
-                        is PhotosItem.Separator -> Text(
-                            modifier = Modifier.padding(
-                                top = ProtonDimens.MediumSpacing,
-                                bottom = ProtonDimens.SmallSpacing,
-                                start = ProtonDimens.DefaultSpacing,
-                                end = ProtonDimens.DefaultSpacing,
-                            ),
-                            text = item.value,
-                            style = ProtonTheme.typography.defaultWeak,
-                        )
+                        is PhotosItem.Separator -> if (isSeparatorSelectionEnabled) {
+                            val separatorFileIds by remember(item.year, item.month) {
+                                getSeparatorFileIds(item.year, item.month)
+                            }.collectAsStateWithLifecycle(initialValue = emptyList())
+                            SeparatorItem(
+                                title = item.value,
+                                isSelected = separatorFileIds.isNotEmpty() &&
+                                    separatorFileIds.all { fileId -> selectedPhotos.contains(fileId) },
+                                onClick = { onSeparator(item.year, item.month) },
+                            )
+                        } else {
+                            SeparatorItem(title = item.value)
+                        }
 
                         is PhotosItem.PhotoListing -> {
                             val selected = selectedPhotos.contains(item.id)
@@ -252,6 +257,7 @@ fun PhotosContent(
                                     .clip(ProtonTheme.shapes.small),
                                 link = driveLinksMap[item.id],
                                 thumbnailVO = item.thumbnailVO,
+                                fileId = item.id,
                                 index = index,
                                 isSelected = selected,
                                 inMultiselect = selected || selectedPhotos.isNotEmpty() || inMultiselect,
@@ -352,22 +358,6 @@ fun PhotosContent(
     }
 }
 
-private fun List<PhotosItem>.targetIds(
-    visibleCount: Int,
-    firstVisibleItemIndex: Int,
-): Set<FileId> {
-    val sizeRange = IntRange(0, size - 1)
-    val offscreenPageSize = minOf(visibleCount, MAX_OFFSCREEN_PAGE_SIZE)
-    val afterFrom = (firstVisibleItemIndex + visibleCount).coerceIn(sizeRange)
-    val afterTo = (firstVisibleItemIndex + visibleCount + offscreenPageSize - 1).coerceIn(sizeRange)
-    val beforeFrom = (firstVisibleItemIndex - offscreenPageSize).coerceIn(sizeRange)
-    val beforeTo = (firstVisibleItemIndex - 1).coerceIn(sizeRange)
-    return (subList(afterFrom, afterTo + 1) + subList(beforeFrom, beforeTo + 1))
-        .filterIsInstance<PhotosItem.PhotoListing>()
-        .map { photoListing ->  photoListing.id }
-        .toSet()
-}
-
 private fun Set<FileId>.disposeNonTargeted(
     precacheDisposables: MutableMap<LinkId, Disposable>
 ): Set<FileId> = this.apply {
@@ -375,5 +365,3 @@ private fun Set<FileId>.disposeNonTargeted(
         precacheDisposables.remove(id)?.dispose()
     }
 }
-
-private const val MAX_OFFSCREEN_PAGE_SIZE = 36

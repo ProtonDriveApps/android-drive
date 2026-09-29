@@ -22,6 +22,7 @@ import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.documentsprovider.domain.entity.DocumentId
 import me.proton.core.drive.documentsprovider.domain.usecase.NotifyDocumentChanged
+import me.proton.core.drive.linkupload.domain.extension.userId
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import javax.inject.Inject
 

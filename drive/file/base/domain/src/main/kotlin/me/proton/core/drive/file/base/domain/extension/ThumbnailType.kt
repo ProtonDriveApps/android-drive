@@ -18,26 +18,10 @@
 
 package me.proton.core.drive.file.base.domain.extension
 
-import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.file.base.domain.entity.Thumbnail
 import me.proton.core.drive.file.base.domain.entity.ThumbnailType
-
-val ThumbnailType.nameEncFile: String get() = when (this) {
-    ThumbnailType.DEFAULT -> Thumbnail.default
-    ThumbnailType.PHOTO -> Thumbnail.photo
-}
 
 val ThumbnailType.nameDecFile: String get() = when (this) {
     ThumbnailType.DEFAULT -> Thumbnail.default + ".dec"
     ThumbnailType.PHOTO -> Thumbnail.photo + ".dec"
-}
-
-val ThumbnailType.index: Long get() = when (this) {
-    ThumbnailType.DEFAULT -> Block.THUMBNAIL_DEFAULT_INDEX
-    ThumbnailType.PHOTO -> Block.THUMBNAIL_PHOTO_INDEX
-}
-
-fun ThumbnailType.toBlockType(): Block.Type = when (this) {
-    ThumbnailType.DEFAULT -> Block.Type.THUMBNAIL_DEFAULT
-    ThumbnailType.PHOTO -> Block.Type.THUMBNAIL_PHOTO
 }

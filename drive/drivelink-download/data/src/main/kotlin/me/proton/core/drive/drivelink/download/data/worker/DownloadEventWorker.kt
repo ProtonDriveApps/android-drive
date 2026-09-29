@@ -53,6 +53,7 @@ import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.download.domain.entity.DownloadFileLink
+import me.proton.core.drive.drivelink.download.domain.entity.revisionUid
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadManager
 import me.proton.core.drive.drivelink.download.domain.repository.DownloadFileRepository
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidDownloadFileProgressNotificationDisabled
@@ -137,7 +138,7 @@ class DownloadEventWorker @AssistedInject constructor(
                         (currentIds - previousLinks.keys).forEach { id ->
                             val link = running.first { it.id == id }
                             fileProgressJobs[id] = async {
-                                downloadManager.getProgressFlow(link.fileId)
+                                downloadManager.getProgressFlow(link.revisionUid)
                                     ?.collect { percentage ->
                                         progressMap.update { it + (id to percentage) }
                                     }

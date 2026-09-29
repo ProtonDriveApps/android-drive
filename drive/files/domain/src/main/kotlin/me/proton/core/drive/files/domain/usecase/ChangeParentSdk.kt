@@ -17,10 +17,13 @@
  */
 package me.proton.core.drive.files.domain.usecase
 
+import kotlinx.coroutines.flow.toList
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.provider.ProtonDriveClientProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
+import me.proton.drive.sdk.ProtonDriveSdkException
+import me.proton.drive.sdk.entity.NodeMoveItem
 import me.proton.drive.sdk.entity.NodeResultPair
 import me.proton.drive.sdk.entity.NodeUid
 import javax.inject.Inject
@@ -38,13 +41,43 @@ class ChangeParentSdk @Inject constructor(
             userId = userId,
             nodeUid = newParentFolderUid,
         ) {
-            protonDriveClientProvider
+            val client = protonDriveClientProvider
                 .getOrCreate(userId)
                 .getOrThrow()
-                .moveNodes(
-                    nodeUids = nodeUids,
-                    newParentFolderUid = newParentFolderUid,
+            val nodeMoveItems = mutableListOf<NodeMoveItem>()
+            val failures = mutableListOf<NodeResultPair>()
+            nodeUids.forEach { nodeUid ->
+                coRunCatching {
+                    // TODO replace by getNodes
+                    val node = checkNotNull(client.getNode(nodeUid)) { "Node not found for move" }
+                    val parentUid =
+                        checkNotNull(node.parentUid) { "Node without parent cannot be moved" }
+                    val name = node.name.getOrThrow()
+                    NodeMoveItem(
+                        nodeUid = nodeUid,
+                        currentParentUid = parentUid,
+                        currentName = name,
+                        targetName = name,
+                    )
+                }.fold(
+                    onSuccess = { nodeMoveItems += it },
+                    onFailure = { error ->
+                        failures += NodeResultPair.Failure(
+                            nodeUid = nodeUid,
+                            error = error as? ProtonDriveSdkException
+                                ?: ProtonDriveSdkException(message = error.message, cause = error),
+                        )
+                    },
                 )
+            }
+            failures + if (nodeMoveItems.isEmpty()) {
+                emptyList()
+            } else {
+                client.moveNodes(
+                    nodeMoveItems,
+                    targetParentFolderUid = newParentFolderUid
+                ).toList()
+            }
         }
     }
 }

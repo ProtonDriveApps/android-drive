@@ -21,15 +21,26 @@ package me.proton.core.drive.drivelink.download.data.extension
 import me.proton.core.drive.drivelink.download.data.db.entity.ParentLinkDownloadEntity
 import me.proton.core.drive.drivelink.download.domain.entity.DownloadParentLink
 import me.proton.core.drive.link.data.api.entity.LinkDto
+import me.proton.core.drive.link.domain.entity.AlbumContext
 import me.proton.core.drive.link.domain.entity.AlbumId
+import me.proton.core.drive.link.domain.entity.FileContext
 import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.entity.FolderContext
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.drive.volume.data.extension.toVolumeType
+import me.proton.drive.sdk.entity.LegacyNodeUid
 
 fun ParentLinkDownloadEntity.toDownloadParentLink() = DownloadParentLink(
     id = id,
-    volumeId = VolumeId(volumeId),
+    nodeContext = LegacyNodeUid(volumeId = volumeId, linkId = linkId).let { nodeUid ->
+        when (linkType) {
+            LinkDto.TYPE_FILE -> FileContext(userId, nodeUid, volumeType.toVolumeType())
+            LinkDto.TYPE_FOLDER -> FolderContext(userId, nodeUid, volumeType.toVolumeType())
+            LinkDto.TYPE_ALBUM -> AlbumContext(userId, nodeUid, volumeType.toVolumeType())
+            else -> error("Unhandled link type: $linkType")
+        }
+    },
     linkId = ShareId(userId, shareId).let {
         when (linkType) {
             LinkDto.TYPE_FILE -> FileId(it, linkId)

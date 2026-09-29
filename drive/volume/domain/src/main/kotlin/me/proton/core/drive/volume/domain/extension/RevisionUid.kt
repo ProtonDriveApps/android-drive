@@ -21,4 +21,4 @@ package me.proton.core.drive.volume.domain.extension
 import me.proton.drive.sdk.entity.LegacyRevisionUid
 import me.proton.drive.sdk.entity.RevisionUid
 
-val RevisionUid.volumeId get() = (this as LegacyRevisionUid).nodeUid.volumeId
+val RevisionUid.volumeId get() = (this as? LegacyRevisionUid ?: LegacyRevisionUid(value)).nodeUid.volumeId

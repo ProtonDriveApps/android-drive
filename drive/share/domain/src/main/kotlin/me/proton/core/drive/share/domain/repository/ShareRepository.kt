@@ -75,9 +75,9 @@ interface ShareRepository {
     suspend fun hasShareWithKey(shareId: ShareId): Boolean
 
     /**
-     * Fetches share from the server and stores it into cache
+     * Fetches share from the server, stores it into cache and returns it
      */
-    suspend fun fetchShare(shareId: ShareId)
+    suspend fun fetchShare(shareId: ShareId): Share
 
     /**
      * Ask the backend to delete a share

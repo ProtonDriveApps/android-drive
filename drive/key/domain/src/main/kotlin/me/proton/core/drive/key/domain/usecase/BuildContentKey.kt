@@ -24,7 +24,6 @@ import me.proton.core.drive.key.domain.entity.Key
 import me.proton.core.drive.key.domain.factory.ContentKeyFactory
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.extension.userId
-import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.usecase.GetSignatureAddress
 import javax.inject.Inject
@@ -57,18 +56,6 @@ class BuildContentKey @Inject constructor(
             fileKey = getNodeKey(file).getOrThrow()
         ).getOrThrow()
     }
-
-    suspend operator fun invoke(
-        userId: UserId,
-        uploadFile: UploadFileLink,
-        fileKey: Key.Node,
-    ): Result<ContentKey> = invoke(
-        userId = userId,
-        shareId = uploadFile.shareId.id,
-        contentKeyPacket = uploadFile.contentKeyPacket,
-        contentKeyPacketSignature = uploadFile.contentKeyPacketSignature,
-        fileKey = fileKey,
-    )
 
     suspend operator fun invoke(
         userId: UserId,

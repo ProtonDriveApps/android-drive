@@ -25,10 +25,6 @@ import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 fun LinkDownloadStateEntity.toDownloadState() = when (state) {
     LinkDownloadState.DOWNLOADING -> DownloadState.Downloading
     LinkDownloadState.ERROR -> DownloadState.Error
-    LinkDownloadState.DOWNLOADED -> DownloadState.Downloaded(
-        manifestSignature = manifestSignature,
-        signatureAddress = signatureAddress,
-    )
-
+    LinkDownloadState.DOWNLOADED -> DownloadState.Downloaded
     LinkDownloadState.READY -> DownloadState.Ready
 }

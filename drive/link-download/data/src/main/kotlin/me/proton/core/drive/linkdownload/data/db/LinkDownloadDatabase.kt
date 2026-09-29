@@ -19,7 +19,9 @@ package me.proton.core.drive.linkdownload.data.db
 
 import androidx.sqlite.db.SupportSQLiteDatabase
 import me.proton.core.data.room.db.Database
+import me.proton.core.data.room.db.extension.recreateTable
 import me.proton.core.data.room.db.migration.DatabaseMigration
+import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.linkdownload.data.db.dao.LinkDownloadDao
 import me.proton.core.drive.linkdownload.data.db.dao.LinkDownloadFileSignatureVerificationFailedDao
 
@@ -52,6 +54,60 @@ interface LinkDownloadDatabase : Database {
                         FOREIGN KEY(`user_id`, `share_id`, `link_id`) REFERENCES `LinkEntity`(`user_id`, `share_id`, `id`)
                         ON UPDATE NO ACTION ON DELETE CASCADE )
                     """.trimIndent()
+                )
+            }
+        }
+
+        val MIGRATION_2 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Nothing has written a download block since download moved to the SDK.
+                database.execSQL("DROP TABLE IF EXISTS `DownloadBlockEntity`")
+                // The manifest signature and its address went with the block verification.
+                database.recreateTable(
+                    table = "LinkDownloadStateEntity",
+                    createTable = {
+                        database.execSQL(
+                            """
+                                CREATE TABLE IF NOT EXISTS `LinkDownloadStateEntity` (
+                                `user_id` TEXT NOT NULL,
+                                `share_id` TEXT NOT NULL,
+                                `link_id` TEXT NOT NULL,
+                                `revision_id` TEXT NOT NULL,
+                                `state` TEXT NOT NULL,
+
+                                PRIMARY KEY(`user_id`, `share_id`, `link_id`, `revision_id`),
+                                FOREIGN KEY(`user_id`, `share_id`, `link_id`) REFERENCES `LinkEntity`(`user_id`, `share_id`, `id`)
+                                ON UPDATE NO ACTION ON DELETE CASCADE )
+                            """.trimIndent()
+                        )
+                    },
+                    createIndices = {
+                        listOf(
+                            "user_id" to "`user_id`",
+                            "share_id" to "`share_id`",
+                            "link_id" to "`link_id`",
+                            "revision_id" to "`revision_id`",
+                            "state" to "`state`",
+                            "user_id_state" to "`user_id`, `state`",
+                            "user_id_share_id_link_id" to "`user_id`, `share_id`, `link_id`",
+                            "user_id_share_id_link_id_revision_id" to
+                                "`user_id`, `share_id`, `link_id`, `revision_id`",
+                        ).forEach { (suffix, columns) ->
+                            database.execSQL(
+                                """
+                                    CREATE INDEX IF NOT EXISTS `index_LinkDownloadStateEntity_$suffix`
+                                    ON `LinkDownloadStateEntity` ($columns)
+                                """.trimIndent()
+                            )
+                        }
+                    },
+                    columns = listOf(
+                        Column.USER_ID,
+                        Column.SHARE_ID,
+                        Column.LINK_ID,
+                        Column.REVISION_ID,
+                        Column.STATE,
+                    ),
                 )
             }
         }

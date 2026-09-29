@@ -124,8 +124,13 @@ val privateProperties = Properties().apply {
 val lastAlpha = tags.countSubstrings("${Config.versionName}-alpha")
 val lastBeta = tags.countSubstrings("${Config.versionName}-beta")
 
-// Drive SDK: dev & alpha use Rust crypto, beta & prod use Go crypto (catalog default).
-val driveSdkRustFlavors = setOf("dev", "alpha")
+// Drive SDK: enable rust per flavor (uncomment to enable).
+val driveSdkRustFlavors = setOf(
+    "dev",
+    "alpha",
+    //"beta",
+    //"prod",
+)
 val driveSdkRustVersion = "${libs.versions.drive.sdk.get()}-rust"
 
 android {
@@ -193,9 +198,6 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev ($gitHash)"
             isDefault = true
-            buildConfigField("String", "SDK_VERSION_NAME", "\"$driveSdkRustVersion\"")
-            // Rust crypto flavor when the SDK is a local composite build.
-            missingDimensionStrategy("crypto", "rust")
 
             val testEnvironment = System.getenv("TEST_ENV_DOMAIN")
             val dynamicEnvironment = privateProperties.getProperty("HOST", "proton.black")
@@ -228,8 +230,6 @@ android {
         create("alpha") {
             versionCode = (versionCodeFromGitCommitCount * 10) + 3
             versionNameSuffix = "-alpha ($gitCommitCount)"
-            buildConfigField("String", "SDK_VERSION_NAME", "\"$driveSdkRustVersion\"")
-            missingDimensionStrategy("crypto", "rust")
             androidLocales(Config.incubatingResourceConfigurations)
         }
         create("beta") {
@@ -238,6 +238,13 @@ android {
         }
         create("prod") {
             versionCode = (versionCodeFromGitCommitCount * 10) + 1
+        }
+        driveSdkRustFlavors.forEach { flavor ->
+            getByName(flavor) {
+                buildConfigField("String", "SDK_VERSION_NAME", "\"$driveSdkRustVersion\"")
+                // Rust crypto flavor when the SDK is a local composite build.
+                missingDimensionStrategy("crypto", "rust")
+            }
         }
     }
 
@@ -268,8 +275,7 @@ android {
     }
 }
 
-// Force the "-rust" SDK version on dev & alpha classpaths, including the SDK pulled
-// in transitively by the :drive modules. Applies only to the Maven artifact.
+// Force the "-rust" SDK version on rust flavors, Maven artifact only.
 androidComponents {
     onVariants { variant ->
         if (driveSdkRustFlavors.any { variant.name.startsWith(it) }) {

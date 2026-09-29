@@ -39,7 +39,6 @@ import androidx.compose.material.TextFieldColors
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,6 +67,8 @@ import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.textNorm
 import me.proton.core.drive.base.presentation.component.ProtonIconTextButton
+import me.proton.core.drive.base.presentation.extension.aroundVisibleItems
+import me.proton.core.drive.base.presentation.extension.rememberVisibleItems
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -227,19 +228,13 @@ fun PhotosToAddToAlbum(
 
 ) {
     val gridState = rememberLazyGridState()
-    val firstVisibleItemIndex by remember(gridState) { derivedStateOf { gridState.firstVisibleItemIndex } }
-    LaunchedEffect(firstVisibleItemIndex, items.itemSnapshotList.items) {
+    val visibleItems = gridState.rememberVisibleItems()
+    LaunchedEffect(visibleItems, items.itemSnapshotList.items) {
         onScroll(
             items.itemSnapshotList.items
-                .takeIf { list -> list.isNotEmpty() && list.size > firstVisibleItemIndex }
-                ?.let { list ->
-                    val sizeRange = IntRange(0, list.size - 1)
-                    val fromIndex = (firstVisibleItemIndex - 10).coerceIn(sizeRange)
-                    val toIndex = (firstVisibleItemIndex + 20).coerceIn(sizeRange)
-                    list.subList(fromIndex, toIndex + 1)
-                        .map { photoListing -> photoListing.id }
-                        .toSet()
-                } ?: emptySet(),
+                .aroundVisibleItems(visibleItems)
+                .map { photoListing -> photoListing.id }
+                .toSet(),
         )
     }
     LazyVerticalGrid(
@@ -257,6 +252,7 @@ fun PhotosToAddToAlbum(
             items[index]?.let { item ->
                 AddToAlbumItem(
                     driveLink = driveLinksMap[item.id] as? DriveLink.File,
+                    fileId = item.id,
                     index = index,
                     thumbnailVO = item.thumbnailVO,
                     isSelected = false,
@@ -275,6 +271,7 @@ fun PhotosToAddToAlbum(
 @Composable
 fun AddToAlbumItem(
     driveLink: DriveLink.File?,
+    fileId: FileId,
     index: Int,
     thumbnailVO: ThumbnailVO?,
     isSelected: Boolean,
@@ -294,6 +291,7 @@ fun AddToAlbumItem(
                 .padding(all = ProtonDimens.DefaultSpacing)
                 .clip(ProtonTheme.shapes.small),
             link = driveLink,
+            fileId = fileId,
             thumbnailVO = thumbnailVO,
             index = index,
             isSelected = isSelected,

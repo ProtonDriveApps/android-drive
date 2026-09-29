@@ -25,10 +25,6 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.android.drive.extension.log
@@ -38,8 +34,8 @@ import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.presentation.observe
 import me.proton.core.accountmanager.presentation.onAccountReady
 import me.proton.core.accountmanager.presentation.onAccountRemoved
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
+import me.proton.core.drive.base.domain.coroutines.UserSupervisorIOScopes
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.usecase.HasBusinessPlan
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadManager
@@ -48,7 +44,7 @@ import me.proton.core.util.kotlin.CoreLogger
 
 class AccountReadyObserverInitializer : Initializer<Unit> {
 
-    private val scopes = mutableMapOf<UserId, CoroutineScope>()
+    private val scopes = UserSupervisorIOScopes(LogTag.DEFAULT)
 
     override fun create(context: Context) {
         EntryPointAccessors.fromApplication(
@@ -58,9 +54,7 @@ class AccountReadyObserverInitializer : Initializer<Unit> {
             accountManager.observe(appLifecycleProvider.lifecycle, Lifecycle.State.CREATED)
                 .onAccountReady { account ->
                     val userId = account.userId
-                    val scope = scopes.getOrPut(userId) {
-                        CoroutineScope(Dispatchers.IO + Job())
-                    }
+                    val scope = scopes[userId]
                     observeApplicationState().onEach { applicationState ->
                         val state = if (applicationState.inForeground) "foreground" else "background"
                         CoreLogger.d(
@@ -80,7 +74,7 @@ class AccountReadyObserverInitializer : Initializer<Unit> {
                 }
                 .onAccountRemoved { account ->
                     fileDownloader.stop(account.userId)
-                    scopes.remove(account.userId)?.cancel()
+                    scopes.remove(account.userId)
                 }
         }
     }

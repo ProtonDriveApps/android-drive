@@ -67,7 +67,7 @@ class BackupCheckDuplicatesWorker @AssistedInject constructor(
             .onSuccess { folderId ->
                 checkDuplicates(BackupFolder(bucketId, folderId)).onFailure { error ->
                     error.log(LogTag.BACKUP, "Cannot check duplicates")
-                    handleBackupError(folderId, error.toBackupError())
+                    handleBackupError(folderId, error.toBackupError(folderId))
                     return Result.failure()
                 }
             }

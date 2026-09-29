@@ -23,9 +23,12 @@ import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.entity.Event.Backup.BackupState.PAUSED_DISABLED
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.backup.domain.manager.BackupManager
+import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class DisablePhotosBackup @Inject constructor(
@@ -33,9 +36,13 @@ class DisablePhotosBackup @Inject constructor(
     private val backupManager: BackupManager,
     private val announceEvent: AnnounceEvent,
 ) {
-    suspend operator fun invoke(folderId: FolderId) = coRunCatching {
+    suspend operator fun invoke(
+        folderId: FolderId,
+        state: Event.Backup.BackupState = PAUSED_DISABLED,
+    ) = coRunCatching {
+        CoreLogger.i(LogTag.BACKUP, "Disabling photos backup for ${folderId.id.logId()}: $state")
         backupManager.stop(folderId)
-        announceEvent(folderId.userId, Event.BackupStopped(folderId, PAUSED_DISABLED))
+        announceEvent(folderId.userId, Event.BackupStopped(folderId, state))
         clearPhotosBackup(folderId).getOrThrow()
         announceEvent(folderId.userId, Event.BackupDisabled(folderId))
         PhotoBackupState.Disabled
