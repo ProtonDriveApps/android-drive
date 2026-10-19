@@ -30,7 +30,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
 import me.proton.android.drive.ui.viewmodel.ShareLinkPermissionsViewModel
-import me.proton.core.compose.component.bottomsheet.RunAction
+import me.proton.core.drive.base.presentation.component.RunAction
 import me.proton.core.drive.drivelink.shared.presentation.component.ShareLinkPermissionsOptions
 
 @Composable

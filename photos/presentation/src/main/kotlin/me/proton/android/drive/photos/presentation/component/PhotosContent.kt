@@ -31,8 +31,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -99,6 +100,7 @@ fun PhotosContent(
     onGetStorage: () -> Unit,
     onResolveMissingFolder: () -> Unit,
     onChangeNetwork: () -> Unit,
+    onAllowUnconfirmedNetwork: () -> Unit,
     onIgnoreBackgroundRestrictions: () -> Unit,
     onDismissBackgroundRestrictions: () -> Unit,
     isRefreshEnabled: Boolean,
@@ -136,6 +138,7 @@ fun PhotosContent(
             onGetStorage = onGetStorage,
             onResolveMissingFolder = onResolveMissingFolder,
             onChangeNetwork = onChangeNetwork,
+            onAllowUnconfirmedNetwork = onAllowUnconfirmedNetwork,
             onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions,
             onDismissBackgroundRestrictions = onDismissBackgroundRestrictions,
             getFastScrollAnchors = getFastScrollAnchors,
@@ -169,6 +172,7 @@ fun PhotosContent(
     onGetStorage: () -> Unit,
     onResolveMissingFolder: () -> Unit,
     onChangeNetwork: () -> Unit,
+    onAllowUnconfirmedNetwork: () -> Unit,
     onIgnoreBackgroundRestrictions: () -> Unit,
     onDismissBackgroundRestrictions: () -> Unit,
     getFastScrollAnchors: suspend (List<PhotosItem>, Int, Int) -> List<FastScrollAnchor>,
@@ -305,6 +309,7 @@ fun PhotosContent(
                     onResolve = onResolve,
                     onResolveMissingFolder = onResolveMissingFolder,
                     onChangeNetwork = onChangeNetwork,
+                    onAllowUnconfirmedNetwork = onAllowUnconfirmedNetwork,
                     onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions,
                     onDismissBackgroundRestrictions = onDismissBackgroundRestrictions,
                 )
@@ -328,13 +333,16 @@ fun PhotosContent(
                 ) {
                     Card(
                         shape = RoundedCornerShape(100.dp),
-                        elevation = ProtonDimens.SmallSpacing,
-                        backgroundColor = ProtonTheme.colors.backgroundSecondary,
-                        contentColor = ProtonTheme.colors.textNorm,
+                        elevation = CardDefaults.cardElevation(defaultElevation = ProtonDimens.SmallSpacing),
+                        colors = CardDefaults.cardColors(
+                            containerColor = ProtonTheme.colors.backgroundSecondary,
+                            contentColor = ProtonTheme.colors.textNorm,
+                        ),
                         modifier = Modifier
                             .size(width = 32.dp, height = 37.dp)
                     ) {
                         Box(
+                            modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(

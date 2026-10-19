@@ -21,6 +21,7 @@ package me.proton.core.drive.crypto.domain.usecase.file
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.provider.ProtonDriveClientProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.drive.sdk.entity.AvailableNameTarget
 import me.proton.drive.sdk.entity.NodeUid
 import javax.inject.Inject
 
@@ -31,6 +32,7 @@ class AvoidDuplicateFileNameSdk @Inject constructor(
         userId: UserId,
         parentFolderUid: NodeUid,
         name: String,
+        target: AvailableNameTarget = AvailableNameTarget.FILE,
     ): Result<String> = coRunCatching {
 
         protonDriveClientProvider
@@ -39,6 +41,7 @@ class AvoidDuplicateFileNameSdk @Inject constructor(
             .getAvailableName(
                 parentFolderUid = parentFolderUid,
                 name = name,
+                target = target,
             )
     }
 }

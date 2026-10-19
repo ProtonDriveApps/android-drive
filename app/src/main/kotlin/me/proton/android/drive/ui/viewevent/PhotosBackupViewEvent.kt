@@ -23,5 +23,6 @@ import android.content.Context
 interface PhotosBackupViewEvent {
     val onToggleBackup: () -> Unit
     val onToggleMobileData: () -> Unit
+    val onToggleAllowUnconfirmedNetwork: () -> Unit
     val onToggleIgnoringBatteryOptimizations: (Context) -> Unit
 }

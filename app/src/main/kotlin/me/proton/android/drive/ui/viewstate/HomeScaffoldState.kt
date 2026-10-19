@@ -18,9 +18,10 @@
 
 package me.proton.android.drive.ui.viewstate
 
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
@@ -31,7 +32,8 @@ import me.proton.core.drive.base.presentation.component.rememberModalBottomSheet
 
 @Stable
 data class HomeScaffoldState(
-    val scaffoldState: ScaffoldState,
+    val drawerState: DrawerState,
+    val snackbarHostState: SnackbarHostState,
     val drawerGesturesEnabled: MutableState<Boolean>,
     val modalBottomSheetContentState: ModalBottomSheetContentState,
     val topAppBar: MutableState<@Composable () -> Unit>,
@@ -39,16 +41,17 @@ data class HomeScaffoldState(
 )
 
 @Composable
-@OptIn(ExperimentalMaterialApi::class)
 fun rememberHomeScaffoldState(
-    scaffoldState: ScaffoldState = rememberScaffoldState(),
+    drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     drawerGesturesEnabled: MutableState<Boolean> = mutableStateOf(true),
     modalBottomSheetContentState: ModalBottomSheetContentState = rememberModalBottomSheetContentState(),
     topAppBar: MutableState<@Composable () -> Unit> = mutableStateOf({}),
     bottomNavigationEnabled: MutableState<Boolean> = mutableStateOf(true),
 ): HomeScaffoldState = remember {
     HomeScaffoldState(
-        scaffoldState,
+        drawerState,
+        snackbarHostState,
         drawerGesturesEnabled,
         modalBottomSheetContentState,
         topAppBar,

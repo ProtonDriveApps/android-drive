@@ -144,6 +144,7 @@
   <string name="notification_content_text_backup_failed_connectivity">Nessuna connessione a Internet</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">In attesa di una rete Wi-Fi</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Il backup non è consentito</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
   <string name="notification_content_text_backup_paused_disabled">Il backup è stato disabilitato</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Il backup non può essere effettuato in background</string>
   <string name="notification_content_text_backup_preparing">Preparazione del backup in corso</string>
@@ -176,6 +177,8 @@
   <string name="notification_content_title_transferring">Trasferimento dati</string>
   <!-- endregion -->
   <string name="content_description_select_all">Seleziona tutti gli elementi nella lista</string>
+  <string name="content_description_select_separator">Select all items in %1$s</string>
+  <string name="photos_error_separator_selection_failed">Some items could not be selected, please try again</string>
   <string name="content_description_selected_options">Mostra più opzioni per i file e/o le cartelle selezionati</string>
   <string name="content_description_files_upload_upload_file">Carica un file</string>
   <string name="content_description_albums_new">Crea nuovo album</string>

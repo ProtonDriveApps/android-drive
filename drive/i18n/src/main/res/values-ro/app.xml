@@ -149,6 +149,7 @@
   <string name="notification_content_text_backup_failed_connectivity">Nu există conexiune la internet.</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Se așteaptă Wi-Fi</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Conservarea nu este permisă.</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">Folderul de conservări nu mai există.</string>
   <string name="notification_content_text_backup_paused_disabled">Conservarea este dezactivată</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Conservarea nu poate funcționa în fundal.</string>
   <string name="notification_content_text_backup_preparing">Se pregătește conservarea</string>
@@ -182,6 +183,8 @@
   <string name="notification_content_title_transferring">Se transferă datele</string>
   <!-- endregion -->
   <string name="content_description_select_all">Selectare toate din listă</string>
+  <string name="content_description_select_separator">Selectare toate articolele din %1$s</string>
+  <string name="photos_error_separator_selection_failed">Unele articole nu s-au putut selecta. Reîncercați.</string>
   <string name="content_description_selected_options">Afișare mai multe opțiuni pentru fișierele și/sau folderele selectate.</string>
   <string name="content_description_files_upload_upload_file">Încărcați un fișier</string>
   <string name="content_description_albums_new">Creare album</string>

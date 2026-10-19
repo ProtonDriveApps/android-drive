@@ -20,7 +20,7 @@ package me.proton.core.drive.worker.domain.usecase
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.base.domain.util.coRunCatchingException
 import me.proton.core.drive.worker.domain.repository.WorkerRepository
 import javax.inject.Inject
 
@@ -28,8 +28,8 @@ class CanRun @Inject constructor(
     private val workerRepository: WorkerRepository,
     private val configurationProvider: ConfigurationProvider,
 ) {
-    suspend operator fun invoke(userId: UserId, workerId: String): Result<Boolean> = coRunCatching {
-        invoke(workerRepository.getAllWorkerRuns(userId, workerId).size).getOrThrow()
+    suspend operator fun invoke(userId: UserId, workerId: String): Result<Boolean> = coRunCatchingException {
+        invoke(workerRepository.getAllWorkerRuns(userId, workerId).count { run -> !run.isBlocked }).getOrThrow()
     }
 
     operator fun invoke(attempt: Int): Result<Boolean> = Result.success(

@@ -33,14 +33,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -80,6 +80,7 @@ import me.proton.core.drive.base.presentation.component.LetterBadge
 import me.proton.core.drive.base.presentation.component.LinearProgressIndicator
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.base.presentation.extension.currentLocale
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.domain.extension.isSharedByLinkOrWithUsers
@@ -508,8 +509,8 @@ fun rememberHighlightColor(isHighlighted: Boolean): Color {
 @Preview
 @Composable
 fun PreviewFilesListItemPlaceholder() {
-    ProtonTheme {
-        Column(modifier = Modifier.background(MaterialTheme.colors.background)) {
+    DriveTheme {
+        Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             FilesListItemPlaceholder()
             FilesListItem(
                 link = PREVIEW_DRIVELINK_FOLDER_SHARED_WITH_ME,
@@ -533,8 +534,8 @@ fun PreviewFilesListItemPlaceholder() {
 @Suppress("unused")
 @Composable
 fun PreviewListItem() {
-    ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+    DriveTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             FilesListItem(
                 link = PREVIEW_DRIVELINK,
                 onClick = {},
@@ -551,8 +552,8 @@ fun PreviewListItem() {
 @Preview
 @Composable
 fun PreviewSharedWithMeListItems() {
-    ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+    DriveTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             Column {
                 FilesListItem(
                     link = PREVIEW_DRIVELINK_FOLDER_SHARED_WITH_ME,
@@ -586,8 +587,8 @@ fun PreviewSharedWithMeListItems() {
 @Suppress("unused")
 @Composable
 fun PreviewSelectedListItem() {
-    ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+    DriveTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             FilesListItem(
                 link = PREVIEW_DRIVELINK,
                 onClick = {},
@@ -612,8 +613,8 @@ fun PreviewSelectedListItem() {
 @Suppress("unused")
 @Composable
 fun PreviewUnselectedListItem() {
-    ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+    DriveTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             FilesListItem(
                 link = PREVIEW_DRIVELINK,
                 onClick = {},
@@ -638,8 +639,8 @@ fun PreviewUnselectedListItem() {
 @Suppress("unused")
 @Composable
 fun PreviewDownloadedListItem() {
-    ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+    DriveTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             FilesListItem(
                 link = PREVIEW_DRIVELINK.copy(
                     isMarkedAsOffline = true,
@@ -660,8 +661,8 @@ fun PreviewDownloadedListItem() {
 @Preview
 @Composable
 fun PreviewDownloadingListItem() {
-    ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+    DriveTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             FilesListItem(
                 link = PREVIEW_DRIVELINK.copy(
                     isMarkedAsOffline = true,
@@ -681,8 +682,8 @@ fun PreviewDownloadingListItem() {
 @Preview
 @Composable
 fun PreviewDownloadedAndFavoriteListItem() {
-    ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+    DriveTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             FilesListItem(
                 link = PREVIEW_DRIVELINK.copy(
                     isMarkedAsOffline = true,
@@ -705,8 +706,8 @@ fun PreviewDownloadedAndFavoriteListItem() {
 @Preview
 @Composable
 fun PreviewDwnldAndFavShrdListItem() {
-    ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+    DriveTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             FilesListItem(
                 link = PREVIEW_DRIVELINK.copy(
                     isMarkedAsOffline = true,
@@ -734,7 +735,7 @@ fun PreviewDwnldAndFavShrdListItem() {
 @Preview
 @Composable
 fun PreviewItemsWithoutMoreOptions() {
-    ProtonTheme {
+    DriveTheme {
         Column {
             FilesListItem(
                 link = PREVIEW_DRIVELINK_FOLDER.copy(

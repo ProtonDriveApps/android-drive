@@ -43,6 +43,8 @@ import me.proton.android.drive.extension.log
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.mapSuccessValueOrNull
+import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -71,6 +73,7 @@ class SendFileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     configurationProvider: ConfigurationProvider,
     isConnectedToNetwork: isConnectedToNetwork,
+    private val announceEvent: AnnounceEvent,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     private val shareId = ShareId(userId, savedStateHandle.require(Screen.SendFile.SHARE_ID))
@@ -127,6 +130,16 @@ class SendFileViewModel @Inject constructor(
                     }
                 )
             }
+        }
+    }.onEach { state ->
+        if (state is ShareState.Ready) {
+            announceEvent(
+                userId,
+                Event.RecentlyAccessed.FilesDownloaded(
+                    listOf(fileId),
+                    Event.RecentlyAccessed.FilesDownloaded.Destination.SHARE,
+                ),
+            )
         }
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 }

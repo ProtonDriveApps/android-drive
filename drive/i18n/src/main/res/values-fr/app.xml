@@ -144,6 +144,7 @@
   <string name="notification_content_text_backup_failed_connectivity">Aucune connexion internet</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">En attente du wifi</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">La sauvegarde n\'est pas autorisée.</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">Le dossier de sauvegarde n\'existe plus</string>
   <string name="notification_content_text_backup_paused_disabled">La sauvegarde a été désactivée.</string>
   <string name="notification_content_text_backup_paused_background_restrictions">La sauvegarde ne peut pas être exécutée en arrière-plan.</string>
   <string name="notification_content_text_backup_preparing">Préparation de la sauvegarde</string>
@@ -176,6 +177,8 @@
   <string name="notification_content_title_transferring">Transfert de données en cours</string>
   <!-- endregion -->
   <string name="content_description_select_all">Sélectionner tous les éléments de la liste</string>
+  <string name="content_description_select_separator">Sélectionner tous les éléments dans %1$s</string>
+  <string name="photos_error_separator_selection_failed">Certains éléments n\'ont pas pu être sélectionnés. Nous vous invitons à réessayer.</string>
   <string name="content_description_selected_options">Afficher plus d\'options pour les fichiers et/ou dossiers sélectionnés</string>
   <string name="content_description_files_upload_upload_file">Importer un fichier</string>
   <string name="content_description_albums_new">Créer un album</string>

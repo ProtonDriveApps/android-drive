@@ -62,6 +62,7 @@
   <string name="photos_error_backup_disabled_action">オンにする</string>
   <string name="photos_error_backup_missing_folder">デフォルトのカメラフォルダが見つかりません</string>
   <string name="photos_error_backup_failed">バックアップに失敗しました。</string>
+  <string name="photos_error_backup_folder_not_found">Backup folder no longer exists.</string>
   <string name="photos_error_backup_temporarily_disabled">バックアップは一時的に無効にされています。</string>
   <string name="photos_error_missing_permissions">権限がありません。</string>
   <!--

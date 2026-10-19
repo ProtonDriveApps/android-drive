@@ -27,6 +27,7 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.data.extension.log
@@ -66,6 +67,7 @@ class ExportToDestinationUriWorker @AssistedInject constructor(
     private val destinationUri = requireNotNull(
         Uri.parse(requireNotNull(inputData.getString(KEY_DESTINATION_URI)) { "Destination Uri is required" })
     ) { "Uri parsing failed for ${inputData.getString(KEY_DESTINATION_URI)}" }
+    override val destination = Event.RecentlyAccessed.FilesDownloaded.Destination.URI
     override val downloadId: String get() = "${fileId.shareId.id}.${fileId.id}"
 
     override suspend fun getDriveLinks(): List<DriveLink.File> =

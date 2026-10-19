@@ -31,9 +31,9 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.Switch
-import androidx.compose.material.Text
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -56,14 +56,15 @@ import me.proton.android.drive.ui.viewmodel.PhotosBackupViewModel
 import me.proton.android.drive.ui.viewstate.PhotosBackupOption
 import me.proton.android.drive.ui.viewstate.PhotosBackupViewState
 import me.proton.android.drive.ui.viewstate.TagsMigrationProgressState
-import me.proton.core.compose.component.ProtonRawListItem
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.ListItemHeight
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.captionWeak
 import me.proton.core.compose.theme.defaultNorm
+import me.proton.core.drive.base.presentation.component.ProtonRawListItem
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -139,6 +140,7 @@ fun PhotosBackup(
             BackupPhotosOptions(
                 onToggleBackup = { viewEvent.onToggleBackup() },
                 onToggleMobileData = { viewEvent.onToggleMobileData() },
+                onToggleAllowUnconfirmedNetwork = { viewEvent.onToggleAllowUnconfirmedNetwork() },
                 onToggleIgnoringBatteryOptimizations = {
                     viewEvent.onToggleIgnoringBatteryOptimizations(
                         localContext
@@ -146,6 +148,7 @@ fun PhotosBackup(
                 },
                 backup = viewState.backup,
                 mobileData = viewState.mobileData,
+                allowUnconfirmedNetwork = viewState.allowUnconfirmedNetwork,
                 ignoringBatteryOptimizations = viewState.ignoringBatteryOptimizations,
             )
             content()
@@ -158,14 +161,17 @@ fun BackupPhotosOptions(
     modifier: Modifier = Modifier,
     onToggleBackup: () -> Unit,
     onToggleMobileData: () -> Unit,
+    onToggleAllowUnconfirmedNetwork: () -> Unit,
     onToggleIgnoringBatteryOptimizations: () -> Unit,
     backup: PhotosBackupOption,
     mobileData: PhotosBackupOption,
+    allowUnconfirmedNetwork: PhotosBackupOption,
     ignoringBatteryOptimizations: PhotosBackupOption,
 ) {
     Column(modifier) {
         BackupPhotosToggle(option = backup, onToggle = onToggleBackup)
         BackupPhotosToggle(option = mobileData, onToggle = onToggleMobileData)
+        BackupPhotosToggle(option = allowUnconfirmedNetwork, onToggle = onToggleAllowUnconfirmedNetwork)
         BackupPhotosToggle(
             option = ignoringBatteryOptimizations,
             onToggle = onToggleIgnoringBatteryOptimizations,
@@ -254,7 +260,8 @@ fun TagsMigrationProgress(
             Spacer(Modifier.height(SmallSpacing))
             LinearProgressIndicator(
                 modifier = Modifier.fillMaxWidth(),
-                progress = progress,
+                progress = { progress },
+                color = ProtonTheme.colors.brandNorm,
             )
         }
     }
@@ -263,7 +270,7 @@ fun TagsMigrationProgress(
 @Preview
 @Composable
 private fun PhotosBackupPreview() {
-    ProtonTheme {
+    DriveTheme {
         PhotosBackup(
             viewState = PhotosBackupViewState(
                 title = "Photo backup",
@@ -273,6 +280,13 @@ private fun PhotosBackupPreview() {
                 ),
                 mobileData = PhotosBackupOption(
                     title = "Use mobile data to backup photos",
+                    checked = false,
+                    enabled = false,
+                ),
+                allowUnconfirmedNetwork = PhotosBackupOption(
+                    title = "Allow backup on unconfirmed networks",
+                    description = "Backs up over networks that can't be confirmed as unmetered, " +
+                        "such as some Wi-Fi networks.",
                     checked = false,
                     enabled = false,
                 ),
@@ -286,6 +300,7 @@ private fun PhotosBackupPreview() {
             viewEvent = object : PhotosBackupViewEvent {
                 override val onToggleBackup = {}
                 override val onToggleMobileData = {}
+                override val onToggleAllowUnconfirmedNetwork = {}
                 override val onToggleIgnoringBatteryOptimizations = { _: Context -> }
             },
             modifier = Modifier.fillMaxSize(),
@@ -298,7 +313,7 @@ private fun PhotosBackupPreview() {
 @Preview
 @Composable
 private fun PreviewBackupPhotosToggle() {
-    ProtonTheme {
+    DriveTheme {
         BackupPhotosToggle(
             PhotosBackupOption(
                 title = "Photo backup",
@@ -312,7 +327,7 @@ private fun PreviewBackupPhotosToggle() {
 @Preview
 @Composable
 private fun PreviewBackupPhotosDescriptionToggle() {
-    ProtonTheme {
+    DriveTheme {
         BackupPhotosToggle(
             PhotosBackupOption(
                 title = "Disable battery optimization",
@@ -327,7 +342,7 @@ private fun PreviewBackupPhotosDescriptionToggle() {
 @Preview
 @Composable
 fun TagsMigrationProgressFinishedPreview() {
-    ProtonTheme {
+    DriveTheme {
         TagsMigrationProgress(
             TagsMigrationProgressState(
                 title = stringResource(I18N.string.photos_tags_migration_title),
@@ -342,7 +357,7 @@ fun TagsMigrationProgressFinishedPreview() {
 @Preview
 @Composable
 fun TagsMigrationProgressOngoingPreview() {
-    ProtonTheme {
+    DriveTheme {
         TagsMigrationProgress(
             TagsMigrationProgressState(
                 title = stringResource(I18N.string.photos_tags_migration_title),

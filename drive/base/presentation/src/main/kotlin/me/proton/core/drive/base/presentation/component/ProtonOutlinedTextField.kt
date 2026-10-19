@@ -17,16 +17,23 @@
  */
 package me.proton.core.drive.base.presentation.component
 
-import androidx.compose.material.TextFieldColors
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import me.proton.core.compose.theme.ProtonTheme
 
+@Suppress("UnusedReceiverParameter")
 @Composable
 fun TextFieldDefaults.protonOutlineTextFieldColors(): TextFieldColors =
-    outlinedTextFieldColors(
-        textColor = ProtonTheme.colors.textNorm,
-        backgroundColor = ProtonTheme.colors.backgroundSecondary,
+    OutlinedTextFieldDefaults.colors(
+        focusedTextColor = ProtonTheme.colors.textNorm,
+        unfocusedTextColor = ProtonTheme.colors.textNorm,
+
+        focusedContainerColor = ProtonTheme.colors.backgroundSecondary,
+        unfocusedContainerColor = ProtonTheme.colors.backgroundSecondary,
+        disabledContainerColor = ProtonTheme.colors.backgroundSecondary,
+        errorContainerColor = ProtonTheme.colors.backgroundSecondary,
 
         focusedLabelColor = ProtonTheme.colors.textNorm,
         focusedBorderColor = ProtonTheme.colors.brandNorm,

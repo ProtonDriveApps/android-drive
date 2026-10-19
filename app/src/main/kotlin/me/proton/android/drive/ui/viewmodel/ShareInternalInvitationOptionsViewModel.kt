@@ -22,6 +22,7 @@ import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
 import me.proton.android.drive.ui.options.InvitationOption
 import me.proton.core.domain.arch.onSuccess
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.onFailure
@@ -54,6 +56,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ShareInternalInvitationOptionsViewModel @Inject constructor(
+    @ApplicationScope applicationScope: CoroutineScope,
     @ApplicationContext private val appContext: Context,
     savedStateHandle: SavedStateHandle,
     getDriveLink: GetDriveLink,
@@ -71,7 +74,8 @@ class ShareInternalInvitationOptionsViewModel @Inject constructor(
     getDriveLink = getDriveLink,
     canManageSharing = canManageSharing,
     configurationProvider = configurationProvider,
-    broadcastMessages = broadcastMessages
+    broadcastMessages = broadcastMessages,
+    applicationScope = applicationScope,
 ) {
 
     override val invitation = driveLink.filterNotNull().transformLatest { driveLink ->

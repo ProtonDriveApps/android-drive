@@ -139,6 +139,7 @@
   <string name="notification_content_text_backup_failed_connectivity">沒有網際網路連線</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">正在等待 Wi-Fi</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">不允許備份</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
   <string name="notification_content_text_backup_paused_disabled">已關閉備份</string>
   <string name="notification_content_text_backup_paused_background_restrictions">備份無法於背景運作</string>
   <string name="notification_content_text_backup_preparing">正在準備備份</string>
@@ -170,6 +171,8 @@
   <string name="notification_content_title_transferring">正在傳輸資料</string>
   <!-- endregion -->
   <string name="content_description_select_all">顯示清單中所有的項目</string>
+  <string name="content_description_select_separator">Select all items in %1$s</string>
+  <string name="photos_error_separator_selection_failed">Some items could not be selected, please try again</string>
   <string name="content_description_selected_options">顯示所選檔案及/或資料夾的更多選項</string>
   <string name="content_description_files_upload_upload_file">上傳檔案</string>
   <string name="content_description_albums_new">建立新相簿</string>

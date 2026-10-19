@@ -26,4 +26,8 @@ fun WorkerRunEntity.toWorkerRun() = WorkerRun(
     userId = userId,
     workerId = workerId,
     runAt = TimestampMs(runAt),
+    isBlocked = isBlocked,
+    isLimited = blocked != WorkerRunEntity.BLOCKED_UNLIMITED,
 )
+
+val WorkerRunEntity.isBlocked: Boolean get() = blocked != WorkerRunEntity.NOT_BLOCKED

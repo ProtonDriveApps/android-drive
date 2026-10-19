@@ -144,6 +144,7 @@
   <string name="notification_content_text_backup_failed_connectivity">Internet-yhteyttä ei ole</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Odotetaan Wi-Fi-yhteyttä</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Varmuuskopiointia ei sallita</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
   <string name="notification_content_text_backup_paused_disabled">Varmuuskopiointi poistettiin käytöstä</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Varmuuskopiointia ei voida suorittaa taustalla</string>
   <string name="notification_content_text_backup_preparing">Valmistellaan varmuuskopiointia</string>
@@ -176,6 +177,8 @@
   <string name="notification_content_title_transferring">Siirretään tietoja</string>
   <!-- endregion -->
   <string name="content_description_select_all">Valitse listan kaikki kohteet</string>
+  <string name="content_description_select_separator">Select all items in %1$s</string>
+  <string name="photos_error_separator_selection_failed">Some items could not be selected, please try again</string>
   <string name="content_description_selected_options">Näytä lisää valintoja valituille tiedostoille ja/tai kansioille</string>
   <string name="content_description_files_upload_upload_file">Tallenna tiedosto</string>
   <string name="content_description_albums_new">Luo uusi albumi</string>

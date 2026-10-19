@@ -36,8 +36,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -346,9 +347,11 @@ fun Label(
     label.value?.let { labelValue ->
         Card(
             shape = RoundedCornerShape(100.dp),
-            elevation = ProtonDimens.ExtraSmallSpacing,
-            backgroundColor = ProtonTheme.colors.backgroundSecondary,
-            contentColor = ProtonTheme.colors.textNorm,
+            elevation = CardDefaults.cardElevation(defaultElevation = ProtonDimens.ExtraSmallSpacing),
+            colors = CardDefaults.cardColors(
+                containerColor = ProtonTheme.colors.backgroundSecondary,
+                contentColor = ProtonTheme.colors.textNorm,
+            ),
             modifier = modifier
                 .height(height)
         ) {

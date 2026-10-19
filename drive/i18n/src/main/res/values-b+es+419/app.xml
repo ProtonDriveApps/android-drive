@@ -144,6 +144,7 @@
   <string name="notification_content_text_backup_failed_connectivity">No hay conexión a internet</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Esperando una conexión WiFi</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">No se permite hacer copias de seguridad</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">La carpeta de copia de seguridad ya no existe</string>
   <string name="notification_content_text_backup_paused_disabled">Las copias de seguridad están desactivadas</string>
   <string name="notification_content_text_backup_paused_background_restrictions">La copia de seguridad no puede ejecutarse en segundo plano</string>
   <string name="notification_content_text_backup_preparing">Preparando para hacer copia de seguridad</string>
@@ -176,6 +177,8 @@
   <string name="notification_content_title_transferring">Transferencia de datos</string>
   <!-- endregion -->
   <string name="content_description_select_all">Seleccionar todos los elementos en la lista</string>
+  <string name="content_description_select_separator">Seleccionar todos los elementos en %1$s</string>
+  <string name="photos_error_separator_selection_failed">No se pudieron seleccionar algunos elementos, intente de nuevo</string>
   <string name="content_description_selected_options">Mostrar más opciones para los archivos o carpetas seleccionados</string>
   <string name="content_description_files_upload_upload_file">Cargar un archivo</string>
   <string name="content_description_albums_new">Crear un álbum</string>

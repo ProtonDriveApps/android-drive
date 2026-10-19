@@ -22,6 +22,7 @@
   <string name="preview_downloading_state">Γίνεται λήψη…</string>
   <string name="preview_processing_state">Γίνεται επεξεργασία…</string>
   <string name="preview_empty">Δεν υπάρχει κάτι για προεπισκόπηση…</string>
+  <string name="preview_text_too_large">Αυτό το αρχείο είναι πολύ μεγάλο για προεπισκόπηση</string>
   <string name="title_not_found">Δε βρέθηκε</string>
   <string name="proton_docs_insert_image_header_title">Εισαγωγή εικόνας</string>
   <string name="proton_docs_option_select_file">Επιλέξτε ένα αρχείο</string>

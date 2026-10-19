@@ -26,9 +26,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +49,7 @@ import me.proton.core.compose.theme.captionNorm
 import me.proton.core.compose.theme.captionStrongNorm
 import me.proton.core.compose.theme.captionWeak
 import me.proton.core.drive.base.presentation.extension.conditional
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -127,7 +128,7 @@ private fun MoreIndicator(
 @Preview
 @Composable
 fun PreviewLogItem() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             LogItem(
                 time = "13:28:24.321",

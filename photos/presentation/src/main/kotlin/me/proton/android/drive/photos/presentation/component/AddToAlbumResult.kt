@@ -21,25 +21,27 @@ package me.proton.android.drive.photos.presentation.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.SnackbarData
-import androidx.compose.material.SnackbarDuration
-import androidx.compose.material.Surface
+import androidx.compose.material3.SnackbarData
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarVisuals
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import me.proton.android.drive.photos.presentation.extension.processAdd
-import me.proton.core.compose.component.ProtonSnackbar
-import me.proton.core.compose.component.ProtonSnackbarType
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.domain.api.ProtonApiCode
+import me.proton.core.drive.base.presentation.component.ProtonSnackbar
+import me.proton.core.drive.base.presentation.component.ProtonSnackbarType
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.photo.domain.entity.AddToRemoveFromAlbumResult
 
 @Preview
 @Composable
 fun AddToAlbumResultLightPreview() {
-    ProtonTheme(isDark = false) {
+    DriveTheme(isDark = false) {
         AddToAlbumResultPreview()
     }
 }
@@ -47,7 +49,7 @@ fun AddToAlbumResultLightPreview() {
 @Preview
 @Composable
 fun AddToAlbumResultDarkPreview() {
-    ProtonTheme(isDark = true) {
+    DriveTheme(isDark = true) {
         AddToAlbumResultPreview()
     }
 }
@@ -98,9 +100,12 @@ private fun BroadcastMessage.Type.toProtonSnackbarType() = when (this) {
 }
 
 private fun previewSnackbarData(message: String) = object : SnackbarData {
-    override val actionLabel: String? = null
-    override val duration: SnackbarDuration = SnackbarDuration.Indefinite
-    override val message: String = message
+    override val visuals: SnackbarVisuals = object : SnackbarVisuals {
+        override val actionLabel: String? = null
+        override val duration: SnackbarDuration = SnackbarDuration.Indefinite
+        override val message: String = message
+        override val withDismissAction: Boolean = false
+    }
     override fun dismiss() = Unit
     override fun performAction() = Unit
 }

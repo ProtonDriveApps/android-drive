@@ -23,7 +23,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultNorm
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 
 @Composable
 fun UserThumbnail(firstLetter: String) {
@@ -57,7 +58,7 @@ private val LargeIconSize = 32.dp
 @Preview(name = "dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun UserThumbnailPreview() {
-    ProtonTheme {
+    DriveTheme {
         UserThumbnail("P")
     }
 }

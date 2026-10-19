@@ -20,8 +20,8 @@ package me.proton.android.drive.photos.presentation.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +36,7 @@ import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultWeak
 import me.proton.core.drive.base.presentation.component.list.ListEmpty
 import me.proton.core.drive.base.presentation.state.ListContentState
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.user.presentation.quota.component.StorageBanner
 import me.proton.core.drive.i18n.R as I18N
 
@@ -53,6 +54,7 @@ fun PhotosEmpty(
     onGetStorage: () -> Unit,
     onResolveMissingFolder: () -> Unit,
     onChangeNetwork: () -> Unit,
+    onAllowUnconfirmedNetwork: () -> Unit,
     onIgnoreBackgroundRestrictions: () -> Unit,
     onDismissBackgroundRestrictions: () -> Unit,
 ) {
@@ -80,6 +82,7 @@ fun PhotosEmpty(
                 onResolve = onResolve,
                 onResolveMissingFolder = onResolveMissingFolder,
                 onChangeNetwork = onChangeNetwork,
+                onAllowUnconfirmedNetwork = onAllowUnconfirmedNetwork,
                 onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions,
                 onDismissBackgroundRestrictions = onDismissBackgroundRestrictions,
             )
@@ -154,6 +157,7 @@ private fun PhotosEmptyPreview() {
         onGetStorage = {},
         onResolveMissingFolder = {},
         onChangeNetwork = {},
+        onAllowUnconfirmedNetwork = {},
         onIgnoreBackgroundRestrictions = {},
         onDismissBackgroundRestrictions = {},
     )
@@ -162,7 +166,7 @@ private fun PhotosEmptyPreview() {
 @Preview
 @Composable
 private fun BackupProgressPhotosEmptyEncryptedPreview() {
-    ProtonTheme {
+    DriveTheme {
         BackupProgressPhotosEmpty(Modifier.fillMaxSize(), true)
     }
 }
@@ -170,7 +174,7 @@ private fun BackupProgressPhotosEmptyEncryptedPreview() {
 @Preview
 @Composable
 private fun BackupProgressPhotosEmptyProgressPreview() {
-    ProtonTheme {
+    DriveTheme {
         BackupProgressPhotosEmpty(Modifier.fillMaxSize(), false)
     }
 }

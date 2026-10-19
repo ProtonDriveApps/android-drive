@@ -57,8 +57,10 @@ sealed class FeatureFlagId(open val userId: UserId, open val id: String) {
         const val DRIVE_ANDROID_DOWNLOAD_FILE_PROGRESS_NOTIFICATION_DISABLED = "DriveAndroidDownloadFileProgressNotificationDisabled"
         const val DRIVE_ANDROID_Q3_CAMPAIGN_2026 = "DriveAndroidQ3Sale2026"
         const val DRIVE_MOBILE_UPSELL_PLAN = "DriveMobileUpsellPlan"
+        const val DRIVE_MOBILE_RECENTLY_ACCESSED = "DriveMobileRecentlyAccessed"
         const val DRIVE_ANDROID_SDK_UPDATE_PHOTOS = "DriveAndroidSDKUpdatePhotos"
         const val DRIVE_ANDROID_SDK_MOVE = "DriveAndroidSDKMove"
+        const val DRIVE_ANDROID_SDK_QUEUE_FULL_CONSTRAINT = "DriveAndroidSDKQueueFullConstraint"
         const val DRIVE_ANDROID_PHOTOS_SEPARATOR_SELECTION_DISABLED = "DriveAndroidPhotosSeparatorSelectionDisabled"
 
         internal var developments : List<String> = listOf(
@@ -91,11 +93,14 @@ sealed class FeatureFlagId(open val userId: UserId, open val id: String) {
         fun driveAndroidSDKLeaveSharedNode(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_LEAVE_SHARED_NODE)
         fun driveAndroidSDKUpdatePhotos(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_UPDATE_PHOTOS)
         fun driveAndroidSDKMove(userId: UserId) = Unleash(userId, DRIVE_ANDROID_SDK_MOVE)
+        fun driveAndroidSDKQueueFullConstraint(userId: UserId) =
+            Unleash(userId, DRIVE_ANDROID_SDK_QUEUE_FULL_CONSTRAINT)
         fun driveDownloadVerificationDisabled(userId: UserId) = Unleash(userId, DRIVE_DOWNLOAD_VERIFICATION_DISABLED)
         fun driveUploadVerificationDisabled(userId: UserId) = Unleash(userId, DRIVE_UPLOAD_VERIFICATION_DISABLED)
         fun driveAndroidDownloadFileProgressNotificationDisabled(userId: UserId) = Unleash(userId, DRIVE_ANDROID_DOWNLOAD_FILE_PROGRESS_NOTIFICATION_DISABLED)
         fun driveAndroidQ3Campaign2026(userId: UserId) = Unleash(userId, DRIVE_ANDROID_Q3_CAMPAIGN_2026)
         fun driveMobileUpsellPlan(userId: UserId) = Unleash(userId, DRIVE_MOBILE_UPSELL_PLAN)
+        fun driveMobileRecentlyAccessed(userId: UserId) = Unleash(userId, DRIVE_MOBILE_RECENTLY_ACCESSED)
         fun driveAndroidPhotosSeparatorSelectionDisabled(userId: UserId) = Unleash(userId, DRIVE_ANDROID_PHOTOS_SEPARATOR_SELECTION_DISABLED)
     }
 }

@@ -59,7 +59,8 @@ class AccountReadyObserverInitializer : Initializer<Unit> {
                         val state = if (applicationState.inForeground) "foreground" else "background"
                         CoreLogger.d(
                             LogTag.DEFAULT,
-                            "App in $state, ${applicationState.currentNetworkStatus?.replace("\n", ", ")}",
+                            "App in $state, ${applicationState.connectivity}, " +
+                                "${applicationState.currentNetworkStatus?.replace("\n", ", ")}",
                         )
                         announceEvent(userId, applicationState)
                     }.launchIn(scope)

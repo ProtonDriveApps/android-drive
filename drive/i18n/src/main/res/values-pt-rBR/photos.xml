@@ -63,6 +63,7 @@
   <string name="photos_error_backup_disabled_action">Ativar</string>
   <string name="photos_error_backup_missing_folder">Pasta padrão da câmera não encontrada</string>
   <string name="photos_error_backup_failed">Falha no Backup.</string>
+  <string name="photos_error_backup_folder_not_found">A pasta de backupnão existe mais</string>
   <string name="photos_error_backup_temporarily_disabled">O backup está temporariamente desativado.</string>
   <string name="photos_error_missing_permissions">Faltam permissões.</string>
   <!--

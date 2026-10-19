@@ -60,9 +60,7 @@ class MediaPreviewViewModel @Inject constructor(
     }
 
     private fun releasePlayer(player: ExoPlayer) {
-        viewModelScope.launch {
-            player.release()
-        }
+        player.release()
     }
 
     override fun onCleared() {

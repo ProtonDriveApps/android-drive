@@ -29,9 +29,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import me.proton.android.drive.ui.component.PromoContainer
 import me.proton.android.drive.ui.viewmodel.PhotosUpsellViewModel
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
 import me.proton.core.drive.base.presentation.component.RunAction
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.drive.base.presentation.R as BasePresentation
 
@@ -86,7 +86,7 @@ private fun PhotosUpsell(
 @Preview(widthDp = 600, heightDp = 360)
 @Composable
 private fun PhotosUpsellPreview() {
-    ProtonTheme {
+    DriveTheme {
         PhotosUpsell(
             modifier = Modifier.fillMaxSize(),
             onMoreStorage = {},

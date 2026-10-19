@@ -18,23 +18,18 @@
 
 package me.proton.android.drive.ui.navigation.internal
 
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.SwipeableDefaults
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.FloatingWindow
@@ -44,11 +39,11 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.NavigatorState
 import androidx.navigation.compose.LocalOwnersProvider
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import me.proton.core.drive.base.presentation.component.ModalBottomSheet
-import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
-import me.proton.core.compose.component.bottomsheet.RunAction
+import me.proton.core.drive.base.presentation.component.ModalBottomSheetViewState
+import me.proton.core.drive.base.presentation.component.RunAction
+import me.proton.core.drive.base.presentation.component.rememberProtonModalBottomSheetState
 
 @Navigator.Name(ModalBottomSheetNavigator.NAME)
 class ModalBottomSheetNavigator : Navigator<ModalBottomSheetNavigator.Destination>() {
@@ -60,11 +55,14 @@ class ModalBottomSheetNavigator : Navigator<ModalBottomSheetNavigator.Destinatio
      */
     internal val backStack get() = if (attached) state.backStack else MutableStateFlow(emptyList())
 
+    internal val transitionsInProgress get() =
+        if (attached) state.transitionsInProgress else MutableStateFlow(emptySet())
+
     /**
      * Dismiss the dialog destination associated with the given [backStackEntry].
      */
     internal fun dismiss(backStackEntry: NavBackStackEntry) {
-        state.popWithTransition(backStackEntry, false)
+        popBackStack(backStackEntry, false)
     }
 
     override fun onAttach(state: NavigatorState) {
@@ -79,13 +77,21 @@ class ModalBottomSheetNavigator : Navigator<ModalBottomSheetNavigator.Destinatio
     ) {
         entries.lastOrNull { entry -> entry.destination is Destination }?.let { toBeAdded ->
             if (backStack.value.none { entry -> entry.destination is Destination }) {
-                state.pushWithTransition(toBeAdded)
+                state.push(toBeAdded)
             }
         }
     }
 
     override fun popBackStack(popUpTo: NavBackStackEntry, savedState: Boolean) {
         state.popWithTransition(popUpTo, savedState)
+        val popIndex = state.transitionsInProgress.value.indexOf(popUpTo)
+        state.transitionsInProgress.value.forEachIndexed { index, entry ->
+            if (index > popIndex) onTransitionComplete(entry)
+        }
+    }
+
+    internal fun onTransitionComplete(entry: NavBackStackEntry) {
+        state.markTransitionComplete(entry)
     }
 
     override fun createDestination() =
@@ -111,18 +117,35 @@ internal fun ModalBottomSheetHost(
 ) {
     val saveableStateHolder = rememberSaveableStateHolder()
     val modalBackStack by remember(navigator.attached) { navigator.backStack }.collectAsState()
+    val transitionsInProgress by remember(navigator.attached) { navigator.transitionsInProgress }.collectAsState()
+    val sheetsToDispose = remember { mutableStateListOf<NavBackStackEntry>() }
     val visibleBackStack = rememberVisibleList(modalBackStack)
     visibleBackStack.PopulateVisibleList(modalBackStack)
     visibleBackStack.forEach { backStackEntry ->
-        backStackEntry.LocalOwnersProvider(saveableStateHolder) {
-            ModalBottomSheetContent(backStackEntry) {
-                navigator.dismiss(backStackEntry)
+        key(backStackEntry.id) {
+            DisposableEffect(backStackEntry) {
+                sheetsToDispose.add(backStackEntry)
+                onDispose {
+                    navigator.onTransitionComplete(backStackEntry)
+                    sheetsToDispose.remove(backStackEntry)
+                }
+            }
+            backStackEntry.LocalOwnersProvider(saveableStateHolder) {
+                ModalBottomSheetContent(backStackEntry) {
+                    navigator.dismiss(backStackEntry)
+                }
+            }
+        }
+    }
+    LaunchedEffect(transitionsInProgress, sheetsToDispose) {
+        transitionsInProgress.forEach { entry ->
+            if (!navigator.backStack.value.contains(entry) && !sheetsToDispose.contains(entry)) {
+                navigator.onTransitionComplete(entry)
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun ModalBottomSheetContent(
     backStackEntry: NavBackStackEntry,
@@ -130,18 +153,7 @@ private fun ModalBottomSheetContent(
     onDismiss: () -> Unit,
 ) {
     val destination = backStackEntry.destination as ModalBottomSheetNavigator.Destination
-    var dismissTrigger by remember(destination) { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        animationSpec = SwipeableDefaults.AnimationSpec,
-        skipHalfExpanded = true,
-        confirmValueChange = { value ->
-            if (value == ModalBottomSheetValue.Hidden) {
-                dismissTrigger = true
-            }
-            true
-        },
-    )
+    val sheetState = rememberProtonModalBottomSheetState()
     ModalBottomSheet(
         viewState = destination.viewState,
         sheetContent = { runAction ->
@@ -155,19 +167,10 @@ private fun ModalBottomSheetContent(
             }
         },
         sheetState = sheetState,
-        modifier = Modifier.statusBarsPadding(),
         onDismiss = onDismiss,
         content = { }
     )
     LaunchedEffect(destination) { sheetState.show() }
-    LaunchedEffect(destination, dismissTrigger) {
-        if (dismissTrigger) {
-            while (sheetState.isVisible) {
-                delay(10)
-            }
-            onDismiss()
-        }
-    }
 }
 
 // From NavHost.kt those are internal functions of androidx.navigation.compose package

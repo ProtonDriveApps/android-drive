@@ -37,5 +37,7 @@
   <string name="log_origin_backup">Varnostna kopija</string>
   <string name="log_origin_user">Uporabnik</string>
   <string name="log_origin_device">Naprava</string>
-  <string name="log_origin_crypto">Kripto</string>
+  <!-- Represent logs from cryptographic operations like encryption/decryption,
+         signature verification etc. -->
+  <string name="log_origin_crypto">Kriptografija</string>
 </resources>

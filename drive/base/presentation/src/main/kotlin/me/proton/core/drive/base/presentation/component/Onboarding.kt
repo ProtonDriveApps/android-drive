@@ -30,8 +30,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -49,9 +49,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import me.proton.core.compose.component.ProtonSecondaryButton
-import me.proton.core.compose.component.ProtonSolidButton
-import me.proton.core.compose.component.ProtonTextButton
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonDimens.MediumSpacing
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
@@ -65,6 +62,7 @@ import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.base.presentation.extension.isLandscape
 import me.proton.core.drive.base.presentation.extension.isPortrait
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.base.presentation.viewevent.OnboardingViewEvent
 import me.proton.core.drive.base.presentation.viewstate.OnboardingViewState
 import me.proton.core.drive.i18n.R as I18N
@@ -222,7 +220,7 @@ private val ButtonMinWidth = 300.dp
 @Preview
 @Composable
 fun OnboardingPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             Onboarding(
                 viewState = OnboardingViewState(

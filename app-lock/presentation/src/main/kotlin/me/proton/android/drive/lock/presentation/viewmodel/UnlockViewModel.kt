@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import me.proton.android.drive.lock.domain.exception.LockException
 import me.proton.android.drive.lock.domain.usecase.UnlockApp
@@ -52,19 +53,24 @@ class UnlockViewModel @Inject constructor(
         override val onSignOut: (userId: UserId) -> Unit = { userId -> doSignOut(userId) }
     }
 
-    private fun showBiometrics(userId: UserId) = viewModelScope.launch {
-        unlockApp()
-            .onFailure { error ->
-                error.log(VIEW_MODEL)
-                broadcastMessages(
-                    userId = userId,
-                    message = when (error) {
-                        is LockException -> error.getDefaultMessage(appContext)
-                        else -> error.getDefaultMessage(appContext, configurationProvider.useExceptionMessage)
-                    },
-                    type = BroadcastMessage.Type.WARNING,
-                )
-            }
+    private var unlockJob: Job? = null
+
+    private fun showBiometrics(userId: UserId) {
+        if (unlockJob?.isActive == true) return
+        unlockJob = viewModelScope.launch {
+            unlockApp()
+                .onFailure { error ->
+                    error.log(VIEW_MODEL)
+                    broadcastMessages(
+                        userId = userId,
+                        message = when (error) {
+                            is LockException -> error.getDefaultMessage(appContext)
+                            else -> error.getDefaultMessage(appContext, configurationProvider.useExceptionMessage)
+                        },
+                        type = BroadcastMessage.Type.WARNING,
+                    )
+                }
+        }
     }
 
     private fun doSignOut(userId: UserId) = viewModelScope.launch {

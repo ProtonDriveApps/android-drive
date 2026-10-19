@@ -19,5 +19,5 @@
 package me.proton.core.drive.backup.domain.entity
 
 enum class BackupNetworkType {
-    CONNECTED, UNMETERED
+    UNMETERED, UNCONFIRMED, ANY
 }

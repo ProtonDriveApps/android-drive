@@ -42,6 +42,7 @@ import me.proton.core.drive.linkupload.domain.usecase.GetPhotoTags
 import me.proton.core.drive.linkupload.domain.usecase.UpdateSize
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadFileCreationTime
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
+import me.proton.core.drive.upload.domain.exception.SdkQueueTimeoutException
 import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.upload.domain.exception.ContentSizeChangedException
 import me.proton.core.drive.upload.domain.manager.UploadSdkManager
@@ -102,7 +103,7 @@ class CreateNewFileSdk @Inject constructor(
                     message = "Enqueue timed out after ${configurationProvider.sdkQueueTimeout}",
                 )
                 shouldResetToIdle = true
-                throw exception
+                throw SdkQueueTimeoutException(configurationProvider.sdkQueueTimeout, exception)
             } finally {
                 if (!isActive || shouldResetToIdle) {
                     resetToIdle(id)

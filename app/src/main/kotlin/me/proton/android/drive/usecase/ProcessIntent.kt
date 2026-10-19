@@ -28,7 +28,6 @@ import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -42,6 +41,7 @@ import me.proton.android.drive.ui.MainActivity
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.navigation.UriWithFileName
 import me.proton.android.drive.ui.viewmodel.AccountViewModel
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.log.LogTag.UPLOAD
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.drivelink.upload.domain.usecase.ValidateUploadLimit
@@ -56,6 +56,7 @@ import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
 
 class ProcessIntent @Inject constructor(
+    @ApplicationScope private val applicationScope: CoroutineScope,
     @ApplicationContext private val appContext: Context,
     private val removeNotification: RemoveNotification,
     private val broadcastMessages: BroadcastMessages,
@@ -69,7 +70,7 @@ class ProcessIntent @Inject constructor(
         accountViewModel: AccountViewModel,
         isNewIntent: Boolean = false,
     ) =
-        CoroutineScope(Job() + Dispatchers.IO).launch {
+        applicationScope.launch(Dispatchers.IO) {
             with (intent) {
                 getStringExtra(EXTRA_NOTIFICATION_ID)?.let { extraNotificationId ->
                     processExtraNotificationId(extraNotificationId)

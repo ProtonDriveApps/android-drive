@@ -20,8 +20,8 @@ package me.proton.android.drive.ui.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -47,12 +47,13 @@ import me.proton.android.drive.photos.presentation.viewevent.CreateNewAlbumViewE
 import me.proton.android.drive.photos.presentation.viewstate.CreateNewAlbumViewState
 import me.proton.android.drive.ui.viewmodel.CreateNewAlbumViewModel
 import me.proton.core.compose.activity.KeepScreenOn
-import me.proton.core.compose.component.ProtonTextButton
-import me.proton.core.compose.component.protonTextButtonColors
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.headlineSmallNorm
 import me.proton.core.compose.theme.interactionNorm
+import me.proton.core.drive.base.presentation.component.ProtonTextButton
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.base.presentation.component.protonTextButtonColors
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -153,7 +154,7 @@ fun TopAppBar(
 @Preview
 @Composable
 private fun CreateNewAlbumScreenPreview() {
-    ProtonTheme {
+    DriveTheme {
         CreateNewAlbumScreen(
             viewState = CreateNewAlbumViewState(
                 isDoneEnabled = false,

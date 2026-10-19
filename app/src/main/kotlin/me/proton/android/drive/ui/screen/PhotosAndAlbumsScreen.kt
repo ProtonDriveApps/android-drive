@@ -33,9 +33,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -76,19 +76,20 @@ import me.proton.android.drive.ui.viewmodel.PhotosViewModel
 import me.proton.android.drive.ui.viewstate.HomeScaffoldState
 import me.proton.android.drive.ui.viewstate.PhotosAndAlbumsViewState
 import me.proton.android.drive.ui.viewstate.PhotosAndAlbumsViewState.Tab
-import me.proton.core.compose.component.ProtonButton
-import me.proton.core.compose.component.protonTextButtonColors
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.headlineSmallNorm
 import me.proton.core.compose.theme.headlineSmallUnspecified
 import me.proton.core.drive.base.domain.entity.FastScrollAnchor
+import me.proton.core.drive.base.presentation.component.ProtonButton
 import me.proton.core.drive.base.presentation.component.RepeatOnLifecycleLaunchedEffect
 import me.proton.core.drive.base.presentation.component.Title
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.base.presentation.component.TopBarActions
+import me.proton.core.drive.base.presentation.component.protonTextButtonColors
 import me.proton.core.drive.base.presentation.effect.ListEffect
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.shared.presentation.component.UserInvitationBanner
 import me.proton.core.drive.link.domain.entity.AlbumId
@@ -471,7 +472,7 @@ private fun TabItem(
 @Preview
 @Composable
 fun TabsPreview() {
-    ProtonTheme {
+    DriveTheme {
         Tabs(
             modifier = Modifier.height(ProtonDimens.DefaultButtonMinHeight),
             viewState = PhotosAndAlbumsViewState(

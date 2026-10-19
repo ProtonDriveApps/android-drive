@@ -26,16 +26,21 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.Navigator
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.compose.DialogNavigator
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.util.kotlin.CoreLogger
 
 @ExperimentalAnimationApi
 @Composable
@@ -49,6 +54,26 @@ fun rememberAnimatedNavController(
     }.apply {
         for (navigator in navigators) {
             navigatorProvider.addNavigator(navigator)
+        }
+    }
+}
+
+@Composable
+fun rememberNavigateIfStillOn(
+    navController: NavHostController,
+    sheetEntry: NavBackStackEntry,
+): (navigate: NavHostController.() -> Unit) -> Unit {
+    val parentEntry = remember(sheetEntry) { navController.previousBackStackEntry }
+    return remember(navController, sheetEntry, parentEntry) {
+        { navigate ->
+            val currentEntry = navController.currentBackStackEntry
+            val isStillOn = (currentEntry == sheetEntry || currentEntry == parentEntry) &&
+                parentEntry?.lifecycle?.currentState?.isAtLeast(Lifecycle.State.CREATED) == true
+            if (isStillOn) {
+                navController.navigate()
+            } else {
+                CoreLogger.d(LogTag.DEFAULT, "Skipping navigation from ${sheetEntry.destination.route}")
+            }
         }
     }
 }

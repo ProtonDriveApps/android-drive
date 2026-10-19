@@ -64,7 +64,7 @@
     -->
   <plurals name="common_x_months">
     <item quantity="one">%1$d mesiac</item>
-    <item quantity="few">%1$d mesiacov</item>
+    <item quantity="few">%1$d mesiace</item>
     <item quantity="many">%1$d mesiacov</item>
     <item quantity="other">%1$d mesiacov</item>
   </plurals>

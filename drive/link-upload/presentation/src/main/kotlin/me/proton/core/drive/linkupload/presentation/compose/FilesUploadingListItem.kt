@@ -27,11 +27,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +54,7 @@ import me.proton.core.drive.base.domain.extension.toPercentString
 import me.proton.core.drive.base.presentation.component.LinearProgressIndicator
 import me.proton.core.drive.base.presentation.extension.currentLocale
 import me.proton.core.drive.base.presentation.extension.iconResId
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.link.domain.entity.FolderContext
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
@@ -205,7 +206,7 @@ private fun UploadState.title(progress: Percentage? = null): String = when (this
 @Preview
 @Composable
 fun FilesUploadListItemPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             FilesUploadingListItem(
                 modifier = Modifier.height(ListItemHeight),

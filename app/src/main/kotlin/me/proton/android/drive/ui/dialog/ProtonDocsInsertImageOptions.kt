@@ -25,7 +25,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -37,13 +37,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import me.proton.android.drive.ui.viewmodel.ProtonDocsInsertImageOptionsViewModel
 import me.proton.core.compose.activity.rememberCameraLauncher
-import me.proton.core.compose.component.bottomsheet.BottomSheetContent
-import me.proton.core.compose.component.bottomsheet.BottomSheetEntry
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultSmallStrongNorm
+import me.proton.core.drive.base.presentation.component.BottomSheetContent
+import me.proton.core.drive.base.presentation.component.BottomSheetEntry
 import me.proton.core.drive.base.presentation.component.rememberFilePickerLauncher
 import me.proton.core.drive.base.presentation.extension.launchWithNotFound
 import me.proton.core.drive.base.presentation.extension.rememberPermissionCameraLauncher
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.files.presentation.entry.OptionEntry
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -138,7 +139,7 @@ internal fun ProtonDocsInsertImageOptionsHeader(
 @Preview
 @Composable
 fun PreviewProtonDocsInsertImageOptions() {
-    ProtonTheme {
+    DriveTheme {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomCenter,

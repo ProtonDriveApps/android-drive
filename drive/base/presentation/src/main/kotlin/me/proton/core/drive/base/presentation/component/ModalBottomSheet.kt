@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2026 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -18,12 +18,13 @@
 
 package me.proton.core.drive.base.presentation.component
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -31,14 +32,15 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
+import me.proton.core.compose.theme.ProtonTheme
+import androidx.compose.material3.ModalBottomSheet as Material3ModalBottomSheet
 
 typealias RunAction = (action: suspend () -> Unit) -> Unit
 
 @Composable
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 fun ModalBottomSheet(
-    sheetState: ModalBottomSheetState,
+    sheetState: ProtonModalBottomSheetState,
     sheetContent: @Composable ColumnScope.(runAction: RunAction) -> Unit,
     viewState: ModalBottomSheetViewState,
     modifier: Modifier = Modifier,
@@ -47,32 +49,38 @@ fun ModalBottomSheet(
 ) {
     val scope = rememberCoroutineScope()
 
-    BackHandler(viewState.closeOnBack && sheetState.isVisible) {
-        scope.launch {
-            sheetState.hide()
-            onDismiss()
+    content()
+
+    if (sheetState.isVisible) {
+        Material3ModalBottomSheet(
+            onDismissRequest = {
+                sheetState.onDismissed()
+                onDismiss()
+            },
+            modifier = modifier.statusBarsPadding(),
+            sheetState = sheetState.sheetState,
+            shape = ProtonTheme.shapes.bottomSheet,
+            containerColor = ProtonTheme.colors.backgroundNorm,
+            contentColor = ProtonTheme.colors.textNorm,
+            scrimColor = ProtonTheme.colors.blenderNorm,
+            dragHandle = null,
+            contentWindowInsets = { WindowInsets(0, 0, 0, 0) },
+            properties = ModalBottomSheetProperties(
+                shouldDismissOnBackPress = viewState.closeOnBack,
+                shouldDismissOnClickOutside = true,
+            ),
+        ) {
+            Spacer(modifier = Modifier.height(RoundedCornerHeight))
+            sheetContent { action: suspend () -> Unit ->
+                runAction(scope, sheetState, viewState, onDismiss, action)
+            }
         }
     }
-
-    ProtonModalBottomSheetLayout(
-        modifier = modifier,
-        sheetState = sheetState,
-        sheetContent = {
-            Spacer(modifier = Modifier.height(RoundedCornerHeight))
-            if (sheetState.isVisible) {
-                sheetContent { action: suspend () -> Unit ->
-                    runAction(scope, sheetState, viewState, onDismiss, action)
-                }
-            }
-        },
-        content = content
-    )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 private fun runAction(
     scope: CoroutineScope,
-    modalBottomSheetState: ModalBottomSheetState,
+    modalBottomSheetState: ProtonModalBottomSheetState,
     viewState: ModalBottomSheetViewState,
     onDismiss: () -> Unit,
     action: suspend () -> Unit,
@@ -85,9 +93,7 @@ private fun runAction(
             modalBottomSheetState.hide()
         }
         action()
-        if (viewState.dismissOnAction) {
-            onDismiss()
-        }
+        onDismiss()
     }
 }
 

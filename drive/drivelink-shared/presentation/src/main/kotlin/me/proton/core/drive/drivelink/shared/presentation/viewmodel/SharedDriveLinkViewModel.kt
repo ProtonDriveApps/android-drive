@@ -320,7 +320,12 @@ class SharedDriveLinkViewModel @Inject constructor(
     }
 
     private fun copyPassword(password: String) {
-        copyToClipboard(userId, appContext.getString(I18N.string.common_password), password)
+        copyToClipboard(
+            userId = userId,
+            label = appContext.getString(I18N.string.common_password),
+            text = password,
+            isSensitive = true,
+        )
     }
 
     private fun DriveLink.toLoadingMessage(): String {

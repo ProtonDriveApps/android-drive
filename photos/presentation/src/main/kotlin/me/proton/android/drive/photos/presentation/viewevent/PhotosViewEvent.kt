@@ -51,6 +51,7 @@ interface PhotosViewEvent {
     val onGetStorage: () -> Unit get() = {}
     val onResolveMissingFolder: () -> Unit get() = {}
     val onChangeNetwork: () -> Unit get() = {}
+    val onAllowUnconfirmedNetwork: () -> Unit get() = {}
     val onEnableBackupDialog: () -> Unit get() = {}
     val onIgnoreBackgroundRestrictions: (Context) -> Unit get() = {}
     val onDismissBackgroundRestrictions: () -> Unit get() = {}

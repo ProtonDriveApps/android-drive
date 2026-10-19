@@ -38,6 +38,7 @@ import me.proton.android.drive.photos.domain.entity.PhotoBackupState
 import me.proton.android.drive.photos.domain.usecase.GetPhotosConfiguration
 import me.proton.android.drive.photos.domain.usecase.GetPhotosDriveLink
 import me.proton.android.drive.photos.domain.usecase.IsPhotosEnabled
+import me.proton.android.drive.photos.domain.usecase.TogglePhotosAllowUnconfirmedNetwork
 import me.proton.android.drive.photos.domain.usecase.TogglePhotosNetworkConfiguration
 import me.proton.android.drive.photos.presentation.viewmodel.BackupPermissionsViewModel
 import me.proton.android.drive.ui.viewevent.PhotosBackupViewEvent
@@ -77,6 +78,7 @@ class PhotosBackupViewModel @Inject constructor(
     getPhotosConfiguration: GetPhotosConfiguration,
     getOldestActiveVolume: GetOldestActiveVolume,
     private val togglePhotosNetworkConfiguration: TogglePhotosNetworkConfiguration,
+    private val togglePhotosAllowUnconfirmedNetwork: TogglePhotosAllowUnconfirmedNetwork,
     private val getPhotosDriveLink: GetPhotosDriveLink,
     private val broadcastMessages: BroadcastMessages,
     private val isIgnoringBatteryOptimizations: IsIgnoringBatteryOptimizations,
@@ -93,6 +95,13 @@ class PhotosBackupViewModel @Inject constructor(
         ),
         mobileData = PhotosBackupOption(
             title = appContext.getString(I18N.string.photos_backup_option_mobile_data),
+            description = appContext.getString(I18N.string.photos_backup_option_mobile_data_description),
+            checked = false,
+            enabled = false,
+        ),
+        allowUnconfirmedNetwork = PhotosBackupOption(
+            title = appContext.getString(I18N.string.photos_backup_option_allow_unconfirmed_network),
+            description = appContext.getString(I18N.string.photos_backup_option_allow_unconfirmed_network_description),
             checked = false,
             enabled = false,
         ),
@@ -126,8 +135,12 @@ class PhotosBackupViewModel @Inject constructor(
         initialViewState.copy(
             backup = initialViewState.backup.copy(checked = enabled),
             mobileData = initialViewState.mobileData.copy(
-                checked = configuration?.networkType == BackupNetworkType.CONNECTED,
+                checked = configuration?.networkType == BackupNetworkType.ANY,
                 enabled = enabled,
+            ),
+            allowUnconfirmedNetwork = initialViewState.allowUnconfirmedNetwork.copy(
+                checked = configuration?.networkType == BackupNetworkType.UNCONFIRMED,
+                enabled = enabled && configuration?.networkType != BackupNetworkType.ANY,
             ),
             ignoringBatteryOptimizations = initialViewState.ignoringBatteryOptimizations.copy(
                 checked = isIgnoringBatteryOptimizations,
@@ -202,6 +215,22 @@ class PhotosBackupViewModel @Inject constructor(
             viewModelScope.launch {
                 togglePhotosNetworkConfiguration(userId).onFailure { error ->
                     error.log(VIEW_MODEL, "Failed to toggle photos network configuration")
+                    broadcastMessages(
+                        userId = userId,
+                        message = error.getDefaultMessage(
+                            appContext,
+                            configurationProvider.useExceptionMessage
+                        ),
+                        type = BroadcastMessage.Type.ERROR,
+                    )
+                }
+            }
+            Unit
+        }
+        override val onToggleAllowUnconfirmedNetwork = {
+            viewModelScope.launch {
+                togglePhotosAllowUnconfirmedNetwork(userId).onFailure { error ->
+                    error.log(VIEW_MODEL, "Failed to toggle allow unconfirmed network")
                     broadcastMessages(
                         userId = userId,
                         message = error.getDefaultMessage(

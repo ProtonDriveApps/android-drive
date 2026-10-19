@@ -29,6 +29,7 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -65,6 +66,7 @@ import me.proton.android.drive.usecase.OnFilesDriveLinkError
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.arch.onSuccess
 import me.proton.core.drive.base.data.extension.log as logResult
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.isViewerOrEditorOnly
@@ -113,6 +115,7 @@ import me.proton.core.presentation.R as CorePresentation
 @HiltViewModel
 @ExperimentalCoroutinesApi
 class AlbumViewModel @Inject constructor(
+    @ApplicationScope applicationScope: CoroutineScope,
     savedStateHandle: SavedStateHandle,
     getDecryptedDriveLink: GetDecryptedDriveLink,
     selectLinks: SelectLinks,
@@ -142,6 +145,7 @@ class AlbumViewModel @Inject constructor(
     addToAlbumInfo = addToAlbumInfo,
     removeFromAlbumInfo = removeFromAlbumInfo,
     getAddToAlbumPhotoListings = getAddToAlbumPhotoListings,
+    applicationScope = applicationScope,
 ) {
     override val filterByParentId: Boolean = false
     private val shareId = ShareId(userId, requireNotNull(savedStateHandle.get<String>(SHARE_ID)))

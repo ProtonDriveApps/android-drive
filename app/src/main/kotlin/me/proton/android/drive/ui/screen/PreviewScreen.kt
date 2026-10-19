@@ -21,8 +21,7 @@ package me.proton.android.drive.ui.screen
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,10 +37,10 @@ import me.proton.android.drive.ui.MainActivity
 import me.proton.android.drive.ui.effect.PreviewEffect
 import me.proton.android.drive.ui.viewmodel.PreviewViewModel
 import me.proton.core.compose.activity.KeepScreenOn
-import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
-import me.proton.core.compose.component.bottomsheet.rememberModalBottomSheetContentState
 import me.proton.core.drive.base.presentation.component.Deferred
 import me.proton.core.drive.base.presentation.component.ModalBottomSheet
+import me.proton.core.drive.base.presentation.component.ModalBottomSheetViewState
+import me.proton.core.drive.base.presentation.component.rememberModalBottomSheetContentState
 import me.proton.core.drive.files.preview.presentation.component.Preview
 import me.proton.core.drive.files.preview.presentation.component.PreviewEmpty
 import me.proton.core.drive.files.preview.presentation.component.state.PreviewContentState
@@ -63,7 +62,6 @@ fun PreviewScreen(
 )
 
 @Composable
-@OptIn(ExperimentalMaterialApi::class)
 fun PreviewScreen(
     viewModel: PreviewViewModel,
     navigateBack: () -> Unit,

@@ -26,9 +26,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +49,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.presentation.component.EncryptedItem
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.device.domain.entity.Device
 import me.proton.core.drive.device.domain.entity.DeviceId
 import me.proton.core.drive.device.domain.extension.name
@@ -169,7 +170,7 @@ fun MoreOptions(
 @Preview
 @Composable
 fun PreviewDeviceListItem() {
-    ProtonTheme(isDark = true) {
+    DriveTheme(isDark = true) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

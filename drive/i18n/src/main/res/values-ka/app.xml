@@ -144,6 +144,7 @@
   <string name="notification_content_text_backup_failed_connectivity">ინტერნეტი არ გაქვთ</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Wi-Fi-ის მოლოდინი</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">მარქაფი დაშვებული არაა</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
   <string name="notification_content_text_backup_paused_disabled">მარქაფი გათიშული იყო</string>
   <string name="notification_content_text_backup_paused_background_restrictions">მარქაფს ფონურად ვერ გაუშვებთ</string>
   <string name="notification_content_text_backup_preparing">მომზადება მარქაფისთვის</string>
@@ -176,6 +177,8 @@
   <string name="notification_content_title_transferring">მონაცემების გადაცემა</string>
   <!-- endregion -->
   <string name="content_description_select_all">სიაში ყველა ელემენტის მონიშვნა</string>
+  <string name="content_description_select_separator">Select all items in %1$s</string>
+  <string name="photos_error_separator_selection_failed">Some items could not be selected, please try again</string>
   <string name="content_description_selected_options">მონიშნული ფაილების ან/და საქაღალდეებისთვის მეტი პარამეტრის ჩვენება</string>
   <string name="content_description_files_upload_upload_file">ფაილის ატვირთვა</string>
   <string name="content_description_albums_new">ახალი ალბომის შექმნა</string>

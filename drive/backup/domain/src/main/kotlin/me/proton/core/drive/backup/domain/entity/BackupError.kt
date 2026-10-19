@@ -54,6 +54,11 @@ data class BackupError(
             retryable = true,
         )
 
+        fun ConnectivityUnconfirmed() = BackupError(
+            type = BackupErrorType.CONNECTIVITY_UNCONFIRMED,
+            retryable = true,
+        )
+
         fun PhotosUploadNotAllowed() = BackupError(
             type = BackupErrorType.PHOTOS_UPLOAD_NOT_ALLOWED,
             retryable = true,

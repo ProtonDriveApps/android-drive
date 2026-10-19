@@ -38,14 +38,14 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,6 +63,7 @@ import me.proton.core.compose.theme.defaultSmallNorm
 import me.proton.core.compose.theme.defaultSmallStrongUnspecified
 import me.proton.core.compose.theme.defaultSmallUnspecified
 import me.proton.core.drive.base.presentation.extension.conditional
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
@@ -102,9 +103,11 @@ fun BackupPreparingState(
 ) {
     Card(
         modifier = modifier,
-        backgroundColor = ProtonTheme.colors.backgroundSecondary,
-        contentColor = ProtonTheme.colors.textNorm,
-        elevation = 0.dp,
+        colors = CardDefaults.cardColors(
+            containerColor = ProtonTheme.colors.backgroundSecondary,
+            contentColor = ProtonTheme.colors.textNorm,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
             modifier = Modifier
@@ -144,8 +147,8 @@ fun BackupPreparingState(
             LinearProgressIndicator(
                 modifier = progressModifier,
                 color = ProtonTheme.colors.interactionNorm,
-                backgroundColor = ProtonTheme.colors.interactionWeakNorm,
-                progress = preparing.progress,
+                trackColor = ProtonTheme.colors.interactionWeakNorm,
+                progress = { preparing.progress },
             )
         }
     }
@@ -170,9 +173,11 @@ private fun BackupInProgressState(
 ) {
     Card(
         modifier = modifier,
-        backgroundColor = ProtonTheme.colors.backgroundSecondary,
-        contentColor = ProtonTheme.colors.textNorm,
-        elevation = 0.dp,
+        colors = CardDefaults.cardColors(
+            containerColor = ProtonTheme.colors.backgroundSecondary,
+            contentColor = ProtonTheme.colors.textNorm,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
             modifier = Modifier
@@ -246,8 +251,8 @@ private fun BackupInProgressState(
             LinearProgressIndicator(
                 modifier = progressModifier,
                 color = ProtonTheme.colors.interactionNorm,
-                backgroundColor = ProtonTheme.colors.interactionWeakNorm,
-                progress = inProgress.progress,
+                trackColor = ProtonTheme.colors.interactionWeakNorm,
+                progress = { inProgress.progress },
             )
         }
     }
@@ -268,7 +273,7 @@ fun MissingPermissionsState(
                 tint = ProtonTheme.colors.notificationError,
                 text = I18N.string.photos_error_missing_permissions,
             )
-            Divider(
+            HorizontalDivider(
                 color = ProtonTheme.colors.separatorNorm,
                 modifier = Modifier
                     .height(1.dp)
@@ -302,7 +307,7 @@ fun LocalStorageState(
                 tint = ProtonTheme.colors.notificationError,
                 text = I18N.string.photos_error_local_storage,
             )
-            Divider(
+            HorizontalDivider(
                 color = ProtonTheme.colors.separatorNorm,
                 modifier = Modifier
                     .height(1.dp)
@@ -428,7 +433,7 @@ fun BackgroundRestrictions(
                     )
                 }
             }
-            Divider(
+            HorizontalDivider(
                 color = ProtonTheme.colors.separatorNorm,
                 modifier = Modifier
                     .height(1.dp)
@@ -478,6 +483,21 @@ fun WaitingConnectivityState(
 }
 
 @Composable
+fun UnconfirmedNetworkState(
+    modifier: Modifier = Modifier,
+    onAllowUnconfirmedNetwork: () -> Unit,
+) {
+    BackupStateCard(
+        modifier = modifier,
+        icon = R.drawable.ic_no_wifi,
+        tint = ProtonTheme.colors.notificationWarning,
+        text = I18N.string.photos_error_wifi_connectivity_unconfirmed,
+        action = I18N.string.photos_error_wifi_connectivity_unconfirmed_action,
+        onClick = onAllowUnconfirmedNetwork
+    )
+}
+
+@Composable
 fun NoConnectivityState(
     modifier: Modifier = Modifier,
 ) {
@@ -489,7 +509,6 @@ fun NoConnectivityState(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun BackupCard(
     modifier: Modifier = Modifier,
@@ -500,20 +519,24 @@ private fun BackupCard(
         Card(
             modifier = modifier,
             shape = ProtonTheme.shapes.medium,
-            backgroundColor = ProtonTheme.colors.backgroundSecondary,
-            contentColor = ProtonTheme.colors.textNorm,
-            elevation = 0.dp,
-            content = content,
+            colors = CardDefaults.cardColors(
+                containerColor = ProtonTheme.colors.backgroundSecondary,
+                contentColor = ProtonTheme.colors.textNorm,
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+            content = { content() },
         )
     } else {
         Card(
             modifier = modifier,
             onClick = onClick,
             shape = ProtonTheme.shapes.medium,
-            backgroundColor = ProtonTheme.colors.backgroundSecondary,
-            contentColor = ProtonTheme.colors.textNorm,
-            elevation = 0.dp,
-            content = content,
+            colors = CardDefaults.cardColors(
+                containerColor = ProtonTheme.colors.backgroundSecondary,
+                contentColor = ProtonTheme.colors.textNorm,
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+            content = { content() },
         )
     }
 }
@@ -632,7 +655,7 @@ private fun BackupStateCard(
 @Preview
 @Composable
 fun BackupCompletedStatePreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupCompletedState("1 000 items saved")
         }
@@ -642,7 +665,7 @@ fun BackupCompletedStatePreview() {
 @Preview
 @Composable
 fun BackupUncompletedStatePreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupUncompletedState(onResolve = {})
         }
@@ -652,7 +675,7 @@ fun BackupUncompletedStatePreview() {
 @Preview
 @Composable
 private fun PreparingStatePreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupPreparingState(
                 preparing = PhotosStatusViewState.Preparing(
@@ -666,7 +689,7 @@ private fun PreparingStatePreview() {
 @Preview
 @Composable
 fun EncryptingStatePreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupInProgressState(
                 inProgress = PhotosStatusViewState.InProgress(
@@ -682,7 +705,7 @@ fun EncryptingStatePreview() {
 @Preview
 @Composable
 fun UploadingStatePreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupInProgressState(
                 inProgress = PhotosStatusViewState.InProgress(
@@ -698,7 +721,7 @@ fun UploadingStatePreview() {
 @Preview
 @Composable
 fun MissingPermissionsStatePreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             MissingPermissionsState(onPermissions = { })
         }
@@ -708,7 +731,7 @@ fun MissingPermissionsStatePreview() {
 @Preview
 @Composable
 fun BackupDisableStatePreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupDisableState(onEnableBackup = { })
         }
@@ -718,7 +741,7 @@ fun BackupDisableStatePreview() {
 @Preview
 @Composable
 fun BackupMissingFolderStatePreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupMissingFolderState(onMore = { })
         }
@@ -728,7 +751,7 @@ fun BackupMissingFolderStatePreview() {
 @Preview
 @Composable
 fun BackupFolderNotFoundStatePreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupFolderNotFoundState()
         }
@@ -738,7 +761,7 @@ fun BackupFolderNotFoundStatePreview() {
 @Preview
 @Composable
 fun BackupFailedStatePreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupFailedState(onRetry = { })
         }
@@ -748,7 +771,7 @@ fun BackupFailedStatePreview() {
 @Preview
 @Composable
 fun BackgroundRestrictionsPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackgroundRestrictions(
                 onIgnoreBackgroundRestrictions = { },
@@ -761,7 +784,7 @@ fun BackgroundRestrictionsPreview() {
 @Preview
 @Composable
 fun LocalStorageStatePreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             LocalStorageState(onRetry = { })
         }
@@ -771,7 +794,7 @@ fun LocalStorageStatePreview() {
 @Preview
 @Composable
 fun BackupTemporarilyDisabledStatePreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupTemporarilyDisabledState(onRetry = { })
         }

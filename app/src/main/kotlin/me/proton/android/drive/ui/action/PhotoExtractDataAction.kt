@@ -24,8 +24,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -37,10 +37,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.proton.android.drive.ui.viewmodel.PhotosExportDataViewModel
-import me.proton.core.compose.component.ProtonRawListItem
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultNorm
+import me.proton.core.drive.base.presentation.component.ProtonRawListItem
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.i18n.R
 
 @Composable
@@ -96,7 +97,7 @@ private fun PhotoExtractDataAction(
 @Preview
 @Composable
 private fun PhotoExtractDataActionPreview() {
-    ProtonTheme {
+    DriveTheme {
         PhotoExtractDataAction(
             onExportData = {},
             isLoading = true

@@ -22,7 +22,9 @@ import me.proton.core.auth.domain.usecase.GetPrimaryUser
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.log.LogTag.DRIVE_SDK
 import me.proton.core.drive.base.domain.usecase.ReportError
+import me.proton.core.drive.observability.data.extension.toCausedBy
 import me.proton.core.drive.observability.data.extension.toField
+import me.proton.core.drive.observability.data.extension.toRecency
 import me.proton.core.drive.observability.data.extension.toVolumeType
 import me.proton.core.drive.observability.domain.constraint.CountConstraint
 import me.proton.core.drive.observability.domain.constraint.MinimumIntervalConstraint
@@ -34,7 +36,9 @@ import me.proton.core.drive.observability.domain.metrics.sdk.IntegrityBlockVerif
 import me.proton.core.drive.observability.domain.metrics.sdk.IntegrityDecryptionErrorsTotal
 import me.proton.core.drive.observability.domain.metrics.sdk.IntegrityErroringUsersTotal
 import me.proton.core.drive.observability.domain.metrics.sdk.IntegrityVerificationErrorsTotal
+import me.proton.core.drive.observability.domain.metrics.sdk.common.CausedBy
 import me.proton.core.drive.observability.domain.metrics.sdk.common.Field
+import me.proton.core.drive.observability.domain.metrics.sdk.common.Recency
 import me.proton.core.drive.observability.domain.metrics.sdk.common.YesNoUnknown
 import me.proton.core.drive.observability.domain.usecase.EnqueueObservabilityEvent
 import me.proton.core.drive.user.domain.extension.isWithoutProtonSubscription
@@ -56,18 +60,20 @@ class SdkIntegrityMetricsNotifier @Inject constructor(
     suspend operator fun invoke(
         decryptionErrorEvent: DecryptionErrorEvent
     ) {
-        val volumeType = decryptionErrorEvent.volumeType.toVolumeType()
+        val recency = decryptionErrorEvent.recency.toRecency()
+        val causedBy = decryptionErrorEvent.createdBy.toCausedBy()
         decryptionErrorEvent.field.toField()?.let { field ->
             notifyIntegrityDecryptionErrorsTotalMetric(
                 uid = decryptionErrorEvent.uid,
-                volumeType = volumeType,
                 field = field,
-                isFromBefore2024 = decryptionErrorEvent.fromBefore2024,
+                recency = recency,
+                causedBy = causedBy,
             )
         }
-        if (decryptionErrorEvent.fromBefore2024.not()) {
+        if (recency != Recency.before_2024) {
             notifyIntegrityErroringUsersTotalMetric(
-                volumeType = volumeType
+                volumeType = VolumeType.unknown,
+                causedBy = causedBy,
             )
             reportError(
                 tag = DRIVE_SDK,
@@ -79,19 +85,21 @@ class SdkIntegrityMetricsNotifier @Inject constructor(
     suspend operator fun invoke(
         verificationErrorEvent: VerificationErrorEvent
     ) {
-        val volumeType = verificationErrorEvent.volumeType.toVolumeType()
+        val recency = verificationErrorEvent.recency.toRecency()
+        val causedBy = verificationErrorEvent.createdBy.toCausedBy()
         verificationErrorEvent.field.toField()?.let { field ->
             notifyIntegrityVerificationErrorsTotalMetric(
                 uid = verificationErrorEvent.uid,
-                volumeType = volumeType,
                 field = field,
                 addressMatchingDefaultShare = verificationErrorEvent.addressMatchingDefaultShare,
-                isFromBefore2024 = verificationErrorEvent.fromBefore2024,
+                recency = recency,
+                causedBy = causedBy,
             )
         }
-        if (verificationErrorEvent.fromBefore2024.not() and verificationErrorEvent.addressMatchingDefaultShare) {
+        if (recency != Recency.before_2024 && verificationErrorEvent.addressMatchingDefaultShare) {
             notifyIntegrityErroringUsersTotalMetric(
-                volumeType = volumeType
+                volumeType = VolumeType.unknown,
+                causedBy = causedBy,
             )
         }
     }
@@ -104,24 +112,25 @@ class SdkIntegrityMetricsNotifier @Inject constructor(
         )
         if (blockVerificationErrorEvent.retryHelped.not()) {
             notifyIntegrityErroringUsersTotalMetric(
-                volumeType = blockVerificationErrorEvent.volumeType.toVolumeType()
+                volumeType = blockVerificationErrorEvent.volumeType.toVolumeType(),
+                causedBy = CausedBy.UNKNOWN,
             )
         }
     }
 
     private suspend fun notifyIntegrityDecryptionErrorsTotalMetric(
         uid: String,
-        volumeType: VolumeType,
         field: Field,
-        isFromBefore2024: Boolean?,
+        recency: Recency,
+        causedBy: CausedBy,
     ) {
         getPrimaryUser()?.let { user ->
             notifyIntegrityDecryptionErrorsTotalMetric(
                 userId = user.userId,
                 uid = uid,
-                volumeType = volumeType,
                 field = field,
-                isFromBefore2024 = isFromBefore2024,
+                recency = recency,
+                causedBy = causedBy,
             )
         }
     }
@@ -129,20 +138,16 @@ class SdkIntegrityMetricsNotifier @Inject constructor(
     private suspend fun notifyIntegrityDecryptionErrorsTotalMetric(
         userId: UserId,
         uid: String,
-        volumeType: VolumeType,
         field: Field,
-        isFromBefore2024: Boolean?,
+        recency: Recency,
+        causedBy: CausedBy,
     ) {
         enqueueObservabilityEvent(
             observabilityData = IntegrityDecryptionErrorsTotal(
                 Labels = IntegrityDecryptionErrorsTotal.LabelsData(
-                    volumeType = volumeType,
                     field = field,
-                    fromBefore2024 = when (isFromBefore2024) {
-                        true -> YesNoUnknown.yes
-                        false ->  YesNoUnknown.no
-                        null -> YesNoUnknown.unknown
-                    },
+                    recency = recency,
+                    causedBy = causedBy,
                 )
             ),
             constraint = countConstraint(
@@ -155,19 +160,19 @@ class SdkIntegrityMetricsNotifier @Inject constructor(
 
     private suspend fun notifyIntegrityVerificationErrorsTotalMetric(
         uid: String,
-        volumeType: VolumeType,
         field: Field,
         addressMatchingDefaultShare: Boolean?,
-        isFromBefore2024: Boolean?,
+        recency: Recency,
+        causedBy: CausedBy,
     ) {
         getPrimaryUser()?.let { user ->
             notifyIntegrityVerificationErrorsTotalMetric(
                 userId = user.userId,
                 uid = uid,
-                volumeType = volumeType,
                 field = field,
                 addressMatchingDefaultShare = addressMatchingDefaultShare,
-                isFromBefore2024 = isFromBefore2024,
+                recency = recency,
+                causedBy = causedBy,
             )
         }
     }
@@ -175,26 +180,22 @@ class SdkIntegrityMetricsNotifier @Inject constructor(
     private suspend fun notifyIntegrityVerificationErrorsTotalMetric(
         userId: UserId,
         uid: String,
-        volumeType: VolumeType,
         field: Field,
         addressMatchingDefaultShare: Boolean?,
-        isFromBefore2024: Boolean?,
+        recency: Recency,
+        causedBy: CausedBy,
     ) {
         enqueueObservabilityEvent(
             IntegrityVerificationErrorsTotal(
                 Labels = IntegrityVerificationErrorsTotal.LabelsData(
-                    volumeType = volumeType,
                     field = field,
                     addressMatchingDefaultShare = when (addressMatchingDefaultShare) {
                         true -> YesNoUnknown.yes
                         false -> YesNoUnknown.no
                         null -> YesNoUnknown.unknown
                     },
-                    fromBefore2024 = when (isFromBefore2024) {
-                        true -> YesNoUnknown.yes
-                        false -> YesNoUnknown.no
-                        null -> YesNoUnknown.unknown
-                    },
+                    recency = recency,
+                    causedBy = causedBy,
                 )
             ),
             constraint = countConstraint(
@@ -219,11 +220,13 @@ class SdkIntegrityMetricsNotifier @Inject constructor(
 
     private suspend fun notifyIntegrityErroringUsersTotalMetric(
         volumeType: VolumeType,
+        causedBy: CausedBy,
     ) {
         getPrimaryUser()?.let { user ->
             notifyIntegrityErroringUsersTotalMetric(
                 userId = user.userId,
                 volumeType = volumeType,
+                causedBy = causedBy,
                 isFreeUser = user.isWithoutProtonSubscription,
             )
         }
@@ -232,6 +235,7 @@ class SdkIntegrityMetricsNotifier @Inject constructor(
     private suspend fun notifyIntegrityErroringUsersTotalMetric(
         userId: UserId,
         volumeType: VolumeType,
+        causedBy: CausedBy,
         isFreeUser: Boolean,
     ) {
         enqueueObservabilityEvent(
@@ -239,6 +243,7 @@ class SdkIntegrityMetricsNotifier @Inject constructor(
                 Labels = IntegrityErroringUsersTotal.LabelsData(
                     volumeType = volumeType,
                     userPlan = if (isFreeUser) Plan.free else Plan.paid,
+                    causedBy = causedBy,
                 )
             ),
             constraint = minimumIntervalConstraint(

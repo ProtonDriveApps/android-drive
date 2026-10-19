@@ -18,10 +18,11 @@
   -->
 <resources>
   <string name="content_description_file_preview">Förhandsgranskning av filinnehåll</string>
-  <string name="content_description_more_options">Show more options for the file</string>
+  <string name="content_description_more_options">Visa fler alternativ för filen</string>
   <string name="preview_downloading_state">Laddar ner…</string>
   <string name="preview_processing_state">Bearbetar…</string>
   <string name="preview_empty">Inget att förhandsgranska…</string>
+  <string name="preview_text_too_large">Denna fil är för stor för att förhandsgranska</string>
   <string name="title_not_found">Hittades inte</string>
   <string name="proton_docs_insert_image_header_title">Infoga bild</string>
   <string name="proton_docs_option_select_file">Välj en fil</string>

@@ -139,6 +139,7 @@
   <string name="notification_content_text_backup_failed_connectivity">인터넷 연결 없음</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Wi-Fi를 기다리는 중</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">백업이 허용되지 않음</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">백업 폴더가 더 이상 존재하지 않습니다</string>
   <string name="notification_content_text_backup_paused_disabled">백업이 비활성화 되었습니다</string>
   <string name="notification_content_text_backup_paused_background_restrictions">백업이 백그라운드에서 작동할 수 없습니다</string>
   <string name="notification_content_text_backup_preparing">백업 준비 중</string>
@@ -170,6 +171,8 @@
   <string name="notification_content_title_transferring">데이터 이전 중</string>
   <!-- endregion -->
   <string name="content_description_select_all">목록의 모든 항목 선택</string>
+  <string name="content_description_select_separator">%1$s내의 모든 항목 검색</string>
+  <string name="photos_error_separator_selection_failed">Some items could not be selected, please try again</string>
   <string name="content_description_selected_options">선택한 파일 또는 폴더에 대한 추가 옵션 표시</string>
   <string name="content_description_files_upload_upload_file">파일 업로드</string>
   <string name="content_description_albums_new">새로운 앨범 생성</string>
@@ -281,7 +284,7 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">%1$s(으)로 업그레이드</string>
-  <string name="support_contact_options_title">Help us enhance your experience</string>
+  <string name="support_contact_options_title">저희가 회원님의 경험을 한층 향상시킬 수 있도록 도와주세요</string>
   <string name="support_contact_options_description">문제가 발생한 경우 언제든 지원 문서나 지원 팀에 도움을 요청하세요!</string>
   <string name="support_contact_options_action_button">문의하기</string>
 </resources>

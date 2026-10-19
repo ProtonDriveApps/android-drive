@@ -23,9 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import me.proton.android.drive.photos.presentation.viewevent.ConfirmDeleteAlbumViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.ConfirmDeleteAlbumViewState
-import me.proton.core.compose.component.ProtonAlertDialog
-import me.proton.core.compose.component.ProtonAlertDialogButton
-import me.proton.core.compose.component.ProtonAlertDialogText
+import me.proton.core.drive.base.presentation.component.ProtonAlertDialog
+import me.proton.core.drive.base.presentation.component.ProtonAlertDialogButton
+import me.proton.core.drive.base.presentation.component.ProtonAlertDialogText
 
 @Composable
 fun ConfirmDeleteAlbumDialogContent(

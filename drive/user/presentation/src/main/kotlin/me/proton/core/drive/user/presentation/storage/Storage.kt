@@ -24,10 +24,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.Icon
-import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +45,7 @@ import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.extension.toPercentString
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.base.presentation.extension.currentLocale
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
@@ -80,13 +81,13 @@ fun StorageIndicator(
         }
 
         LinearProgressIndicator(
-            progress = percentage.value,
+            progress = { percentage.value },
             modifier = Modifier
                 .height(LinearProgressIndicatorSize)
                 .fillMaxWidth()
                 .padding(vertical = DefaultSpacing)
                 .clip(ProtonTheme.shapes.small),
-            backgroundColor = ProtonTheme.colors.separatorNorm,
+            trackColor = ProtonTheme.colors.separatorNorm,
         )
 
         Text(
@@ -103,7 +104,7 @@ fun StorageIndicator(
 @Preview
 @Composable
 fun PreviewStorage() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             StorageIndicator(
                 label = stringResource(I18N.string.storage_total_usage),

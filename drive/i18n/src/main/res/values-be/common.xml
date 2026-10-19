@@ -65,8 +65,8 @@
   <plurals name="common_x_months">
     <item quantity="one">%1$d месяц</item>
     <item quantity="few">%1$d месяцы</item>
-    <item quantity="many">%1$d месяцы</item>
-    <item quantity="other">%1$d месяцы</item>
+    <item quantity="many">%1$d месяцаў</item>
+    <item quantity="other">%1$d месяцаў</item>
   </plurals>
   <!--
         Variable %1$d is a number of weeks

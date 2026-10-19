@@ -55,9 +55,7 @@ import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.upload.data.extension.getDefaultMessage
 import me.proton.core.drive.worker.data.LimitedRetryCoroutineWorker
 import me.proton.core.drive.worker.data.usecase.TransferDataNotifier
-import me.proton.core.drive.worker.domain.usecase.CanRun
-import me.proton.core.drive.worker.domain.usecase.Done
-import me.proton.core.drive.worker.domain.usecase.Run
+import me.proton.core.drive.worker.domain.usecase.WorkerRuns
 import me.proton.core.util.kotlin.CoreLogger
 import kotlin.Result as KotlinResult
 
@@ -65,14 +63,12 @@ import kotlin.Result as KotlinResult
 class UploadFolderWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    canRun: CanRun,
-    run: Run,
-    done: Done,
+    workerRuns: WorkerRuns,
     private val transferDataNotifier: TransferDataNotifier,
     private val createFolderTreeAndScheduleUpload: CreateFolderTreeAndScheduleUpload,
     private val getDecryptedDriveLink: GetDecryptedDriveLink,
     private val broadcastMessages: BroadcastMessages,
-) : LimitedRetryCoroutineWorker(appContext, workerParams, canRun, run, done) {
+) : LimitedRetryCoroutineWorker(appContext, workerParams, workerRuns) {
     override val userId = UserId(
         requireNotNull(inputData.getString(KEY_USER_ID)) { "User id is required" }
     )

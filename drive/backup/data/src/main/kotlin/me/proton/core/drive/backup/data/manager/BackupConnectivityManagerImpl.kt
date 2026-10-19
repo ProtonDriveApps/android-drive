@@ -24,7 +24,6 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import me.proton.core.drive.backup.data.extension.toTransportTypes
 import me.proton.core.drive.backup.data.extension.toTransportTypesMask
-import android.net.NetworkRequest
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
@@ -52,16 +51,7 @@ class BackupConnectivityManagerImpl @Inject constructor(
     }
 
     override val connectivity: Flow<BackupConnectivityManager.Connectivity> = callbackFlow {
-        val networkRequest = NetworkRequest.Builder()
-            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-            .build()
         val networkCallback = object : ConnectivityManager.NetworkCallback() {
-
-            private var networks: List<Network> = emptyList()
-
-            override fun onAvailable(network: Network) {
-                networks = networks + network
-            }
 
             override fun onCapabilitiesChanged(
                 network: Network,
@@ -71,22 +61,8 @@ class BackupConnectivityManagerImpl @Inject constructor(
             }
 
             override fun onLost(network: Network) {
-                networks = networks - network
-                trySend(
-                    networks.lastOrNull()
-                        ?.let(connectivityManager::getNetworkCapabilities)
-                        ?.getConnectivity()
-                        ?: BackupConnectivityManager.Connectivity.NONE
-                )
+                trySend(BackupConnectivityManager.Connectivity.NONE)
             }
-
-            private fun NetworkCapabilities.getConnectivity(): BackupConnectivityManager.Connectivity =
-                if (hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED)) {
-                    BackupConnectivityManager.Connectivity.UNMETERED
-                } else {
-                    BackupConnectivityManager.Connectivity.CONNECTED
-                }
-
         }
         retry(
             logMessage = {
@@ -95,12 +71,12 @@ class BackupConnectivityManagerImpl @Inject constructor(
                 "Registering network callback as UID=$uid package=$packageName"
             },
         ) {
-            connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
+            connectivityManager.registerDefaultNetworkCallback(networkCallback)
         }
         awaitClose {
             connectivityManager.unregisterNetworkCallback(networkCallback)
         }
-    }.shareIn(coroutineScope, SharingStarted.WhileSubscribed(), 1)
+    }.shareIn(coroutineScope, SharingStarted.WhileSubscribed(replayExpirationMillis = 0), 1)
 
     private suspend fun retry(
         numberOfRetries: Int = 1,
@@ -137,4 +113,20 @@ class BackupConnectivityManagerImpl @Inject constructor(
                     transportTypesMask = capabilities.toTransportTypesMask(),
                 )
             }
+
+    override fun getCurrentConnectivity(): BackupConnectivityManager.Connectivity =
+        connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)?.getConnectivity()
+            ?: BackupConnectivityManager.Connectivity.NONE
 }
+
+private fun NetworkCapabilities.isKnownUnmetered(): Boolean =
+    hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED) ||
+        hasCapability(NetworkCapabilities.NET_CAPABILITY_TEMPORARILY_NOT_METERED)
+
+private fun NetworkCapabilities.getConnectivity(): BackupConnectivityManager.Connectivity =
+    when {
+        // Cellular is never trusted as unmetered: some carriers/eSIM plans mislabel it as NOT_METERED.
+        hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> BackupConnectivityManager.Connectivity.CONNECTED_METERED
+        isKnownUnmetered() -> BackupConnectivityManager.Connectivity.CONNECTED_UNMETERED
+        else -> BackupConnectivityManager.Connectivity.CONNECTED_UNCONFIRMED
+    }

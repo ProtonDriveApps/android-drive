@@ -77,6 +77,7 @@ interface ConfigurationProvider {
         0.seconds, 60.seconds, 2.minutes, 5.minutes, 15.minutes, 30.minutes
     )
     val maxApiAutoRetries: Int get() = 10
+    val maxBlockedAttempts: Int get() = 15
     val uploadMaxRetries: Long get() = 5
     val logToFileInDebugEnabled: Boolean get() = true
     val allowBackupDeletedFilesEnabled: Boolean get() = false
@@ -87,6 +88,7 @@ interface ConfigurationProvider {
     val backupSyncWindow: Duration get() = 1.days
     val photoExportData: Boolean get() = false
     val featureFlagFreshDuration: Duration get() = 10.minutes
+    val recentlyAccessedPreviewDuration: Duration get() = 10.seconds
     val featureFlagLegacyFreshDuration: Duration get() = 1.days
     val useVerifier: Boolean get() = true
     val maxFreeSpace: Bytes get() = 5.GiB

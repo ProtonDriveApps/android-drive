@@ -24,8 +24,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -37,16 +37,18 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.android.drive.ui.viewmodel.SigningOutViewModel
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.i18n.R as I18N
 
 @ExperimentalCoroutinesApi
 @Composable
 fun SigningOutScreen(
+    navigateToLauncher: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val signingOutViewModel = hiltViewModel<SigningOutViewModel>()
     LaunchedEffect(Unit) {
-        signingOutViewModel.signOut()
+        signingOutViewModel.signOut(onUnauthorized = navigateToLauncher)
     }
     SigningOut(modifier)
 }
@@ -85,7 +87,7 @@ private fun SigningOut(
 @Composable
 @Suppress("unused")
 private fun PreviewSigningOut() {
-    ProtonTheme {
+    DriveTheme {
         SigningOut(Modifier.background(ProtonTheme.colors.backgroundSecondary))
     }
 }

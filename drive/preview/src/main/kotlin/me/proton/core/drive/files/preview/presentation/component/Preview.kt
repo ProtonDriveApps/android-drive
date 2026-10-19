@@ -41,8 +41,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.layout.getDefaultLazyLayoutKey
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -78,10 +78,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
-import me.proton.core.compose.component.ErrorPadding
-import me.proton.core.compose.component.ProtonErrorMessage
-import me.proton.core.compose.component.ProtonErrorMessageWithAction
-import me.proton.core.compose.component.ProtonSolidButton
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonTheme
@@ -93,13 +89,18 @@ import me.proton.core.drive.base.domain.extension.MiB
 import me.proton.core.drive.base.domain.extension.requireIsInstance
 import me.proton.core.drive.base.presentation.component.ActionButton
 import me.proton.core.drive.base.presentation.component.Deferred
+import me.proton.core.drive.base.presentation.component.ErrorPadding
 import me.proton.core.drive.base.presentation.component.LinearProgressIndicator
+import me.proton.core.drive.base.presentation.component.ProtonErrorMessage
+import me.proton.core.drive.base.presentation.component.ProtonErrorMessageWithAction
+import me.proton.core.drive.base.presentation.component.ProtonSolidButton
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.base.presentation.component.list.ListEmpty
 import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.base.presentation.extension.debugOnly
 import me.proton.core.drive.base.presentation.extension.iconResId
 import me.proton.core.drive.base.presentation.extension.isLandscape
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.files.preview.presentation.component.event.PreviewViewEvent
 import me.proton.core.drive.files.preview.presentation.component.state.ContentState
 import me.proton.core.drive.files.preview.presentation.component.state.PreviewContentState
@@ -646,7 +647,7 @@ private val ProgressHeight = 2.dp
 @Preview
 @Composable
 fun PreviewPreviewLoadingState() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             Preview(
                 viewState = PreviewViewState(
@@ -689,7 +690,7 @@ fun PreviewPreviewLoadingState() {
 @Composable
 @Suppress("MagicNumber")
 fun PreviewPreviewDownloading() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             PreviewDownloadingAndDecrypting(
                 state = ContentState.Downloading(flowOf(Percentage(50))),
@@ -702,7 +703,7 @@ fun PreviewPreviewDownloading() {
 @Preview
 @Composable
 fun PreviewPreviewNotFound() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             PreviewNotFound(deferDuration = 0.seconds)
         }
@@ -712,7 +713,7 @@ fun PreviewPreviewNotFound() {
 @Preview
 @Composable
 fun PreviewPreviewError() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             PreviewError(
                 message = "Error message",

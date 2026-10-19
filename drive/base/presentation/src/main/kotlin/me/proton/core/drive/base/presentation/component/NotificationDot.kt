@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 
 @Composable
 fun NotificationDot(
@@ -61,7 +62,7 @@ fun NotificationDot(
 @Preview
 @Composable
 fun PreviewNotificationDot() {
-    ProtonTheme {
+    DriveTheme {
         Surface(
             modifier = Modifier
                 .fillMaxSize()

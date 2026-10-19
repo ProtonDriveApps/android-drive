@@ -34,9 +34,9 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,7 +47,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.proton.android.drive.photos.presentation.R
-import me.proton.core.compose.component.ProtonSolidButton
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.ExtraLargeCornerRadius
 import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
@@ -58,9 +57,11 @@ import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultWeak
 import me.proton.core.compose.theme.headlineNorm
+import me.proton.core.drive.base.presentation.component.ProtonSolidButton
 import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.base.presentation.extension.isLandscape
 import me.proton.core.drive.base.presentation.extension.isPortrait
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
@@ -287,7 +288,7 @@ private fun Section(
 @Preview
 @Composable
 fun PhotosPermissionsPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             PhotosEmptyWithBackupTurnedOff(onEnable = {})
         }
@@ -297,7 +298,7 @@ fun PhotosPermissionsPreview() {
 @Preview(widthDp = 600, heightDp = 360)
 @Composable
 fun PhotosPermissionsPreviewLandscape() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             PhotosEmptyWithBackupTurnedOff(onEnable = {})
         }

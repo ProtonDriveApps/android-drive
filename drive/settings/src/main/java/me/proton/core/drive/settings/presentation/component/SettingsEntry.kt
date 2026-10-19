@@ -27,11 +27,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -56,6 +56,7 @@ import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.default
 import me.proton.core.drive.base.presentation.component.protonOutlineTextFieldColors
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.settings.presentation.state.LegalLink
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -200,7 +201,7 @@ private fun EditableIconButton(
 @Suppress("unused")
 @Composable
 private fun PreviewExternalSettingsEntry() {
-    ProtonTheme {
+    DriveTheme {
         ExternalSettingsEntry(
             modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
             link = LegalLink.External(
@@ -224,7 +225,7 @@ private fun PreviewExternalSettingsEntry() {
 @Suppress("unused")
 @Composable
 private fun PreviewEditableSettingsEntry() {
-    ProtonTheme {
+    DriveTheme {
         EditableSettingsEntry(
             modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
             label = "Label",

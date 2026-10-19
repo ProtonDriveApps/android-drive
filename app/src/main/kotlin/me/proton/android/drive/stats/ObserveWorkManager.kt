@@ -20,6 +20,7 @@ package me.proton.android.drive.stats
 
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import androidx.work.WorkQuery
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.firstOrNull
@@ -42,7 +43,12 @@ class ObserveWorkManager @Inject constructor(
     }
 
     operator fun invoke(userId: UserId) = tickerFlow.transform {
-        val workInfos = workManager.getWorkInfosByTagFlow(userId.id).firstOrNull() ?: emptyList<WorkInfo>()
+        val workInfos = workManager.getWorkInfosFlow(
+            WorkQuery.Builder
+                .fromTags(listOf(userId.id))
+                .addStates(OBSERVED_STATES)
+                .build()
+        ).firstOrNull() ?: emptyList<WorkInfo>()
         workInfos
             .filterNotNull()
             .takeIf { it.isNotEmpty() }
@@ -70,4 +76,13 @@ class ObserveWorkManager @Inject constructor(
                 )
             }
     }.distinctUntilChanged()
+
+    private companion object {
+        val OBSERVED_STATES = listOf(
+            WorkInfo.State.ENQUEUED,
+            WorkInfo.State.RUNNING,
+            WorkInfo.State.BLOCKED,
+            WorkInfo.State.FAILED,
+        )
+    }
 }

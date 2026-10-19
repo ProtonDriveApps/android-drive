@@ -20,9 +20,9 @@ package me.proton.android.drive.ui.options
 
 import me.proton.android.drive.ui.common.FolderEntry
 import me.proton.android.drive.ui.common.folderEntry
-import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.isViewerOrEditorOnly
+import me.proton.core.drive.base.presentation.component.RunAction
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.hasShareLink
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag

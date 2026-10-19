@@ -24,12 +24,13 @@ import android.content.Intent
 import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.viewevent.ContactSupportOptionsViewEvent
 import me.proton.android.drive.ui.viewstate.ContactSupportOptionsViewState
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
@@ -38,6 +39,7 @@ import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 class ContactSupportOptionsViewModel @Inject constructor(
+    @ApplicationScope private val applicationScope: CoroutineScope,
     savedStateHandle: SavedStateHandle,
     @param:ApplicationContext private val appContext: Context,
     private val broadcastMessages: BroadcastMessages,
@@ -65,7 +67,7 @@ class ContactSupportOptionsViewModel @Inject constructor(
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             )
         } catch (_: ActivityNotFoundException) {
-            viewModelScope.launch {
+            applicationScope.launch {
                 broadcastMessages(
                     userId = userId,
                     message = appContext.getString(I18N.string.common_error_no_browser_available),

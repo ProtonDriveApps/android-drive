@@ -18,12 +18,14 @@
 package me.proton.core.drive.base.presentation.component
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -48,13 +50,15 @@ fun BottomNavigation(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier) {
-        BottomNavigation(
-            backgroundColor = ProtonTheme.colors.backgroundNorm,
-            elevation = 0.dp,
+        NavigationBar(
+            containerColor = ProtonTheme.colors.backgroundNorm,
+            contentColor = ProtonTheme.colors.iconWeak,
+            tonalElevation = 0.dp,
+            windowInsets = WindowInsets(0, 0, 0, 0),
         ) {
             tabs.forEach { tab ->
                 val isSelected = selectedTab == tab
-                BottomNavigationItem(
+                NavigationBarItem(
                     icon = {
                         BoxWithNotificationDot(
                             modifier = Modifier.padding(horizontal = ProtonDimens.SmallSpacing),
@@ -76,15 +80,26 @@ fun BottomNavigation(
                     },
                     selected = isSelected,
                     onClick = { onSelectedTab(tab) },
-                    selectedContentColor = ProtonTheme.colors.interactionNorm,
-                    unselectedContentColor = ProtonTheme.colors.iconWeak,
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = ProtonTheme.colors.interactionNorm,
+                        selectedTextColor = ProtonTheme.colors.interactionNorm,
+                        indicatorColor = if (ProtonTheme.colors.isDark) {
+                            ProtonTheme.colors.shade15
+                        } else {
+                            ProtonTheme.colors.interactionWeakNorm
+                        },
+                        unselectedIconColor = ProtonTheme.colors.iconWeak,
+                        unselectedTextColor = ProtonTheme.colors.iconWeak,
+                    ),
                     modifier = Modifier.testTag(BottomNavigationComponentTestTag.tab)
                 )
             }
         }
-        Divider(color = ProtonTheme.colors.separatorNorm)
+        HorizontalDivider(color = ProtonTheme.colors.separatorNorm)
     }
 }
+
+val BottomNavigationHeight = 80.dp
 
 object BottomNavigationComponentTestTag {
     const val tab = "bottom navigation tab"

@@ -35,7 +35,7 @@ import me.proton.android.drive.document.scanner.domain.entity.ScannerOptions
 import me.proton.android.drive.document.scanner.presentation.component.rememberDocumentScannerLauncher
 import me.proton.android.drive.ui.viewmodel.ParentFolderOptionsViewModel
 import me.proton.core.compose.activity.rememberCameraLauncher
-import me.proton.core.compose.component.bottomsheet.RunAction
+import me.proton.core.drive.base.presentation.component.RunAction
 import me.proton.core.drive.base.presentation.component.rememberFilePickerLauncher
 import me.proton.core.drive.base.presentation.component.rememberFolderPickerLauncher
 import me.proton.core.drive.base.presentation.extension.launchWithNotFound

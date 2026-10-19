@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -47,6 +48,7 @@ import me.proton.core.domain.arch.onSuccess
 import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.coroutines.timeLimitedScope
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.onProcessing
@@ -98,6 +100,7 @@ import me.proton.core.presentation.R as CorePresentation
 @HiltViewModel
 @SuppressLint("StaticFieldLeak")
 class SharedDriveInvitationsViewModel @Inject constructor(
+    @ApplicationScope private val applicationScope: CoroutineScope,
     getDriveLink: GetDecryptedDriveLink,
     getUserEmailsFlow: GetUserEmailsFlow,
     private val inviteMembers: InviteMembers,
@@ -382,7 +385,7 @@ class SharedDriveInvitationsViewModel @Inject constructor(
     }
 
     private fun save(onComplete: () -> Unit) {
-        timeLimitedScope(SHARING) {
+        timeLimitedScope(SHARING, scope = applicationScope) {
             val invitations = validInvitations.first()
             CoreLogger.i(SHARING, "Start sending invitations (${invitations.size})")
             val sendMessageAndName = sendMessageAndName.value

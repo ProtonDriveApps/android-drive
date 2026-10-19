@@ -22,6 +22,7 @@ import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import me.proton.android.drive.extension.log
@@ -30,6 +31,7 @@ import me.proton.android.drive.photos.domain.usecase.AddToAlbumInfo
 import me.proton.android.drive.ui.viewevent.ShareMultiplePhotosOptionsViewEvent
 import me.proton.android.drive.ui.viewstate.ShareMultiplePhotosOptionsViewState
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
@@ -53,6 +55,7 @@ import me.proton.core.presentation.R as CorePresentation
 
 @HiltViewModel
 class ShareMultiplePhotosOptionsViewModel @Inject constructor(
+    @ApplicationScope applicationScope: CoroutineScope,
     savedStateHandle: SavedStateHandle,
     getSelectedDriveLinks: GetSelectedDriveLinks,
     getPhotoShare: GetPhotoShare,
@@ -73,6 +76,7 @@ class ShareMultiplePhotosOptionsViewModel @Inject constructor(
     addPhotosToAlbum = addPhotosToAlbum,
     broadcastMessages = broadcastMessages,
     configurationProvider = configurationProvider,
+    applicationScope = applicationScope,
 ) {
     val selectionId = SelectionId(savedStateHandle.require(SELECTION_ID))
     override val selectedDriveLinks: Flow<List<DriveLink>> = getSelectedDriveLinks(selectionId)

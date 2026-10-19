@@ -30,8 +30,8 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -44,6 +44,7 @@ import me.proton.android.drive.photos.presentation.viewstate.PhotosStatusViewSta
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.backup.domain.entity.BackupError
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -218,7 +219,7 @@ private fun PhotosStatesIndicator(color: Color, icon: Int, modifier: Modifier = 
 @Preview
 @Composable
 fun PhotosDisableIconPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             PhotosDisableIndicator()
         }
@@ -228,7 +229,7 @@ fun PhotosDisableIconPreview() {
 @Preview
 @Composable
 fun PhotosMissingFolderIconPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             PhotosMissingFolderIndicator()
         }
@@ -239,7 +240,7 @@ fun PhotosMissingFolderIconPreview() {
 @Preview
 @Composable
 fun PhotosCompleteIconPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             PhotosCompleteIndicator()
         }
@@ -249,7 +250,7 @@ fun PhotosCompleteIconPreview() {
 @Preview
 @Composable
 fun PhotosUncompletedIconPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             PhotosUncompletedIndicator()
         }
@@ -259,7 +260,7 @@ fun PhotosUncompletedIconPreview() {
 @Preview
 @Composable
 private fun PhotosPreparingIconPreview() {
-    ProtonTheme {
+    DriveTheme {
         PhotosPreparingIndicator()
     }
 }
@@ -267,7 +268,7 @@ private fun PhotosPreparingIconPreview() {
 @Preview
 @Composable
 fun PhotosProgressIconPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             PhotosProgressIndicator()
         }
@@ -277,7 +278,7 @@ fun PhotosProgressIconPreview() {
 @Preview
 @Composable
 fun PhotosFailedIconPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             PhotosFailedIndicator()
         }
@@ -287,7 +288,7 @@ fun PhotosFailedIconPreview() {
 @Preview
 @Composable
 private fun PhotosFailedConnectivityIndicatorPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             PhotosFailedConnectivityIndicator()
         }

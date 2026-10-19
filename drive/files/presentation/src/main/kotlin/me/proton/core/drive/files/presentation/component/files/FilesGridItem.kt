@@ -37,12 +37,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.ripple
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -73,6 +73,7 @@ import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.presentation.component.CircleSelection
 import me.proton.core.drive.base.presentation.component.EncryptedItem
 import me.proton.core.drive.base.presentation.component.LinearProgressIndicator
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.files.presentation.component.FilesTestTag
@@ -295,8 +296,8 @@ private const val MoreButtonAlpha = 0.7f
 @Suppress("unused")
 @Composable
 fun PreviewGridItem() {
-    ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+    DriveTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             FilesGridItem(
                 link = PREVIEW_DRIVELINK,
                 onClick = {},
@@ -319,8 +320,8 @@ fun PreviewGridItem() {
 @Suppress("unused")
 @Composable
 fun PreviewSelectedGridItem() {
-    ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+    DriveTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             FilesGridItem(
                 link = PREVIEW_DRIVELINK,
                 onClick = {},
@@ -345,8 +346,8 @@ fun PreviewSelectedGridItem() {
 @Suppress("unused")
 @Composable
 fun PreviewUnselectedGridItem() {
-    ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+    DriveTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             FilesGridItem(
                 link = PREVIEW_DRIVELINK,
                 onClick = {},

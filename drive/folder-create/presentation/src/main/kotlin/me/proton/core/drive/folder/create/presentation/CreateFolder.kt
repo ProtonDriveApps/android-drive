@@ -41,16 +41,16 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import me.proton.core.drive.base.presentation.component.ProtonAlertDialog
+import me.proton.core.drive.base.presentation.component.ProtonAlertDialogButton
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.link.domain.entity.FolderId
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import me.proton.core.compose.component.ProtonAlertDialog
-import me.proton.core.compose.component.ProtonAlertDialogButton
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.component.OutlinedTextFieldWithError
 import me.proton.core.drive.i18n.R as I18N
 
@@ -193,7 +193,7 @@ fun CreateFolderContent(
 @Preview
 @Composable
 fun CreateFolderPreview() {
-    ProtonTheme {
+    DriveTheme {
         CreateFolder(
             titleResId = I18N.string.folder_create_title,
             folderName = "New folder",
@@ -209,7 +209,7 @@ fun CreateFolderPreview() {
 @Preview
 @Composable
 fun CreateFolderErrorPreview() {
-    ProtonTheme {
+    DriveTheme {
         CreateFolder(
             titleResId = I18N.string.folder_create_title,
             folderName = "..",

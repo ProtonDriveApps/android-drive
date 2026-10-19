@@ -32,8 +32,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.android.drive.ui.viewmodel.LauncherViewModel
 import me.proton.android.drive.ui.viewstate.LauncherViewState
 import me.proton.android.drive.ui.viewstate.PrimaryAccountState
-import me.proton.core.compose.component.DeferredCircularProgressIndicator
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.presentation.component.DeferredCircularProgressIndicator
 
 @Composable
 @ExperimentalCoroutinesApi

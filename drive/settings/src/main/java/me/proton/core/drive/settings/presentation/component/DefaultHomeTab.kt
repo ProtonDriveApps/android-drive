@@ -27,8 +27,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.RadioButton
-import androidx.compose.material.Surface
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,6 +44,7 @@ import me.proton.core.compose.theme.defaultNorm
 import me.proton.core.compose.theme.defaultWeak
 import me.proton.core.drive.base.presentation.component.ProtonListItem
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.settings.presentation.entity.TabItem
 import me.proton.core.presentation.R as CorePresentation
 import me.proton.core.drive.i18n.R as I18N
@@ -127,7 +128,7 @@ fun HomeTabItem(
 @Preview
 @Composable
 fun DefaultHomeTabPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             DefaultHomeTab(
                 title = stringResource(id = I18N.string.title_default_home_screen_tab),

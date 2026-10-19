@@ -122,11 +122,9 @@ class GetBackupState @Inject constructor(
         )).filterNotNull().distinct()
     }.combine(
         hasCanceledUserMessages(folderId.userId, UserMessage.BACKUP_BATTERY_SETTINGS)
-    ) { errors, hasCanceledUserMessages ->
-        if (hasCanceledUserMessages) {
-            errors.filterNot { error -> error.type == BackupErrorType.BACKGROUND_RESTRICTIONS }
-        } else {
-            errors
+    ) { errors, hasCanceledBatterySettings ->
+        errors.filterNot { error ->
+            error.type == BackupErrorType.BACKGROUND_RESTRICTIONS && hasCanceledBatterySettings
         }
     }
 
@@ -135,15 +133,20 @@ class GetBackupState @Inject constructor(
         configuration: BackupConfiguration?,
     ) = when (connectivity) {
         BackupConnectivityManager.Connectivity.NONE -> when (configuration?.networkType) {
-            BackupNetworkType.UNMETERED -> BackupError.WifiConnectivity()
-            else -> BackupError.Connectivity()
+            BackupNetworkType.UNMETERED, BackupNetworkType.UNCONFIRMED -> BackupError.WifiConnectivity()
+            BackupNetworkType.ANY, null -> BackupError.Connectivity()
         }
 
-        BackupConnectivityManager.Connectivity.UNMETERED -> null
+        BackupConnectivityManager.Connectivity.CONNECTED_UNMETERED -> null
 
-        BackupConnectivityManager.Connectivity.CONNECTED -> when (configuration?.networkType) {
-            BackupNetworkType.UNMETERED -> BackupError.WifiConnectivity()
-            else -> null
+        BackupConnectivityManager.Connectivity.CONNECTED_UNCONFIRMED -> when (configuration?.networkType) {
+            BackupNetworkType.UNMETERED -> BackupError.ConnectivityUnconfirmed()
+            BackupNetworkType.UNCONFIRMED, BackupNetworkType.ANY, null -> null
+        }
+
+        BackupConnectivityManager.Connectivity.CONNECTED_METERED -> when (configuration?.networkType) {
+            BackupNetworkType.UNMETERED, BackupNetworkType.UNCONFIRMED -> BackupError.WifiConnectivity()
+            BackupNetworkType.ANY, null -> null
         }
     }
 

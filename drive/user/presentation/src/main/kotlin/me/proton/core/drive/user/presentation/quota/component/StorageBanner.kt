@@ -26,10 +26,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -44,11 +45,12 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import me.proton.core.compose.component.ProtonSolidButton
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultNorm
+import me.proton.core.drive.base.presentation.component.ProtonSolidButton
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.user.domain.entity.QuotaLevel
 import me.proton.core.drive.user.presentation.quota.extension.toState
 import me.proton.core.drive.user.presentation.quota.viewevent.StorageQuotasViewEvent
@@ -120,7 +122,7 @@ fun StorageBanner(
     actionLabel: String,
 ) {
     Card(
-        elevation = 0.dp
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(modifier = modifier.padding(bottom = ProtonDimens.SmallSpacing)) {
             Row(
@@ -181,7 +183,7 @@ private val containerPadding = ProtonDimens.ListItemTextStartPadding
 @Preview
 @Composable
 fun InfoStorageBannerPreview() {
-    ProtonTheme {
+    DriveTheme {
         StorageBanner(
             viewState = QuotaLevel.INFO.toState(LocalContext.current)!!,
             viewEvent = object : StorageQuotasViewEvent {},
@@ -192,7 +194,7 @@ fun InfoStorageBannerPreview() {
 @Preview
 @Composable
 fun WarningStorageBannerPreview() {
-    ProtonTheme {
+    DriveTheme {
         StorageBanner(
             viewState = QuotaLevel.WARNING.toState(LocalContext.current)!!,
             viewEvent = object : StorageQuotasViewEvent {},
@@ -203,7 +205,7 @@ fun WarningStorageBannerPreview() {
 @Preview
 @Composable
 fun ErrorStorageBannerPreview() {
-    ProtonTheme {
+    DriveTheme {
         StorageBanner(
             viewState = QuotaLevel.ERROR.toState(LocalContext.current)!!,
             viewEvent = object : StorageQuotasViewEvent {},

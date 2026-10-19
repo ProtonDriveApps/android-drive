@@ -30,10 +30,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import me.proton.android.drive.photos.presentation.viewevent.ConfirmLeaveAlbumDialogViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.ConfirmLeaveAlbumDialogViewState
-import me.proton.core.compose.component.ProtonAlertDialog
-import me.proton.core.compose.component.ProtonAlertDialogButton
-import me.proton.core.compose.component.ProtonAlertDialogText
 import me.proton.core.compose.theme.ProtonDimens
+import me.proton.core.drive.base.presentation.component.ProtonAlertDialog
+import me.proton.core.drive.base.presentation.component.ProtonAlertDialogButton
+import me.proton.core.drive.base.presentation.component.ProtonAlertDialogText
 
 @Composable
 fun ConfirmLeaveAlbumDialogContent(

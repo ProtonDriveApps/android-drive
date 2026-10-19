@@ -20,7 +20,7 @@ package me.proton.core.drive.base.presentation.component.list
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import me.proton.core.compose.component.DeferredCircularProgressIndicator
+import me.proton.core.drive.base.presentation.component.DeferredCircularProgressIndicator
 
 @Composable
 fun ListLoading(

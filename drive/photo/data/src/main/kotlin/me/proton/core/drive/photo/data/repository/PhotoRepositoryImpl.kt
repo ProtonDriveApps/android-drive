@@ -38,6 +38,7 @@ import me.proton.core.drive.photo.data.extension.toCreatePhotoRequest
 import me.proton.core.drive.photo.data.extension.toEntity
 import me.proton.core.drive.photo.data.extension.toPhotoDuplicate
 import me.proton.core.drive.photo.data.extension.toPhotoListing
+import me.proton.core.drive.photo.data.extension.toPhotoListings
 import me.proton.core.drive.photo.data.extension.toPhotoListingEntity
 import me.proton.core.drive.photo.data.extension.toTaggedPhotoListingEntity
 import me.proton.core.drive.photo.domain.entity.PhotoDuplicate
@@ -200,9 +201,7 @@ class PhotoRepositoryImpl @Inject constructor(
             limit = count,
             lastCaptureTime = lastPhotoListing?.captureTime?.value,
             lastId = lastPhotoListing?.linkId?.id,
-        ).map { photoListingWithFileProperties ->
-            photoListingWithFileProperties.toPhotoListing()
-        }
+        ).toPhotoListings()
     } else {
         db.taggedPhotoListingDao.getPhotoListingWithFileProperties(
             userId = userId,
@@ -212,9 +211,7 @@ class PhotoRepositoryImpl @Inject constructor(
             limit = count,
             lastCaptureTime = lastPhotoListing?.captureTime?.value,
             lastId = lastPhotoListing?.linkId?.id,
-        ).map { taggedPhotoListingWithFileProperties ->
-            taggedPhotoListingWithFileProperties.toPhotoListing()
-        }
+        ).toPhotoListings()
     }
 
     override suspend fun findDuplicates(
@@ -252,9 +249,7 @@ class PhotoRepositoryImpl @Inject constructor(
             lastId = lastPhotoListing?.linkId?.id,
         ).map { entities ->
             coRunCatching {
-                entities.map { photoListingWithFileProperties ->
-                    photoListingWithFileProperties.toPhotoListing()
-                }
+                entities.toPhotoListings()
             }
         }
     } else {
@@ -268,9 +263,7 @@ class PhotoRepositoryImpl @Inject constructor(
             lastId = lastPhotoListing?.linkId?.id,
         ).map { entities ->
             coRunCatching {
-                entities.map { taggedPhotoListingWithFileProperties ->
-                    taggedPhotoListingWithFileProperties.toPhotoListing()
-                }
+                entities.toPhotoListings()
             }
         }
     }

@@ -23,8 +23,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.RadioButton
-import androidx.compose.material.Text
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -36,15 +36,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.proton.android.drive.ui.viewevent.AutoLockDurationsViewEvent
 import me.proton.android.drive.ui.viewmodel.AutoLockDurationsViewModel
 import me.proton.android.drive.ui.viewstate.AutoLockDurationsViewState
-import me.proton.core.compose.component.bottomsheet.BottomSheetContent
-import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
+import me.proton.core.drive.base.presentation.component.BottomSheetContent
+import me.proton.core.drive.base.presentation.component.RunAction
 import me.proton.core.drive.settings.presentation.extension.toString
 
 @Composable
 fun AutoLockDurations(
     runAction: RunAction,
-    dismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<AutoLockDurationsViewModel>()
@@ -53,7 +52,7 @@ fun AutoLockDurations(
     )
     AutoLockDurations(
         viewState = viewState,
-        viewEvent = viewModel.viewEvent(runAction, dismiss),
+        viewEvent = viewModel.viewEvent(runAction),
         modifier = modifier.navigationBarsPadding(),
     )
 }

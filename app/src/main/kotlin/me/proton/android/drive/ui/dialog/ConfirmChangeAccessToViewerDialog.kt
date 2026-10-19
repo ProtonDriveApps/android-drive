@@ -20,7 +20,7 @@ package me.proton.android.drive.ui.dialog
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -32,12 +32,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.android.drive.ui.viewmodel.ConfirmChangeAccessToViewerDialogViewModel
 import me.proton.android.drive.ui.viewstate.ConfirmChangeAccessToViewerViewState
-import me.proton.core.compose.component.ProtonAlertDialog
-import me.proton.core.compose.component.ProtonAlertDialogButton
-import me.proton.core.compose.component.ProtonAlertDialogText
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultHint
+import me.proton.core.drive.base.presentation.component.ProtonAlertDialog
+import me.proton.core.drive.base.presentation.component.ProtonAlertDialogButton
+import me.proton.core.drive.base.presentation.component.ProtonAlertDialogText
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.i18n.R as I18N
 
 @Composable
@@ -103,7 +104,7 @@ private fun ConfirmChangeAccessToViewerDialog(
 @Preview
 @Composable
 private fun ConfirmChangeAccessToViewerDialogPreview() {
-    ProtonTheme {
+    DriveTheme {
         ConfirmChangeAccessToViewerDialog(
             viewState = ConfirmChangeAccessToViewerViewState(
                 description = "You won't be able to share \"My folder\" after changing access to " +

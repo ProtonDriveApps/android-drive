@@ -65,6 +65,7 @@
   <string name="photos_error_backup_disabled_action">Zapnúť</string>
   <string name="photos_error_backup_missing_folder">Predvolený priečinok fotoaparátu sa nenašiel</string>
   <string name="photos_error_backup_failed">Zálohovanie zlyhalo.</string>
+  <string name="photos_error_backup_folder_not_found">Zálohovací priečinok už neexistuje.</string>
   <string name="photos_error_backup_temporarily_disabled">Zálohovanie je dočasne zakázané.</string>
   <string name="photos_error_missing_permissions">Chýbajúce povolenia.</string>
   <!--

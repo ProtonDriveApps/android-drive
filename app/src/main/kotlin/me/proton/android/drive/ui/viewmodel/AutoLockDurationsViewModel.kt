@@ -20,9 +20,9 @@ package me.proton.android.drive.ui.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -32,15 +32,17 @@ import me.proton.android.drive.lock.domain.usecase.GetAutoLockDuration
 import me.proton.android.drive.lock.domain.usecase.UpdateAutoLockDuration
 import me.proton.android.drive.ui.viewevent.AutoLockDurationsViewEvent
 import me.proton.android.drive.ui.viewstate.AutoLockDurationsViewState
-import me.proton.core.compose.component.bottomsheet.RunAction
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.presentation.component.RunAction
 import javax.inject.Inject
 import kotlin.time.Duration
 import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 class AutoLockDurationsViewModel @Inject constructor(
+    @ApplicationScope private val applicationScope: CoroutineScope,
     @ApplicationContext appContext: Context,
     configurationProvider: ConfigurationProvider,
     getAutoLockDuration: GetAutoLockDuration,
@@ -59,15 +61,13 @@ class AutoLockDurationsViewModel @Inject constructor(
 
     fun viewEvent(
         runAction: RunAction,
-        dismiss: () -> Unit,
     ): AutoLockDurationsViewEvent = object : AutoLockDurationsViewEvent {
         override val onDuration: (Duration) -> Unit = { duration ->
             runAction {
-                viewModelScope.launch {
+                applicationScope.launch {
                     updateAutoLockDuration(duration).onFailure { error ->
                         error.log(VIEW_MODEL, "Cannot update auto lock duration")
                     }
-                    dismiss()
                 }
             }
         }

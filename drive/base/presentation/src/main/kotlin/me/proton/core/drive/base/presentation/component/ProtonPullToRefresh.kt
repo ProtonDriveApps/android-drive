@@ -21,18 +21,19 @@ package me.proton.core.drive.base.presentation.component
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.pullToRefresh
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import me.proton.core.compose.theme.ProtonTheme
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProtonPullToRefresh(
     isPullToRefreshEnabled: Boolean,
@@ -42,20 +43,27 @@ fun ProtonPullToRefresh(
     topPadding: Dp = 0.dp,
     content: @Composable BoxScope.() -> Unit
 ) {
-    val pullRefreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = onRefresh)
+    val pullToRefreshState = rememberPullToRefreshState()
     Box(
         modifier = modifier
-            .pullRefresh(pullRefreshState, isPullToRefreshEnabled)
+            .pullToRefresh(
+                isRefreshing = isRefreshing,
+                state = pullToRefreshState,
+                enabled = isPullToRefreshEnabled,
+                onRefresh = onRefresh,
+            )
             .testTag(ProtonPullToRefreshTestTags.content)
     ) {
         content()
 
-        PullRefreshIndicator(
-            refreshing = isRefreshing,
-            state = pullRefreshState,
+        PullToRefreshDefaults.Indicator(
+            state = pullToRefreshState,
+            isRefreshing = isRefreshing,
             modifier = Modifier
                 .padding(top = topPadding)
                 .align(Alignment.TopCenter),
+            containerColor = ProtonTheme.colors.backgroundSecondary,
+            color = ProtonTheme.colors.textNorm,
         )
     }
 }

@@ -26,7 +26,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -40,14 +40,15 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import me.proton.android.drive.ui.viewevent.ContactSupportOptionsViewEvent
 import me.proton.android.drive.ui.viewmodel.ContactSupportOptionsViewModel
 import me.proton.android.drive.ui.viewstate.ContactSupportOptionsViewState
-import me.proton.core.compose.component.ProtonSolidButton
-import me.proton.core.compose.component.ProtonTextButton
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonDimens.ListItemHeight
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.drive.base.presentation.component.ProtonSolidButton
+import me.proton.core.drive.base.presentation.component.ProtonTextButton
 import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.base.presentation.extension.isLandscape
 import me.proton.core.drive.base.presentation.extension.isPortrait
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.i18n.R as I18N
 
 @Composable
@@ -143,7 +144,7 @@ private val ButtonMinWidth = 300.dp
 @Preview
 @Composable
 fun ContactSupportOptionsPreview() {
-    ProtonTheme {
+    DriveTheme {
         ContactSupportOptions(
             viewState = ContactSupportOptionsViewState(
                 title = stringResource(I18N.string.support_contact_options_title),

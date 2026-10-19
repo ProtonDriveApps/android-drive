@@ -22,7 +22,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -59,6 +58,7 @@ open class SelectionViewModel(
     private val deselectLinks: DeselectLinks,
     private val selectAll: SelectAll,
     private val getSelectedDriveLinks: GetSelectedDriveLinks,
+    private val applicationScope: CoroutineScope,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     protected open val driveLinkFilter: (DriveLink) -> Boolean = { true }
@@ -100,7 +100,7 @@ open class SelectionViewModel(
     override fun onCleared() {
         super.onCleared()
         selectionId.value?.let { selectionId ->
-            CoroutineScope(Dispatchers.Main).launch {
+            applicationScope.launch {
                 deselectLinks(selectionId).onFailure { error ->
                     error.log(VIEW_MODEL, "Failed to deselect links")
                 }

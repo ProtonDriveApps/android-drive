@@ -23,8 +23,8 @@ import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
-import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
-import me.proton.core.compose.component.bottomsheet.RunAction
+import me.proton.core.drive.base.presentation.component.ModalBottomSheetViewState
+import me.proton.core.drive.base.presentation.component.RunAction
 
 fun NavGraphBuilder.modalBottomSheet(
     route: String,

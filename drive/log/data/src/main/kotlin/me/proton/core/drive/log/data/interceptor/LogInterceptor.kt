@@ -24,7 +24,7 @@ import me.proton.core.drive.announce.event.domain.usecase.AsyncAnnounceEvent
 import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.TimestampMs
-import me.proton.core.drive.base.domain.extension.MiB
+import me.proton.core.drive.base.domain.extension.KiB
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
@@ -114,6 +114,6 @@ class LogInterceptor : Interceptor {
     companion object {
         private const val JSON_CONTENT_TYPE = "application"
         private const val JSON_CONTENT_SUB_TYPE = "json"
-        private val MAX_BYTE_COUNT = 1.MiB
+        private val MAX_BYTE_COUNT = 4.KiB
     }
 }

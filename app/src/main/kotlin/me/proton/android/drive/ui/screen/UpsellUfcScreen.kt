@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,12 +44,15 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.Text
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -70,19 +74,21 @@ import me.proton.android.drive.ui.effect.UpsellUfcEffect
 import me.proton.android.drive.ui.viewevent.UpsellUfcViewEvent
 import me.proton.android.drive.ui.viewmodel.UpsellUfcViewModel
 import me.proton.android.drive.ui.viewstate.UpsellUfcViewState
-import me.proton.core.compose.component.DeferredCircularProgressIndicator
-import me.proton.core.compose.component.ProtonButton
-import me.proton.core.compose.component.protonButtonColors
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.presentation.common.Action
+import me.proton.core.drive.base.presentation.component.DeferredCircularProgressIndicator
+import me.proton.core.drive.base.presentation.component.ProtonButton
 import me.proton.core.drive.base.presentation.component.ThemelessStatusBarScreen
+import me.proton.core.drive.base.presentation.component.TopAppBarHeight
 import me.proton.core.drive.base.presentation.component.TopBarActions
 import me.proton.core.drive.base.presentation.component.list.ListError
+import me.proton.core.drive.base.presentation.component.protonButtonColors
 import me.proton.core.drive.base.presentation.extension.isCompactHeight
 import me.proton.core.drive.base.presentation.extension.isLandscape
 import me.proton.core.drive.base.presentation.extension.shadow
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.base.presentation.component.TopAppBar as BaseTopAppBar
 import me.proton.core.drive.i18n.R as I18N
@@ -127,7 +133,7 @@ fun Upsell(
     modifier: Modifier = Modifier,
 ) {
     ThemelessStatusBarScreen(useDarkIcons = false)
-    ProtonTheme(isDark = true) {
+    DriveTheme(isDark = true) {
         if (isCompactHeight()) {
             UpsellCompact(
                 viewState = viewState,
@@ -310,6 +316,7 @@ private fun UpsellContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun UpsellTopAppBar(
     closeAction: Action,
@@ -330,15 +337,19 @@ private fun UpsellTopAppBar(
     } else {
         TopAppBar(
             title = {},
-            modifier = modifier,
-            backgroundColor = backgroundColor,
-            elevation = elevation,
+            modifier = modifier.shadow(elevation),
             actions = {
                 TopBarActions(
                     actionFlow = flowOf { setOf(closeAction) },
                     iconTintColor = iconTintColor,
                 )
-            }
+            },
+            expandedHeight = TopAppBarHeight,
+            windowInsets = WindowInsets(0, 0, 0, 0),
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = backgroundColor,
+                scrolledContainerColor = backgroundColor,
+            ),
         )
     }
 }
@@ -515,7 +526,7 @@ private fun UpsellComparisonTable(
 
 @Composable
 private fun TableDivider() {
-    Divider(
+    HorizontalDivider(
         color = Color.White.copy(alpha = 0.12f),
         modifier = Modifier.fillMaxWidth().height(1.dp),
     )
@@ -566,7 +577,7 @@ private fun UpsellClaimOfferArea(
             .shadow(offsetY = (-2).dp)
             .fillMaxWidth(),
     ) {
-        Divider(
+        HorizontalDivider(
             color = Color.White.copy(alpha = 0.12f),
             modifier = Modifier.fillMaxWidth().height(1.dp),
         )

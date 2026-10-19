@@ -63,6 +63,7 @@
   <string name="photos_error_backup_disabled_action">Slå til</string>
   <string name="photos_error_backup_missing_folder">Standard kameramappe blev ikke fundet</string>
   <string name="photos_error_backup_failed">Sikkerhedskopiering mislykkedes.</string>
+  <string name="photos_error_backup_folder_not_found">Backupmappen eksisterer ikke længere.</string>
   <string name="photos_error_backup_temporarily_disabled">Sikkerhedskopiering er midlertidigt deaktiveret.</string>
   <string name="photos_error_missing_permissions">Manglende tilladelser.</string>
   <!--

@@ -34,14 +34,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Checkbox
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -58,7 +57,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import me.proton.core.compose.component.protonOutlineTextFieldColors
 import me.proton.core.compose.theme.ProtonDimens.DefaultButtonMinHeight
 import me.proton.core.compose.theme.ProtonDimens.DefaultIconSize
 import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
@@ -67,6 +65,7 @@ import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultNorm
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.contact.presentation.component.ChipItem
 import me.proton.core.drive.contact.presentation.component.ChipsListField
 import me.proton.core.drive.contact.presentation.component.ContactSuggestionState
@@ -121,7 +120,7 @@ fun SharedDriveInvitations(
                     onSuggestionTermTyped = viewEvent.onSearchTermChanged,
                     emailValidator = viewEvent.isValidEmailAddress,
                 )
-                Divider(
+                HorizontalDivider(
                     color = ProtonTheme.colors.separatorNorm,
                 )
                 if (viewState.showFullForm) {
@@ -132,7 +131,7 @@ fun SharedDriveInvitations(
                             keyboardController?.hide()
                         },
                     )
-                    Divider(
+                    HorizontalDivider(
                         color = ProtonTheme.colors.separatorNorm,
                     )
                     SendNameCheckbox(
@@ -140,7 +139,7 @@ fun SharedDriveInvitations(
                         label = stringResource(id = I18N.string.share_via_invitations_send_message_and_name_label),
                         onCheckedChange = viewEvent.onSendMessageAndName
                     )
-                    Divider(
+                    HorizontalDivider(
                         color = ProtonTheme.colors.separatorNorm,
                     )
                     MessageTextField(
@@ -308,21 +307,25 @@ private fun MessageTextField(
             placeholder = {
                 Text(placeHolderText)
             },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                textColor = ProtonTheme.colors.textNorm,
-                backgroundColor = Color.Transparent,
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = ProtonTheme.colors.textNorm,
+                unfocusedTextColor = ProtonTheme.colors.textNorm,
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+                errorContainerColor = Color.Transparent,
 
                 focusedLabelColor = ProtonTheme.colors.textNorm,
-                focusedBorderColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
 
                 unfocusedLabelColor = ProtonTheme.colors.textHint,
-                unfocusedBorderColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
 
                 disabledLabelColor = ProtonTheme.colors.textDisabled,
-                disabledBorderColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
 
                 errorLabelColor = ProtonTheme.colors.notificationError,
-                errorBorderColor = ProtonTheme.colors.notificationError,
+                errorIndicatorColor = ProtonTheme.colors.notificationError,
             ),
         )
     }
@@ -380,7 +383,7 @@ private fun ShareUserInvitation.toChipItem(): ChipItem = when (isValid) {
 fun SharedDriveInvitationsPreview(
     @PreviewParameter(ViewStateParameterProvider::class) viewState: SharedDriveInvitationsViewState,
 ) {
-    ProtonTheme {
+    DriveTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             SharedDriveInvitations(
                 viewState = viewState,

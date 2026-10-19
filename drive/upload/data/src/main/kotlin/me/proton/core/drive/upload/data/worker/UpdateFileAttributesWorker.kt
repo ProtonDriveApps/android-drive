@@ -40,10 +40,8 @@ import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_I
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.UpdateUploadFileAttributes
-import me.proton.core.drive.worker.domain.usecase.CanRun
-import me.proton.core.drive.worker.domain.usecase.Done
-import me.proton.core.drive.worker.domain.usecase.Run
 import java.util.concurrent.TimeUnit
+import me.proton.core.drive.worker.domain.usecase.WorkerRuns
 
 @HiltWorker
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -56,9 +54,7 @@ class UpdateFileAttributesWorker @AssistedInject constructor(
     uploadErrorManager: UploadErrorManager,
     private val updateUploadFileAttributes: UpdateUploadFileAttributes,
     configurationProvider: ConfigurationProvider,
-    canRun: CanRun,
-    run: Run,
-    done: Done,
+    workerRuns: WorkerRuns,
 ) : UploadCoroutineWorker(
     appContext = appContext,
     workerParams = workerParams,
@@ -67,9 +63,7 @@ class UpdateFileAttributesWorker @AssistedInject constructor(
     getUploadFileLink = getUploadFileLink,
     uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
-    canRun = canRun,
-    run = run,
-    done = done,
+    workerRuns = workerRuns,
 ) {
 
     override suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result {

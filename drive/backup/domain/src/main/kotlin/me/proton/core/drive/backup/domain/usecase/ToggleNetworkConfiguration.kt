@@ -38,8 +38,10 @@ class ToggleNetworkConfiguration @Inject constructor(
             updateConfiguration(
                 configuration.copy(
                     networkType = when (configuration.networkType) {
-                        BackupNetworkType.CONNECTED -> BackupNetworkType.UNMETERED
-                        BackupNetworkType.UNMETERED -> BackupNetworkType.CONNECTED
+                        BackupNetworkType.ANY -> BackupNetworkType.UNMETERED
+                        BackupNetworkType.UNMETERED,
+                        BackupNetworkType.UNCONFIRMED,
+                        -> BackupNetworkType.ANY
                     }
                 )
             ).getOrThrow()

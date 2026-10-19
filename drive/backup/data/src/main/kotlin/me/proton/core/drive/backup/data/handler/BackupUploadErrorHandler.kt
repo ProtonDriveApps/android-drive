@@ -87,6 +87,7 @@ class BackupUploadErrorHandler @Inject constructor(
                     BackupErrorType.OTHER -> onFileOtherError(uploadError)
                     BackupErrorType.CONNECTIVITY,
                     BackupErrorType.WIFI_CONNECTIVITY,
+                    BackupErrorType.CONNECTIVITY_UNCONFIRMED,
                     BackupErrorType.BACKGROUND_RESTRICTIONS,
                     -> Unit // Will be stopped by work manager
                 }

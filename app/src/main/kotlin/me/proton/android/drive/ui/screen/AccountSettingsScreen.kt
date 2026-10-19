@@ -26,9 +26,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import me.proton.core.accountmanager.presentation.compose.AccountSettingsList
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.base.presentation.theme.DriveTheme
+import me.proton.core.drive.settings.presentation.component.AccountSettingsList
 import me.proton.core.accountmanager.presentation.R as AccountPresentation
 import me.proton.core.presentation.R as CorePresentation
 import me.proton.core.drive.i18n.R as I18N
@@ -62,7 +62,7 @@ fun AccountSettingsScreen(
 @Preview
 @Composable
 private fun AccountSettingsScreenPreview() {
-    ProtonTheme {
+    DriveTheme {
         AccountSettingsScreen(
             navigateToPasswordManagement = {},
             navigateToRecoveryEmail = {},

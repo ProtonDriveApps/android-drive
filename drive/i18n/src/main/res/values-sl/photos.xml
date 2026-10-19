@@ -65,6 +65,7 @@
   <string name="photos_error_backup_disabled_action">Vklopi</string>
   <string name="photos_error_backup_missing_folder">Privzeta mapa za fotografije ni bila najdena</string>
   <string name="photos_error_backup_failed">Varnostna kopija ni uspela.</string>
+  <string name="photos_error_backup_folder_not_found">Mapa za varnostne kopije ne obstaja več.</string>
   <string name="photos_error_backup_temporarily_disabled">Varnostno kopiranje je onemogočeno.</string>
   <string name="photos_error_missing_permissions">Manjkajoča dovoljenja</string>
   <!--

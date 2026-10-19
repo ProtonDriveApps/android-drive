@@ -28,8 +28,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Text
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +45,7 @@ import me.proton.core.compose.theme.ProtonDimens.SmallIconSize
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.component.CircleSelection
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.log.domain.entity.Log
 import me.proton.core.drive.log.presentation.entity.LogOriginItem
 import me.proton.core.drive.log.presentation.entity.LogLevelItem
@@ -194,7 +195,7 @@ fun LogOptionItem(
 @Preview
 @Composable
 fun LogOptionsPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             LogOptions(
                 logLevelItems = flowOf(

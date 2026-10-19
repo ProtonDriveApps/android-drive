@@ -22,6 +22,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
@@ -42,6 +43,7 @@ import me.proton.android.drive.ui.options.filterPermissions
 import me.proton.android.drive.ui.options.filterRoot
 import me.proton.android.drive.ui.options.filterShareMember
 import me.proton.core.domain.arch.mapSuccessValueOrNull
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
@@ -66,6 +68,7 @@ import javax.inject.Inject
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
 class AlbumOptionsViewModel @Inject constructor(
+    @ApplicationScope private val applicationScope: CoroutineScope,
     savedStateHandle: SavedStateHandle,
     getDriveLink: GetDecryptedDriveLink,
     getFeatureFlagFlow: GetFeatureFlagFlow,
@@ -122,7 +125,7 @@ class AlbumOptionsViewModel @Inject constructor(
                 .map { option ->
                     when (option) {
                         is Option.OfflineToggle -> option.build(runAction) { driveLink ->
-                            viewModelScope.launch {
+                            applicationScope.launch {
                                 toggleOffline(driveLink).onFailure { error ->
                                     error.log(VIEW_MODEL, "Failed to toggle offline for ${driveLink.id.id}")
                                 }

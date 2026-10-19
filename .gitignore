@@ -13,4 +13,12 @@ build/
 captures/
 config/
 app/variables.env
+.claude/*
+!.claude/skills/
+
+# Local log analysis (analyze-logs skill) — never commit raw logs, sanitized
+# copies, or the token -> real-value reverse map.
+Logs/
+SanitizedLogs/
+sanitize_mapping.json
 

@@ -25,4 +25,6 @@ data class WorkerRun(
     val userId: UserId,
     val workerId: String,
     val runAt: TimestampMs,
+    val isBlocked: Boolean = false,
+    val isLimited: Boolean = true,
 )

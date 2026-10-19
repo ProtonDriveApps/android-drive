@@ -139,6 +139,7 @@
   <string name="notification_content_text_backup_failed_connectivity">インターネット接続なし</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Wi-Fi待ち</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">バックアップは許可されていません</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
   <string name="notification_content_text_backup_paused_disabled">バックアップが無効になりました</string>
   <string name="notification_content_text_backup_paused_background_restrictions">バックアップはバックグラウンドで実行できません</string>
   <string name="notification_content_text_backup_preparing">バックアップを準備中</string>
@@ -170,6 +171,8 @@
   <string name="notification_content_title_transferring">データ転送中</string>
   <!-- endregion -->
   <string name="content_description_select_all">リスト内のすべての項目を選択します</string>
+  <string name="content_description_select_separator">Select all items in %1$s</string>
+  <string name="photos_error_separator_selection_failed">Some items could not be selected, please try again</string>
   <string name="content_description_selected_options">選択したファイルやフォルダーのその他のオプションを表示します</string>
   <string name="content_description_files_upload_upload_file">ファイルをアップロード</string>
   <string name="content_description_albums_new">新しいアルバムを作成</string>

@@ -32,8 +32,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,17 +47,18 @@ import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import me.proton.android.drive.lock.presentation.R
 import me.proton.android.drive.lock.presentation.viewevent.UnlockViewEvent
 import me.proton.android.drive.lock.presentation.viewmodel.UnlockViewModel
-import me.proton.core.compose.component.ProtonSolidButton
-import me.proton.core.compose.component.ProtonTextButton
 import me.proton.core.compose.theme.ProtonDimens.ListItemHeight
 import me.proton.core.compose.theme.ProtonDimens.MediumSpacing
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.presentation.component.ProtonSolidButton
+import me.proton.core.drive.base.presentation.component.ProtonTextButton
 import me.proton.core.drive.base.presentation.component.RepeatOnLifecycleLaunchedEffect
 import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.base.presentation.extension.isLandscape
 import me.proton.core.drive.base.presentation.extension.isPortrait
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -202,7 +203,7 @@ private fun getDrawable(@DrawableRes light: Int, @DrawableRes dark: Int, @Drawab
 @Preview
 @Composable
 fun UnlockPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             Unlock(
                 userId = UserId("123"),

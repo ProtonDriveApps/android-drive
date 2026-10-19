@@ -18,17 +18,17 @@
   -->
 <resources>
   <string name="title_manage_access">Gestisci accesso</string>
-  <string name="manage_access_who_has_access">Who has access</string>
+  <string name="manage_access_who_has_access">Chi ha accesso</string>
   <!--
         Variable %1$s is a name or email
         Example:
             "Jack Frost (you)"
             "jack.frost@example.com (you)"
     -->
-  <string name="manage_access_current_user">%1$s (you)</string>
+  <string name="manage_access_current_user">%1$s (tu)</string>
   <string name="manage_access_share_with_anyone">Condividi con chiunque</string>
-  <string name="manage_access_allow_editors_to_share_title">Access</string>
-  <string name="manage_access_allow_editors_to_share_description">Allow editors to change permissions and share</string>
+  <string name="manage_access_allow_editors_to_share_title">Accesso</string>
+  <string name="manage_access_allow_editors_to_share_description">Consenti agli editori di modificare i permessi e condividere</string>
   <string name="manage_access_link_settings_action">Impostazioni del link</string>
   <string name="manage_access_link_description_public">Chiunque con questo link</string>
   <string name="manage_access_link_description_password_protected">Chiunque con il link e la password</string>

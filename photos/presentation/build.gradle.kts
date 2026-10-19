@@ -41,7 +41,7 @@ driveModule(
     implementation(project(":drive:thumbnail:presentation"))
     implementation(project(":drive:user:presentation"))
     implementation(libs.accompanist.permissions)
-    implementation(libs.accompanist.placeholderMaterial)
+    implementation(libs.accompanist.placeholder)
     implementation(libs.coil.compose)
     implementation(libs.coil.video)
     implementation(libs.core.presentation)

@@ -23,21 +23,22 @@ import android.content.Context
 import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.drive.backup.domain.manager.BackupManager
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class BatteryLowBroadcastReceiver : BroadcastReceiver() {
     @Inject lateinit var accountManager: AccountManager
     @Inject lateinit var backupManager: BackupManager
+    @Inject @ApplicationScope lateinit var applicationScope: CoroutineScope
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Intent.ACTION_BATTERY_LOW) {
-            CoroutineScope(Dispatchers.Main).launch {
+            applicationScope.launch {
                 accountManager.getPrimaryUserId().firstOrNull()?.let { userId ->
                     backupManager.cancelForegroundWork(userId)
                 }

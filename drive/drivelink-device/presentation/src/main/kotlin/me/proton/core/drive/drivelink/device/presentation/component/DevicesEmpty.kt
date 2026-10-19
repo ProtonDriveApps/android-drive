@@ -21,12 +21,12 @@ package me.proton.core.drive.drivelink.device.presentation.component
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.component.IllustratedMessage
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.device.presentation.R
 import me.proton.core.drive.i18n.R as I18N
 
@@ -48,7 +48,7 @@ fun DevicesEmpty(
 @Preview
 @Composable
 fun PreviewDevicesEmpty() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             DevicesEmpty(
                 imageResId = R.drawable.empty_devices_daynight,

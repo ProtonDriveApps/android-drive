@@ -25,9 +25,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import me.proton.core.compose.theme.ProtonDimens.DefaultIconSize
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultNorm
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 
 @Composable
 fun ProtonListItem(
@@ -163,7 +164,7 @@ fun ProtonListItem(
 @Preview
 @Composable
 fun PreviewListItem() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             ProtonListItem(
                 icon = ColorPainter(Color.Blue),

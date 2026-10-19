@@ -32,6 +32,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -76,6 +77,8 @@ import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
+import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.function.pagedKeyList
 import me.proton.core.drive.base.domain.function.pagedList
@@ -167,6 +170,7 @@ class PreviewViewModel @Inject constructor(
     val savedStateHandle: SavedStateHandle,
     private val previewMetricsNotifier: PreviewMetricsNotifier,
     private val reportError: ReportError,
+    private val announceEvent: AnnounceEvent,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     private val albumId =
@@ -203,6 +207,15 @@ class PreviewViewModel @Inject constructor(
         .distinctUntilChanged()
         .onEach { fileId ->
             previewMetricsNotifier.previewStart(fileId, TimestampMs(SystemClock.elapsedRealtime()))
+        }
+        .launchIn(viewModelScope)
+
+    private val recentlyAccessedJob = trigger
+        .map { trigger -> trigger.fileId }
+        .distinctUntilChanged()
+        .mapLatest { fileId ->
+            delay(configurationProvider.recentlyAccessedPreviewDuration)
+            announceEvent(userId, Event.RecentlyAccessed.PreviewOpened(fileId))
         }
         .launchIn(viewModelScope)
 

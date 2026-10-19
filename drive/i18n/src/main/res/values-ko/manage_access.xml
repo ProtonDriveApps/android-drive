@@ -18,30 +18,30 @@
   -->
 <resources>
   <string name="title_manage_access">접근 관리</string>
-  <string name="manage_access_who_has_access">Who has access</string>
+  <string name="manage_access_who_has_access">접근할 수 있는 사용자</string>
   <!--
         Variable %1$s is a name or email
         Example:
             "Jack Frost (you)"
             "jack.frost@example.com (you)"
     -->
-  <string name="manage_access_current_user">%1$s (you)</string>
+  <string name="manage_access_current_user">%1$s (나)</string>
   <string name="manage_access_share_with_anyone">모두와 공유</string>
-  <string name="manage_access_allow_editors_to_share_title">Access</string>
-  <string name="manage_access_allow_editors_to_share_description">Allow editors to change permissions and share</string>
+  <string name="manage_access_allow_editors_to_share_title">접근</string>
+  <string name="manage_access_allow_editors_to_share_description">편집자가 권한을 변경하고 공유하도록 허용</string>
   <string name="manage_access_link_settings_action">링크 설정</string>
   <string name="manage_access_link_description_public">이 링크가 있는 누구나</string>
   <string name="manage_access_link_description_password_protected">이 링크와 비밀번호가 있는 누구나</string>
   <string name="manage_access_link_default_permission">보기 가능</string>
   <string name="manage_access_link_editor_permission">편집 가능</string>
-  <string name="manage_access_change_access_to_viewer_title">Change access to viewer?</string>
+  <string name="manage_access_change_access_to_viewer_title">뷰어로 권한을 변경하시겠습니까?</string>
   <!--
         Variable %1$s is a file or folder name
         Example:
             You won’t be able to share "Some folder" after changing your access to viewer. The owner or an editor with sharing access can restore your edit access. You can’t undo this change yourself.
     -->
-  <string name="manage_access_change_access_to_viewer_description">"You won\’t be able to share \"%1$s\" after changing your access to viewer. The owner or an editor with sharing access can restore your edit access. You can\’t undo this change yourself."</string>
-  <string name="manage_access_change_access_to_viewer_action">Change my access</string>
-  <string name="manage_access_new_editor_permissions_title">New editor permissions</string>
-  <string name="manage_access_new_editor_permissions_description">Editors can now manage sharing and invite others. You can turn it off anytime.</string>
+  <string name="manage_access_change_access_to_viewer_description">"나의 접근 권한을 뷰어로 변경하면 \"%1$s\"을(를) 더 이상 공유할 수 없습니다. 소유자나 공유 권한을 부여받은 편집자가 편집 권한을 복원할 수 있습니다. 이 설정은 실행취소할 수 없습니다."</string>
+  <string name="manage_access_change_access_to_viewer_action">내 접근 권한 변경</string>
+  <string name="manage_access_new_editor_permissions_title">새로운 편집자 권한</string>
+  <string name="manage_access_new_editor_permissions_description">이제 편집자가 공유 권한을 관리하고 다른 사용자를 초대할 수 있습니다. 언제든지 비활성화할 수 있습니다.</string>
 </resources>

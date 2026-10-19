@@ -23,8 +23,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,8 +42,6 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 import me.proton.android.drive.ui.viewmodel.SendFileViewModel
 import me.proton.android.drive.ui.viewmodel.ShareState
-import me.proton.core.compose.component.ProtonAlertDialog
-import me.proton.core.compose.component.ProtonAlertDialogButton
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.captionHint
@@ -51,6 +49,8 @@ import me.proton.core.compose.theme.defaultSmallWeak
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.extension.toPercentString
 import me.proton.core.drive.base.presentation.component.LinearProgressIndicator
+import me.proton.core.drive.base.presentation.component.ProtonAlertDialog
+import me.proton.core.drive.base.presentation.component.ProtonAlertDialogButton
 import me.proton.core.drive.base.presentation.extension.currentLocale
 import me.proton.core.drive.i18n.R as I18N
 

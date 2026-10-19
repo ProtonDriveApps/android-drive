@@ -18,10 +18,11 @@
   -->
 <resources>
   <string name="content_description_file_preview">Anteprima del contenuto del file</string>
-  <string name="content_description_more_options">Show more options for the file</string>
+  <string name="content_description_more_options">Mostra più opzioni per il file</string>
   <string name="preview_downloading_state">Scaricamento in corso</string>
   <string name="preview_processing_state">Elaborazione in corso</string>
   <string name="preview_empty">Nessuna anteprima</string>
+  <string name="preview_text_too_large">Questo file è troppo grande per l\'anteprima</string>
   <string name="title_not_found">Non trovato</string>
   <string name="proton_docs_insert_image_header_title">Inserisci immagine</string>
   <string name="proton_docs_option_select_file">Seleziona un file</string>

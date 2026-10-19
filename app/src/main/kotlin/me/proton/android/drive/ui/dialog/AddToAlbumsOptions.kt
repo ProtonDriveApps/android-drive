@@ -23,7 +23,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -132,7 +132,7 @@ fun AddToAlbumsOptions(
             item(
                 key = "divider"
             ) {
-                Divider(
+                HorizontalDivider(
                     color = ProtonTheme.colors.separatorNorm,
                     modifier = Modifier.padding(bottom = ProtonDimens.SmallSpacing)
                 )

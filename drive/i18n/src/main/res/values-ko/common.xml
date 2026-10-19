@@ -60,7 +60,7 @@
             "12 months"
     -->
   <plurals name="common_x_months">
-    <item quantity="other">%1$d개월</item>
+    <item quantity="other">%1$d months</item>
   </plurals>
   <!--
         Variable %1$d is a number of weeks

@@ -20,15 +20,15 @@ package me.proton.core.drive.drivelink.device.presentation.component
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.crypto.common.pgp.VerificationStatus
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.device.domain.entity.Device
 import me.proton.core.drive.device.domain.entity.DeviceId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -65,7 +65,7 @@ fun DevicesContent(
 @Preview
 @Composable
 fun PreviewDevicesContent() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             DevicesContent(
                 devices = listOf(

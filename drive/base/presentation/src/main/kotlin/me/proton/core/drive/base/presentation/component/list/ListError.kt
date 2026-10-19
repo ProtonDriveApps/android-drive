@@ -27,9 +27,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import me.proton.core.compose.component.ErrorPadding
-import me.proton.core.compose.component.ProtonErrorMessage
-import me.proton.core.compose.component.ProtonErrorMessageWithAction
+import me.proton.core.drive.base.presentation.component.ErrorPadding
+import me.proton.core.drive.base.presentation.component.ProtonErrorMessage
+import me.proton.core.drive.base.presentation.component.ProtonErrorMessageWithAction
 
 @Composable
 fun ListError(

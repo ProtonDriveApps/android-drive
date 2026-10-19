@@ -32,6 +32,7 @@ import me.proton.android.drive.provider.AppProtonSdkClientProvider
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.presentation.observe
 import me.proton.core.accountmanager.presentation.onAccountRemoved
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.presentation.app.AppLifecycleProvider
 import me.proton.drive.sdk.ProtonDriveSdk
@@ -39,13 +40,14 @@ import me.proton.drive.sdk.ProtonDriveSdk
 class ProtonDriveSdkInitializer : Initializer<Unit> {
 
     override fun create(context: Context) {
-        // Loading the sdk first and the app don't crash
-        ProtonDriveSdk
-
         EntryPointAccessors.fromApplication(
             context.applicationContext,
             SdkInitializerEntryPoint::class.java
         ).run {
+            // Loading the sdk first and the app don't crash
+            applicationScope.launch(Dispatchers.IO) {
+                ProtonDriveSdk
+            }
             accountManager.observe(appLifecycleProvider.lifecycle, Lifecycle.State.RESUMED)
                 .onAccountRemoved { account ->
                     appProtonSdkClientProvider.remove(account.userId)
@@ -65,4 +67,6 @@ interface SdkInitializerEntryPoint {
     val accountManager: AccountManager
     val appLifecycleProvider: AppLifecycleProvider
     val appProtonSdkClientProvider: AppProtonSdkClientProvider
+    @get:ApplicationScope
+    val applicationScope: CoroutineScope
 }

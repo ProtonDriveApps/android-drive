@@ -18,11 +18,11 @@
 
 package me.proton.core.drive.base.presentation.extension
 
-import androidx.compose.material.ButtonDefaults
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import me.proton.core.compose.component.protonButtonColors
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.drive.base.presentation.component.protonButtonColors
 
 @Composable
 fun ButtonDefaults.protonNotificationSuccessButtonColors(

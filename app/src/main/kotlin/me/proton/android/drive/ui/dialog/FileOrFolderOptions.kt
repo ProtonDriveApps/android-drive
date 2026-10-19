@@ -31,7 +31,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import me.proton.android.drive.ui.viewmodel.FileOrFolderOptionsViewModel
-import me.proton.core.compose.component.bottomsheet.RunAction
+import me.proton.core.drive.base.presentation.component.RunAction
 import me.proton.core.drive.base.presentation.component.rememberCreateDocumentLauncher
 import me.proton.core.drive.base.presentation.extension.launchWithNotFound
 import me.proton.core.drive.drivelink.domain.entity.DriveLink

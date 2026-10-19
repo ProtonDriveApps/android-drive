@@ -63,6 +63,7 @@
   <string name="photos_error_backup_disabled_action">Abilita</string>
   <string name="photos_error_backup_missing_folder">La cartella predefinita della fotocamera non è stata trovata</string>
   <string name="photos_error_backup_failed">Backup non riuscito</string>
+  <string name="photos_error_backup_folder_not_found">Backup folder no longer exists.</string>
   <string name="photos_error_backup_temporarily_disabled">Backup temporaneamente disabilitato</string>
   <string name="photos_error_missing_permissions">Autorizzazioni mancanti</string>
   <!--

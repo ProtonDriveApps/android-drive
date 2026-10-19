@@ -24,9 +24,12 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import me.proton.android.drive.auth.SignOutAuthorization
+import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.usecase.SignOut
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.documentsprovider.data.DriveDocumentsProvider
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,10 +37,18 @@ import javax.inject.Inject
 class SigningOutViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val signOut: SignOut,
+    signOutAuthorization: SignOutAuthorization,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
-    suspend fun signOut() {
+    private val isAuthorized = signOutAuthorization.consume(userId)
+
+    suspend fun signOut(onUnauthorized: () -> Unit) {
+        if (!isAuthorized) {
+            CoreLogger.w(VIEW_MODEL, "Sign out was not confirmed by the user, ignoring")
+            onUnauthorized()
+            return
+        }
         signOut(userId)
         DriveDocumentsProvider.notifyRootsHaveChanged(context)
     }

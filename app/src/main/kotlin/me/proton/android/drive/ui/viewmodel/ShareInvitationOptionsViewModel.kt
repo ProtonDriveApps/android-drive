@@ -23,6 +23,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -33,10 +34,10 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.options.InvitationOption
-import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.data.extension.getDefaultMessage
+import me.proton.core.drive.base.presentation.component.RunAction
 import me.proton.core.drive.base.data.extension.log as logResult
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
@@ -61,6 +62,7 @@ abstract class ShareInvitationOptionsViewModel(
     private val canManageSharing: CanManageSharing,
     private val configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
+    private val applicationScope: CoroutineScope,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     protected val invitationId: String = savedStateHandle.require(KEY_INVITATION_ID)
@@ -99,7 +101,7 @@ abstract class ShareInvitationOptionsViewModel(
                     isSelected = invitation.permissions == Permissions.viewer,
                     runAction = runAction,
                 ) {
-                    viewModelScope.launch {
+                    applicationScope.launch {
                         updatePermissions(driveLink, Permissions.viewer)
                     }
                 }
@@ -108,25 +110,25 @@ abstract class ShareInvitationOptionsViewModel(
                     isSelected = invitation.permissions == Permissions.editor,
                     runAction = runAction,
                 ) {
-                    viewModelScope.launch {
+                    applicationScope.launch {
                         updatePermissions(driveLink, Permissions.editor)
                     }
                 }
 
                 is InvitationOption.CopyInvitationLink -> option.build(runAction) {
-                    viewModelScope.launch {
+                    applicationScope.launch {
                         copyInvitationUrl(driveLink)
                     }
                 }
 
                 is InvitationOption.ResendInvitation -> option.build(runAction) {
-                    viewModelScope.launch {
+                    applicationScope.launch {
                         resendInvitation(driveLink)
                     }
                 }
 
                 is InvitationOption.RemoveAccess -> option.build(runAction) {
-                    viewModelScope.launch {
+                    applicationScope.launch {
                         deleteInvitation(driveLink)
                     }
                 }

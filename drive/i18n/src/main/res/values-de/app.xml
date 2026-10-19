@@ -144,6 +144,7 @@
   <string name="notification_content_text_backup_failed_connectivity">Keine Internetverbindung</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Warte auf WLAN-Verbindung</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Backup ist nicht erlaubt</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">Sicherungsordner existiert nicht mehr</string>
   <string name="notification_content_text_backup_paused_disabled">Sicherung wurde deaktiviert</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Sicherung kann nicht im Hintergrund laufen</string>
   <string name="notification_content_text_backup_preparing">Sicherung wird vorbereitet</string>
@@ -176,6 +177,8 @@
   <string name="notification_content_title_transferring">Datenübertragung</string>
   <!-- endregion -->
   <string name="content_description_select_all">Alle Elemente in der Liste auswählen</string>
+  <string name="content_description_select_separator">Alle Elemente in %1$s auswählen</string>
+  <string name="photos_error_separator_selection_failed">Einige Elemente konnten nicht ausgewählt werden. Bitte versuche es erneut</string>
   <string name="content_description_selected_options">Mehr Optionen für die ausgewählten Dateien und/oder Ordner anzeigen</string>
   <string name="content_description_files_upload_upload_file">Eine Datei hochladen</string>
   <string name="content_description_albums_new">Neues Album erstellen</string>

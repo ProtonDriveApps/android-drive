@@ -29,10 +29,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.DrawerState
-import androidx.compose.material.DrawerValue
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -47,7 +47,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import me.proton.core.compose.component.ProtonListSectionTitle
 import me.proton.core.compose.theme.ProtonDimens.DefaultIconSize
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
@@ -57,6 +56,8 @@ import me.proton.core.compose.theme.defaultStrongNorm
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.presentation.component.NavigationDrawerAppVersion
 import me.proton.core.drive.base.presentation.component.ProtonListItem
+import me.proton.core.drive.base.presentation.component.ProtonListSectionTitle
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.user.presentation.storage.StorageIndicator
 import me.proton.core.drive.user.presentation.user.PREVIEW_USER
 import me.proton.core.drive.user.presentation.user.UserSelector
@@ -75,7 +76,7 @@ fun NavigationDrawer(
     onCloseOnActionStarted: (() -> Unit)? = null,
     onCloseOnActionCompleted: (() -> Unit)? = null,
 ) {
-    ProtonTheme(
+    DriveTheme(
         colors = ProtonTheme.colors.sidebarColors ?: ProtonTheme.colors
     ) {
         val scope = rememberCoroutineScope()
@@ -98,7 +99,7 @@ fun NavigationDrawer(
         }
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colors.background
+            color = MaterialTheme.colorScheme.background
         ) {
             Column(modifier) {
                 if (viewState.currentUser != null) {
@@ -425,7 +426,7 @@ object NavigationDrawerTestTag {
 @Preview(name = "Drawer opened")
 @Composable
 fun PreviewDrawerWithUser() {
-    ProtonTheme {
+    DriveTheme {
         NavigationDrawer(
             drawerState = DrawerState(DrawerValue.Open) { true },
             viewState = NavigationDrawerViewState(
@@ -451,7 +452,7 @@ fun PreviewDrawerWithUser() {
 @Preview(name = "Drawer opened")
 @Composable
 private fun PreviewDrawerWithoutUser() {
-    ProtonTheme {
+    DriveTheme {
         NavigationDrawer(
             drawerState = DrawerState(DrawerValue.Open) { true },
             viewState = NavigationDrawerViewState(I18N.string.common_app, "Version"),

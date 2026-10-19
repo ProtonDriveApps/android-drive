@@ -21,18 +21,19 @@ package me.proton.android.drive.usecase
 import android.app.Activity
 import com.google.android.play.core.review.ReviewManager
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import me.proton.android.drive.log.DriveLogTag.UI
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class ShowRatingBooster @Inject constructor(
+    @ApplicationScope private val applicationScope: CoroutineScope,
     private val markRatingBoosterAsShown: MarkRatingBoosterAsShown,
     private val reviewManager: ReviewManager,
     private val accountManager: AccountManager,
@@ -45,7 +46,7 @@ class ShowRatingBooster @Inject constructor(
                     reviewManager.launchReviewFlow(activity, infoTask.result)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                CoroutineScope(Dispatchers.Main).launch {
+                                applicationScope.launch {
                                     accountManager.getPrimaryUserId().firstOrNull()?.let { userId ->
                                         markRatingBoosterAsShown(userId = userId).onFailure { error ->
                                             error.log(UI, "Marking rating booster as shown failed")

@@ -63,6 +63,7 @@
   <string name="photos_error_backup_disabled_action">Ota käyttöön</string>
   <string name="photos_error_backup_missing_folder">Oletuskamerakansiota ei löytynyt</string>
   <string name="photos_error_backup_failed">Varmuuskopiointi epäonnistui.</string>
+  <string name="photos_error_backup_folder_not_found">Backup folder no longer exists.</string>
   <string name="photos_error_backup_temporarily_disabled">Varmuuskopiointi on poistettu tilapäisesti käytöstä.</string>
   <string name="photos_error_missing_permissions">Käyttöoikeuksia puuttuu.</string>
   <!--

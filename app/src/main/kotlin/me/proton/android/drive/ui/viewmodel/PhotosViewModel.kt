@@ -29,6 +29,7 @@ import androidx.paging.PagingData
 import androidx.paging.insertSeparators
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -94,6 +95,7 @@ import me.proton.core.drive.backup.domain.usecase.GetDisabledBackupState
 import me.proton.core.drive.backup.domain.usecase.RetryBackup
 import me.proton.core.drive.backup.domain.usecase.SyncFolders
 import me.proton.core.drive.base.data.extension.getDefaultMessage
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.entity.FastScrollAnchor
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.entity.TimestampS
@@ -167,6 +169,7 @@ import me.proton.core.presentation.R as CorePresentation
 @HiltViewModel
 @Suppress("StaticFieldLeak", "LongParameterList")
 class PhotosViewModel @Inject constructor(
+    @ApplicationScope applicationScope: CoroutineScope,
     savedStateHandle: SavedStateHandle,
     selectLinks: SelectLinks,
     deselectLinks: DeselectLinks,
@@ -218,6 +221,7 @@ class PhotosViewModel @Inject constructor(
         removeFromAlbumInfo = removeFromAlbumInfo,
         getAddToAlbumPhotoListings = getAddToAlbumPhotoListings,
         getPhotoListingCount = getPhotoListingCount,
+        applicationScope = applicationScope,
     ),
     HomeTabViewModel,
     NotificationDotViewModel by NotificationDotViewModel(shouldUpgradeStorage) {
@@ -732,6 +736,7 @@ class PhotosViewModel @Inject constructor(
         override val onGetStorage: () -> Unit = { navigateToUpsellOrQ3Campaign(navigateToUpsellPromo, navigateToQ3CampaignPromo) }
         override val onResolveMissingFolder: () -> Unit = navigateToBackupSettings
         override val onChangeNetwork: () -> Unit = navigateToBackupSettings
+        override val onAllowUnconfirmedNetwork: () -> Unit = navigateToBackupSettings
         override val onEnableBackupDialog: () -> Unit = navigateToEnableBackupDialog
         override val onIgnoreBackgroundRestrictions: (Context) -> Unit = {context ->
             context.launchIgnoreBatteryOptimizations()

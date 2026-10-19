@@ -25,9 +25,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Surface
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +37,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.datasource.CollectionPreviewParameterProvider
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -64,7 +64,7 @@ fun BoxWithNotificationDot(
 @Preview
 @Composable
 fun PreviewIcon() {
-    ProtonTheme {
+    DriveTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             Row {
                 BoxWithNotificationDot(
@@ -96,7 +96,7 @@ fun PreviewIcon() {
 fun PreviewIconButton(
     @PreviewParameter(IconResIdProvider::class) iconResId: Int
 ) {
-    ProtonTheme {
+    DriveTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             Row {
                 IconButton(onClick = {}) {

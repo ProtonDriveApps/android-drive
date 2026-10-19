@@ -22,9 +22,9 @@ import android.content.Context
 import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -36,18 +36,19 @@ import me.proton.android.drive.photos.domain.usecase.EnablePhotosBackup
 import me.proton.android.drive.photos.domain.usecase.GetPhotosDriveLink
 import me.proton.android.drive.photos.presentation.viewevent.EnableBackupForBucketsViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.EnableBackupForBucketsViewState
-import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
 import me.proton.core.drive.backup.domain.usecase.GetAllBuckets
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.base.presentation.component.RunAction
 import me.proton.core.drive.base.presentation.extension.quantityString
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
@@ -57,6 +58,7 @@ import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 class EnableBackupForBucketsDialogViewModel @Inject constructor(
+    @ApplicationScope private val applicationScope: CoroutineScope,
     @ApplicationContext private val appContext: Context,
     savedStateHandle: SavedStateHandle,
     getAllBuckets: GetAllBuckets,
@@ -128,7 +130,7 @@ class EnableBackupForBucketsDialogViewModel @Inject constructor(
     }
 
     private fun save() {
-        viewModelScope.launch {
+        applicationScope.launch {
             coRunCatching {
                 val selectedIds = selectedBucketIds.value
                 val folderId = photosDriveLink.toResult().getOrThrow().id

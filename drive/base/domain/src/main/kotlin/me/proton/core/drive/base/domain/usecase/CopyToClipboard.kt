@@ -21,5 +21,10 @@ import me.proton.core.domain.entity.UserId
 
 interface CopyToClipboard {
     operator fun invoke(text: String): Result<Unit>
-    operator fun invoke(userId: UserId, label: String, text: String): Result<Unit>
+    operator fun invoke(
+        userId: UserId,
+        label: String,
+        text: String,
+        isSensitive: Boolean = false,
+    ): Result<Unit>
 }

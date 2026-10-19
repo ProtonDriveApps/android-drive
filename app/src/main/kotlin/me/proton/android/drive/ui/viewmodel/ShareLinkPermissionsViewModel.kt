@@ -21,9 +21,9 @@ package me.proton.android.drive.ui.viewmodel
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
@@ -33,13 +33,14 @@ import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import me.proton.android.drive.extension.log
 import me.proton.android.drive.ui.options.ShareLinkPermissionsOption
-import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.data.extension.getDefaultMessage
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.base.presentation.component.RunAction
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -56,6 +57,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ShareLinkPermissionsViewModel @Inject constructor(
+    @ApplicationScope private val applicationScope: CoroutineScope,
     @ApplicationContext private val appContext: Context,
     savedStateHandle: SavedStateHandle,
     getDriveLink: GetDriveLink,
@@ -85,7 +87,7 @@ class ShareLinkPermissionsViewModel @Inject constructor(
                     isSelected = sharedDriveLink.permissions == Permissions.viewer,
                     runAction = runAction,
                 ) {
-                    viewModelScope.launch {
+                    applicationScope.launch {
                         updatePermissions(sharedDriveLink, Permissions.viewer)
                     }
                 }
@@ -94,7 +96,7 @@ class ShareLinkPermissionsViewModel @Inject constructor(
                     isSelected = sharedDriveLink.permissions == Permissions.editor,
                     runAction = runAction,
                 ) {
-                    viewModelScope.launch {
+                    applicationScope.launch {
                         updatePermissions(sharedDriveLink, Permissions.editor)
                     }
                 }

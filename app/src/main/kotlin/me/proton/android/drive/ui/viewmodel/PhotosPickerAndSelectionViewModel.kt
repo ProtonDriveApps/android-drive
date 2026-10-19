@@ -20,6 +20,7 @@ package me.proton.android.drive.ui.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -50,12 +51,14 @@ open class PhotosPickerAndSelectionViewModel(
     private val addToAlbumInfo: AddToAlbumInfo,
     private val removeFromAlbumInfo: RemoveFromAlbumInfo,
     private val getAddToAlbumPhotoListings: GetAddToAlbumPhotoListings,
+    applicationScope: CoroutineScope,
 ) : SelectionViewModel(
     savedStateHandle = savedStateHandle,
     selectLinks = selectLinks,
     deselectLinks = deselectLinks,
     selectAll = selectAll,
     getSelectedDriveLinks = getSelectedDriveLinks,
+    applicationScope = applicationScope,
 ) {
     private val destinationAlbumId: AlbumId? = savedStateHandle.get<String?>(DESTINATION_SHARE_ID)
         ?.let { destinationShareId ->

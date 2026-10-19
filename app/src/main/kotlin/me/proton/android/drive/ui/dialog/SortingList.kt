@@ -23,18 +23,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import me.proton.android.drive.ui.viewmodel.SortingDialogViewModel
-import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.compose.theme.ProtonDimens.DefaultBottomSheetHeaderMinHeight
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.headlineSmallNorm
+import me.proton.core.drive.base.presentation.component.RunAction
 import me.proton.core.drive.sorting.presentation.SortingList
 import me.proton.core.drive.sorting.presentation.entity.toSortingOptions
 import me.proton.core.drive.i18n.R as I18N

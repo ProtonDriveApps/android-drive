@@ -29,6 +29,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -62,6 +63,7 @@ import me.proton.core.domain.arch.onSuccess
 import me.proton.core.drive.base.data.datastore.GetUserDataStore
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log as logResult
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampMs
@@ -124,6 +126,7 @@ import me.proton.core.presentation.R as CorePresentation
 @ExperimentalCoroutinesApi
 @SuppressLint("StaticFieldLeak")
 class FilesViewModel @Inject constructor(
+    @ApplicationScope applicationScope: CoroutineScope,
     savedStateHandle: SavedStateHandle,
     selectLinks: SelectLinks,
     deselectLinks: DeselectLinks,
@@ -151,7 +154,14 @@ class FilesViewModel @Inject constructor(
     private val observeQ3CampaignPromoEligible: ObserveQ3CampaignPromoEligible,
     private val openFolderActionProvider: OpenFolderActionProvider,
     private val folderCreatedHandlerDelegate: FolderCreatedHandlerDelegate,
-) : SelectionViewModel(savedStateHandle, selectLinks, deselectLinks, selectAll, getSelectedDriveLinks),
+) : SelectionViewModel(
+    savedStateHandle,
+    selectLinks,
+    deselectLinks,
+    selectAll,
+    getSelectedDriveLinks,
+    applicationScope,
+),
     HomeTabViewModel,
     NotificationDotViewModel by NotificationDotViewModel(shouldUpgradeStorage),
     FolderCreatedHandler by folderCreatedHandlerDelegate {

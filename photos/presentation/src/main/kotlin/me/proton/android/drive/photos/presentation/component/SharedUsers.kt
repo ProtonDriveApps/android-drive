@@ -21,8 +21,8 @@ package me.proton.android.drive.photos.presentation.component
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +35,7 @@ import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.captionNorm
 import me.proton.core.drive.base.domain.extension.firstCodePointAsStringOrNull
 import me.proton.core.drive.base.presentation.component.BadgeWithBorder
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -124,7 +125,7 @@ fun HasMoreBadge(
 @Preview
 @Composable
 fun SharedUsersLightPreview() {
-    ProtonTheme {
+    DriveTheme {
         Column {
             SharedUsers(
                 users = listOf("Alice", "Bob", "Charlie", "Dave"),
@@ -141,7 +142,7 @@ fun SharedUsersLightPreview() {
 @Preview
 @Composable
 fun SharedUsersDarkPreview() {
-    ProtonTheme(isDark = true) {
+    DriveTheme(isDark = true) {
         Column {
             SharedUsers(
                 users = listOf("Alice", "Bob", "Charlie", "Dave"),

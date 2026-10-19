@@ -20,11 +20,12 @@ package me.proton.android.drive.ui.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.proton.android.drive.extension.log
 import me.proton.android.drive.photos.presentation.viewevent.PhotosUpsellViewEvent
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.presentation.component.RunAction
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
@@ -37,6 +38,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PhotosUpsellViewModel @Inject constructor(
+    @ApplicationScope private val applicationScope: CoroutineScope,
     savedStateHandle: SavedStateHandle,
     private val cancelUserMessage: CancelUserMessage,
     private val driveTelemetryManager: DriveTelemetryManager,
@@ -58,7 +60,7 @@ class PhotosUpsellViewModel @Inject constructor(
             }
         }
         override val onDismiss = {
-            viewModelScope.launch {
+            applicationScope.launch {
                 cancelUserMessage(userId, UserMessage.UPSELL_PHOTOS).onFailure { error ->
                     error.log(VIEW_MODEL, "Cannot cancel upsell photos message")
                 }

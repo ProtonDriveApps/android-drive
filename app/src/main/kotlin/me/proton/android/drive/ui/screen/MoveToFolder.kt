@@ -25,9 +25,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.material.Button
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,15 +48,15 @@ import me.proton.android.drive.ui.component.FolderCreatedEffect
 import me.proton.android.drive.ui.component.rememberFolderHighlightState
 import me.proton.android.drive.ui.effect.SnackbarEffect
 import me.proton.android.drive.ui.viewmodel.MoveToFolderViewModel
-import me.proton.core.compose.component.ProtonSnackbarHost
-import me.proton.core.compose.component.ProtonSnackbarHostState
-import me.proton.core.compose.component.ProtonSnackbarType
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultHighlightNorm
 import me.proton.core.compose.theme.headlineSmallNorm
 import me.proton.core.drive.base.presentation.component.EncryptedItem
+import me.proton.core.drive.base.presentation.component.ProtonSnackbarHost
+import me.proton.core.drive.base.presentation.component.ProtonSnackbarHostState
+import me.proton.core.drive.base.presentation.component.ProtonSnackbarType
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.base.presentation.component.TopBarActions
 import me.proton.core.drive.files.presentation.component.DriveLinksFlow
@@ -147,7 +147,9 @@ fun MoveToFolder(
                     .align(Alignment.End)
                     .padding(SmallSpacing)
             ) {
-                OutlinedButton(onClick = navigateBack) {
+                OutlinedButton(
+                    onClick = navigateBack,
+                ) {
                     Text(text = stringResource(id = I18N.string.move_file_dismiss_action))
                 }
 

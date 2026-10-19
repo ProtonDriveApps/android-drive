@@ -21,10 +21,10 @@ package me.proton.core.drive.observability.domain.metrics.sdk
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Required
 import kotlinx.serialization.Serializable
-import me.proton.core.drive.observability.domain.metrics.common.VolumeType
 import me.proton.core.drive.observability.domain.metrics.sdk.IntegrityDecryptionErrorsTotal.Companion.SCHEMA_ID
+import me.proton.core.drive.observability.domain.metrics.sdk.common.CausedBy
 import me.proton.core.drive.observability.domain.metrics.sdk.common.Field
-import me.proton.core.drive.observability.domain.metrics.sdk.common.YesNoUnknown
+import me.proton.core.drive.observability.domain.metrics.sdk.common.Recency
 import me.proton.core.observability.domain.entity.SchemaId
 
 @Serializable
@@ -37,12 +37,12 @@ data class IntegrityDecryptionErrorsTotal(
 
     @Serializable
     data class LabelsData(
-        val volumeType: VolumeType,
         val field: Field,
-        val fromBefore2024: YesNoUnknown,
+        val recency: Recency,
+        val causedBy: CausedBy,
     )
 
     companion object {
-        const val SCHEMA_ID = "https://proton.me/drive_sdk_integrity_decryption_errors_total_v1.schema.json"
+        const val SCHEMA_ID = "https://proton.me/drive_sdk_integrity_decryption_errors_total_v2.schema.json"
     }
 }

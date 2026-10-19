@@ -144,6 +144,7 @@
   <string name="notification_content_text_backup_failed_connectivity">Δεν υπάρχει σύνδεση στο Διαδίκτυο</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Αναμονή για Wi-Fi</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Δεν επιτρέπεται η δημιουργία αντιγράφων ασφαλείας</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">Ο φάκελος αντιγράφων ασφαλείας δεν υπάρχει πλέον</string>
   <string name="notification_content_text_backup_paused_disabled">Η δημιουργία αντιγράφων ασφαλείας ήταν απενεργοποιημένη</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Δεν είναι δυνατή η εκτέλεση της δημιουργίας αντιγράφων ασφαλείας στο παρασκήνιο</string>
   <string name="notification_content_text_backup_preparing">Προετοιμασία δημιουργίας αντιγράφων ασφαλείας</string>
@@ -176,6 +177,8 @@
   <string name="notification_content_title_transferring">Μεταφορά δεδομένων</string>
   <!-- endregion -->
   <string name="content_description_select_all">Επιλογή όλων των στοιχείων στη λίστα</string>
+  <string name="content_description_select_separator">Επιλογή όλων των στοιχείων στη %1$s</string>
+  <string name="photos_error_separator_selection_failed">Ορισμένα στοιχεία δεν ήταν δυνατό να επιλεγούν, παρακαλούμε δοκιμάστε ξανά.</string>
   <string name="content_description_selected_options">Εμφάνιση περισσότερων επιλογών για επιλεγμένα αρχεία ή/και φακέλους</string>
   <string name="content_description_files_upload_upload_file">Ανέβασε ένα αρχείο</string>
   <string name="content_description_albums_new">Δημιουργήστε νέο άλμπουμ</string>

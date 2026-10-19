@@ -25,12 +25,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Switch
-import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,6 +60,7 @@ import me.proton.core.compose.theme.defaultHint
 import me.proton.core.compose.theme.defaultSmallStrong
 import me.proton.core.compose.theme.headlineSmall
 import me.proton.core.drive.base.presentation.component.protonOutlineTextFieldColors
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.shared.presentation.viewevent.PrivacySettingsViewEvent
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.PrivacySettingsViewState
 import java.text.DateFormat
@@ -262,7 +263,7 @@ object PrivacySettingsTestTag {
 @Preview
 @Composable
 private fun PrivacySettingsPreview() {
-    ProtonTheme {
+    DriveTheme {
         PrivacySettings(
             viewState = PrivacySettingsViewState(
                 enabled = false,

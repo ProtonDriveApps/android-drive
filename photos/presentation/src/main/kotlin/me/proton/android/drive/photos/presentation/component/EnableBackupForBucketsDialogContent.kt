@@ -28,10 +28,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Checkbox
-import androidx.compose.material.Divider
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -39,14 +39,15 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.proton.android.drive.photos.presentation.viewstate.EnableBackupForBucketsViewState
-import me.proton.core.compose.component.ProtonSolidButton
-import me.proton.core.compose.component.ProtonTextButton
-import me.proton.core.compose.component.bottomsheet.BottomSheetHeader
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.captionWeak
 import me.proton.core.compose.theme.defaultNorm
 import me.proton.core.compose.theme.defaultSmallStrongNorm
+import me.proton.core.drive.base.presentation.component.BottomSheetHeader
+import me.proton.core.drive.base.presentation.component.ProtonSolidButton
+import me.proton.core.drive.base.presentation.component.ProtonTextButton
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.i18n.R as I18N
 
 @Composable
@@ -67,7 +68,7 @@ fun EnableBackupForBucketsDialogContent(
                 style = ProtonTheme.typography.defaultSmallStrongNorm,
             )
         })
-        Divider(
+        HorizontalDivider(
             modifier = Modifier.padding(bottom = ProtonDimens.SmallSpacing),
             color = ProtonTheme.colors.separatorNorm,
         )
@@ -151,7 +152,7 @@ private val ThumbnailSize = 40.dp
 @Preview
 @Composable
 private fun EnableBackupForBucketsDialogContentPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             EnableBackupForBucketsDialogContent(
                 viewState = EnableBackupForBucketsViewState(

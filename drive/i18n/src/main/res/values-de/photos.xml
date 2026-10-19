@@ -63,6 +63,7 @@
   <string name="photos_error_backup_disabled_action">Aktivieren</string>
   <string name="photos_error_backup_missing_folder">Standard-Kameraordner nicht gefunden</string>
   <string name="photos_error_backup_failed">Sicherung fehlgeschlagen.</string>
+  <string name="photos_error_backup_folder_not_found">Sicherungsordner existiert nicht mehr.</string>
   <string name="photos_error_backup_temporarily_disabled">Die Sicherung ist vorübergehend deaktiviert.</string>
   <string name="photos_error_missing_permissions">Fehlende Berechtigungen.</string>
   <!--

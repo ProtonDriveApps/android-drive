@@ -26,8 +26,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.default
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.sorting.presentation.entity.SortingOption
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -96,7 +97,7 @@ fun SortingListItem(
 @Composable
 @Suppress("unused")
 private fun PreviewSortingList() {
-    ProtonTheme {
+    DriveTheme {
         SortingList(
             listOf(
                 SortingOption(

@@ -44,13 +44,13 @@ import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import me.proton.core.compose.component.ProtonAlertDialog
-import me.proton.core.compose.component.ProtonAlertDialogButton
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.component.OutlinedTextFieldWithError
+import me.proton.core.drive.base.presentation.component.ProtonAlertDialog
+import me.proton.core.drive.base.presentation.component.ProtonAlertDialogButton
 import me.proton.core.drive.base.presentation.entity.Selection
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.rename.presentation.viewmodel.RenameLinkViewModel
 import me.proton.core.drive.drivelink.rename.presentation.viewmodel.RenameViewModel
 import me.proton.core.drive.i18n.R as I18N
@@ -189,7 +189,7 @@ fun RenameContent(
 @Preview
 @Composable
 fun RenamePreview() {
-    ProtonTheme {
+    DriveTheme {
         Rename(
             titleResId = I18N.string.link_rename_title_file,
             filename = "presentation.pdf",
@@ -205,7 +205,7 @@ fun RenamePreview() {
 @Preview
 @Composable
 fun RenameWithErrorPreview() {
-    ProtonTheme {
+    DriveTheme {
         Rename(
             titleResId = I18N.string.link_rename_title_file,
             filename = "",

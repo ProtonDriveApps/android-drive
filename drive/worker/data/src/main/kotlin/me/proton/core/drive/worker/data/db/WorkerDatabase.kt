@@ -18,6 +18,21 @@
 
 package me.proton.core.drive.worker.data.db
 
+import androidx.sqlite.db.SupportSQLiteDatabase
+import me.proton.core.data.room.db.migration.DatabaseMigration
+
 interface WorkerDatabase {
     val workerDao: WorkerDao
+
+    companion object {
+        val MIGRATION_0 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    ALTER TABLE `WorkerRunEntity` ADD COLUMN `blocked` INTEGER NOT NULL DEFAULT 0
+                    """.trimIndent()
+                )
+            }
+        }
+    }
 }

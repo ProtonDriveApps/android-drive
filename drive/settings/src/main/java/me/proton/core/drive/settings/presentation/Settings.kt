@@ -25,7 +25,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,23 +37,24 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import me.proton.core.accountmanager.presentation.compose.AccountSettingsItem
-import me.proton.core.compose.component.ProtonSettingsHeader
-import me.proton.core.compose.component.ProtonSettingsItem
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.devicemigration.presentation.settings.SignInToAnotherDeviceItem
 import me.proton.core.drive.base.presentation.component.NavigationDrawerAppVersion
+import me.proton.core.drive.base.presentation.component.ProtonSettingsHeader
+import me.proton.core.drive.base.presentation.component.ProtonSettingsItem
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.base.presentation.theme.DriveTheme
+import me.proton.core.drive.settings.presentation.component.AccountSettingsItem
+import me.proton.core.drive.settings.presentation.component.CrashReportSettingToggleItem
 import me.proton.core.drive.settings.presentation.component.DebugSettings
 import me.proton.core.drive.settings.presentation.component.ExternalSettingsEntry
+import me.proton.core.drive.settings.presentation.component.TelemetrySettingToggleItem
 import me.proton.core.drive.settings.presentation.component.ThemeChooserDialog
 import me.proton.core.drive.settings.presentation.event.SettingsViewEvent
 import me.proton.core.drive.settings.presentation.extension.toString
 import me.proton.core.drive.settings.presentation.state.LegalLink
 import me.proton.core.drive.settings.presentation.state.SettingsViewState
-import me.proton.core.usersettings.presentation.compose.view.CrashReportSettingToggleItem
-import me.proton.core.usersettings.presentation.compose.view.TelemetrySettingToggleItem
 import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -211,9 +212,9 @@ fun Settings(
 @Composable
 @Suppress("unused")
 private fun SettingsPreview() {
-    ProtonTheme {
+    DriveTheme {
         Settings(
-            modifier = Modifier.background(MaterialTheme.colors.background),
+            modifier = Modifier.background(MaterialTheme.colorScheme.background),
             viewState = SettingsViewState(
                 CorePresentation.drawable.ic_proton_arrow_up,
                 null,

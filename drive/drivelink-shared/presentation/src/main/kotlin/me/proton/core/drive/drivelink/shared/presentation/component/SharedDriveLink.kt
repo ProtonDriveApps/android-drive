@@ -30,10 +30,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -82,7 +82,7 @@ fun SharedDriveLink(
             isLinkNameEncrypted = viewState.isLinkNameEncrypted,
             modifier = Modifier.padding(bottom = MediumSpacing)
         ) { viewEvent.onCopyLink(viewState.publicUrl) }
-        Divider(
+        HorizontalDivider(
             color = ProtonTheme.colors.separatorNorm,
             modifier = Modifier.padding(bottom = MediumSpacing)
         )
@@ -91,7 +91,7 @@ fun SharedDriveLink(
             viewEvent = viewEvent,
             modifier = Modifier.padding(bottom = MediumSpacing)
         )
-        Divider(
+        HorizontalDivider(
             color = ProtonTheme.colors.separatorNorm,
             modifier = Modifier.padding(bottom = MediumSpacing)
         )

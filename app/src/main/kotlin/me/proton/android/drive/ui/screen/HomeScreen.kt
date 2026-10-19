@@ -24,12 +24,15 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Scaffold
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -53,15 +56,16 @@ import me.proton.android.drive.ui.viewevent.HomeViewEvent
 import me.proton.android.drive.ui.viewmodel.HomeViewModel
 import me.proton.android.drive.ui.viewstate.HomeViewState
 import me.proton.android.drive.ui.viewstate.rememberHomeScaffoldState
-import me.proton.core.compose.component.DeferredCircularProgressIndicator
-import me.proton.core.compose.component.ProtonSnackbarHost
-import me.proton.core.compose.component.ProtonSnackbarHostState
-import me.proton.core.compose.component.ProtonSnackbarType
-import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.presentation.component.BottomNavigation
+import me.proton.core.drive.base.presentation.component.BottomNavigationHeight
+import me.proton.core.drive.base.presentation.component.DeferredCircularProgressIndicator
 import me.proton.core.drive.base.presentation.component.ModalBottomSheet
+import me.proton.core.drive.base.presentation.component.ModalBottomSheetViewState
+import me.proton.core.drive.base.presentation.component.ProtonSnackbarHost
+import me.proton.core.drive.base.presentation.component.ProtonSnackbarHostState
+import me.proton.core.drive.base.presentation.component.ProtonSnackbarType
 import me.proton.core.drive.base.presentation.component.RunOnFirstLifecycleStateLaunchedEffect
 import me.proton.core.drive.device.domain.entity.DeviceId
 import me.proton.core.drive.link.domain.entity.AlbumId
@@ -117,7 +121,7 @@ fun HomeScreen(
     setLocalSnackbarPadding(BottomNavigationHeight)
     val homeViewModel = hiltViewModel<HomeViewModel>()
     DisposableEffect(homeNavController) {
-        homeViewModel.setCurrentDestination(startDestination)
+        homeViewModel.setCurrentDestination(homeNavController.currentDestination?.route ?: startDestination)
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
             homeViewModel.setCurrentDestination(destination.route ?: startDestination)
         }
@@ -185,7 +189,6 @@ fun HomeScreen(
     } ?: DeferredCircularProgressIndicator(modifier)
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 @ExperimentalCoroutinesApi
 @ExperimentalAnimationApi
@@ -218,7 +221,7 @@ internal fun Home(
     navigateToUpsellPromo: () -> Unit,
 ) {
     val homeScaffoldState = rememberHomeScaffoldState()
-    val isDrawerOpen = with(homeScaffoldState.scaffoldState.drawerState) {
+    val isDrawerOpen = with(homeScaffoldState.drawerState) {
         (isOpen && !isAnimationRunning) || (isClosed && isAnimationRunning)
     }
     LaunchedEffect(isDrawerOpen) {
@@ -231,99 +234,111 @@ internal fun Home(
         viewState = remember { ModalBottomSheetViewState() },
     ) {
         var beforeActionGesturesEnabled by remember { mutableStateOf(drawerGesturesEnabled) }
-        Scaffold(
+        val snackbarHostState = remember(homeScaffoldState.snackbarHostState) {
+            ProtonSnackbarHostState(
+                homeScaffoldState.snackbarHostState,
+                ProtonSnackbarType.ERROR
+            )
+        }
+        ModalNavigationDrawer(
             modifier = modifier,
-            scaffoldState = homeScaffoldState.scaffoldState,
-            drawerShape = RoundedCornerShape(0.dp),
+            drawerState = homeScaffoldState.drawerState,
             drawerContent = {
-                NavigationDrawer(
-                    drawerState = homeScaffoldState.scaffoldState.drawerState,
-                    viewState = viewState.navigationDrawerViewState,
-                    viewEvent = viewEvent.navigationDrawerViewEvent,
-                    modifier = Modifier
-                        .testTag(HomeScreenTestTag.sidebar)
-                        .statusBarsPadding()
-                        .navigationBarsPadding(),
-                    onCloseOnActionStarted = {
-                        beforeActionGesturesEnabled = drawerGesturesEnabled
-                        // tapping outside of drawer closes it, once action is selected we
-                        // prevent gestures so that cancellation of action is not possible
-                        homeScaffoldState.drawerGesturesEnabled.value = false
-                    },
-                    onCloseOnActionCompleted = {
-                        // restore gestures as were before action
-                        homeScaffoldState.drawerGesturesEnabled.value = beforeActionGesturesEnabled
-                    },
-                )
-            },
-            topBar = {
-                Box(
-                    modifier = Modifier
-                        .statusBarsPadding()
-                ) {
-                    homeScaffoldState.topAppBar.value()
-                }
-            },
-            drawerGesturesEnabled = drawerGesturesEnabled,
-            drawerScrimColor = ProtonTheme.colors.blenderNorm,
-            bottomBar = {
-                AnimatedVisibility(
-                    visible = homeScaffoldState.bottomNavigationEnabled.value,
-                    enter = slideInVertically(initialOffsetY = { fullHeight: Int -> fullHeight }),
-                    exit = slideOutVertically(targetOffsetY = { fullHeight: Int -> fullHeight }),
-                ) {
-                    BottomNavigation(
+                BoxWithConstraints {
+                    Box(
                         modifier = Modifier
-                            .testTag(HomeScreenTestTag.bottomBar),
-                        selectedTab = viewState.selectedTab,
-                        tabs = viewState.tabs,
-                        onSelectedTab = { tab -> viewEvent.onTab(tab) },
-                    )
+                            .width(maxWidth - DrawerEndPadding)
+                            .fillMaxHeight()
+                    ) {
+                        NavigationDrawer(
+                            drawerState = homeScaffoldState.drawerState,
+                            viewState = viewState.navigationDrawerViewState,
+                            viewEvent = viewEvent.navigationDrawerViewEvent,
+                            modifier = Modifier
+                                .testTag(HomeScreenTestTag.sidebar)
+                                .statusBarsPadding()
+                                .navigationBarsPadding(),
+                            onCloseOnActionStarted = {
+                                beforeActionGesturesEnabled = drawerGesturesEnabled
+                                // tapping outside of drawer closes it, once action is selected we
+                                // prevent gestures so that cancellation of action is not possible
+                                homeScaffoldState.drawerGesturesEnabled.value = false
+                            },
+                            onCloseOnActionCompleted = {
+                                // restore gestures as were before action
+                                homeScaffoldState.drawerGesturesEnabled.value = beforeActionGesturesEnabled
+                            },
+                        )
+                    }
                 }
             },
-            snackbarHost = { snackbarHostState ->
-                ProtonSnackbarHost(
-                    ProtonSnackbarHostState(
-                        snackbarHostState,
-                        ProtonSnackbarType.ERROR
+            gesturesEnabled = drawerGesturesEnabled,
+            scrimColor = ProtonTheme.colors.blenderNorm,
+        ) {
+            Scaffold(
+                topBar = {
+                    Box(
+                        modifier = Modifier
+                            .statusBarsPadding()
+                    ) {
+                        homeScaffoldState.topAppBar.value()
+                    }
+                },
+                bottomBar = {
+                    AnimatedVisibility(
+                        visible = homeScaffoldState.bottomNavigationEnabled.value,
+                        enter = slideInVertically(initialOffsetY = { fullHeight: Int -> fullHeight }),
+                        exit = slideOutVertically(targetOffsetY = { fullHeight: Int -> fullHeight }),
+                    ) {
+                        BottomNavigation(
+                            modifier = Modifier
+                                .testTag(HomeScreenTestTag.bottomBar),
+                            selectedTab = viewState.selectedTab,
+                            tabs = viewState.tabs,
+                            onSelectedTab = { tab -> viewEvent.onTab(tab) },
+                        )
+                    }
+                },
+                snackbarHost = {
+                    ProtonSnackbarHost(snackbarHostState)
+                },
+                contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            ) { contentPadding ->
+                Box(Modifier
+                    .padding(contentPadding)
+                ) {
+                    HomeNavGraph(
+                        homeNavController,
+                        deepLinkBaseUrl,
+                        arguments,
+                        startDestination,
+                        homeScaffoldState,
+                        navigateToPreview,
+                        navigateToPreviewWithTag,
+                        navigateToSorting,
+                        navigateToFileOrFolderOptions,
+                        navigateToMultipleFileOrFolderOptions,
+                        navigateToParentFolderOptions,
+                        navigateToPhotosPermissionRationale,
+                        navigateToPhotosIssues,
+                        navigateToPhotosUpsell,
+                        navigateToBackupSettings,
+                        navigateToEnableBackupDialog,
+                        navigateToComputerOptions,
+                        navigateToNotificationPermissionRationale,
+                        navigateToUserInvitation,
+                        navigateToCreateNewAlbum,
+                        navigateToAlbum,
+                        navigateToQ3CampaignPromo,
+                        navigateToUpsellPromo,
                     )
-                )
-            }
-        ) { contentPadding ->
-            Box(Modifier
-                .padding(contentPadding)
-            ) {
-                HomeNavGraph(
-                    homeNavController,
-                    deepLinkBaseUrl,
-                    arguments,
-                    startDestination,
-                    homeScaffoldState,
-                    navigateToPreview,
-                    navigateToPreviewWithTag,
-                    navigateToSorting,
-                    navigateToFileOrFolderOptions,
-                    navigateToMultipleFileOrFolderOptions,
-                    navigateToParentFolderOptions,
-                    navigateToPhotosPermissionRationale,
-                    navigateToPhotosIssues,
-                    navigateToPhotosUpsell,
-                    navigateToBackupSettings,
-                    navigateToEnableBackupDialog,
-                    navigateToComputerOptions,
-                    navigateToNotificationPermissionRationale,
-                    navigateToUserInvitation,
-                    navigateToCreateNewAlbum,
-                    navigateToAlbum,
-                    navigateToQ3CampaignPromo,
-                    navigateToUpsellPromo,
-                )
+                }
             }
         }
     }
 }
 
-private val BottomNavigationHeight = 56.dp
+private val DrawerEndPadding = 56.dp
 
 object HomeScreenTestTag {
     const val screen = "home screen"

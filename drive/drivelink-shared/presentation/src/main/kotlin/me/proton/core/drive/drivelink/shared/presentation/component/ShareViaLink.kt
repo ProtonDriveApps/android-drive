@@ -24,9 +24,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,10 +37,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import me.proton.core.compose.component.ProtonErrorMessage
-import me.proton.core.compose.component.ProtonErrorMessageWithAction
-import me.proton.core.compose.component.ProtonTextButton
-import me.proton.core.compose.component.protonTextButtonColors
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.MediumSpacing
@@ -48,7 +44,11 @@ import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.default
 import me.proton.core.compose.theme.headlineSmall
 import me.proton.core.drive.base.presentation.component.Deferred
+import me.proton.core.drive.base.presentation.component.ProtonErrorMessage
+import me.proton.core.drive.base.presentation.component.ProtonErrorMessageWithAction
+import me.proton.core.drive.base.presentation.component.ProtonTextButton
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.base.presentation.component.protonTextButtonColors
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.shared.presentation.viewevent.SharedDriveLinkViewEvent
 import me.proton.core.drive.drivelink.shared.presentation.viewmodel.SharedDriveLinkViewModel

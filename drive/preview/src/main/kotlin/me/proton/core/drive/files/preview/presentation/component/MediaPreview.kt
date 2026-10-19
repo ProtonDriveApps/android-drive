@@ -24,7 +24,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -45,6 +45,7 @@ import androidx.media3.ui.PlayerView
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.isNightMode
 import me.proton.core.drive.base.presentation.extension.conditional
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 
 @Composable
 @OptIn(UnstableApi::class)
@@ -91,9 +92,9 @@ fun MediaPreview(
     }
     val backgroundColor by animateColorAsState(
         targetValue = if (isFullScreen && isNightMode().not()) {
-            MaterialTheme.colors.onBackground
+            MaterialTheme.colorScheme.onBackground
         } else {
-            MaterialTheme.colors.background
+            MaterialTheme.colorScheme.background
         }
     )
     Box(
@@ -138,7 +139,7 @@ fun MediaPreview(
 @Preview
 @Composable
 private fun PreviewMediaPreview() {
-    ProtonTheme {
+    DriveTheme {
         MediaPreview(uri = Uri.parse(""), isFullScreen = true)
     }
 }

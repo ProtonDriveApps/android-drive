@@ -144,6 +144,7 @@
   <string name="notification_content_text_backup_failed_connectivity">Ingen internettforbindelse</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Venter på Wi-Fi</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Sikkerhetskopiering er ikke tillat</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">Sikkerhetskopimappen finnes ikke lenger</string>
   <string name="notification_content_text_backup_paused_disabled">Sikkerhetskopiering ble deaktivert</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Sikkerhetskopiering kan ikke kjøres i bakgrunnen</string>
   <string name="notification_content_text_backup_preparing">Forbereder sikkerhetskopiering</string>
@@ -176,6 +177,8 @@
   <string name="notification_content_title_transferring">Overfører data</string>
   <!-- endregion -->
   <string name="content_description_select_all">Velg alle elementer i listen</string>
+  <string name="content_description_select_separator">Velg alle elementer i %1$s</string>
+  <string name="photos_error_separator_selection_failed">Noen elementer kunne ikke velges, prøv igjen</string>
   <string name="content_description_selected_options">Vis flere alternativer for valgte filer og/eller mapper</string>
   <string name="content_description_files_upload_upload_file">Last opp en fil</string>
   <string name="content_description_albums_new">Opprett nytt album</string>

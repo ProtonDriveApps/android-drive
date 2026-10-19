@@ -23,6 +23,7 @@ import me.proton.core.drive.worker.domain.entity.WorkerRun
 
 interface WorkerRepository {
     suspend fun getAllWorkerRuns(userId: UserId, workerId: String): List<WorkerRun>
-    suspend fun insertWorkerRun(workerRun: WorkerRun)
+    suspend fun insertWorkerRun(workerRun: WorkerRun): Long
+    suspend fun markWorkerRunBlocked(userId: UserId, workerId: String, id: Long, isLimited: Boolean)
     suspend fun deleteAllWorkerRuns(userId: UserId, workerId: String)
 }

@@ -67,6 +67,7 @@ import me.proton.core.drive.base.domain.extension.GiB
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.base.presentation.extension.isLandscape
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -289,7 +290,7 @@ private fun ActionDetails(
 @Preview
 @Composable
 fun PreviewGetMoreFreeStorage() {
-    ProtonTheme {
+    DriveTheme {
         GetMoreFreeStorage(
             viewState = GetMoreFreeStorageViewState(
                 imageResId = BasePresentation.drawable.img_free_storage,

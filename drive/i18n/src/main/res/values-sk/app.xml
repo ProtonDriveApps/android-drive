@@ -154,6 +154,7 @@
   <string name="notification_content_text_backup_failed_connectivity">Žiadne internetové pripojenie</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Čakám na Wi-Fi</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Záloha nie je povolená</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">Zálohovací priečinok už neexistuje</string>
   <string name="notification_content_text_backup_paused_disabled">Zálohovanie bolo vypnuté</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Zálohovanie nemôže prebiehať na pozadí</string>
   <string name="notification_content_text_backup_preparing">Príprava na zálohovanie</string>
@@ -188,6 +189,8 @@
   <string name="notification_content_title_transferring">Prenos dát</string>
   <!-- endregion -->
   <string name="content_description_select_all">Vybrať všetky položky v zozname</string>
+  <string name="content_description_select_separator">Vybrať všetky položky v %1$s</string>
+  <string name="photos_error_separator_selection_failed">Peňaženku nie je možné vybrať. Skúste to znova, prosím</string>
   <string name="content_description_selected_options">Zobraziť viac možností pre vybrané súbory a/alebo priečinky</string>
   <string name="content_description_files_upload_upload_file">Nahrať súbor</string>
   <string name="content_description_albums_new">Vytvoriť nový album</string>

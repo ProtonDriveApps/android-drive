@@ -33,7 +33,9 @@ import androidx.biometric.BiometricPrompt
 import androidx.biometric.BiometricPrompt.CryptoObject
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import kotlin.coroutines.resume
 import kotlinx.coroutines.suspendCancellableCoroutine
 import me.proton.android.drive.lock.domain.exception.LockException
@@ -46,7 +48,7 @@ import javax.inject.Inject
 class BiometricPromptProviderImpl @Inject constructor(
     private val biometricManager: BiometricManager,
 ) : BiometricPromptProvider {
-    private val listeners = ConcurrentHashMap<AuthenticationListener, Unit>()
+    private val listeners = ConcurrentHashMap<AuthenticationListener, WeakReference<FragmentActivity>>()
     private val activities: MutableList<WeakReference<FragmentActivity>> = mutableListOf()
     private val callback = object : BiometricPrompt.AuthenticationCallback() {
         override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
@@ -65,15 +67,21 @@ class BiometricPromptProviderImpl @Inject constructor(
     interface AuthenticationListener {
         fun onSuccess(result: BiometricPrompt.AuthenticationResult)
         fun onError(error: LockException)
+        fun onCancel()
     }
 
     override fun bindToActivity(activity: FragmentActivity) {
         activities.flush().add(WeakReference(activity))
+        activity.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                listeners.filterValues { reference -> reference.get() === owner }.keys.forEach { listener ->
+                    listener.onCancel()
+                }
+            }
+        })
     }
 
-    private fun buildBiometricPrompt(): BiometricPrompt {
-        val activity = activities.flush().firstResumedOrNull()
-        requireNotNull(activity) { "activity is required" }
+    private fun buildBiometricPrompt(activity: FragmentActivity): BiometricPrompt {
         val executor = ContextCompat.getMainExecutor(activity)
         return BiometricPrompt(
             activity,
@@ -101,9 +109,10 @@ class BiometricPromptProviderImpl @Inject constructor(
         subtitle: String,
         cryptoObject: CryptoObject?
     ): Result<BiometricPrompt.AuthenticationResult> = coRunCatching {
+        val activity = requireNotNull(activities.flush().firstResumedOrNull()) { "activity is required" }
         cryptoObject?.let {
-            buildBiometricPrompt().authenticate(biometricPromptInfo(title, subtitle), cryptoObject)
-        } ?: buildBiometricPrompt().authenticate(biometricPromptInfo(title, subtitle))
+            buildBiometricPrompt(activity).authenticate(biometricPromptInfo(title, subtitle), cryptoObject)
+        } ?: buildBiometricPrompt(activity).authenticate(biometricPromptInfo(title, subtitle))
 
         // await result
         suspendCancellableCoroutine<Result<BiometricPrompt.AuthenticationResult>> { continuation ->
@@ -117,8 +126,13 @@ class BiometricPromptProviderImpl @Inject constructor(
                     listeners.remove(this)
                     continuation.resume(Result.failure(error))
                 }
+
+                override fun onCancel() {
+                    listeners.remove(this)
+                    continuation.cancel()
+                }
             }
-            listeners[listener] = Unit
+            listeners[listener] = WeakReference(activity)
             continuation.invokeOnCancellation {
                 listeners.remove(listener)
             }

@@ -21,7 +21,7 @@ package me.proton.android.drive.photos.presentation.component
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
@@ -64,7 +64,8 @@ fun Photos(
     modifier: Modifier = Modifier,
 ) {
     val items = photos.collectAsLazyPagingItems()
-    LaunchedEffect(items) {
+    val selectedFilter = viewState.filters.firstOrNull { filter -> filter.tagViewState.selected }?.filter
+    LaunchedEffect(items, selectedFilter) {
         snapshotFlow { items.loadState to items.itemCount }
             .distinctUntilChanged()
             .collect { (loadState, itemCount) ->
@@ -105,6 +106,7 @@ fun Photos(
                                 onGetStorage = viewEvent.onGetStorage,
                                 onResolveMissingFolder = viewEvent.onEnableBackupDialog,
                                 onChangeNetwork = viewEvent.onChangeNetwork,
+                                onAllowUnconfirmedNetwork = viewEvent.onAllowUnconfirmedNetwork,
                                 onIgnoreBackgroundRestrictions = {
                                     viewEvent.onIgnoreBackgroundRestrictions(localContext)
                                 },
@@ -164,6 +166,7 @@ fun Photos(
                         onGetStorage = viewEvent.onGetStorage,
                         onResolveMissingFolder = viewEvent.onEnableBackupDialog,
                         onChangeNetwork = viewEvent.onChangeNetwork,
+                        onAllowUnconfirmedNetwork = viewEvent.onAllowUnconfirmedNetwork,
                         onIgnoreBackgroundRestrictions = {
                             viewEvent.onIgnoreBackgroundRestrictions(localContext)
                         },

@@ -27,8 +27,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,21 +45,21 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.android.drive.ui.effect.TrashEffect
 import me.proton.android.drive.ui.viewmodel.TrashViewModel
-import me.proton.core.compose.component.ProtonSnackbarHost
-import me.proton.core.compose.component.ProtonSnackbarHostState
-import me.proton.core.compose.component.ProtonSnackbarType
-import me.proton.core.compose.component.bottomsheet.BottomSheetContent
-import me.proton.core.compose.component.bottomsheet.BottomSheetEntry
-import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
-import me.proton.core.compose.component.bottomsheet.rememberModalBottomSheetContentState
 import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultSmallStrongNorm
 import me.proton.core.drive.base.presentation.component.ActionButton
+import me.proton.core.drive.base.presentation.component.BottomSheetContent
+import me.proton.core.drive.base.presentation.component.BottomSheetEntry
 import me.proton.core.drive.base.presentation.component.ModalBottomSheet
+import me.proton.core.drive.base.presentation.component.ModalBottomSheetViewState
 import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
+import me.proton.core.drive.base.presentation.component.ProtonSnackbarHost
+import me.proton.core.drive.base.presentation.component.ProtonSnackbarHostState
+import me.proton.core.drive.base.presentation.component.ProtonSnackbarType
 import me.proton.core.drive.base.presentation.component.ProtonTab
 import me.proton.core.drive.base.presentation.component.TopAppBarHeight
+import me.proton.core.drive.base.presentation.component.rememberModalBottomSheetContentState
 import me.proton.core.drive.files.presentation.component.DriveLinksFlow
 import me.proton.core.drive.files.presentation.component.Files
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -146,7 +146,7 @@ fun TrashScreen(
                                     )
                                 }
                             }
-                            Divider(
+                            HorizontalDivider(
                                 color = ProtonTheme.colors.separatorNorm,
                                 modifier = Modifier
                                     .fillMaxWidth()

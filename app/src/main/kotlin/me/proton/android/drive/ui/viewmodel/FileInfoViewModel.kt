@@ -31,12 +31,17 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import me.proton.android.drive.BuildConfig
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.viewstate.FileInfoViewState
 import me.proton.core.domain.arch.mapSuccessValueOrNull
+import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
@@ -63,6 +68,7 @@ class FileInfoViewModel @Inject constructor(
     getShare: GetShare,
     private val decryptAncestorsName: DecryptAncestorsName,
     private val updateDriveLinkDisplayName: UpdateDriveLinkDisplayName,
+    private val announceEvent: AnnounceEvent,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val shareId: ShareId = ShareId(userId, savedStateHandle.require(Screen.Info.SHARE_ID))
@@ -71,6 +77,11 @@ class FileInfoViewModel @Inject constructor(
     private val driveLink = getDriveLink(linkId, failOnDecryptionError = false)
         .mapSuccessValueOrNull()
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    private val fileInfoOpenedJob = driveLink
+        .filterNotNull()
+        .take(1)
+        .onEach { link -> announceEvent(userId, Event.RecentlyAccessed.FileInfoOpened(link.id)) }
+        .launchIn(viewModelScope)
     private val share = getShare(shareId, flowOf(false))
         .mapSuccessValueOrNull()
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)

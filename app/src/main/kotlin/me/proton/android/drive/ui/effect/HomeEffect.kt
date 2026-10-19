@@ -43,8 +43,8 @@ fun HomeTabViewModel.HandleHomeEffect(homeScaffoldState: HomeScaffoldState) {
             homeEffect
                 .collectLatest { effect ->
                     when (effect) {
-                        is HomeEffect.OpenDrawer -> homeScaffoldState.scaffoldState.drawerState.open()
-                        is HomeEffect.ShowSnackbar -> homeScaffoldState.scaffoldState.snackbarHostState.showSnackbar(
+                        is HomeEffect.OpenDrawer -> homeScaffoldState.drawerState.open()
+                        is HomeEffect.ShowSnackbar -> homeScaffoldState.snackbarHostState.showSnackbar(
                             effect.message
                         )
                         is HomeEffect.BottomNavigation -> homeScaffoldState.bottomNavigationEnabled.value = effect.enabled

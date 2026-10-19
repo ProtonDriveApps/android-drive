@@ -32,9 +32,7 @@ import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.UpdateName
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
-import me.proton.core.drive.worker.domain.usecase.CanRun
-import me.proton.core.drive.worker.domain.usecase.Done
-import me.proton.core.drive.worker.domain.usecase.Run
+import me.proton.core.drive.worker.domain.usecase.WorkerRuns
 
 @OptIn(ExperimentalCoroutinesApi::class)
 abstract class CommonCreateFileWorker(
@@ -46,9 +44,7 @@ abstract class CommonCreateFileWorker(
     uploadErrorManager: UploadErrorManager,
     private val updateName: UpdateName,
     configurationProvider: ConfigurationProvider,
-    canRun: CanRun,
-    run: Run,
-    done: Done,
+    workerRuns: WorkerRuns,
 ) : UploadCoroutineWorker(
     appContext = appContext,
     workerParams = workerParams,
@@ -57,9 +53,7 @@ abstract class CommonCreateFileWorker(
     getUploadFileLink = getUploadFileLink,
     uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
-    canRun = canRun,
-    run = run,
-    done = done,
+    workerRuns = workerRuns,
 ) {
     protected suspend fun Throwable.handle(uploadFileLink: UploadFileLink): Boolean =
         onProtonHttpException { protonData ->

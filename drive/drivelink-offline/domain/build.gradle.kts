@@ -26,6 +26,7 @@ android {
 driveModule(hilt = true) {
     api(project(":drive:drivelink:domain"))
     api(project(":drive:drivelink-crypto:domain"))
+    implementation(project(":drive:announce-event:domain"))
     implementation(project(":drive:drivelink-download:domain"))
     implementation(project(":drive:drivelink-list:domain"))
     implementation(project(":drive:drivelink-sorting"))

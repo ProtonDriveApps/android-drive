@@ -34,7 +34,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.SnackbarResult
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -82,15 +82,17 @@ import me.proton.android.drive.ui.viewmodel.AccountViewModel
 import me.proton.android.drive.ui.viewmodel.BugReportViewModel
 import me.proton.android.drive.usecase.GetDefaultEnabledDynamicHomeTab
 import me.proton.android.drive.usecase.ProcessIntent
+import me.proton.android.drive.usecase.SanitizeIntent
 import me.proton.android.drive.usecase.ShowRatingBooster
-import me.proton.core.compose.component.ProtonSnackbarHost
-import me.proton.core.compose.component.ProtonSnackbarHostState
-import me.proton.core.compose.component.ProtonSnackbarType
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.ListenToBroadcastMessages
+import me.proton.core.drive.base.presentation.component.ProtonSnackbarHost
+import me.proton.core.drive.base.presentation.component.ProtonSnackbarHostState
+import me.proton.core.drive.base.presentation.component.ProtonSnackbarType
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.messagequeue.domain.ActionProvider
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.thumbnail.presentation.coil.ThumbnailEnabled
@@ -113,6 +115,7 @@ class MainActivity : FragmentActivity() {
     @Inject lateinit var getHomeTab: GetHomeTab
     @Inject lateinit var getDefaultEnabledDynamicHomeTab: GetDefaultEnabledDynamicHomeTab
     @Inject lateinit var processIntent: ProcessIntent
+    @Inject lateinit var sanitizeIntent: SanitizeIntent
     @Inject lateinit var biometricPromptProvider: BiometricPromptProvider
     @Inject lateinit var appLockManager: AppLockManager
     @Inject lateinit var deeplinkManager: DeeplinkManager
@@ -143,6 +146,7 @@ class MainActivity : FragmentActivity() {
         setTheme(CorePresentation.style.ProtonTheme_Drive)
         super.onCreate(savedInstanceState)
         deeplinkManager.onActivityCreate(this, savedInstanceState)
+        intent = sanitizeIntent(intent)
         biometricPromptProvider.bindToActivity(this)
         gmsDocumentScannerProvider.check(this, lifecycleScope)
         initializeViewModels()
@@ -187,7 +191,7 @@ class MainActivity : FragmentActivity() {
             }
         }
         if (savedInstanceState == null)
-            intent?.let { processIntent(it, deepLinkIntent, accountViewModel) }
+            processIntent(intent, deepLinkIntent, accountViewModel)
     }
 
     @Composable
@@ -280,7 +284,7 @@ class MainActivity : FragmentActivity() {
     @Composable
     private fun Content(isDarkTheme: Boolean, content: @Composable () -> Unit) {
         ThumbnailEnabled(configurationProvider) {
-            ProtonTheme(isDarkTheme) {
+            DriveTheme(isDarkTheme) {
                 ProvideLocalSnackbarPadding {
                     content()
                 }
@@ -347,8 +351,6 @@ class MainActivity : FragmentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        intent?.let {
-            processIntent(intent, deepLinkIntent, accountViewModel, true)
-        }
+        processIntent(sanitizeIntent(intent), deepLinkIntent, accountViewModel, true)
     }
 }

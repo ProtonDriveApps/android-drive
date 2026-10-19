@@ -71,7 +71,7 @@ class FeatureFlagInitializer : Initializer<Unit> {
                         .onFailure { error ->
                             error.log(LogTag.FEATURE_FLAG)
                         }
-                    jobs[account.userId] = notifyFeatureFlagChange(account.userId)
+                    jobs.put(account.userId, notifyFeatureFlagChange(account.userId))?.cancel()
                 }
                 .onAccountRemoved { account ->
                     jobs.remove(account.userId)?.cancel()

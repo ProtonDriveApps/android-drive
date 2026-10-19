@@ -29,6 +29,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
@@ -48,16 +49,17 @@ import me.proton.android.drive.ui.options.filterProtonSheets
 import me.proton.android.drive.usecase.CreateNewDocument
 import me.proton.android.drive.usecase.GetUriForFile
 import me.proton.android.drive.usecase.NotifyActivityNotFound
-import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.data.datastore.GetUserDataStore
 import me.proton.core.drive.base.data.entity.LoggerLevel
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.extension.combine
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.usecase.GetCacheTempFolder
+import me.proton.core.drive.base.presentation.component.RunAction
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.document.base.domain.entity.DocumentType
@@ -89,6 +91,7 @@ import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 class ParentFolderOptionsViewModel @Inject constructor(
+    @ApplicationScope private val applicationScope: CoroutineScope,
     getDriveLink: GetDecryptedDriveLink,
     getFeatureFlagFlow: GetFeatureFlagFlow,
     private val savedStateHandle: SavedStateHandle,
@@ -338,7 +341,7 @@ class ParentFolderOptionsViewModel @Inject constructor(
         folderId: FolderId,
         documentType: DocumentType,
         navigateToPreview: (FileId) -> Unit,
-    ) = viewModelScope.launch {
+    ) = applicationScope.launch {
         createNewDocument(folderId, documentType)
             .onSuccess { fileId ->
                 navigateToPreview(fileId)

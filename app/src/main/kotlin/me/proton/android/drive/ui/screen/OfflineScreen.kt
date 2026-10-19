@@ -22,7 +22,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,11 +39,11 @@ import me.proton.android.drive.ui.effect.OfflineEffect
 import me.proton.android.drive.ui.navigation.PagerType
 import me.proton.android.drive.ui.viewmodel.OfflineViewModel
 import me.proton.android.drive.ui.viewmodel.RemoveAllOfflineIconState
+import me.proton.core.drive.base.presentation.component.BottomSheetContent
+import me.proton.core.drive.base.presentation.component.BottomSheetEntry
+import me.proton.core.drive.base.presentation.component.ModalBottomSheetViewState
+import me.proton.core.drive.base.presentation.component.rememberModalBottomSheetContentState
 import me.proton.core.util.kotlin.exhaustive
-import me.proton.core.compose.component.bottomsheet.BottomSheetContent
-import me.proton.core.compose.component.bottomsheet.BottomSheetEntry
-import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
-import me.proton.core.compose.component.bottomsheet.rememberModalBottomSheetContentState
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultSmallStrongNorm
 import me.proton.core.drive.base.presentation.component.ActionButton

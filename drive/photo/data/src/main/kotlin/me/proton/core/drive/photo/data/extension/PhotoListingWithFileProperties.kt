@@ -25,13 +25,29 @@ import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
-fun PhotoListingWithFileProperties.toPhotoListing() =
+fun PhotoListingWithFileProperties.toPhotoListing(
+    volumeId: VolumeId = VolumeId(photoListingEntity.volumeId),
+    shareId: ShareId = ShareId(photoListingEntity.userId, photoListingEntity.shareId),
+) =
     PhotoListing.Volume(
-        volumeId = VolumeId(photoListingEntity.volumeId),
-        linkId = FileId(ShareId(photoListingEntity.userId, photoListingEntity.shareId), photoListingEntity.linkId),
+        volumeId = volumeId,
+        linkId = FileId(shareId, photoListingEntity.linkId),
         captureTime = TimestampS(photoListingEntity.captureTime),
         nameHash = photoListingEntity.hash,
         contentHash = photoListingEntity.contentHash,
         activeRevisionId = activeRevisionId,
         defaultThumbnailId = defaultThumbnailId,
     )
+
+fun List<PhotoListingWithFileProperties>.toPhotoListings(): List<PhotoListing> {
+    val shareIds = mutableMapOf<String, ShareId>()
+    val volumeIds = mutableMapOf<String, VolumeId>()
+    return map { photoListingWithFileProperties ->
+        with(photoListingWithFileProperties.photoListingEntity) {
+            photoListingWithFileProperties.toPhotoListing(
+                volumeId = volumeIds.getOrPut(volumeId) { VolumeId(volumeId) },
+                shareId = shareIds.getOrPut(shareId) { ShareId(userId, shareId) },
+            )
+        }
+    }
+}

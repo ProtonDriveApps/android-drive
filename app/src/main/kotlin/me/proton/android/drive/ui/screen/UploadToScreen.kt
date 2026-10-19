@@ -26,9 +26,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.material.Button
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -54,14 +54,14 @@ import me.proton.android.drive.ui.effect.SnackbarEffect
 import me.proton.android.drive.ui.viewevent.UploadToViewEvent
 import me.proton.android.drive.ui.viewmodel.UploadToViewModel
 import me.proton.android.drive.ui.viewstate.UploadToViewState
-import me.proton.core.compose.component.ProtonSnackbarHost
-import me.proton.core.compose.component.ProtonSnackbarHostState
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.captionWeak
 import me.proton.core.compose.theme.defaultNorm
 import me.proton.core.drive.base.presentation.component.ActionButton
+import me.proton.core.drive.base.presentation.component.ProtonSnackbarHost
+import me.proton.core.drive.base.presentation.component.ProtonSnackbarHostState
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.base.presentation.extension.rejectObscuredTouches
 import me.proton.core.drive.files.presentation.component.DriveLinksFlow
@@ -183,7 +183,7 @@ fun UploadTo(
                 OutlinedButton(
                     onClick = {
                         exitApp()
-                    }
+                    },
                 ) {
                     Text(text = stringResource(id = I18N.string.upload_to_dismiss_action))
                 }
@@ -192,7 +192,7 @@ fun UploadTo(
                     modifier = Modifier
                         .rejectObscuredTouches()
                         .padding(start = SmallSpacing),
-                    onClick = { viewEvent.upload() }
+                    onClick = { viewEvent.upload() },
                 ) {
                     Text(text = stringResource(id = I18N.string.upload_title))
                 }

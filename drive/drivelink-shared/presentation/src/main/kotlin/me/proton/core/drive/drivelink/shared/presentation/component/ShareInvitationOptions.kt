@@ -21,19 +21,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import me.proton.core.compose.component.bottomsheet.BottomSheetContent
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultSmallStrongNorm
+import me.proton.core.drive.base.presentation.component.BottomSheetContent
 import me.proton.core.drive.base.presentation.component.BottomSheetEntry
 import me.proton.core.drive.base.presentation.component.UserThumbnail
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.shared.presentation.entry.CopyInviteLinkEntry
 import me.proton.core.drive.drivelink.shared.presentation.entry.ShareUserOptionEntry
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserType
@@ -95,7 +96,7 @@ private fun ShareUserOptionsHeader(
 @Preview
 @Composable
 fun ShareUserOptionsPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             ShareUserOptions(
                 ShareUserViewState(

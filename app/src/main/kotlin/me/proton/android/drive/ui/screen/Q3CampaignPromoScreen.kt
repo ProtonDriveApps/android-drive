@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,11 +44,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -56,6 +59,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -73,15 +77,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.proton.android.drive.ui.viewevent.Q3CampaignPromoViewEvent
 import me.proton.android.drive.ui.viewmodel.Q3CampaignPromoViewModel
 import me.proton.android.drive.ui.viewstate.Q3CampaignPromoViewState
-import me.proton.core.compose.component.DeferredCircularProgressIndicator
-import me.proton.core.compose.component.ProtonButton
-import me.proton.core.compose.component.protonButtonColors
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.presentation.common.Action
+import me.proton.core.drive.base.presentation.component.DeferredCircularProgressIndicator
+import me.proton.core.drive.base.presentation.component.ProtonButton
 import me.proton.core.drive.base.presentation.component.ThemelessStatusBarScreen
+import me.proton.core.drive.base.presentation.component.TopAppBarHeight
 import me.proton.core.drive.base.presentation.component.TopBarActions
+import me.proton.core.drive.base.presentation.component.protonButtonColors
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -141,7 +147,7 @@ fun Q3CampaignPromoScreenPortrait(
 ) {
     // Forced to dark theme regardless of system setting
     ThemelessStatusBarScreen(useDarkIcons = false)
-    ProtonTheme(isDark = true) {
+    DriveTheme(isDark = true) {
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -227,6 +233,7 @@ private fun AutoRenewText(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopAppBar(
     closeAction: Action,
@@ -237,15 +244,19 @@ private fun TopAppBar(
 ) {
     TopAppBar(
         title = {},
-        modifier = modifier,
-        backgroundColor = backgroundColor,
-        elevation = elevation,
+        modifier = modifier.shadow(elevation),
         actions = {
             TopBarActions(
                 actionFlow = flowOf { setOf(closeAction) },
                 iconTintColor = iconTintColor,
             )
-        }
+        },
+        expandedHeight = TopAppBarHeight,
+        windowInsets = WindowInsets(0, 0, 0, 0),
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = backgroundColor,
+            scrolledContainerColor = backgroundColor,
+        ),
     )
 }
 
@@ -429,7 +440,7 @@ private fun PricingComparisonTable(
                 }
 
                 if (index != rows.lastIndex) {
-                    Divider(
+                    HorizontalDivider(
                         modifier = Modifier.fillMaxWidth(),
                         color = comparisonDividerColor,
                         thickness = 1.dp,
@@ -545,7 +556,7 @@ private val previewViewEvent = object : Q3CampaignPromoViewEvent {}
 @Preview(name = "Portrait", showBackground = true)
 @Composable
 private fun Q3CampaignPromoScreenPortraitPreview() {
-    ProtonTheme {
+    DriveTheme {
         Q3CampaignPromoScreenPortrait(
             viewState = previewViewState(),
             viewEvent = previewViewEvent,

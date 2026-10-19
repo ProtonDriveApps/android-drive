@@ -19,7 +19,7 @@ package me.proton.core.drive.base.presentation.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -56,16 +56,16 @@ fun LinearProgressIndicator(
         .height(height)
     if (progress != null) {
         LinearProgressIndicator(
-            progress = progress,
+            progress = { progress },
             modifier = progressModifier,
             color = progressColors,
-            backgroundColor = backgroundColor
+            trackColor = backgroundColor,
         )
     } else {
         LinearProgressIndicator(
             modifier = progressModifier,
             color = progressColors,
-            backgroundColor = backgroundColor
+            trackColor = backgroundColor,
         )
     }
 }

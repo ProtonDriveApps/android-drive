@@ -19,12 +19,12 @@
 package me.proton.core.drive.drivelink.device.presentation.component
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import me.proton.core.compose.component.DeferredCircularProgressIndicator
-import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.drive.base.presentation.component.DeferredCircularProgressIndicator
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 
 @Composable
 fun DevicesLoading(
@@ -36,7 +36,7 @@ fun DevicesLoading(
 @Preview
 @Composable
 private fun PreviewDevicesLoading() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             DevicesLoading(Modifier.fillMaxSize())
         }

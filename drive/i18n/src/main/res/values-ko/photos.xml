@@ -62,6 +62,7 @@
   <string name="photos_error_backup_disabled_action">켜기</string>
   <string name="photos_error_backup_missing_folder">기본 카메라 폴더를 찾을 수 없습니다</string>
   <string name="photos_error_backup_failed">백업에 실패했습니다.</string>
+  <string name="photos_error_backup_folder_not_found">백업 폴더가 더 이상 존재하지 않습니다.</string>
   <string name="photos_error_backup_temporarily_disabled">백업을 일시적으로 사용할 수 없습니다.</string>
   <string name="photos_error_missing_permissions">권한 없음.</string>
   <!--

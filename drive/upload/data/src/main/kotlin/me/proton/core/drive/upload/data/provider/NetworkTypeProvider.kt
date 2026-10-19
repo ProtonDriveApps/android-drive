@@ -19,8 +19,12 @@
 package me.proton.core.drive.upload.data.provider
 
 import androidx.work.NetworkType
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import me.proton.core.drive.link.domain.entity.FolderId
 
 interface NetworkTypeProvider {
     suspend fun get(folderId: FolderId): NetworkType = NetworkType.CONNECTED
+    fun isSatisfied(folderId: FolderId): Flow<Boolean> = flowOf(true)
+    suspend fun reportUsage(folderId: FolderId) = Unit
 }

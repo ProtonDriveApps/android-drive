@@ -30,9 +30,9 @@
   <!-- tag(q3campaign2026) -->
   <string name="promo_q3_campaign_drawer_title">Ειδική Προσφορά</string>
   <!-- tag(q3campaign2026) Free vs. Unlimited comparison table on the Q3 campaign promo screen -->
-  <string name="promo_q3_campaign_comparison_header_free">Free</string>
+  <string name="promo_q3_campaign_comparison_header_free">Δωρεάν</string>
   <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_header_unlimited">Unlimited</string>
+  <string name="promo_q3_campaign_comparison_header_unlimited">Απεριόριστο</string>
   <!-- tag(q3campaign2026) -->
   <string name="promo_q3_campaign_comparison_storage_label">Αποθηκευτικός χώρος</string>
   <!-- tag(q3campaign2026) -->
@@ -40,7 +40,7 @@
   <!-- tag(q3campaign2026) -->
   <string name="promo_q3_campaign_comparison_storage_unlimited">500 GB</string>
   <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_storage_unlimited_subtitle">100 φορές περισσότερο από free</string>
+  <string name="promo_q3_campaign_comparison_storage_unlimited_subtitle">100 φορές περισσότερο από δωρεάν</string>
   <!-- tag(q3campaign2026) -->
   <string name="promo_q3_campaign_comparison_share_edit_label">Κοινοποίηση με πρόσβαση επεξεργασίας</string>
   <!-- tag(q3campaign2026) -->
@@ -48,7 +48,7 @@
   <!-- tag(q3campaign2026) -->
   <string name="promo_q3_campaign_comparison_vpn_label">VPN Plus με 20.000+ διακομιστές σε 140+ χώρες</string>
   <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_pass_label">Pass Plus με 50 ασφαλές κρύπτες</string>
+  <string name="promo_q3_campaign_comparison_pass_label">Pass Plus με 50 ασφαλείς κρύπτες</string>
   <!-- tag(q3campaign2026) Preview-only mock price for Q3CampaignPromoScreenPortraitPreview, not a real formatted currency amount -->
   <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
   <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->

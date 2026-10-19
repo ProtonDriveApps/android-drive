@@ -55,9 +55,7 @@ import me.proton.core.drive.upload.domain.provider.FileProvider
 import me.proton.core.drive.upload.domain.resolver.UriResolver
 import me.proton.core.drive.upload.domain.usecase.AnnounceUploadEvent
 import me.proton.core.drive.upload.domain.usecase.RemoveUploadFile
-import me.proton.core.drive.worker.domain.usecase.CanRun
-import me.proton.core.drive.worker.domain.usecase.Done
-import me.proton.core.drive.worker.domain.usecase.Run
+import me.proton.core.drive.worker.domain.usecase.WorkerRuns
 import me.proton.core.util.kotlin.deserializeOrNull
 import me.proton.core.util.kotlin.serialize
 import java.util.concurrent.TimeUnit
@@ -79,9 +77,7 @@ class UploadCleanupWorker @AssistedInject constructor(
     private val uploadSdkManager: UploadSdkManager,
     private val fileProvider: FileProvider,
     configurationProvider: ConfigurationProvider,
-    canRun: CanRun,
-    run: Run,
-    done: Done,
+    workerRuns: WorkerRuns,
 ) : UploadCoroutineWorker(
     appContext = appContext,
     workerParams = workerParams,
@@ -90,9 +86,7 @@ class UploadCleanupWorker @AssistedInject constructor(
     getUploadFileLink = getUploadFileLink,
     uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
-    canRun = canRun,
-    run = run,
-    done = done,
+    workerRuns = workerRuns,
 ) {
     private val isCancelled = inputData.getBoolean(KEY_IS_CANCELLED, false)
     private val reason: Event.Upload.Reason = inputData.getString(KEY_REASON)

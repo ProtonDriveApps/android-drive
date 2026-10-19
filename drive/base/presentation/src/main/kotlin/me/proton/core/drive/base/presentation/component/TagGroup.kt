@@ -23,11 +23,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ChipDefaults.filterChipColors
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FilterChip
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -35,11 +34,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.base.presentation.viewstate.TagViewState
 import me.proton.core.presentation.R as CorePresentation
 import me.proton.core.drive.i18n.R as I18N
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TagGroup(
     tags: List<TagViewState>,
@@ -58,7 +57,7 @@ fun TagGroup(
                         onClick(tag)
                     }
                 },
-                content = {
+                label = {
                     Text(tag.label)
                 },
                 selected = tag.selected,
@@ -70,14 +69,14 @@ fun TagGroup(
                     )
                 },
                 shape = ProtonTheme.shapes.medium,
-                colors = filterChipColors(
-                    backgroundColor = ProtonTheme.colors.backgroundNorm,
-                    selectedBackgroundColor = ProtonTheme.colors.backgroundSecondary,
-                    contentColor = ProtonTheme.colors.textWeak,
-                    selectedContentColor = ProtonTheme.colors.textNorm,
-                    leadingIconColor = ProtonTheme.colors.textWeak,
+                colors = FilterChipDefaults.filterChipColors(
+                    containerColor = ProtonTheme.colors.backgroundNorm,
+                    selectedContainerColor = ProtonTheme.colors.backgroundSecondary,
+                    labelColor = ProtonTheme.colors.textWeak,
+                    selectedLabelColor = ProtonTheme.colors.textNorm,
+                    iconColor = ProtonTheme.colors.textWeak,
                     selectedLeadingIconColor = ProtonTheme.colors.textNorm,
-                )
+                ),
             )
         }
     }
@@ -86,7 +85,7 @@ fun TagGroup(
 @Preview
 @Composable
 fun TagGroupPreview() {
-    ProtonTheme {
+    DriveTheme {
         TagGroup(
             tags = listOf(
                 TagViewState(

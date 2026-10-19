@@ -29,9 +29,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -47,11 +47,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import me.proton.core.compose.component.ProtonButton
-import me.proton.core.compose.component.protonTextButtonColors
 import me.proton.core.compose.theme.ProtonDimens.DefaultButtonMinHeight
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.i18n.R
 import kotlin.math.roundToInt
 
@@ -109,7 +108,7 @@ fun ProtonTab(
                     .matchParentSize(),
                 contentAlignment = Alignment.BottomCenter,
             ) {
-                Divider(
+                HorizontalDivider(
                     color = dividerColor,
                     thickness = thickness,
                     modifier = Modifier
@@ -125,7 +124,7 @@ fun ProtonTab(
 @Preview
 @Composable
 fun ProtonTabPreview() {
-    ProtonTheme {
+    DriveTheme {
         var isSelected by remember { mutableIntStateOf(0) }
         Row(
             modifier = Modifier.fillMaxWidth(),

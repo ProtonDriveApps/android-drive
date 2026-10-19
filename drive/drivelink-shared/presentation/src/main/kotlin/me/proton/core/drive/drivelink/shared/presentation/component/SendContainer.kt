@@ -27,11 +27,11 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -46,6 +46,7 @@ import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultWeak
 import me.proton.core.compose.theme.textWeak
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.SaveButtonViewState
 import me.proton.core.presentation.R as CorePresentation
 import me.proton.core.drive.i18n.R as I18N
@@ -59,7 +60,7 @@ internal fun SendContainer(
     if (saveButtonViewState.isVisible) {
         Column(modifier = modifier) {
 
-            Divider(
+            HorizontalDivider(
                 color = ProtonTheme.colors.separatorNorm,
             )
             Row(
@@ -113,7 +114,7 @@ internal fun SendContainer(
 fun SendContainerPreview(
     @PreviewParameter(SaveButtonViewStateParameterProvider::class) viewState: SaveButtonViewState,
 ) {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             SendContainer(
                 saveButtonViewState = viewState,

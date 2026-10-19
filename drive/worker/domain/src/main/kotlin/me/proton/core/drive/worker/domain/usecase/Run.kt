@@ -20,7 +20,7 @@ package me.proton.core.drive.worker.domain.usecase
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.TimestampMs
-import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.base.domain.util.coRunCatchingException
 import me.proton.core.drive.worker.domain.entity.WorkerRun
 import me.proton.core.drive.worker.domain.repository.WorkerRepository
 import javax.inject.Inject
@@ -28,12 +28,19 @@ import javax.inject.Inject
 class Run @Inject constructor(
     private val workerRepository: WorkerRepository,
 ) {
-    suspend operator fun invoke(userId: UserId, workerId: String): Result<Unit> = coRunCatching {
+    suspend operator fun invoke(
+        userId: UserId,
+        workerId: String,
+        isBlocked: Boolean = false,
+        isLimited: Boolean = true,
+    ): Result<Long> = coRunCatchingException {
         workerRepository.insertWorkerRun(
             workerRun = WorkerRun(
                 userId = userId,
                 workerId = workerId,
                 runAt = TimestampMs(),
+                isBlocked = isBlocked,
+                isLimited = isLimited,
             )
         )
     }

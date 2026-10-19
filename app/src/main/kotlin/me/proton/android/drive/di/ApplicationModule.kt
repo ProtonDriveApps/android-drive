@@ -61,7 +61,6 @@ import me.proton.android.drive.usecase.notification.TransferDataNotificationEven
 import me.proton.core.account.domain.entity.AccountType
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.compose.theme.AppTheme
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.configuration.EnvironmentConfiguration
 import me.proton.core.domain.entity.AppStore
 import me.proton.core.domain.entity.Product
@@ -74,6 +73,7 @@ import me.proton.core.drive.base.domain.provider.ProtonPhotosClientProvider
 import me.proton.core.drive.base.domain.repository.ClientUidRepository
 import me.proton.core.drive.base.domain.usecase.DeviceInfo
 import me.proton.core.drive.base.domain.usecase.DriveUrlBuilder
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.documentsprovider.domain.usecase.GetDocumentsProviderRoots
 import me.proton.core.drive.folder.create.domain.provider.OpenFolderActionProvider
 import me.proton.core.drive.key.domain.handler.PublicKeyEventHandler
@@ -81,6 +81,7 @@ import me.proton.core.drive.link.domain.provider.ProtonSdkClientProvider
 import me.proton.core.drive.log.domain.handler.LogEventHandler
 import me.proton.core.drive.messagequeue.domain.ActionProvider
 import me.proton.core.drive.notification.data.provider.NotificationBuilderProvider
+import me.proton.core.drive.recently.accessed.data.handler.RecentlyAccessedEventHandler
 import me.proton.core.drive.worker.data.usecase.TransferDataNotifier
 import me.proton.drive.android.settings.data.datastore.AppUiSettingsDataStore
 import javax.inject.Singleton
@@ -91,7 +92,7 @@ object ApplicationModule {
 
     @Provides
     fun provideAppTheme() = AppTheme { content ->
-        ProtonTheme { content() }
+        DriveTheme { content() }
     }
 
     @Provides
@@ -199,7 +200,19 @@ object ApplicationModule {
         log: LogEventHandler,
         publicKeyEventHandler: PublicKeyEventHandler,
         sentryEventHandler: SentryEventHandler,
-    ) = setOf(notification, telemetry, upload, download, photos, stats, log, publicKeyEventHandler, sentryEventHandler)
+        recentlyAccessed: RecentlyAccessedEventHandler,
+    ) = setOf(
+        notification,
+        telemetry,
+        upload,
+        download,
+        photos,
+        stats,
+        log,
+        publicKeyEventHandler,
+        sentryEventHandler,
+        recentlyAccessed,
+    )
 
     @Provides
     @Singleton

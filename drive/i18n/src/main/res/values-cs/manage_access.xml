@@ -18,30 +18,30 @@
   -->
 <resources>
   <string name="title_manage_access">Správa přístupů</string>
-  <string name="manage_access_who_has_access">Who has access</string>
+  <string name="manage_access_who_has_access">Kdo má přístup</string>
   <!--
         Variable %1$s is a name or email
         Example:
             "Jack Frost (you)"
             "jack.frost@example.com (you)"
     -->
-  <string name="manage_access_current_user">%1$s (you)</string>
+  <string name="manage_access_current_user">%1$s (vy)</string>
   <string name="manage_access_share_with_anyone">Sdílet s kýmkoli</string>
-  <string name="manage_access_allow_editors_to_share_title">Access</string>
-  <string name="manage_access_allow_editors_to_share_description">Allow editors to change permissions and share</string>
+  <string name="manage_access_allow_editors_to_share_title">Přístup</string>
+  <string name="manage_access_allow_editors_to_share_description">Umožnit editorům měnit oprávnění a sdílet</string>
   <string name="manage_access_link_settings_action">Nastavení odkazu</string>
   <string name="manage_access_link_description_public">Kdokoli s tímto odkazem</string>
   <string name="manage_access_link_description_password_protected">Kdokoli s odkazem a heslem</string>
   <string name="manage_access_link_default_permission">Může zobrazit</string>
   <string name="manage_access_link_editor_permission">Může upravovat</string>
-  <string name="manage_access_change_access_to_viewer_title">Change access to viewer?</string>
+  <string name="manage_access_change_access_to_viewer_title">Změnit přístup k prohlížení?</string>
   <!--
         Variable %1$s is a file or folder name
         Example:
             You won’t be able to share "Some folder" after changing your access to viewer. The owner or an editor with sharing access can restore your edit access. You can’t undo this change yourself.
     -->
-  <string name="manage_access_change_access_to_viewer_description">"You won\’t be able to share \"%1$s\" after changing your access to viewer. The owner or an editor with sharing access can restore your edit access. You can\’t undo this change yourself."</string>
-  <string name="manage_access_change_access_to_viewer_action">Change my access</string>
-  <string name="manage_access_new_editor_permissions_title">New editor permissions</string>
-  <string name="manage_access_new_editor_permissions_description">Editors can now manage sharing and invite others. You can turn it off anytime.</string>
+  <string name="manage_access_change_access_to_viewer_description">"Po změně vašeho oprávnění na prohlížení již nebudete moci sdílet \"%1$s\". Vlastník nebo editor s oprávněním ke sdílení vám může obnovit oprávnění k úpravám. Tuto změnu nemůžete sami vrátit zpět."</string>
+  <string name="manage_access_change_access_to_viewer_action">Změnit můj přístup</string>
+  <string name="manage_access_new_editor_permissions_title">Nová oprávnění pro editory</string>
+  <string name="manage_access_new_editor_permissions_description">Editoři nyní mohou spravovat sdílení a zvát další uživatele. Tuto funkci můžete kdykoli deaktivovat.</string>
 </resources>

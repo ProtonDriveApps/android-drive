@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -38,9 +39,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.options.MemberOption
-import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.data.extension.getDefaultMessage
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.onFailure
@@ -48,6 +49,7 @@ import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.usecase.GetUserEmailsFlow
+import me.proton.core.drive.base.presentation.component.RunAction
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -70,6 +72,7 @@ import me.proton.core.drive.base.data.extension.log as logResult
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ShareMemberOptionsViewModel @Inject constructor(
+    @ApplicationScope private val applicationScope: CoroutineScope,
     @param:ApplicationContext private val appContext: Context,
     savedStateHandle: SavedStateHandle,
     getDriveLink: GetDriveLink,
@@ -123,7 +126,7 @@ class ShareMemberOptionsViewModel @Inject constructor(
                     if (member.email in userEmails && member.permissions.canWrite) {
                         navigateToConfirmChangeAccessToViewer(linkId, memberId)
                     } else {
-                        viewModelScope.launch {
+                        applicationScope.launch {
                             updatePermissions(driveLink, Permissions.viewer)
                         }
                     }
@@ -133,13 +136,13 @@ class ShareMemberOptionsViewModel @Inject constructor(
                     isSelected = member.permissions == Permissions.editor || member.permissions.isAdmin,
                     runAction = runAction,
                 ) {
-                    viewModelScope.launch {
+                    applicationScope.launch {
                         updatePermissions(driveLink, Permissions.editor)
                     }
                 }
 
                 is MemberOption.RemoveAccess -> option.build(runAction) {
-                    viewModelScope.launch {
+                    applicationScope.launch {
                         deleteMember(driveLink)
                     }
                 }

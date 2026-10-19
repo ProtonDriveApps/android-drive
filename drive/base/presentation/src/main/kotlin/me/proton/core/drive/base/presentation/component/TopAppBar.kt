@@ -23,20 +23,24 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.testTag
@@ -55,6 +59,7 @@ import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.headlineSmallNorm
 import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.base.presentation.component.TopAppBarComponentTestTag.navigationButton
+import androidx.compose.material3.TopAppBar as Material3TopAppBar
 
 @Composable
 fun TopAppBar(
@@ -86,6 +91,7 @@ fun TopAppBar(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBar(
     navigationIcon: Painter?,
@@ -99,9 +105,18 @@ fun TopAppBar(
     elevation: Dp = 0.dp,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
-    TopAppBar(
-        modifier = modifier.testTag(TopAppBarComponentTestTag.appBar),
-        title = { title(Modifier.testTag(TopAppBarComponentTestTag.appBarTitle)) },
+    Material3TopAppBar(
+        modifier = modifier
+            .shadow(elevation)
+            .testTag(TopAppBarComponentTestTag.appBar),
+        title = {
+            Box(
+                modifier = Modifier.heightIn(max = TopAppBarHeight),
+                contentAlignment = Alignment.CenterStart,
+            ) {
+                title(Modifier.testTag(TopAppBarComponentTestTag.appBarTitle))
+            }
+        },
         navigationIcon = {
             if (navigationIcon != null) {
                 NavigationIconButton(
@@ -113,11 +128,18 @@ fun TopAppBar(
             }
         },
         actions = actions,
-        backgroundColor = backgroundColor,
-        contentColor = contentColor,
-        elevation = elevation,
+        expandedHeight = TopAppBarHeight,
+        windowInsets = WindowInsets(0, 0, 0, 0),
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = backgroundColor,
+            scrolledContainerColor = backgroundColor,
+            navigationIconContentColor = contentColor,
+            titleContentColor = contentColor,
+            actionIconContentColor = contentColor,
+        ),
     )
 }
+
 @Composable
 fun Title(
     title: String,
@@ -242,7 +264,6 @@ private val IconTintColor @Composable get() = ProtonTheme.colors.iconNorm
 private val ActionButtonSize = DefaultButtonMinHeight
 private val ActionIconSize = DefaultIconSize
 private val ActionIconPadding = ExtraSmallSpacing
-// Actual value is private in androidx.compose.material.AppBarKt
 val TopAppBarHeight = 56.dp
 
 object TopAppBarComponentTestTag {

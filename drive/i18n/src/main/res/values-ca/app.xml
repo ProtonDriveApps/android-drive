@@ -144,6 +144,7 @@
   <string name="notification_content_text_backup_failed_connectivity">No hi ha connexió a internet</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">S\'està esperant una connexió Wi-Fi.</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Les còpies de seguretat no estan permeses.</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">La carpeta de còpia de seguretat ja no existeix</string>
   <string name="notification_content_text_backup_paused_disabled">S\'ha desactivat la còpia de seguretat.</string>
   <string name="notification_content_text_backup_paused_background_restrictions">La còpia de seguretat no es pot executar en segon pla</string>
   <string name="notification_content_text_backup_preparing">S\'està preparant per a fer una còpia de seguretat</string>
@@ -176,6 +177,8 @@
   <string name="notification_content_title_transferring">Transferència de dades</string>
   <!-- endregion -->
   <string name="content_description_select_all">Selecciona tots els elements a la llista</string>
+  <string name="content_description_select_separator">Seleccioneu tots els elements de %1$s</string>
+  <string name="photos_error_separator_selection_failed">No s\'han pogut seleccionar alguns elements, torneu-ho a intentar</string>
   <string name="content_description_selected_options">Mostra més opcions per als fitxers i/o carpetes seleccionades</string>
   <string name="content_description_files_upload_upload_file">Carrega un fitxer</string>
   <string name="content_description_albums_new">Crea un àlbum</string>

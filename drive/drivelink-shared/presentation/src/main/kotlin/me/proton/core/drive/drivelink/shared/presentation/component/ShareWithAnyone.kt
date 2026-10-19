@@ -30,12 +30,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
-import androidx.compose.material.Switch
-import androidx.compose.material.Text
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,10 +43,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import me.proton.core.compose.component.ProtonErrorMessage
-import me.proton.core.compose.component.ProtonErrorMessageWithAction
-import me.proton.core.compose.component.ProtonSolidButton
-import me.proton.core.compose.component.protonButtonColors
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
@@ -59,6 +55,11 @@ import me.proton.core.compose.theme.defaultNorm
 import me.proton.core.compose.theme.defaultSmallNorm
 import me.proton.core.compose.theme.defaultStrongNorm
 import me.proton.core.drive.base.presentation.component.Deferred
+import me.proton.core.drive.base.presentation.component.ProtonErrorMessage
+import me.proton.core.drive.base.presentation.component.ProtonErrorMessageWithAction
+import me.proton.core.drive.base.presentation.component.ProtonSolidButton
+import me.proton.core.drive.base.presentation.component.protonButtonColors
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.LoadingViewState
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -369,7 +370,7 @@ private val LargeIconSize = 32.dp
 @Preview
 @Composable
 fun ShareWithAnyoneNoLinkPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             ShareWithAnyone(
                 viewState = LoadingViewState.Initial,
@@ -390,7 +391,7 @@ fun ShareWithAnyoneNoLinkPreview() {
 @Preview
 @Composable
 fun ShareWithAnyoneLoadingPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             ShareWithAnyone(
                 viewState = LoadingViewState.Loading("Creating link to file"),
@@ -411,7 +412,7 @@ fun ShareWithAnyoneLoadingPreview() {
 @Preview
 @Composable
 private fun ShareWithAnyoneErrorRetryablePreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             ShareWithAnyone(
                 viewState = LoadingViewState.Error.Retryable("Retryable error"),
@@ -432,7 +433,7 @@ private fun ShareWithAnyoneErrorRetryablePreview() {
 @Preview
 @Composable
 private fun ShareWithAnyoneErrorNonRetryablePreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             ShareWithAnyone(
                 viewState = LoadingViewState.Error.NonRetryable("Non retryable error", 0.seconds),
@@ -453,7 +454,7 @@ private fun ShareWithAnyoneErrorNonRetryablePreview() {
 @Preview
 @Composable
 fun ShareWithAnyoneEditorPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             ShareWithAnyone(
                 viewState = LoadingViewState.Initial,
@@ -474,7 +475,7 @@ fun ShareWithAnyoneEditorPreview() {
 @Preview
 @Composable
 fun ShareWithAnyonePasswordLinkPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             ShareWithAnyone(
                 viewState = LoadingViewState.Initial,

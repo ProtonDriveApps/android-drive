@@ -97,6 +97,9 @@ class BackupNotificationBuilder @Inject constructor(
             Event.Backup.BackupState.FAILED_WIFI_CONNECTIVITY ->
                 appContext.getString(I18N.string.notification_content_text_backup_failed_wifi_connectivity)
 
+            Event.Backup.BackupState.FAILED_CONNECTIVITY_UNCONFIRMED ->
+                appContext.getString(I18N.string.notification_content_text_backup_failed_connectivity_unconfirmed)
+
             Event.Backup.BackupState.FAILED_PERMISSION ->
                 appContext.getString(I18N.string.notification_content_text_backup_failed_permission)
 

@@ -40,7 +40,7 @@ class BlobUrlDownloader(
     ) = coRunCatching {
         CoreLogger.d(
             tag = LogTag.WEBVIEW,
-            message ="BlobUrlDownloader processing base64 content, type $mimeType, size ${base64Content.length}",
+            message = "BlobUrlDownloader processing base64 content, type $mimeType, size ${base64Content.length}",
         )
         val filename = fileExtension(mimeType)?.let { extension -> "$title.$extension" } ?: title
         base64Content
@@ -50,9 +50,10 @@ class BlobUrlDownloader(
                 filename = filename,
                 mimeType = mimeType,
             )
+            .getOrThrow()
         CoreLogger.d(
             tag = LogTag.WEBVIEW,
-            message = "BlobUrlDownloader base64 content successfully exported, file \"$filename\"",
+            message = "BlobUrlDownloader base64 content successfully exported",
         )
         filename
     }.also { result ->

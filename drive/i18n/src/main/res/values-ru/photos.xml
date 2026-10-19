@@ -65,6 +65,7 @@
   <string name="photos_error_backup_disabled_action">Включить</string>
   <string name="photos_error_backup_missing_folder">Default camera folder not found</string>
   <string name="photos_error_backup_failed">Резервное копирование не удалось</string>
+  <string name="photos_error_backup_folder_not_found">Backup folder no longer exists.</string>
   <string name="photos_error_backup_temporarily_disabled">Резервное копирование временно отключено.</string>
   <string name="photos_error_missing_permissions">Отсутствуют разрешения.</string>
   <!--

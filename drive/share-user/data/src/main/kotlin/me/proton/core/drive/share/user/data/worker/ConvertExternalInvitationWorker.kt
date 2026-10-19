@@ -39,24 +39,18 @@ import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.usecase.ConvertExternalInvitation
 import me.proton.core.drive.worker.data.LimitedRetryCoroutineWorker
-import me.proton.core.drive.worker.domain.usecase.CanRun
-import me.proton.core.drive.worker.domain.usecase.Done
-import me.proton.core.drive.worker.domain.usecase.Run
+import me.proton.core.drive.worker.domain.usecase.WorkerRuns
 
 @HiltWorker
 class ConvertExternalInvitationWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    canRun: CanRun,
-    run: Run,
-    done: Done,
+    workerRuns: WorkerRuns,
     private val convertExternalInvitation: ConvertExternalInvitation,
 ) : LimitedRetryCoroutineWorker(
     appContext,
     workerParams,
-    canRun,
-    run,
-    done,
+    workerRuns,
 ) {
 
     override val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)))

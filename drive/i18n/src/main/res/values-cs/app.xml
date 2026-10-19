@@ -154,6 +154,7 @@
   <string name="notification_content_text_backup_failed_connectivity">Bez připojení k Internetu</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Čekání na síť Wi-Fi</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Zálohování není povoleno</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">Záložní složka již neexistuje</string>
   <string name="notification_content_text_backup_paused_disabled">Zálohování bylo vypnuto</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Zálohování nemůže probíhat na pozadí</string>
   <string name="notification_content_text_backup_preparing">Příprava zálohování</string>
@@ -188,6 +189,8 @@
   <string name="notification_content_title_transferring">Přenos dat</string>
   <!-- endregion -->
   <string name="content_description_select_all">Vybrat všechny položky v seznamu</string>
+  <string name="content_description_select_separator">Vybrat všechny položky v(e) %1$s</string>
+  <string name="photos_error_separator_selection_failed">Některé položky nebylo možné vybrat. Zkuste to prosím znovu</string>
   <string name="content_description_selected_options">Zobrazit více možností pro vybrané soubory a/nebo složky</string>
   <string name="content_description_files_upload_upload_file">Nahrát soubor</string>
   <string name="content_description_albums_new">Vytvořit nové album</string>

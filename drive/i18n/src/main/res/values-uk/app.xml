@@ -154,6 +154,7 @@
   <string name="notification_content_text_backup_failed_connectivity">Немає з\'єднання з інтернетом</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Очікування на Wi-Fi</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Резервне копіювання не дозволено</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
   <string name="notification_content_text_backup_paused_disabled">Резервне копіювання було вимкнено</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Резервне копіювання не може працювати на задньому плані</string>
   <string name="notification_content_text_backup_preparing">Підготовка до резервного копіювання</string>
@@ -188,6 +189,8 @@
   <string name="notification_content_title_transferring">Передача даних</string>
   <!-- endregion -->
   <string name="content_description_select_all">Вибрати усі елементи у цьому списку</string>
+  <string name="content_description_select_separator">Select all items in %1$s</string>
+  <string name="photos_error_separator_selection_failed">Some items could not be selected, please try again</string>
   <string name="content_description_selected_options">Показати більше опцій для вибраних файлів і/або тек</string>
   <string name="content_description_files_upload_upload_file">Вивантажити файл</string>
   <string name="content_description_albums_new">Створити новий альбом</string>

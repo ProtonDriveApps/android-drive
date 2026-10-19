@@ -139,6 +139,7 @@
   <string name="notification_content_text_backup_failed_connectivity">Tidak ada koneksi internet</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Menunggu Wi-Fi</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Backup tidak diizinkan</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
   <string name="notification_content_text_backup_paused_disabled">Pencadangan dinonaktifkan</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Pencadangan tidak dapat berlangsung di belakang layar</string>
   <string name="notification_content_text_backup_preparing">Mempersiapkan pencadangan</string>
@@ -170,6 +171,8 @@
   <string name="notification_content_title_transferring">Mentransfer data</string>
   <!-- endregion -->
   <string name="content_description_select_all">Pilih semua item dalam daftar</string>
+  <string name="content_description_select_separator">Select all items in %1$s</string>
+  <string name="photos_error_separator_selection_failed">Some items could not be selected, please try again</string>
   <string name="content_description_selected_options">Tampilkan lebih banyak pilihan untuk berkas dan/atau folder yang dipilih</string>
   <string name="content_description_files_upload_upload_file">Unggah berkas</string>
   <string name="content_description_albums_new">Buat album baru</string>

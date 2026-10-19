@@ -40,8 +40,8 @@
         Example:
             You won’t be able to share "Some folder" after changing your access to viewer. The owner or an editor with sharing access can restore your edit access. You can’t undo this change yourself.
     -->
-  <string name="manage_access_change_access_to_viewer_description">"You won\’t be able to share \"%1$s\" after changing your access to viewer. The owner or an editor with sharing access can restore your edit access. You can\’t undo this change yourself."</string>
+  <string name="manage_access_change_access_to_viewer_description">"Vous ne pourrez pas partager \"%1$s\" après avoir modifié votre droit d'accès pour être lecteur. Le propriétaire du fichier ou un éditeur qui a les droits de partage pourront restaurer votre droit d'édition. Vous ne pouvez pas annuler ce changement par vous-même."</string>
   <string name="manage_access_change_access_to_viewer_action">Modifier mes droits d\'accès</string>
-  <string name="manage_access_new_editor_permissions_title">New editor permissions</string>
+  <string name="manage_access_new_editor_permissions_title">Nouvelles permissions pour éditer</string>
   <string name="manage_access_new_editor_permissions_description">Les éditeurs peuvent désormais gérer le partage et inviter d\'autres personnes. Vous pouvez désactiver cette fonctionnalité à tout moment.</string>
 </resources>

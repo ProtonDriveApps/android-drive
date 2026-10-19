@@ -32,9 +32,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,8 +44,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import me.proton.core.compose.component.ProtonSecondaryButton
-import me.proton.core.compose.component.ProtonSolidButton
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonDimens.DefaultButtonMinHeight
 import me.proton.core.compose.theme.ProtonDimens.DefaultCornerRadius
@@ -62,9 +60,12 @@ import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.presentation.R
 import me.proton.core.drive.base.presentation.component.EncryptedItem
 import me.proton.core.drive.base.presentation.component.LetterBadge
+import me.proton.core.drive.base.presentation.component.ProtonSecondaryButton
+import me.proton.core.drive.base.presentation.component.ProtonSolidButton
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.base.presentation.extension.iconResId
 import me.proton.core.drive.base.presentation.extension.protonNotificationSuccessButtonColors
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.shared.presentation.extension.key
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.entity.UserInvitation
@@ -190,7 +191,7 @@ val IconSize = DefaultButtonMinHeight
 @Preview
 @Composable
 fun UserInvitationItemPendingPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             UserInvitationItem(
                 onAccept = {},
@@ -203,7 +204,7 @@ fun UserInvitationItemPendingPreview() {
 @Preview
 @Composable
 fun UserInvitationItemPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             UserInvitationItem(
                 details = UserInvitationDetails(

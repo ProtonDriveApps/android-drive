@@ -128,17 +128,19 @@ class StartTagsMigration @Inject constructor(
         statusAnchor: TagsMigrationAnchor? = null,
     ): List<PhotoListing> {
         var maxRetries = 3
+        var useAnchorLinkId = true
         while (true) {
             val oldestIdleFile = getOldestTagsMigrationFile(
                 userId = userId,
                 volumeId = volumeId,
                 state = TagsMigrationFile.State.IDLE,
             ).firstOrNull()?.fileId
+            val anchorLinkId = statusAnchor?.lastProcessedLinkId?.takeIf { useAnchorLinkId }
             fetchAllPhotoListings(
                 userId = userId,
                 volumeId = volumeId,
                 pageSize = configurationProvider.apiListingPageSize,
-                linkId = (oldestIdleFile ?: statusAnchor?.lastProcessedLinkId)
+                linkId = (oldestIdleFile ?: anchorLinkId)
             ).fold(
                 onSuccess = { photoListings ->
                     val lastProcessedCaptureTime = statusAnchor?.lastProcessedCaptureTime
@@ -169,6 +171,16 @@ class StartTagsMigration @Inject constructor(
                                 tag = PHOTO,
                                 message = "Failed to remove tags migration file",
                             )
+                        continue
+                    }
+                    if (error.hasThrowableOrCauseProtonErrorCode(ProtonApiCode.NOT_EXISTS) &&
+                        anchorLinkId != null) {
+                        // Anchor photo was deleted, capture time filter still skips processed photos
+                        CoreLogger.w(
+                            PHOTO,
+                            "Tags migration anchor not found, fetching all photo listings for volume: ${volumeId.id.logId()}"
+                        )
+                        useAnchorLinkId = false
                         continue
                     }
                     throw error

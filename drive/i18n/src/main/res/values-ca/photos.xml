@@ -63,6 +63,7 @@
   <string name="photos_error_backup_disabled_action">Activa</string>
   <string name="photos_error_backup_missing_folder">No s\'ha trobat la carpeta predeterminada de la càmera</string>
   <string name="photos_error_backup_failed">Error en la còpia de seguretat.</string>
+  <string name="photos_error_backup_folder_not_found">La carpeta de còpia de seguretat ja no existeix.</string>
   <string name="photos_error_backup_temporarily_disabled">Les còpies de seguretat estan temporalment desactivades.</string>
   <string name="photos_error_missing_permissions">Falten permisos.</string>
   <!--

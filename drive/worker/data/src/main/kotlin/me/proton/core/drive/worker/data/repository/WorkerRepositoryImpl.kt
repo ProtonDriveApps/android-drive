@@ -20,6 +20,7 @@ package me.proton.core.drive.worker.data.repository
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.worker.data.db.WorkerDatabase
+import me.proton.core.drive.worker.data.extension.blockedValue
 import me.proton.core.drive.worker.data.extension.toWorkerRun
 import me.proton.core.drive.worker.data.extension.toWorkerRunEntity
 import me.proton.core.drive.worker.domain.entity.WorkerRun
@@ -34,7 +35,11 @@ class WorkerRepositoryImpl @Inject constructor(
     override suspend fun getAllWorkerRuns(userId: UserId, workerId: String): List<WorkerRun> =
         workerDao.getAll(userId, workerId).map { workerRunEntity -> workerRunEntity.toWorkerRun() }
 
-    override suspend fun insertWorkerRun(workerRun: WorkerRun) = workerDao.insertOrIgnore(workerRun.toWorkerRunEntity())
+    override suspend fun insertWorkerRun(workerRun: WorkerRun): Long =
+        workerDao.insert(workerRun.toWorkerRunEntity())
+
+    override suspend fun markWorkerRunBlocked(userId: UserId, workerId: String, id: Long, isLimited: Boolean) =
+        workerDao.markBlocked(userId, workerId, id, blockedValue(isBlocked = true, isLimited = isLimited))
 
     override suspend fun deleteAllWorkerRuns(userId: UserId, workerId: String) = workerDao.deleteAll(userId, workerId)
 

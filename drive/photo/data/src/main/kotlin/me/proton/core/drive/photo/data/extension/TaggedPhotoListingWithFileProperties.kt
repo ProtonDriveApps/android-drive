@@ -26,15 +26,15 @@ import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
-fun TaggedPhotoListingWithFileProperties.toPhotoListing() =
+fun TaggedPhotoListingWithFileProperties.toPhotoListing(
+    volumeId: VolumeId = VolumeId(taggedPhotoListingEntity.volumeId),
+    shareId: ShareId = ShareId(taggedPhotoListingEntity.userId, taggedPhotoListingEntity.shareId),
+) =
     with (taggedPhotoListingEntity) {
         PhotoListing.Volume(
-            volumeId = VolumeId(volumeId),
+            volumeId = volumeId,
             linkId = FileId(
-                shareId = ShareId(
-                    userId,
-                    shareId
-                ),
+                shareId = shareId,
                 id = linkId,
             ),
             captureTime = TimestampS(captureTime),
@@ -45,3 +45,16 @@ fun TaggedPhotoListingWithFileProperties.toPhotoListing() =
             defaultThumbnailId = defaultThumbnailId,
         )
     }
+
+fun List<TaggedPhotoListingWithFileProperties>.toPhotoListings(): List<PhotoListing> {
+    val shareIds = mutableMapOf<String, ShareId>()
+    val volumeIds = mutableMapOf<String, VolumeId>()
+    return map { taggedPhotoListingWithFileProperties ->
+        with(taggedPhotoListingWithFileProperties.taggedPhotoListingEntity) {
+            taggedPhotoListingWithFileProperties.toPhotoListing(
+                volumeId = volumeIds.getOrPut(volumeId) { VolumeId(volumeId) },
+                shareId = shareIds.getOrPut(shareId) { ShareId(userId, shareId) },
+            )
+        }
+    }
+}

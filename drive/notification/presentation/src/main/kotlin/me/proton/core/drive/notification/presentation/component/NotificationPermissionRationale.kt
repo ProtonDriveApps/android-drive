@@ -28,7 +28,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -39,18 +39,19 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
-import me.proton.core.compose.component.ProtonSolidButton
-import me.proton.core.compose.component.ProtonTextButton
-import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.compose.theme.ProtonDimens.ListItemHeight
 import me.proton.core.compose.theme.ProtonDimens.MediumLargeSpacing
 import me.proton.core.compose.theme.ProtonDimens.MediumSpacing
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.headlineNorm
+import me.proton.core.drive.base.presentation.component.ProtonSolidButton
+import me.proton.core.drive.base.presentation.component.ProtonTextButton
+import me.proton.core.drive.base.presentation.component.RunAction
 import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.base.presentation.extension.isLandscape
 import me.proton.core.drive.base.presentation.extension.isPortrait
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.notification.presentation.viewevent.NotificationPermissionRationaleViewEvent
 import me.proton.core.drive.notification.presentation.viewmodel.NotificationPermissionRationaleViewModel
 import me.proton.core.drive.notification.presentation.viewstate.NotificationPermissionRationaleViewState
@@ -182,7 +183,7 @@ private val ButtonMinWidth = 300.dp
 @Preview
 @Composable
 fun NotificationPermissionRationalePreview() {
-    ProtonTheme {
+    DriveTheme {
         NotificationPermissionRationale(
             viewState = NotificationPermissionRationaleViewState(
                 title = "Get notify on backup status",

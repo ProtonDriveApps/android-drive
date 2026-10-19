@@ -29,7 +29,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -46,9 +46,9 @@ import me.proton.android.drive.ui.action.PhotoExtractDataAction
 import me.proton.android.drive.ui.screen.PhotosBackup
 import me.proton.android.drive.ui.viewmodel.OnboardingViewModel
 import me.proton.android.drive.ui.viewmodel.PhotosBackupViewModel
-import me.proton.core.compose.component.ProtonSolidButton
 import me.proton.core.compose.theme.ProtonDimens.ListItemHeight
 import me.proton.core.compose.theme.ProtonDimens.MediumSpacing
+import me.proton.core.drive.base.presentation.component.ProtonSolidButton
 import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.base.presentation.extension.isLandscape
 import me.proton.core.drive.base.presentation.extension.isPortrait

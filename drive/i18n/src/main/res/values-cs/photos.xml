@@ -65,6 +65,7 @@
   <string name="photos_error_backup_disabled_action">Zapnout</string>
   <string name="photos_error_backup_missing_folder">Výchozí složka fotoaparátu nebyla nalezena</string>
   <string name="photos_error_backup_failed">Zálohování selhalo.</string>
+  <string name="photos_error_backup_folder_not_found">Záložní složka již neexistuje.</string>
   <string name="photos_error_backup_temporarily_disabled">Zálohování je dočasně vypnuto.</string>
   <string name="photos_error_missing_permissions">Chybějící oprávnění.</string>
   <!--

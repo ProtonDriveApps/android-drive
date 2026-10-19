@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.crypto.common.pgp.VerificationStatus
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.CryptoProperty
@@ -42,6 +41,7 @@ import me.proton.core.drive.base.presentation.extension.onEmpty
 import me.proton.core.drive.base.presentation.extension.onError
 import me.proton.core.drive.base.presentation.extension.onLoading
 import me.proton.core.drive.base.presentation.state.ListContentState
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.shared.presentation.viewevent.UserInvitationViewEvent
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.UserInvitationViewState
 import me.proton.core.drive.i18n.R
@@ -148,7 +148,7 @@ private val viewEvent = object : UserInvitationViewEvent {
 @Preview
 @Composable
 fun UserInvitationContentPreview() {
-    ProtonTheme {
+    DriveTheme {
         val id = UserInvitationId(VolumeId(""), ShareId(UserId(""), ""), "")
         UserInvitation(
             viewState = UserInvitationViewState(
@@ -186,7 +186,7 @@ fun UserInvitationContentPreview() {
 @Preview
 @Composable
 fun UserInvitationEmptyPreview() {
-    ProtonTheme {
+    DriveTheme {
         UserInvitation(
             viewState = UserInvitationViewState(
                 title = stringResource(I18N.string.shared_user_invitations_title, 0),
@@ -211,7 +211,7 @@ fun UserInvitationEmptyPreview() {
 @Preview
 @Composable
 fun UserInvitationErrorPreview() {
-    ProtonTheme {
+    DriveTheme {
         UserInvitation(
             viewState = UserInvitationViewState(
                 title = stringResource(I18N.string.shared_user_invitations_title, 0),
@@ -230,7 +230,7 @@ fun UserInvitationErrorPreview() {
 @Preview
 @Composable
 fun UserInvitationLoadingPreview() {
-    ProtonTheme {
+    DriveTheme {
         UserInvitation(
             viewState = UserInvitationViewState(
                 title = stringResource(I18N.string.shared_user_invitations_title, 0),

@@ -24,7 +24,7 @@ import android.widget.TextView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,6 +48,7 @@ import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultSmallNorm
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.FileTypeCategory
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.i18n.R as I18N
 
 @Composable
@@ -168,7 +169,7 @@ private const val INSTANT_RENDER_MAX_CHARS = 50_000
 @Preview
 @Composable
 fun PreviewTextPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             TextPreview(
                 content = "Preview text",

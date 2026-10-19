@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,6 +41,7 @@ import me.proton.android.drive.photos.presentation.viewstate.BackupPermissionsVi
 import me.proton.android.drive.usecase.MarkOnboardingAsShown
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.extension.firstSuccessOrError
 import me.proton.core.drive.base.domain.extension.getOrNull
@@ -55,6 +57,7 @@ import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
+    @ApplicationScope private val applicationScope: CoroutineScope,
     @ApplicationContext appContext: Context,
     savedStateHandle: SavedStateHandle,
     getUser: GetUser,
@@ -168,7 +171,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     private fun onboardingShown() {
-        viewModelScope.launch {
+        applicationScope.launch {
             markOnboardingAsShown().onFailure { error ->
                 error.log(VIEW_MODEL, "Marking onboarding as shown failed")
             }

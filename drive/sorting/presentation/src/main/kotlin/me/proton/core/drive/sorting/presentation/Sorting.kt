@@ -25,9 +25,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +38,7 @@ import me.proton.core.compose.theme.ProtonDimens.SmallIconSize
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultSmallWeak
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.sorting.presentation.state.SortingViewState
 import me.proton.core.drive.sorting.presentation.state.toSortingViewState
 import me.proton.core.drive.i18n.R as I18N
@@ -87,7 +88,7 @@ fun Sorting(
 @Composable
 @Suppress("unused")
 private fun PreviewSorting() {
-    ProtonTheme {
+    DriveTheme {
         Sorting(
             viewState = me.proton.core.drive.sorting.domain.entity.Sorting.DEFAULT.toSortingViewState(),
             modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
@@ -100,7 +101,7 @@ private fun PreviewSorting() {
 @Preview
 @Composable
 fun PreviewFileListHeader() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             Sorting(
                 viewState = SortingViewState(

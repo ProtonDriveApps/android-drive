@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.Flow
 interface BackupConnectivityManager {
 
     enum class Connectivity {
-        NONE, UNMETERED, CONNECTED
+        NONE, CONNECTED_UNMETERED, CONNECTED_UNCONFIRMED, CONNECTED_METERED
     }
 
     data class NetworkStatusInfo(
@@ -52,4 +52,6 @@ interface BackupConnectivityManager {
     val connectivity: Flow<Connectivity>
 
     fun getCurrentNetworkStatusInfo(): NetworkStatusInfo?
+
+    fun getCurrentConnectivity(): Connectivity
 }

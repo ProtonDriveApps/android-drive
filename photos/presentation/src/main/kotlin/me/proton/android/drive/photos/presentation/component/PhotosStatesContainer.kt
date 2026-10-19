@@ -26,7 +26,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,6 +37,7 @@ import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupErrorType
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 
 @Composable
 internal fun PhotosStatesContainer(
@@ -49,6 +50,7 @@ internal fun PhotosStatesContainer(
     onResolve: () -> Unit,
     onResolveMissingFolder: () -> Unit,
     onChangeNetwork: () -> Unit,
+    onAllowUnconfirmedNetwork: () -> Unit,
     onIgnoreBackgroundRestrictions: () -> Unit,
     onDismissBackgroundRestrictions: () -> Unit,
 ) {
@@ -84,6 +86,10 @@ internal fun PhotosStatesContainer(
                                 onChangeNetwork = onChangeNetwork
                             )
 
+                            BackupErrorType.CONNECTIVITY_UNCONFIRMED -> UnconfirmedNetworkState(
+                                onAllowUnconfirmedNetwork = onAllowUnconfirmedNetwork
+                            )
+
                             BackupErrorType.PHOTOS_UPLOAD_NOT_ALLOWED ->
                                 BackupTemporarilyDisabledState(onRetry = onRetry)
 
@@ -104,7 +110,7 @@ internal fun PhotosStatesContainer(
 fun PhotosStatesContainerPreview(
     @PreviewParameter(ViewStatePreviewParameterProvider::class) viewState: PhotosStatusViewState,
 ) {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             PhotosStatesContainer(
                 modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
@@ -116,6 +122,7 @@ fun PhotosStatesContainerPreview(
                 onResolve = { },
                 onResolveMissingFolder = { },
                 onChangeNetwork = { },
+                onAllowUnconfirmedNetwork = { },
                 onIgnoreBackgroundRestrictions = { },
                 onDismissBackgroundRestrictions = { },
             )
@@ -140,5 +147,6 @@ class ViewStatePreviewParameterProvider : CollectionPreviewParameterProvider<Pho
         PhotosStatusViewState.Failed(listOf(BackupError.PhotosUploadNotAllowed())),
         PhotosStatusViewState.Failed(listOf(BackupError.BackgroundRestrictions())),
         PhotosStatusViewState.Preparing(0.1F),
+        PhotosStatusViewState.Failed(listOf(BackupError.ConnectivityUnconfirmed())),
     )
 )

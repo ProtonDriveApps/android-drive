@@ -31,12 +31,12 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldColors
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -69,6 +69,7 @@ import me.proton.core.compose.theme.textNorm
 import me.proton.core.drive.base.presentation.component.ProtonIconTextButton
 import me.proton.core.drive.base.presentation.extension.aroundVisibleItems
 import me.proton.core.drive.base.presentation.extension.rememberVisibleItems
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -347,17 +348,22 @@ fun RemoveIcon(
 
 @Composable
 fun TextFieldDefaults.protonTextFieldColors(): TextFieldColors =
-    textFieldColors(
-        textColor = ProtonTheme.colors.textNorm,
+    colors(
+        focusedTextColor = ProtonTheme.colors.textNorm,
+        unfocusedTextColor = ProtonTheme.colors.textNorm,
         disabledTextColor = ProtonTheme.colors.textNorm(enabled = false),
-        backgroundColor = Color.Transparent,
+        focusedContainerColor = Color.Transparent,
+        unfocusedContainerColor = Color.Transparent,
+        disabledContainerColor = Color.Transparent,
+        errorContainerColor = Color.Transparent,
         focusedLabelColor = Color.Transparent,
         unfocusedLabelColor = Color.Transparent,
         disabledLabelColor = Color.Transparent,
         focusedIndicatorColor = Color.Transparent,
         unfocusedIndicatorColor = Color.Transparent,
         disabledIndicatorColor = Color.Transparent,
-        placeholderColor = ProtonTheme.colors.textHint,
+        focusedPlaceholderColor = ProtonTheme.colors.textHint,
+        unfocusedPlaceholderColor = ProtonTheme.colors.textHint,
         errorLabelColor = ProtonTheme.colors.notificationError,
     )
 
@@ -366,7 +372,7 @@ private const val MaxLines = 4
 @Preview
 @Composable
 private fun EmptyAlbumNamePreview() {
-    ProtonTheme {
+    DriveTheme {
         AlbumName(
             textFieldValue = TextFieldValue(
                 text = "",
@@ -381,7 +387,7 @@ private fun EmptyAlbumNamePreview() {
 @Preview
 @Composable
 private fun MyAlbumNamePreview() {
-    ProtonTheme {
+    DriveTheme {
         AlbumName(
             textFieldValue = TextFieldValue(
                 text = "My album",

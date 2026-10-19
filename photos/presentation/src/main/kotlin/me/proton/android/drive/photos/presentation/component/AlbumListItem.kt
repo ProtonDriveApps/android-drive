@@ -30,7 +30,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +53,7 @@ import me.proton.core.compose.theme.captionWeak
 import me.proton.core.compose.theme.defaultSmallStrongNorm
 import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.presentation.component.EncryptedItem
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.files.presentation.extension.LayoutType
 import me.proton.core.drive.files.presentation.extension.driveLinkSemantics
@@ -185,7 +186,7 @@ private val HeaderIconSize = 40.dp
 @Preview
 @Composable
 fun AlbumBottomSheetEntryLightPreview() {
-    ProtonTheme(isDark = false) {
+    DriveTheme(isDark = false) {
         Albums(Modifier.background(Color.White))
     }
 }
@@ -193,7 +194,7 @@ fun AlbumBottomSheetEntryLightPreview() {
 @Preview
 @Composable
 fun AlbumBottomSheetEntryDarkPreview() {
-    ProtonTheme(isDark = true) {
+    DriveTheme(isDark = true) {
         Albums(Modifier.background(Color.Black))
     }
 }

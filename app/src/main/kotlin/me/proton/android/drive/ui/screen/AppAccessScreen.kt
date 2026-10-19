@@ -27,7 +27,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.RadioButton
+import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,9 +42,9 @@ import me.proton.android.drive.ui.viewmodel.AppAccessViewModel
 import me.proton.android.drive.ui.viewstate.AccessOption
 import me.proton.android.drive.ui.viewstate.AppAccessViewState
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.component.ProtonListItem
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -145,7 +145,7 @@ fun AppAccessOption(
 @Preview
 @Composable
 private fun AppAccessPreview() {
-    ProtonTheme {
+    DriveTheme {
         AppAccess(
             viewState = AppAccessViewState(
                 title = "Title",

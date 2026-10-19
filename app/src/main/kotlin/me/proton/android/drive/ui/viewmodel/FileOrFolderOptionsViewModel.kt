@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
@@ -52,6 +53,7 @@ import me.proton.android.drive.usecase.LeaveShare
 import me.proton.android.drive.usecase.NotifyActivityNotFound
 import me.proton.android.drive.usecase.OpenProtonDocumentInBrowser
 import me.proton.core.domain.arch.mapSuccessValueOrNull
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
@@ -92,6 +94,7 @@ import me.proton.core.drive.i18n.R as I18N
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
 class FileOrFolderOptionsViewModel @Inject constructor(
+    @ApplicationScope private val applicationScope: CoroutineScope,
     @ApplicationContext private val appContext: Context,
     savedStateHandle: SavedStateHandle,
     getDriveLink: GetDecryptedDriveLink,
@@ -179,7 +182,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
                     when (option) {
                         is Option.DeletePermanently -> option.build(runAction, navigateToDelete)
                         is Option.FavoriteToggle -> option.build(runAction) { driveLink ->
-                            viewModelScope.launch {
+                            applicationScope.launch {
                                 toggleFavoriteAction(driveLink)
                                 deselectLinks()
                             }
@@ -193,7 +196,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
                             deselectLinks()
                         }
                         is Option.OfflineToggle -> option.build(runAction) { driveLink ->
-                            viewModelScope.launch {
+                            applicationScope.launch {
                                 toggleOffline(driveLink).onFailure { error ->
                                     error.log(VIEW_MODEL, "Failed to toggle offline for ${driveLink.id.id}")
                                 }
@@ -207,7 +210,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
                         is Option.Trash -> option.build(
                             runAction = runAction,
                             toggleTrash = {
-                                viewModelScope.launch {
+                                applicationScope.launch {
                                     toggleTrashState(driveLink)
                                     deselectLinks()
                                 }
@@ -230,7 +233,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
                             deselectLinks()
                         }
                         is Option.RemoveMe -> option.build(runAction) { driveLink ->
-                            viewModelScope.launch {
+                            applicationScope.launch {
                                 leaveShare(driveLink).onFailure { error ->
                                     error.log(VIEW_MODEL, "Failed to leave share for ${driveLink.id.id}")
                                 }
@@ -238,7 +241,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
                             }
                         }
                         is Option.OpenInBrowser -> option.build(runAction) { driveLink ->
-                            viewModelScope.launch {
+                            applicationScope.launch {
                                 openProtonDocumentInBrowser(driveLink).onFailure { error ->
                                     error.log(VIEW_MODEL, "Failed to open proton document in browser")
                                 }
@@ -246,25 +249,25 @@ class FileOrFolderOptionsViewModel @Inject constructor(
                             }
                         }
                         is Option.SetAsAlbumCover -> option.build(runAction) { driveLink ->
-                            viewModelScope.launch {
+                            applicationScope.launch {
                                 setAsAlbumCover(driveLink)
                                 deselectLinks()
                             }
                         }
                         is Option.TagPhotoFile -> option.build(runAction) { driveLink ->
-                            viewModelScope.launch {
+                            applicationScope.launch {
                                 scanPhotoForTags(driveLink)
                                 deselectLinks()
                             }
                         }
                         is Option.SaveSharePhoto -> option.build(runAction) { driveLink ->
-                            viewModelScope.launch {
+                            applicationScope.launch {
                                 saveSharedPhoto(driveLink)
                                 deselectLinks()
                             }
                         }
                         is Option.RemoveFromAlbum -> option.build(runAction) { driveLink ->
-                            viewModelScope.launch {
+                            applicationScope.launch {
                                 removePhotosFromAlbum(driveLink)
                                 deselectLinks()
                             }
@@ -273,7 +276,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
                             if (selectionId != null) {
                                 navigateToAddToAlbumsOptions(selectionId)
                             } else {
-                                viewModelScope.launch {
+                                applicationScope.launch {
                                     selectLinks(listOf(driveLink.id))
                                         .onFailure { error ->
                                             error.log(VIEW_MODEL, "Failed to select links")
@@ -301,7 +304,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
     }
 
     private fun deselectLinks() {
-        viewModelScope.launch {
+        applicationScope.launch {
             if (selectionId != null) {
                 deselectLinks(selectionId).onFailure { error ->
                     error.log(VIEW_MODEL, "Failed to deselect links")

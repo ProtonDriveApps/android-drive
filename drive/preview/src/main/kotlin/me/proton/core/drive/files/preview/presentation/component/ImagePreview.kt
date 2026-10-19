@@ -30,8 +30,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -66,6 +66,7 @@ import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.isNightMode
 import me.proton.core.drive.base.presentation.component.Deferred
 import me.proton.core.drive.base.presentation.extension.conditional
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
 import me.proton.core.drive.thumbnail.presentation.extension.cacheKey
 import me.proton.core.drive.i18n.R as I18N
@@ -124,9 +125,9 @@ fun ImagePreview(
 ) {
     val backgroundColor by animateColorAsState(
         targetValue = if (isFullScreen && isNightMode().not()) {
-            MaterialTheme.colors.onBackground
+            MaterialTheme.colorScheme.onBackground
         } else {
-            MaterialTheme.colors.background
+            MaterialTheme.colorScheme.background
         }
     )
     val cacheKey = remember(source) {
@@ -245,7 +246,7 @@ fun ImagePreview(
 @Preview
 @Composable
 private fun PreviewImagePreview() {
-    ProtonTheme {
+    DriveTheme {
         ImagePreview(
             source = Uri.parse("https://farm2.staticflickr.com/1533/26541536141_41abe98db3_z_d.jpg"),
             transformationState = rememberTransformationState(),

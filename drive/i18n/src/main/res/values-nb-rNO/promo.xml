@@ -18,9 +18,9 @@
   -->
 <resources>
   <!-- tag(q1campaign) -->
-  <string name="promo_storage_title">1 TB lagringsplass: 200x nåværende plan</string>
+  <string name="promo_storage_title">1 TB med lagringsplass: 200x gjeldende plan</string>
   <!-- tag(q1campaign) -->
-  <string name="promo_claim_offer_button">Krev tilbudet</string>
+  <string name="promo_claim_offer_button">Gjør krav på tilbudet</string>
   <!-- tag(q1campaign)
         Variable %1$s is price per month
         Example:

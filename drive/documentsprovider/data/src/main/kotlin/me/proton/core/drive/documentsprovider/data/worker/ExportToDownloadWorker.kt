@@ -31,6 +31,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.firstOrNull
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
@@ -63,6 +64,7 @@ class ExportToDownloadWorker @AssistedInject constructor(
     private val selectionId = SelectionId(
         requireNotNull(inputData.getString(KEY_SELECTION_ID)) { "Selection id is required" }
     )
+    override val destination = Event.RecentlyAccessed.FilesDownloaded.Destination.DOWNLOADS
     override val downloadId: String get() = selectionId.id
 
     override suspend fun getDriveLinks(): List<DriveLink.File> =

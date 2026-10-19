@@ -26,6 +26,9 @@ android {
 
 driveModule(
     hilt = true,
+    socialTest = true,
 ) {
     api(project(":drive:base:domain"))
+
+    testImplementation(project(":drive:worker:data"))
 }

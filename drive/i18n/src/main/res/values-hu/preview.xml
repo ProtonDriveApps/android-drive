@@ -22,6 +22,7 @@
   <string name="preview_downloading_state">Letöltés…</string>
   <string name="preview_processing_state">Feldolgozás…</string>
   <string name="preview_empty">Nincs előnézet…</string>
+  <string name="preview_text_too_large">This file is too large to preview</string>
   <string name="title_not_found">Nem található</string>
   <string name="proton_docs_insert_image_header_title">Kép beillesztése</string>
   <string name="proton_docs_option_select_file">Fájl kiválasztása</string>

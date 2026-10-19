@@ -154,6 +154,7 @@
   <string name="notification_content_text_backup_failed_connectivity">Brak połączenia z Internetem</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Oczekiwanie na sieć Wi-Fi</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Kopia zapasowa nie jest dozwolona</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
   <string name="notification_content_text_backup_paused_disabled">Kopia zapasowa została wyłączona</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Kopia zapasowa nie może zostać uruchomiona w tle</string>
   <string name="notification_content_text_backup_preparing">Przygotowywanie do tworzenia kopii zapasowej</string>
@@ -188,6 +189,8 @@
   <string name="notification_content_title_transferring">Przenoszenie danych</string>
   <!-- endregion -->
   <string name="content_description_select_all">Zaznacz wszystkie elementy z listy</string>
+  <string name="content_description_select_separator">Select all items in %1$s</string>
+  <string name="photos_error_separator_selection_failed">Some items could not be selected, please try again</string>
   <string name="content_description_selected_options">Pokaż więcej opcji dla zaznaczonych plików i folderów</string>
   <string name="content_description_files_upload_upload_file">Prześlij plik</string>
   <string name="content_description_albums_new">Utwórz nowy album</string>

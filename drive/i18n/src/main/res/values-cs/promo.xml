@@ -32,7 +32,7 @@
   <!-- tag(q3campaign2026) Free vs. Unlimited comparison table on the Q3 campaign promo screen -->
   <string name="promo_q3_campaign_comparison_header_free">Free</string>
   <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_header_unlimited">Bez omezení</string>
+  <string name="promo_q3_campaign_comparison_header_unlimited">Unlimited</string>
   <!-- tag(q3campaign2026) -->
   <string name="promo_q3_campaign_comparison_storage_label">Úložiště</string>
   <!-- tag(q3campaign2026) -->
@@ -40,7 +40,7 @@
   <!-- tag(q3campaign2026) -->
   <string name="promo_q3_campaign_comparison_storage_unlimited">500 GB</string>
   <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_storage_unlimited_subtitle">100× více než zdarma</string>
+  <string name="promo_q3_campaign_comparison_storage_unlimited_subtitle">100× více než Free</string>
   <!-- tag(q3campaign2026) -->
   <string name="promo_q3_campaign_comparison_share_edit_label">Sdílet s přístupem k úpravám</string>
   <!-- tag(q3campaign2026) -->

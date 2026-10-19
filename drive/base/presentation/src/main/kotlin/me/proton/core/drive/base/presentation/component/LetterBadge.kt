@@ -27,7 +27,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +45,7 @@ import me.proton.core.compose.theme.captionNorm
 import me.proton.core.drive.base.domain.entity.FileTypeCategory
 import me.proton.core.drive.base.domain.extension.firstCodePointAsStringOrNull
 import me.proton.core.drive.base.presentation.extension.iconResId
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 
 @Composable
 fun BoxScope.LetterBadge(
@@ -88,7 +89,7 @@ fun BadgeWithBorder(
 @Preview
 @Composable
 fun LetterBadgePreview() {
-    ProtonTheme {
+    DriveTheme {
         Box {
             Image(
                 modifier = Modifier

@@ -22,6 +22,7 @@ import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -69,6 +70,7 @@ abstract class MultiplePhotosOptionsViewModel(
     private val addPhotosToAlbum: AddPhotosToAlbum,
     private val broadcastMessages: BroadcastMessages,
     private val configurationProvider: ConfigurationProvider,
+    private val applicationScope: CoroutineScope,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     protected abstract val selectedDriveLinks: Flow<List<DriveLink>>
     private var fetchingJob: Job? = null
@@ -126,7 +128,7 @@ abstract class MultiplePhotosOptionsViewModel(
     }
 
     protected fun onCreateNewAlbum() {
-        viewModelScope.launch {
+        applicationScope.launch {
             selectedDriveLinks.firstOrNull()?.let { driveLinks ->
                 driveLinks
                     .filterIsInstance<DriveLink.File>()
@@ -147,7 +149,7 @@ abstract class MultiplePhotosOptionsViewModel(
     }
 
     protected fun onAlbum(albumId: AlbumId) {
-        viewModelScope.launch {
+        applicationScope.launch {
             selectedDriveLinks.firstOrNull()?.let { driveLinks ->
                 driveLinks
                     .filterIsInstance<DriveLink.File>()

@@ -18,6 +18,7 @@
 package me.proton.core.drive.base.data.db
 
 object Column {
+    const val ACCESS_TIME = "access_time"
     const val ADDED_TIME = "added_time"
     const val ADDRESS_ID = "address_id"
     const val ALBUM_ID = "album_id"
@@ -26,6 +27,7 @@ object Column {
     const val ATTEMPTS = "attempts"
     const val ATTRIBUTES = "attributes"
     const val BLOCK_SIZE = "block_size"
+    const val BLOCKED = "blocked"
     const val BUCKET_ID = "bucket_id"
     const val CACHE_OPTION = "cache_option"
     const val CAPTURE_TIME = "capture_time"

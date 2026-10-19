@@ -18,7 +18,6 @@
 package me.proton.core.drive.drivelink.shared.presentation.component
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,15 +29,14 @@ import androidx.compose.ui.platform.testTag
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
-import me.proton.core.compose.component.bottomsheet.rememberModalBottomSheetContentState
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.drive.base.presentation.component.ModalBottomSheet
+import me.proton.core.drive.base.presentation.component.ModalBottomSheetViewState
+import me.proton.core.drive.base.presentation.component.rememberModalBottomSheetContentState
 import me.proton.core.drive.drivelink.shared.presentation.effect.SharedDriveInvitationsEffect
 import me.proton.core.drive.drivelink.shared.presentation.viewmodel.SharedDriveInvitationsViewModel
 import me.proton.core.drive.link.domain.entity.LinkId
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ShareViaInvitations(
     navigateToDiscardChanges: (LinkId) -> Unit,

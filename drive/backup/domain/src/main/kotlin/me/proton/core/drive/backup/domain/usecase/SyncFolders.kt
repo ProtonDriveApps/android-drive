@@ -22,11 +22,15 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.backup.domain.entity.BackupFolder
+import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.backup.domain.entity.BucketUpdate
 import me.proton.core.drive.backup.domain.manager.BackupManager
+import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
+import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.util.kotlin.CoreLogger
 import me.proton.core.util.kotlin.filterNotNullValues
 import javax.inject.Inject
 
@@ -34,8 +38,19 @@ class SyncFolders @Inject constructor(
     private val getAllFolders: GetAllFolders,
     private val backupManager: BackupManager,
     private val announceEvent: AnnounceEvent,
+    private val backupPermissionsManager: BackupPermissionsManager,
 ) {
     suspend operator fun invoke(backupFolder: BackupFolder, uploadPriority: Long) = coRunCatching {
+        // Granting a permission in system settings does not restart the process, so re-check a denied
+        // cache; the refresh also lets BackupInitializer restart the backup once permissions are granted
+        val permissions = backupPermissionsManager.getBackupPermissions()
+            .takeUnless { permissions -> permissions is BackupPermissions.Denied }
+            ?: backupPermissionsManager.getBackupPermissions(refresh = true)
+        if (permissions is BackupPermissions.Denied) {
+            // Every upload would fail with a SecurityException
+            CoreLogger.i(BACKUP, "Skipping sync, backup permissions are denied")
+            return@coRunCatching
+        }
         backupManager.sync(backupFolder, uploadPriority)
         announceEvent(backupFolder.folderId.userId, Event.BackupSync(
             folderId = backupFolder.folderId,

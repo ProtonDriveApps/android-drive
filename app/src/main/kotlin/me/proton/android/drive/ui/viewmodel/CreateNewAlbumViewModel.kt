@@ -28,7 +28,6 @@ import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -50,6 +49,7 @@ import me.proton.android.drive.photos.domain.usecase.UpdateAlbumName
 import me.proton.android.drive.photos.presentation.state.PhotosItem
 import me.proton.android.drive.photos.presentation.viewevent.CreateNewAlbumViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.CreateNewAlbumViewState
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
@@ -70,6 +70,7 @@ import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 class CreateNewAlbumViewModel @Inject constructor(
+    @ApplicationScope private val applicationScope: CoroutineScope,
     savedStateHandle: SavedStateHandle,
     getPagedAddToAlbumPhotoListings: GetPagedAddToAlbumPhotoListings,
     @param:ApplicationContext private val appContext: Context,
@@ -214,7 +215,7 @@ class CreateNewAlbumViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        CoroutineScope(Dispatchers.Main).launch {
+        applicationScope.launch {
             clearNewAlbum(userId)
                 .onFailure { error ->
                     error.log(VIEW_MODEL, "Clear new album failed")

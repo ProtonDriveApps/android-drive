@@ -21,13 +21,14 @@ package me.proton.android.drive.ui.viewmodel
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import me.proton.android.drive.extension.log
 import me.proton.android.drive.usecase.MarkWhatsNewAsShown
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
@@ -41,6 +42,7 @@ import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 class WhatsNewViewModel @Inject constructor(
+    @ApplicationScope private val applicationScope: CoroutineScope,
     @ApplicationContext appContext: Context,
     savedStateHandle: SavedStateHandle,
     private val markWhatsNewAsShown: MarkWhatsNewAsShown,
@@ -68,7 +70,7 @@ class WhatsNewViewModel @Inject constructor(
     }
 
     private fun whatsNewShown() {
-        viewModelScope.launch {
+        applicationScope.launch {
             markWhatsNewAsShown(key).onFailure { error ->
                 error.log(VIEW_MODEL, "Marking whats new as shown failed for: $key")
             }

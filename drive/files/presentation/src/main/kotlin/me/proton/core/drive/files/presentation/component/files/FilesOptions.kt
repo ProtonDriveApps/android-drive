@@ -20,7 +20,7 @@ package me.proton.core.drive.files.presentation.component.files
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import me.proton.core.compose.component.bottomsheet.BottomSheetContent
+import me.proton.core.drive.base.presentation.component.BottomSheetContent
 import me.proton.core.drive.base.presentation.component.BottomSheetEntry
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted

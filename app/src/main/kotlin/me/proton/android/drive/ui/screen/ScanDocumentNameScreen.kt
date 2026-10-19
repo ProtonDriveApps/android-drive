@@ -21,8 +21,8 @@ package me.proton.android.drive.ui.screen
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -39,12 +39,12 @@ import me.proton.android.drive.document.scanner.presentation.viewevent.ScanDocum
 import me.proton.android.drive.document.scanner.presentation.viewstate.ScanDocumentNameViewState
 import me.proton.android.drive.ui.viewmodel.ScanDocumentNameViewModel
 import me.proton.core.compose.activity.KeepScreenOn
-import me.proton.core.compose.component.ProtonTextButton
-import me.proton.core.compose.component.protonTextButtonColors
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.headlineSmallNorm
 import me.proton.core.compose.theme.interactionNorm
+import me.proton.core.drive.base.presentation.component.ProtonTextButton
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.base.presentation.component.protonTextButtonColors
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 

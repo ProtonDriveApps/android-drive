@@ -81,6 +81,7 @@ class TagsMigrationInitializer : Initializer<Unit> {
                     val scope = scopes[userId]
                     val enabledFlow = getFeatureFlagFlow(drivePhotosTagsMigrationDisabled(userId))
                         .map { killSwitch -> !killSwitch.on }
+                        .distinctUntilChanged()
                     val volumeIdFlow = getOldestActiveVolume(userId, Volume.Type.PHOTO)
                         .mapSuccessValueOrNull()
                         .filterNotNull()

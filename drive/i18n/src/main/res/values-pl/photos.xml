@@ -65,6 +65,7 @@
   <string name="photos_error_backup_disabled_action">Włącz</string>
   <string name="photos_error_backup_missing_folder">Default camera folder not found</string>
   <string name="photos_error_backup_failed">Tworzenie kopii zapasowej nie powiodło się.</string>
+  <string name="photos_error_backup_folder_not_found">Backup folder no longer exists.</string>
   <string name="photos_error_backup_temporarily_disabled">Tworzenie kopii zapasowej jest tymczasowo wyłączone.</string>
   <string name="photos_error_missing_permissions">Brak uprawnień.</string>
   <!--

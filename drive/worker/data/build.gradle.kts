@@ -29,6 +29,7 @@ driveModule(
     room = true,
     serialization = true,
     workManager = true,
+    socialTest = true,
 ) {
     api(project(":drive:announce-event:domain"))
     api(project(":drive:base:data"))

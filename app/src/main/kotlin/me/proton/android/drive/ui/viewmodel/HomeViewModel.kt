@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -54,9 +55,9 @@ import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.base.domain.util.coRunCatchingException
 import me.proton.core.drive.base.presentation.component.NavigationTab
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
-import me.proton.android.drive.usecase.IsQ3CampaignPromoEligible
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewEvent
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewState
@@ -83,7 +84,6 @@ class HomeViewModel @Inject constructor(
     private val broadcastMessages: BroadcastMessages,
     private val shouldShowOverlay: ShouldShowOverlay,
     private val getPaymentStatus: GetPaymentStatus,
-    private val isQ3CampaignPromoEligible: IsQ3CampaignPromoEligible,
     private val configurationProvider: ConfigurationProvider,
 ) : ViewModel(), NotificationDotViewModel, UserViewModel by UserViewModel(savedStateHandle) {
     private var navigateToTab: ((route: String) -> Unit)? = null
@@ -122,17 +122,30 @@ class HomeViewModel @Inject constructor(
         currentDestination.value = route
     }
 
+    private val isPaymentEnabled: StateFlow<Boolean> = combine(
+        userManager.observeUser(SessionUserId(userId.id)).filterNotNull(),
+        currentDestination.filterNotNull(),
+    ) { user, _ -> user }
+        .mapLatest {
+            coRunCatchingException {
+                getPaymentStatus().getOrThrow().inApp.enabled
+            }.getOrNull(VIEW_MODEL, "Failed to read payment status") ?: false
+        }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
     val viewState: Flow<HomeViewState> =
         combine(
             userManager.observeUser(SessionUserId(userId.id)),
             currentDestination.filterNotNull(),
             tabs.filter { tabs -> tabs.isNotEmpty() },
-        ) { user, selectedScreen, tabs ->
+            isPaymentEnabled,
+        ) { user, selectedScreen, tabs, isPaymentEnabled ->
             handleInvalidDestination(selectedScreen, tabs)
             getViewState(
                 user = user,
                 startDestination = selectedScreen,
                 tabs = tabs,
+                showSubscription = user != null && isPaymentEnabled,
             )
         }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
@@ -214,10 +227,11 @@ class HomeViewModel @Inject constructor(
             else -> error("Unhandled tab item route: $route")
         }
 
-    private suspend fun getViewState(
+    private fun getViewState(
         user: User?,
         startDestination: String,
         tabs: Map<out HomeTab, NavigationTab>,
+        showSubscription: Boolean,
     ) =
         HomeViewState(
             tabs = tabs.values.toList(),
@@ -229,12 +243,7 @@ class HomeViewModel @Inject constructor(
                 BuildConfig.VERSION_NAME,
                 currentUser = user,
                 showGetFreeStorage = user?.let { canGetMoreFreeStorage(user) } ?: false,
-                showSubscription = user?.userId?.let {
-                    coRunCatching {
-                        getPaymentStatus().getOrThrow().inApp.enabled
-                    }.getOrNull(VIEW_MODEL, "Failed to read payment status")
-                } ?: false,
-                isQ3CampaignPromoEligible = isQ3CampaignPromoEligible(userId),
+                showSubscription = showSubscription,
             )
         )
 

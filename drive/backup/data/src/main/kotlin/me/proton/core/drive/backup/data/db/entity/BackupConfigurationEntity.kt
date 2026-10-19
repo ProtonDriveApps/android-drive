@@ -66,4 +66,6 @@ data class BackupConfigurationEntity(
     val parentId: String,
     @ColumnInfo(name = NETWORK_TYPE)
     val networkType: BackupNetworkType,
+    // Future extension point: a nullable expiry (e.g. unconfirmedNetworkExpiresAt) would go here
+    // to support a time-limited UNCONFIRMED allowance, additive column, no migration of the above.
 )

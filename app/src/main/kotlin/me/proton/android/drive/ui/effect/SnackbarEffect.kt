@@ -19,7 +19,7 @@
 package me.proton.android.drive.ui.effect
 
 import androidx.annotation.StringRes
-import me.proton.core.compose.component.ProtonSnackbarType
+import me.proton.core.drive.base.presentation.component.ProtonSnackbarType
 
 sealed class SnackbarEffect {
     sealed class ShowSnackbar(open val type: ProtonSnackbarType) : SnackbarEffect() {

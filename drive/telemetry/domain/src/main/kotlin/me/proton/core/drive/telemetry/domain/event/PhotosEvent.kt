@@ -35,6 +35,8 @@ object PhotosEvent {
         FAILED_INTEGRITY("failed", "integrity error"),
         FAILED_FOLDER_NOT_FOUND("failed", "folder not found"),
         PAUSED_CONNECTIVITY("paused", "no connection"),
+        PAUSED_WIFI_CONNECTIVITY("paused", "no wifi"),
+        PAUSED_CONNECTIVITY_UNCONFIRMED("paused", "network unconfirmed"),
         PAUSED_DISABLED("paused", "disabled by user"),
         PAUSED_BACKGROUND_RESTRICTIONS("paused", "background mode expired"),
     }
@@ -96,6 +98,11 @@ object PhotosEvent {
                 "reason" to reason.key,
             )
         )
+
+    fun BackupOverUnconfirmedNetwork() = DriveTelemetryEvent(
+        group = group,
+        name = "backup.unconfirmed_network_used",
+    )
 
     fun UpsellPhotosAccepted() = UpsellPhotos("accepted")
 

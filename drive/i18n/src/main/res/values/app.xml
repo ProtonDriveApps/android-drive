@@ -154,6 +154,7 @@
     <string name="notification_content_text_backup_failed_permission">Permissions are missing</string>
     <string name="notification_content_text_backup_failed_connectivity">No internet connection</string>
     <string name="notification_content_text_backup_failed_wifi_connectivity">Waiting for Wi-Fi</string>
+    <string name="notification_content_text_backup_failed_connectivity_unconfirmed">This network might charge for data</string>
     <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Backup is not allowed</string>
     <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
     <string name="notification_content_text_backup_paused_disabled">Backup was disabled</string>

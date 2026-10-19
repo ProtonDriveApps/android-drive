@@ -17,12 +17,16 @@
  */
 package me.proton.core.drive.drivelink.offline.domain.usecase
 
+import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.download.domain.usecase.CancelDownload
 import me.proton.core.drive.drivelink.download.domain.usecase.Download
 import me.proton.core.drive.drivelink.download.domain.usecase.MoveFileIfExists
+import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.linkoffline.domain.usecase.IsAnyAncestorMarkedAsOffline
 import me.proton.core.drive.linkoffline.domain.usecase.IsLinkOrAnyAncestorMarkedAsOffline
 import me.proton.core.drive.linkoffline.domain.usecase.ToggleOffline
@@ -36,6 +40,7 @@ class ToggleOffline @Inject constructor(
     private val download: Download,
     private val cancelDownload: CancelDownload,
     private val moveFileIfExists: MoveFileIfExists,
+    private val announceEvent: AnnounceEvent,
 ) {
     suspend operator fun invoke(driveLink: DriveLink, isRetryable: Boolean = true) = coRunCatching {
         val isAvailableOffline = !isLinkOrAnyAncestorMarkedAsOffline(driveLink.id)
@@ -44,6 +49,9 @@ class ToggleOffline @Inject constructor(
             moveFileIfExists(driveLink).getOrThrow()
         }
         if (isAvailableOffline) {
+            if (driveLink.downloadState == DownloadState.Ready) {
+                announceEvent(driveLink.id.userId, Event.RecentlyAccessed.MarkedAsOffline(driveLink.id))
+            }
             download(driveLink, isRetryable).getOrThrow()
         } else {
             val isAnyAncestorMarkedAsOffline = isAnyAncestorMarkedAsOffline(driveLink.id)

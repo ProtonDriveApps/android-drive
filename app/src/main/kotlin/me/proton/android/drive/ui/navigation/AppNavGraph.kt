@@ -105,6 +105,7 @@ import me.proton.android.drive.ui.navigation.internal.MutableNavControllerSaver
 import me.proton.android.drive.ui.navigation.internal.createNavController
 import me.proton.android.drive.ui.navigation.internal.modalBottomSheet
 import me.proton.android.drive.ui.navigation.internal.rememberAnimatedNavController
+import me.proton.android.drive.ui.navigation.internal.rememberNavigateIfStillOn
 import me.proton.android.drive.ui.screen.AccountSettingsScreen
 import me.proton.android.drive.ui.screen.AlbumScreen
 import me.proton.android.drive.ui.screen.AppAccessScreen
@@ -135,13 +136,14 @@ import me.proton.android.drive.ui.screen.UpsellUfcScreen
 import me.proton.android.drive.ui.screen.UserInvitationScreen
 import me.proton.android.drive.ui.viewmodel.ConfirmStopSyncFolderDialogViewModel
 import me.proton.android.drive.ui.viewmodel.PreviewViewModel
+import me.proton.android.drive.ui.viewmodel.SignOutConfirmationViewModel
 import me.proton.core.account.domain.entity.Account
-import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.base.presentation.component.ModalBottomSheetViewState
 import me.proton.core.drive.device.domain.entity.DeviceId
 import me.proton.core.drive.drivelink.device.presentation.component.RenameDevice
 import me.proton.core.drive.drivelink.rename.presentation.Rename
@@ -284,7 +286,7 @@ fun AppNavGraph(
             deepLinkBaseUrl = deepLinkBaseUrl,
         )
         addSignOutConfirmationDialog(navController)
-        addSigningOut()
+        addSigningOut(navController)
 
         addHome(
             navController = navController,
@@ -386,7 +388,7 @@ fun AppNavGraph(
         addUploadTo(navController, deepLinkBaseUrl, exitApp)
         addAppAccess(navController)
         addSystemAccessDialog(navController)
-        addAutoLockDurations(navController)
+        addAutoLockDurations()
         addPhotosBackup(navController)
         addComputerOptions(navController)
         addRenameComputerDialog(navController)
@@ -475,11 +477,17 @@ fun NavGraphBuilder.addLauncher(
 
 @ExperimentalCoroutinesApi
 @ExperimentalAnimationApi
-fun NavGraphBuilder.addSigningOut() = composable(
+fun NavGraphBuilder.addSigningOut(navController: NavHostController) = composable(
     route = Screen.SigningOut.route,
     arguments = listOf(navArgument(Screen.SigningOut.USER_ID) { type = NavType.StringType })
 ) {
-    SigningOutScreen()
+    SigningOutScreen(
+        navigateToLauncher = {
+            navController.navigate(Screen.Launcher.route) {
+                popUpTo(0)
+            }
+        },
+    )
 }
 
 fun NavGraphBuilder.addSignOutConfirmationDialog(navController: NavHostController) = dialog(
@@ -491,8 +499,10 @@ fun NavGraphBuilder.addSignOutConfirmationDialog(navController: NavHostControlle
     ),
 ) { navBackStackEntry ->
     val userId = UserId(navBackStackEntry.require(Screen.Dialogs.SignOut.USER_ID))
+    val viewModel = hiltViewModel<SignOutConfirmationViewModel>()
     SignOutConfirmationDialog(
         onRemove = {
+            viewModel.confirm()
             navController.navigate(Screen.SigningOut(userId = userId)) {
                 popUpTo(Screen.Home.route) { inclusive = true }
             }
@@ -534,7 +544,6 @@ fun NavGraphBuilder.addFileOrFolderOptions(
     navController: NavHostController,
 ) = modalBottomSheet(
     route = Screen.FileOrFolderOptions.route,
-    viewState = ModalBottomSheetViewState(dismissOnAction = false),
     arguments = listOf(
         navArgument(Screen.Files.USER_ID) { type = NavType.StringType },
         navArgument(Screen.FileOrFolderOptions.SHARE_ID) { type = NavType.StringType },
@@ -554,6 +563,7 @@ fun NavGraphBuilder.addFileOrFolderOptions(
     ),
 ) { navBackStackEntry, runAction ->
     val userId = UserId(navBackStackEntry.require(Screen.Files.USER_ID))
+    val navigateIfStillOn = rememberNavigateIfStillOn(navController, navBackStackEntry)
     FileOrFolderOptions(
         runAction = runAction,
         navigateToInfo = { linkId ->
@@ -602,8 +612,10 @@ fun NavGraphBuilder.addFileOrFolderOptions(
             }
         },
         navigateToAddToAlbumsOptions = { selectionId ->
-            navController.navigate(Screen.AddToAlbumsOptions(userId, selectionId)) {
-                popUpTo(Screen.FileOrFolderOptions.route) { inclusive = true }
+            navigateIfStillOn {
+                navigate(Screen.AddToAlbumsOptions(userId, selectionId)) {
+                    popUpTo(Screen.FileOrFolderOptions.route) { inclusive = true }
+                }
             }
         },
         dismiss = {
@@ -619,7 +631,6 @@ fun NavGraphBuilder.addMultipleFileOrFolderOptions(
     navController: NavHostController,
 ) = modalBottomSheet(
     route = Screen.MultipleFileOrFolderOptions.route,
-    viewState = ModalBottomSheetViewState(dismissOnAction = false),
     arguments = listOf(
         navArgument(Screen.Files.USER_ID) { type = NavType.StringType },
         navArgument(Screen.MultipleFileOrFolderOptions.SELECTION_ID) { type = NavType.StringType },
@@ -664,7 +675,6 @@ fun NavGraphBuilder.addParentFolderOptions(
     navController: NavHostController,
 ) = modalBottomSheet(
     route = Screen.ParentFolderOptions.route,
-    viewState = ModalBottomSheetViewState(dismissOnAction = false),
     arguments = listOf(
         navArgument(Screen.Files.USER_ID) { type = NavType.StringType },
         navArgument(Screen.ParentFolderOptions.SHARE_ID) { type = NavType.StringType },
@@ -672,6 +682,7 @@ fun NavGraphBuilder.addParentFolderOptions(
     ),
 ) { navBackStackEntry, runAction ->
     val userId = UserId(navBackStackEntry.require(Screen.Files.USER_ID))
+    val navigateIfStillOn = rememberNavigateIfStillOn(navController, navBackStackEntry)
     ParentFolderOptions(
         runAction = runAction,
         navigateToCreateFolder = { parentId ->
@@ -685,8 +696,10 @@ fun NavGraphBuilder.addParentFolderOptions(
             }
         },
         navigateToPreview = { fileId ->
-            navController.navigate(Screen.PagerPreview(PagerType.SINGLE, userId, fileId)) {
-                popUpTo(route = Screen.ParentFolderOptions.route) { inclusive = true }
+            navigateIfStillOn {
+                navigate(Screen.PagerPreview(PagerType.SINGLE, userId, fileId)) {
+                    popUpTo(route = Screen.ParentFolderOptions.route) { inclusive = true }
+                }
             }
         },
         navigateToNotificationPermissionRationale = {
@@ -719,7 +732,6 @@ fun NavGraphBuilder.addInvitationOptions(
     navController: NavHostController,
 ) = modalBottomSheet(
     route = Screen.ShareViaInvitations.InternalOptions.route,
-    viewState = ModalBottomSheetViewState(dismissOnAction = false),
     arguments = listOf(
         navArgument(Screen.ShareViaInvitations.InternalOptions.USER_ID) { type = NavType.StringType },
         navArgument(Screen.ShareViaInvitations.InternalOptions.SHARE_ID) { type = NavType.StringType },
@@ -736,7 +748,6 @@ fun NavGraphBuilder.addExternalInvitationOptions(
     navController: NavHostController,
 ) = modalBottomSheet(
     route = Screen.ShareViaInvitations.ExternalOptions.route,
-    viewState = ModalBottomSheetViewState(dismissOnAction = false),
     arguments = listOf(
         navArgument(Screen.ShareViaInvitations.ExternalOptions.USER_ID) { type = NavType.StringType },
         navArgument(Screen.ShareViaInvitations.ExternalOptions.SHARE_ID) { type = NavType.StringType },
@@ -753,7 +764,6 @@ fun NavGraphBuilder.addMemberOptions(
     navController: NavHostController,
 ) = modalBottomSheet(
     route = Screen.ShareMemberOptions.route,
-    viewState = ModalBottomSheetViewState(dismissOnAction = false),
     arguments = listOf(
         navArgument(Screen.ShareMemberOptions.USER_ID) { type = NavType.StringType },
         navArgument(Screen.ShareMemberOptions.SHARE_ID) { type = NavType.StringType },
@@ -824,7 +834,6 @@ fun NavGraphBuilder.addShareLinkPermissions(
     navController: NavHostController,
 ) = modalBottomSheet(
     route = Screen.ShareLinkPermissions.route,
-    viewState = ModalBottomSheetViewState(dismissOnAction = false),
     arguments = listOf(
         navArgument(Screen.ShareLinkPermissions.USER_ID) { type = NavType.StringType },
         navArgument(Screen.ShareLinkPermissions.SHARE_ID) { type = NavType.StringType },
@@ -1402,7 +1411,6 @@ fun NavGraphBuilder.addEnableBackupForBucketsDialog(
     navController: NavHostController,
 ) = modalBottomSheet(
     route = Screen.Photos.Dialogs.EnableBackupForBuckets.route,
-    viewState = ModalBottomSheetViewState(dismissOnAction = false),
     arguments = listOf(
         navArgument(Screen.Photos.Dialogs.EnableBackupForBuckets.USER_ID) {
             type = NavType.StringType
@@ -2054,20 +2062,11 @@ fun NavGraphBuilder.addSystemAccessDialog(navController: NavHostController) = di
     )
 }
 
-fun NavGraphBuilder.addAutoLockDurations(
-    navController: NavHostController,
-) = modalBottomSheet(
+fun NavGraphBuilder.addAutoLockDurations() = modalBottomSheet(
     route = Screen.Settings.AutoLockDurations.route,
-    viewState = ModalBottomSheetViewState(dismissOnAction = false),
 ) { _, runAction ->
     AutoLockDurations(
         runAction = runAction,
-        dismiss = {
-            navController.popBackStack(
-                route = Screen.Settings.AutoLockDurations.route,
-                inclusive = true,
-            )
-        }
     )
 }
 
@@ -2235,7 +2234,6 @@ fun NavGraphBuilder.addComputerOptions(
     navController: NavHostController,
 ) = modalBottomSheet(
     route = Screen.ComputerOptions.route,
-    viewState = ModalBottomSheetViewState(dismissOnAction = false),
     arguments = listOf(
         navArgument(Screen.Files.USER_ID) { type = NavType.StringType },
         navArgument(Screen.ComputerOptions.DEVICE_ID) { type = NavType.StringType },
@@ -2340,7 +2338,6 @@ fun NavGraphBuilder.addLog(navController: NavHostController) = composable(
 
 fun NavGraphBuilder.addLogOptions() = modalBottomSheet(
     route = Screen.Log.Options.route,
-    viewState = ModalBottomSheetViewState(dismissOnAction = false),
     arguments = listOf(
         navArgument(Screen.Log.USER_ID) { type = NavType.StringType },
     ),
@@ -2352,7 +2349,6 @@ fun NavGraphBuilder.addProtonDocsInsertImageOptions(
     navController: NavHostController,
 ) = modalBottomSheet(
     route = Screen.ProtonDocsInsertImageOptions.route,
-    viewState = ModalBottomSheetViewState(dismissOnAction = false),
     arguments = listOf(
         navArgument(Screen.USER_ID) { type = NavType.StringType },
     ),
@@ -2377,7 +2373,6 @@ fun NavGraphBuilder.addOnboarding(
     navController: NavHostController,
 ) = modalBottomSheet(
     route = Screen.Onboarding.route,
-    viewState = ModalBottomSheetViewState(dismissOnAction = false),
     arguments = listOf(
         navArgument(Screen.Onboarding.USER_ID) { type = NavType.StringType },
     ),
@@ -2396,7 +2391,6 @@ fun NavGraphBuilder.addWhatsNew(
     navController: NavHostController,
 ) = modalBottomSheet(
     route = Screen.WhatsNew.route,
-    viewState = ModalBottomSheetViewState(dismissOnAction = false),
     arguments = listOf(
         navArgument(Screen.WhatsNew.USER_ID) { type = NavType.StringType },
         navArgument(Screen.WhatsNew.KEY) { type = NavType.EnumType(WhatsNewKey::class.java) },
@@ -2535,7 +2529,6 @@ fun NavGraphBuilder.addAlbumOptions(
     navController: NavHostController,
 ) = modalBottomSheet(
     route = Screen.AlbumOptions.route,
-    viewState = ModalBottomSheetViewState(dismissOnAction = false),
     arguments = listOf(
         navArgument(Screen.USER_ID) { type = NavType.StringType },
         navArgument(Screen.AlbumOptions.SHARE_ID) { type = NavType.StringType },
@@ -2689,25 +2682,33 @@ fun NavGraphBuilder.addShareMultiplePhotosOptions(
     navController: NavHostController,
 ) = modalBottomSheet(
     route = Screen.ShareMultiplePhotosOptions.route,
-    viewState = ModalBottomSheetViewState(dismissOnAction = false),
     arguments = listOf(
         navArgument(Screen.ShareMultiplePhotosOptions.USER_ID) { type = NavType.StringType },
         navArgument(Screen.ShareMultiplePhotosOptions.SELECTION_ID) { type = NavType.StringType },
     ),
 ) { navBackStackEntry, runAction ->
     val userId = UserId(navBackStackEntry.require(Screen.ShareMultiplePhotosOptions.USER_ID))
+    val navigateIfStillOn = rememberNavigateIfStillOn(navController, navBackStackEntry)
     ShareMultiplePhotosOptions(
         runAction = runAction,
         navigateToCreateNewAlbum = {
-            navController.navigate(
-                Screen.PhotosAndAlbums.CreateNewAlbum(
-                    userId = userId,
-                    sharedAlbum = true,
-                )
-            )
+            navigateIfStillOn {
+                navigate(
+                    Screen.PhotosAndAlbums.CreateNewAlbum(
+                        userId = userId,
+                        sharedAlbum = true,
+                    )
+                ) {
+                    popUpTo(Screen.ShareMultiplePhotosOptions.route) { inclusive = true }
+                }
+            }
         },
         navigateToAlbum = { albumId ->
-            navController.navigate(Screen.Album(albumId))
+            navigateIfStillOn {
+                navigate(Screen.Album(albumId)) {
+                    popUpTo(Screen.ShareMultiplePhotosOptions.route) { inclusive = true }
+                }
+            }
         }
     )
 }
@@ -2716,22 +2717,30 @@ fun NavGraphBuilder.addAddToAlbumsOptions(
     navController: NavHostController,
 ) = modalBottomSheet(
     route = Screen.AddToAlbumsOptions.route,
-    viewState = ModalBottomSheetViewState(dismissOnAction = false),
     arguments = listOf(
         navArgument(Screen.AddToAlbumsOptions.USER_ID) { type = NavType.StringType },
         navArgument(Screen.AddToAlbumsOptions.SELECTION_ID) { type = NavType.StringType },
     ),
 ) { navBackStackEntry, runAction ->
     val userId = UserId(navBackStackEntry.require(Screen.AddToAlbumsOptions.USER_ID))
+    val navigateIfStillOn = rememberNavigateIfStillOn(navController, navBackStackEntry)
     AddToAlbumsOptions(
         runAction = runAction,
         navigateToCreateNewAlbum = {
-            navController.navigate(
-                Screen.PhotosAndAlbums.CreateNewAlbum(userId)
-            )
+            navigateIfStillOn {
+                navigate(
+                    Screen.PhotosAndAlbums.CreateNewAlbum(userId)
+                ) {
+                    popUpTo(Screen.AddToAlbumsOptions.route) { inclusive = true }
+                }
+            }
         },
         navigateToAlbum = { albumId ->
-            navController.navigate(Screen.Album(albumId))
+            navigateIfStillOn {
+                navigate(Screen.Album(albumId)) {
+                    popUpTo(Screen.AddToAlbumsOptions.route) { inclusive = true }
+                }
+            }
         }
     )
 }

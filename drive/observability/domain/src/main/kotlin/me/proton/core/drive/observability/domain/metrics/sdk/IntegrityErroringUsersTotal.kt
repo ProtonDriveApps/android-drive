@@ -24,6 +24,7 @@ import kotlinx.serialization.Serializable
 import me.proton.core.drive.observability.domain.metrics.common.Plan
 import me.proton.core.drive.observability.domain.metrics.common.VolumeType
 import me.proton.core.drive.observability.domain.metrics.sdk.IntegrityErroringUsersTotal.Companion.SCHEMA_ID
+import me.proton.core.drive.observability.domain.metrics.sdk.common.CausedBy
 import me.proton.core.observability.domain.entity.SchemaId
 
 @Serializable
@@ -38,6 +39,7 @@ data class IntegrityErroringUsersTotal(
     data class LabelsData(
         val volumeType: VolumeType,
         val userPlan: Plan,
+        val causedBy: CausedBy,
     )
 
     companion object {

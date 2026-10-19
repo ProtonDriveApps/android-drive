@@ -144,6 +144,7 @@
   <string name="notification_content_text_backup_failed_connectivity">Sem conexão com a internet</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Aguardando por Wi-Fi</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">O backup não é permitido</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">A pasta de backupnão existe mais.</string>
   <string name="notification_content_text_backup_paused_disabled">Backup foi desativado</string>
   <string name="notification_content_text_backup_paused_background_restrictions">O backup não pode ser executado em segundo plano</string>
   <string name="notification_content_text_backup_preparing">Preparando para fazer backup</string>
@@ -176,6 +177,8 @@
   <string name="notification_content_title_transferring">Transferindo dados</string>
   <!-- endregion -->
   <string name="content_description_select_all">Selecionar todos os itens na lista</string>
+  <string name="content_description_select_separator">Selecionar todos os itens em %1$s</string>
+  <string name="photos_error_separator_selection_failed">Some items could not be selected, please try again</string>
   <string name="content_description_selected_options">Mostrar mais opções para a seleção de arquivos e/ou pastas</string>
   <string name="content_description_files_upload_upload_file">Enviar um arquivo</string>
   <string name="content_description_albums_new">Criar um álbum</string>

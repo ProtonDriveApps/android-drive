@@ -65,6 +65,7 @@
   <string name="photos_error_backup_disabled_action">Уключыць</string>
   <string name="photos_error_backup_missing_folder">Прадвызначаная папка для камеры не знойдзена</string>
   <string name="photos_error_backup_failed">Збой рэзервовага капіявання.</string>
+  <string name="photos_error_backup_folder_not_found">Папка рэзервовага капіявання больш не існуе.</string>
   <string name="photos_error_backup_temporarily_disabled">Стварэнне рэзервовай копіі часова адключана.</string>
   <string name="photos_error_missing_permissions">Дазволы адсутнічаюць.</string>
   <!--

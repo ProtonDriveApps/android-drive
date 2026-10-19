@@ -31,6 +31,7 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.drive.base.data.workmanager.addTags
@@ -61,9 +62,8 @@ import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.manager.UploadSdkManager
 import me.proton.core.drive.upload.domain.usecase.UploadFileSdk
 import me.proton.core.drive.upload.domain.usecase.sdk.ResolveContentSizeMismatch
-import me.proton.core.drive.worker.domain.usecase.CanRun
-import me.proton.core.drive.worker.domain.usecase.Done
-import me.proton.core.drive.worker.domain.usecase.Run
+import me.proton.core.drive.worker.domain.entity.Constraint
+import me.proton.core.drive.worker.domain.usecase.WorkerRuns
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.drive.sdk.ProtonDriveSdkException
 import me.proton.drive.sdk.ProtonSdkError
@@ -88,9 +88,7 @@ class UploadFileSdkWorker @AssistedInject constructor(
     private val cleanupWorkers: CleanupWorkers,
     private val networkTypeProviders: @JvmSuppressWildcards Map<NetworkTypeProviderType, NetworkTypeProvider>,
     configurationProvider: ConfigurationProvider,
-    canRun: CanRun,
-    run: Run,
-    done: Done,
+    workerRuns: WorkerRuns,
 ) : UploadCoroutineWorker(
     appContext = appContext,
     workerParams = workerParams,
@@ -99,14 +97,17 @@ class UploadFileSdkWorker @AssistedInject constructor(
     getUploadFileLink = getUploadFileLink,
     uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
-    canRun = canRun,
-    run = run,
-    done = done,
+    workerRuns = workerRuns,
 ) {
     private val uriString = requireNotNull(inputData.getString(KEY_URI_STRING))
 
+    override val runtimeConstraints: Flow<Constraint.Runtime> = networkNotAllowed(networkTypeProviders)
+
     override suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result {
         uploadFileLink.logWorkState("Uploading via SDK (size = ${uploadFileLink.size})")
+        awaitAllowedNetwork(networkTypeProviders, uploadFileLink)
+        requireNotNull(networkTypeProviders[uploadFileLink.networkTypeProviderType])
+            .reportUsage(uploadFileLink.parentLinkId)
         return uploadFileSdk(
             uploadFileLink = uploadFileLink,
             uriString = uriString,

@@ -26,9 +26,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,13 +43,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import me.proton.core.compose.component.ProtonTextButton
-import me.proton.core.compose.component.protonTextButtonColors
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.MediumSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.headlineSmall
+import me.proton.core.drive.base.presentation.component.ProtonTextButton
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.base.presentation.component.protonTextButtonColors
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.shared.presentation.viewevent.LinkSettingsViewEvent
 import me.proton.core.drive.drivelink.shared.presentation.viewmodel.LinkSettingsViewModel
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.LinkSettingsViewState
@@ -173,7 +174,7 @@ fun LinkSettingsLoading(
 @Preview
 @Composable
 private fun LinkSettingsPreview() {
-    ProtonTheme {
+    DriveTheme {
         LinkSettings(
             viewState = LinkSettingsViewState(
                 hasUnsavedChanges = false,

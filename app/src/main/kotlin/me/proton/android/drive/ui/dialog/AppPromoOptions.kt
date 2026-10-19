@@ -26,8 +26,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -42,14 +42,15 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import me.proton.android.drive.ui.viewevent.AppPromoOptionsViewEvent
 import me.proton.android.drive.ui.viewmodel.AppPromoOptionsViewModel
 import me.proton.android.drive.ui.viewstate.AppPromoOptionsViewState
-import me.proton.core.compose.component.ProtonSolidButton
-import me.proton.core.compose.component.ProtonTextButton
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonDimens.ListItemHeight
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.drive.base.presentation.component.ProtonSolidButton
+import me.proton.core.drive.base.presentation.component.ProtonTextButton
 import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.base.presentation.extension.isLandscape
 import me.proton.core.drive.base.presentation.extension.isPortrait
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -154,7 +155,7 @@ private val ButtonMinWidth = 300.dp
 @Preview
 @Composable
 fun AppPromoOptionsPreview() {
-    ProtonTheme {
+    DriveTheme {
         AppPromoOptions(
             viewState = AppPromoOptionsViewState(
                 title = "Enjoying Proton Drive?",

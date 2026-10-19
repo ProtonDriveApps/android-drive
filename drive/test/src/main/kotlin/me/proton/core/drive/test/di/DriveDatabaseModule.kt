@@ -82,6 +82,7 @@ import me.proton.core.usersettings.data.db.UserSettingsDatabase
 import me.proton.drive.android.settings.data.db.AppUiSettingsDatabase
 import javax.inject.Singleton
 import me.proton.core.drive.observability.data.db.ObservabilityDatabase as DriveObservabilityDatabase
+import me.proton.core.drive.recently.accessed.data.db.RecentlyAccessedDatabase
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -257,4 +258,7 @@ abstract class DriveDatabaseBindsModule {
 
     @Binds
     abstract fun provideDriveObservabilityDatabase(appDatabase: DriveDatabase): DriveObservabilityDatabase
+
+    @Binds
+    abstract fun provideRecentlyAccessedDatabase(appDatabase: DriveDatabase): RecentlyAccessedDatabase
 }

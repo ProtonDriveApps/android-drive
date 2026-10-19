@@ -20,13 +20,13 @@ package me.proton.core.drive.drivelink.shared.presentation.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.presentation.component.BottomSheetEntry
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.PermissionViewState
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.PermissionsViewState
 import me.proton.core.presentation.R as CorePresentation
@@ -59,7 +59,7 @@ fun PermissionsOptions(
 @Preview
 @Composable
 fun PermissionsOptionsPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             PermissionsOptions(
                 permissionsViewState = PermissionsViewState(

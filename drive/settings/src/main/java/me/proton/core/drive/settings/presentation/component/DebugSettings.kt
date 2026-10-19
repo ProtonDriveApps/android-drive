@@ -27,9 +27,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import me.proton.core.compose.component.ProtonSettingsHeader
-import me.proton.core.compose.component.ProtonSettingsItem
-import me.proton.core.compose.component.ProtonSettingsToggleItem
+import me.proton.core.drive.base.presentation.component.ProtonSettingsHeader
+import me.proton.core.drive.base.presentation.component.ProtonSettingsItem
+import me.proton.core.drive.base.presentation.component.ProtonSettingsToggleItem
 import me.proton.core.drive.settings.presentation.event.DebugSettingsViewEvent
 import me.proton.core.drive.settings.presentation.state.DebugSettingsViewState
 import me.proton.core.drive.i18n.R as I18N

@@ -35,7 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import me.proton.android.drive.photos.presentation.extension.details
 import me.proton.android.drive.ui.viewmodel.AlbumOptionsViewModel
-import me.proton.core.compose.component.bottomsheet.BottomSheetContent
+import me.proton.core.drive.base.presentation.component.BottomSheetContent
 import me.proton.core.drive.base.presentation.component.BottomSheetEntry
 import me.proton.core.drive.base.presentation.component.RunAction
 import me.proton.core.drive.drivelink.domain.entity.DriveLink

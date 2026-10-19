@@ -21,9 +21,9 @@ package me.proton.android.drive.ui.viewmodel
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
@@ -38,6 +38,7 @@ import me.proton.android.drive.ui.options.filterAll
 import me.proton.android.drive.ui.options.filterPermissions
 import me.proton.android.drive.ui.options.filterPhotoTag
 import me.proton.android.drive.ui.options.filterShare
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
@@ -64,6 +65,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MultipleFileOrFolderOptionsViewModel @Inject constructor(
+    @ApplicationScope private val applicationScope: CoroutineScope,
     savedStateHandle: SavedStateHandle,
     getSelectedDriveLinks: GetSelectedDriveLinks,
     @param:ApplicationContext private val appContext: Context,
@@ -110,7 +112,7 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
                     is Option.Trash -> option.build(
                         runAction = runAction,
                         moveToTrash = {
-                            viewModelScope.launch {
+                            applicationScope.launch {
                                 sendToTrash(userId, driveLinks).onFailure { error ->
                                     error.log(
                                         VIEW_MODEL,
@@ -132,7 +134,7 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
                     is Option.TagPhotoFile -> option.build(
                         runAction = runAction,
                         tagPhotos = {
-                            viewModelScope.launch {
+                            applicationScope.launch {
                                 scanPhotoForTags(driveLinks)
                                 deselectLinks(selectionId).onFailure { error ->
                                     error.log(VIEW_MODEL, "Failed to deselect links")
@@ -143,7 +145,7 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
                     is Option.Download -> option.build(
                         runAction = runAction,
                         download = {
-                            viewModelScope.launch {
+                            applicationScope.launch {
                                 exportToDownload(
                                     driveLinks.filterIsInstance<DriveLink.File>().map { driveLink -> driveLink.id }
                                 ).onFailure { error ->
@@ -164,7 +166,7 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
                     is Option.RemoveFromAlbum -> option.build(
                         runAction = runAction,
                         removeSelectedFromAlbum = {
-                            viewModelScope.launch {
+                            applicationScope.launch {
                                 removePhotosFromAlbum(
                                     driveLinks
                                         .filterIsInstance<DriveLink.File>()

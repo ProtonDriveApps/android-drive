@@ -25,5 +25,12 @@ fun WorkerRun.toWorkerRunEntity() = WorkerRunEntity(
     id = 0,
     userId = userId,
     workerId = workerId,
-    runAt = runAt.value
+    runAt = runAt.value,
+    blocked = blockedValue(isBlocked, isLimited),
 )
+
+internal fun blockedValue(isBlocked: Boolean, isLimited: Boolean): Int = when {
+    !isBlocked -> WorkerRunEntity.NOT_BLOCKED
+    isLimited -> WorkerRunEntity.BLOCKED_LIMITED
+    else -> WorkerRunEntity.BLOCKED_UNLIMITED
+}

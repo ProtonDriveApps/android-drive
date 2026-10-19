@@ -63,6 +63,7 @@
   <string name="photos_error_backup_disabled_action">Ενεργοποίηση</string>
   <string name="photos_error_backup_missing_folder">Δεν βρέθηκε ο προεπιλεγμένος φάκελος της κάμερας</string>
   <string name="photos_error_backup_failed">Αποτυχία δημιουργίας αντιγράφου ασφαλείας.</string>
+  <string name="photos_error_backup_folder_not_found">Ο φάκελος αντιγράφων ασφαλείας δεν υπάρχει πλέον.</string>
   <string name="photos_error_backup_temporarily_disabled">Η δημιουργία αντιγράφων ασφαλείας είναι προσωρινά απενεργοποιημένη.</string>
   <string name="photos_error_missing_permissions">Ελλειπή δικαιώματα.</string>
   <!--

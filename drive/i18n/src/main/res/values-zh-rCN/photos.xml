@@ -62,6 +62,7 @@
   <string name="photos_error_backup_disabled_action">打开</string>
   <string name="photos_error_backup_missing_folder">未找到默认相机文件夹</string>
   <string name="photos_error_backup_failed">备份失败.</string>
+  <string name="photos_error_backup_folder_not_found">Backup folder no longer exists.</string>
   <string name="photos_error_backup_temporarily_disabled">备份暂时不可用。</string>
   <string name="photos_error_missing_permissions">权限不足。</string>
   <!--

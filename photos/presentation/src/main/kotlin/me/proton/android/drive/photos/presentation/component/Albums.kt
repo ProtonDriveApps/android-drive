@@ -42,9 +42,10 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -89,6 +90,7 @@ import me.proton.core.drive.base.presentation.extension.onEmpty
 import me.proton.core.drive.base.presentation.extension.onError
 import me.proton.core.drive.base.presentation.extension.onLoading
 import me.proton.core.drive.base.presentation.extension.rememberVisibleItems
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.files.presentation.component.files.OfflineIcon
 import me.proton.core.drive.files.presentation.extension.LayoutType
@@ -460,9 +462,11 @@ fun AlbumItemCard(
     Card(
         shape = RoundedCornerShape(ProtonDimens.LargeCornerRadius),
         border = BorderStroke(3.dp, borderColor),
-        elevation = ProtonDimens.SmallSpacing,
-        backgroundColor = ProtonTheme.colors.backgroundSecondary,
-        contentColor = ProtonTheme.colors.textNorm,
+        elevation = CardDefaults.cardElevation(defaultElevation = ProtonDimens.SmallSpacing),
+        colors = CardDefaults.cardColors(
+            containerColor = ProtonTheme.colors.backgroundSecondary,
+            contentColor = ProtonTheme.colors.textNorm,
+        ),
         modifier = modifier
             .aspectRatio(1f)
             .sizeIn(minHeight = minCoverSize, minWidth = minCoverSize)
@@ -507,7 +511,7 @@ internal val minCoverSize: Dp = 150.dp
 @Preview
 @Composable
 private fun PreviewAlbumsEmpty() {
-    ProtonTheme {
+    DriveTheme {
         AlbumsEmpty(
             isRefreshEnabled = false,
             isRefreshing = false,
@@ -522,7 +526,7 @@ private fun PreviewAlbumsEmpty() {
 @Preview
 @Composable
 private fun PreviewAlbumItem() {
-    ProtonTheme {
+    DriveTheme {
         AlbumItem(
             album = DriveLink.Album(
                 link = Link.Album(

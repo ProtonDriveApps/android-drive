@@ -20,10 +20,10 @@ package me.proton.core.drive.linkupload.presentation.compose
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import me.proton.core.compose.component.ProtonAlertDialog
-import me.proton.core.compose.component.ProtonAlertDialogButton
-import me.proton.core.compose.component.ProtonAlertDialogText
-import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.drive.base.presentation.component.ProtonAlertDialog
+import me.proton.core.drive.base.presentation.component.ProtonAlertDialogButton
+import me.proton.core.drive.base.presentation.component.ProtonAlertDialogText
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.i18n.R as I18N
 
 @Composable
@@ -50,7 +50,7 @@ fun StorageFullDialog(
 @Preview
 @Composable
 fun StorageFullDialogPreview() {
-    ProtonTheme {
+    DriveTheme {
         StorageFullDialog {}
     }
 }

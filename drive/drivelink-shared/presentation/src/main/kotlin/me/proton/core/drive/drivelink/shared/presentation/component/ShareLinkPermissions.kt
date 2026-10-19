@@ -18,13 +18,13 @@
 package me.proton.core.drive.drivelink.shared.presentation.component
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.component.BottomSheetEntry
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.shared.presentation.entry.PermissionsEntry
 import me.proton.core.drive.drivelink.shared.presentation.entry.ShareUserOptionEntry
 
@@ -51,7 +51,7 @@ fun ShareLinkPermissionsOptions(
 @Preview
 @Composable
 fun ShareLinkPermissionsOptionsPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             ShareLinkPermissionsOptions(
                 entries = listOf(

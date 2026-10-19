@@ -29,16 +29,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.paging.compose.itemKey
 import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.component.list.ListEmpty
 import me.proton.core.drive.base.presentation.component.list.ListError
 import me.proton.core.drive.base.presentation.component.list.ListLoading
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.files.presentation.component.LazyColumnItems
 import me.proton.core.util.kotlin.exhaustive
@@ -141,7 +141,7 @@ fun LazyListScope.FilesGridContent(
 )
 @Composable
 fun PreviewMyFilesEmpty() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             ListEmpty(
                 imageResId = BasePresentation.drawable.empty_folder_daynight,
@@ -160,7 +160,7 @@ fun PreviewMyFilesEmpty() {
 )
 @Composable
 fun PreviewFolderEmpty() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             ListEmpty(
                 imageResId = BasePresentation.drawable.empty_folder_daynight,
@@ -179,7 +179,7 @@ fun PreviewFolderEmpty() {
 )
 @Composable
 fun PreviewTrashEmpty() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             ListEmpty(
                 imageResId = BasePresentation.drawable.empty_trash_daynight,
@@ -198,7 +198,7 @@ fun PreviewTrashEmpty() {
 )
 @Composable
 fun PreviewSharedEmpty() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             ListEmpty(
                 imageResId = BasePresentation.drawable.empty_shared_by_me_daynight,
@@ -217,7 +217,7 @@ fun PreviewSharedEmpty() {
 )
 @Composable
 fun PreviewAvailableOfflineEmpty() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             ListEmpty(
                 imageResId = BasePresentation.drawable.empty_offline_daynight,

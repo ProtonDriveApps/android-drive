@@ -74,9 +74,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
     <string name="photos_error_missing_permissions_description">For continuous and automatic backups, allow %1$s access to All Photos in settings.</string>
-    <string name="photos_error_waiting_connectivity">No internet connection</string>
+    <string name="photos_error_waiting_connectivity">Waiting for connection</string>
     <string name="photos_error_waiting_wifi_connectivity">Waiting for Wi-Fi</string>
     <string name="photos_error_waiting_wifi_connectivity_action">Use cellular</string>
+    <string name="photos_error_wifi_connectivity_unconfirmed">This network might charge for data</string>
+    <string name="photos_error_wifi_connectivity_unconfirmed_action">Allow</string>
     <string name="photos_error_local_storage">Device storage full</string>
     <string name="photos_error_local_storage_description">To continue the backup, you need to free up storage on your device.</string>
     <string name="photos_error_local_storage_action" translatable="false">@string/common_retry</string>
@@ -86,7 +88,10 @@
     <string name="photos_empty_title">No backups yet</string>
     <string name="photos_empty_description">As soon as you have photos or videos on your device, they will appear here.</string>
     <string name="photos_backup_title">Photo backup</string>
-    <string name="photos_backup_option_mobile_data">Use mobile data to backup photos</string>
+    <string name="photos_backup_option_mobile_data">Back up over cellular</string>
+    <string name="photos_backup_option_mobile_data_description">Backs up on any network, which may use paid data.</string>
+    <string name="photos_backup_option_allow_unconfirmed_network">Back up over unverified networks</string>
+    <string name="photos_backup_option_allow_unconfirmed_network_description">Includes hotspots, public Wi-Fi, and other networks we can\'t confirm are free. May occasionally use paid data.</string>
     <string name="photos_backup_option_ignoring_battery_optimizations">Disable battery optimization</string>
     <string name="photos_backup_option_ignoring_battery_optimizations_description">Allows uninterrupted backup when the app is running in the background.</string>
     <string name="photos_backup_in_app_notification_turned_on">Photo backup is turned on</string>

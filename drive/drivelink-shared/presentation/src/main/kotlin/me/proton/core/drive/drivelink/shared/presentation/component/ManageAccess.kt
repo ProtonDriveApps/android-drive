@@ -30,10 +30,10 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
-import androidx.compose.material.Surface
-import androidx.compose.material.Switch
-import androidx.compose.material.Text
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import me.proton.core.compose.component.DeferredCircularProgressIndicator
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
@@ -56,7 +55,9 @@ import me.proton.core.compose.theme.defaultNorm
 import me.proton.core.compose.theme.defaultSmallWeak
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.presentation.component.ActionButton
+import me.proton.core.drive.base.presentation.component.DeferredCircularProgressIndicator
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.shared.presentation.effect.ManageAccessEffect
 import me.proton.core.drive.drivelink.shared.presentation.viewevent.ManageAccessViewEvent
 import me.proton.core.drive.drivelink.shared.presentation.viewmodel.ManageAccessViewModel
@@ -187,7 +188,7 @@ fun ManageAccessContent(
             )
         }
         if (viewState.showStopSharing || viewState.showEditorsCanShare) {
-            Divider(color = ProtonTheme.colors.separatorNorm)
+            HorizontalDivider(color = ProtonTheme.colors.separatorNorm)
             if (viewState.showEditorsCanShare) {
                 LaunchedEffect(viewState.showNewEditorPermissions) {
                     if (viewState.showNewEditorPermissions) {
@@ -255,7 +256,7 @@ private val MinActionHeight = 56.dp
 @Preview
 @Composable
 fun ManageAccessSharedPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             ManageAccess(
                 viewState = ManageAccessViewState(
@@ -308,7 +309,7 @@ fun ManageAccessSharedPreview() {
 @Preview
 @Composable
 fun ManageAccessNotSharedPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             ManageAccess(
                 viewState = ManageAccessViewState(

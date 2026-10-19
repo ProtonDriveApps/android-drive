@@ -19,6 +19,7 @@
 package me.proton.core.drive.worker.data.db
 
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
 import me.proton.core.data.room.db.BaseDao
 import me.proton.core.domain.entity.UserId
@@ -29,6 +30,14 @@ abstract class WorkerDao : BaseDao<WorkerRunEntity>() {
         SELECT * FROM WorkerRunEntity WHERE user_id = :userId AND worker_id = :workerId
     """)
     abstract suspend fun getAll(userId: UserId, workerId: String): List<WorkerRunEntity>
+
+    @Insert
+    abstract suspend fun insert(entity: WorkerRunEntity): Long
+
+    @Query("""
+        UPDATE WorkerRunEntity SET blocked = :blocked WHERE user_id = :userId AND worker_id = :workerId AND id = :id
+    """)
+    abstract suspend fun markBlocked(userId: UserId, workerId: String, id: Long, blocked: Int)
 
     @Query("""
         DELETE FROM WorkerRunEntity WHERE user_id = :userId AND worker_id = :workerId

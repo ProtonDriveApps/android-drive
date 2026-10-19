@@ -64,6 +64,7 @@
   <string name="photos_error_backup_disabled_action">Pornire</string>
   <string name="photos_error_backup_missing_folder">Folderul implicit al camerei nu a fost găsit.</string>
   <string name="photos_error_backup_failed">Conservarea a eșuat.</string>
+  <string name="photos_error_backup_folder_not_found">Folderul de conservări nu mai există.</string>
   <string name="photos_error_backup_temporarily_disabled">Conservarea este momentan dezactivată.</string>
   <string name="photos_error_missing_permissions">Lipsesc permisiunile.</string>
   <!--

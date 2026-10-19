@@ -36,6 +36,7 @@ driveModule(
     api(project(":drive:share:data"))
     api(project(":drive:upload:data"))
     api(project(":drive:worker:data"))
+    implementation(project(":drive:telemetry:domain"))
     implementation(libs.androidx.lifecycle.livedata.ktx)
     testImplementation(project(":drive:db-test"))
 }

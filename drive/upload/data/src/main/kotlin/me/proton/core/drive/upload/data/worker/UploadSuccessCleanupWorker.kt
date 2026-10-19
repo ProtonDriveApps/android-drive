@@ -51,9 +51,7 @@ import me.proton.core.drive.upload.domain.provider.FileProvider
 import me.proton.core.drive.upload.domain.resolver.UriResolver
 import me.proton.core.drive.upload.domain.usecase.AnnounceUploadEvent
 import me.proton.core.drive.upload.domain.usecase.RemoveUploadFile
-import me.proton.core.drive.worker.domain.usecase.CanRun
-import me.proton.core.drive.worker.domain.usecase.Done
-import me.proton.core.drive.worker.domain.usecase.Run
+import me.proton.core.drive.worker.domain.usecase.WorkerRuns
 
 @HiltWorker
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -72,9 +70,7 @@ class UploadSuccessCleanupWorker @AssistedInject constructor(
     private val uploadSdkManager: UploadSdkManager,
     private val fileProvider: FileProvider,
     configurationProvider: ConfigurationProvider,
-    canRun: CanRun,
-    run: Run,
-    done: Done,
+    workerRuns: WorkerRuns,
 ) : UploadCoroutineWorker(
     appContext = appContext,
     workerParams = workerParams,
@@ -83,9 +79,7 @@ class UploadSuccessCleanupWorker @AssistedInject constructor(
     getUploadFileLink = getUploadFileLink,
     uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
-    canRun = canRun,
-    run = run,
-    done = done,
+    workerRuns = workerRuns,
 ) {
 
     override suspend fun onRetriesExhausted() = Unit

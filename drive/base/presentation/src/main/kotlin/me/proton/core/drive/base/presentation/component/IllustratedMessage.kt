@@ -25,8 +25,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +39,7 @@ import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultNorm
 import me.proton.core.compose.theme.headlineNorm
 import me.proton.core.drive.base.presentation.R
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.i18n.R as I18N
 
 @Composable
@@ -132,7 +133,7 @@ fun IllustratedMessage(
 @Preview
 @Composable
 fun PreviewListEmpty() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             IllustratedMessage(
                 imageResId = R.drawable.empty_folder_daynight,
@@ -146,7 +147,7 @@ fun PreviewListEmpty() {
 @Preview
 @Composable
 fun PreviewListEmptyWithDescription() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             IllustratedMessage(
                 imageResId = R.drawable.empty_folder_daynight,

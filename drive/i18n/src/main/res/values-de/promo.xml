@@ -18,9 +18,9 @@
   -->
 <resources>
   <!-- tag(q1campaign) -->
-  <string name="promo_storage_title">1 TB Speicher: 200x des aktuellen Abonnements</string>
+  <string name="promo_storage_title">1 TB Speicherplatz: 200-fache Menge des aktuellen Abonnements</string>
   <!-- tag(q1campaign) -->
-  <string name="promo_claim_offer_button">Angebot beanspruchen</string>
+  <string name="promo_claim_offer_button">Angebot nutzen</string>
   <!-- tag(q1campaign)
         Variable %1$s is price per month
         Example:

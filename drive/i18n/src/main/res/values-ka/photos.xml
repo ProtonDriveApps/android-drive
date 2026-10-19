@@ -63,6 +63,7 @@
   <string name="photos_error_backup_disabled_action">ჩართვა</string>
   <string name="photos_error_backup_missing_folder">ნაგულისხმევი კამერის საქაღალდე აღმოჩენილი არაა</string>
   <string name="photos_error_backup_failed">მარქაფი ჩავარდა</string>
+  <string name="photos_error_backup_folder_not_found">Backup folder no longer exists.</string>
   <string name="photos_error_backup_temporarily_disabled">მარქაფი დროებით გამორთულია.</string>
   <string name="photos_error_missing_permissions">არასამარისი წვდომები.</string>
   <!--

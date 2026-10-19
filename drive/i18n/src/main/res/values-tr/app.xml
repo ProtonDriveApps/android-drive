@@ -144,6 +144,7 @@
   <string name="notification_content_text_backup_failed_connectivity">İnternet bağlantısı yok</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Wi-Fi bekleniyor</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Yedeklemeye izin verilmiyor</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">Yedek klasörü artık yok</string>
   <string name="notification_content_text_backup_paused_disabled">Yedekleme kapalı</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Yedekleme arka planda çalışamaz</string>
   <string name="notification_content_text_backup_preparing">Yedeklemeye hazırlanıyor</string>
@@ -176,6 +177,8 @@
   <string name="notification_content_title_transferring">Veriler aktarılıyor</string>
   <!-- endregion -->
   <string name="content_description_select_all">Listedeki tüm ögeleri seç</string>
+  <string name="content_description_select_separator">%1$s içindeki tüm ögeleri seç</string>
+  <string name="photos_error_separator_selection_failed">Bazı ögeler seçilemed. Lütfen yeniden deneyin</string>
   <string name="content_description_selected_options">Seçilmiş dosya ve/veya klasörler için diğer seçenekleri görüntüle</string>
   <string name="content_description_files_upload_upload_file">Bir dosya yükleyin</string>
   <string name="content_description_albums_new">Yeni albüm oluştur</string>

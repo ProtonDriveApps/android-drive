@@ -22,7 +22,9 @@ import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.link.domain.entity.AlbumId
+import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.key.domain.entity.key.PublicKey
 import java.util.UUID
 
@@ -106,6 +108,7 @@ sealed class Event {
             FAILED,
             FAILED_CONNECTIVITY,
             FAILED_WIFI_CONNECTIVITY,
+            FAILED_CONNECTIVITY_UNCONFIRMED,
             FAILED_PERMISSION,
             FAILED_LOCAL_STORAGE,
             FAILED_DRIVE_STORAGE,
@@ -177,6 +180,38 @@ sealed class Event {
     ) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
         override val occurredAt: TimestampMs = TimestampMs()
+    }
+
+    sealed class RecentlyAccessed : Event() {
+
+        data class FileInfoOpened(val linkId: LinkId) : RecentlyAccessed() {
+            override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_${linkId.id}"
+            override val occurredAt: TimestampMs = TimestampMs()
+        }
+
+        data class PreviewOpened(val fileId: FileId) : RecentlyAccessed() {
+            override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_${fileId.id}"
+            override val occurredAt: TimestampMs = TimestampMs()
+        }
+
+        data class MarkedAsOffline(val linkId: LinkId) : RecentlyAccessed() {
+            override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_${linkId.id}"
+            override val occurredAt: TimestampMs = TimestampMs()
+        }
+
+        data class FilesDownloaded(
+            val fileIds: List<FileId>,
+            val destination: Destination,
+        ) : RecentlyAccessed() {
+            override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
+            override val occurredAt: TimestampMs = TimestampMs()
+
+            enum class Destination {
+                DOWNLOADS,
+                URI,
+                SHARE,
+            }
+        }
     }
 
     data object ForcedSignOut : Event() {

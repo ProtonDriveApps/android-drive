@@ -20,15 +20,15 @@ package me.proton.core.drive.files.presentation.component.folder
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import me.proton.core.compose.component.bottomsheet.BottomSheetContent
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultSmallStrongNorm
+import me.proton.core.drive.base.presentation.component.BottomSheetContent
 import me.proton.core.drive.base.presentation.component.BottomSheetEntry
 import me.proton.core.drive.base.presentation.component.EncryptedItem
 import me.proton.core.drive.drivelink.domain.entity.DriveLink

@@ -139,6 +139,7 @@
   <string name="notification_content_text_backup_failed_connectivity">无网络连接</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">等待Wi-Fi网络</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">备份未被允许</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
   <string name="notification_content_text_backup_paused_disabled">备份已关闭</string>
   <string name="notification_content_text_backup_paused_background_restrictions">备份任务无法在后台运行</string>
   <string name="notification_content_text_backup_preparing">准备备份</string>
@@ -170,6 +171,8 @@
   <string name="notification_content_title_transferring">传输数据</string>
   <!-- endregion -->
   <string name="content_description_select_all">选择列表中的所有项目</string>
+  <string name="content_description_select_separator">Select all items in %1$s</string>
+  <string name="photos_error_separator_selection_failed">Some items could not be selected, please try again</string>
   <string name="content_description_selected_options">为所选文件和/或文件夹显示更多选项</string>
   <string name="content_description_files_upload_upload_file">上传文件</string>
   <string name="content_description_albums_new">创建新相册</string>

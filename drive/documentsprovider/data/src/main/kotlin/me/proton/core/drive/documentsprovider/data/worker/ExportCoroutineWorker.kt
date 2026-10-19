@@ -36,6 +36,7 @@ import me.proton.core.drive.documentsprovider.domain.usecase.GetFileUri
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.download.domain.extension.throwable
 import me.proton.core.drive.drivelink.download.domain.usecase.GetFile
+import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.i18n.R as I18N
 
@@ -50,6 +51,7 @@ abstract class ExportCoroutineWorker(
 ) : CoroutineWorker(appContext, workerParams) {
     protected val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)) { "User id is required" })
     protected abstract val downloadId: String
+    protected abstract val destination: Event.RecentlyAccessed.FilesDownloaded.Destination
 
     override suspend fun doWork(): Result {
         showInfo(applicationContext.getString(I18N.string.common_in_app_notification_download_started))
@@ -94,6 +96,13 @@ abstract class ExportCoroutineWorker(
             announceEvent(
                 userId = userId,
                 event = Event.Download(downloadId, succeeded.size, driveLinks.size)
+            )
+            announceEvent(
+                userId = userId,
+                event = Event.RecentlyAccessed.FilesDownloaded(
+                    fileIds = succeeded.mapNotNull { driveLink -> driveLink.id as? FileId },
+                    destination = destination,
+                )
             )
         }
         return Result.success().also { result -> handleResult(result) }

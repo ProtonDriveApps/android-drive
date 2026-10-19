@@ -31,6 +31,8 @@ import me.proton.core.drive.log.data.extension.toLogEntity
 import me.proton.core.drive.log.domain.entity.Log
 import me.proton.core.drive.log.domain.repository.LogRepository
 import me.proton.core.drive.log.domain.usecase.GetLogLimit
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 
 class LogRepositoryImpl @Inject constructor(
@@ -39,21 +41,18 @@ class LogRepositoryImpl @Inject constructor(
     private val getLogLimit: GetLogLimit,
 ) : LogRepository {
 
-    override suspend fun insert(logs: List<Log>) = db.inTransaction {
-        if (logs.size == 1) {
-            val log = logs.first()
-            db.logDao.insertWithLimit(
-                userId = log.userId,
-                entity = log.toLogEntity(),
-                limit = getLogLimit(),
-            )
-        } else {
-            db.logDao.insertOrIgnore(*logs.map { it.toLogEntity() }.toTypedArray())
-            logs.firstOrNull()?.let { log ->
-                db.logDao.dropOldRowsToFitLimit(userId = log.userId, limit = getLogLimit())
+    private val insertedSinceTrim = ConcurrentHashMap<UserId, AtomicInteger>()
+
+    override suspend fun insert(logs: List<Log>) {
+        if (logs.isEmpty()) return
+        db.logDao.insertOrIgnore(*logs.map { it.toLogEntity() }.toTypedArray())
+        logs.groupingBy { log -> log.userId }.eachCount().forEach { (userId, count) ->
+            val counter = insertedSinceTrim.getOrPut(userId) { AtomicInteger() }
+            if (counter.addAndGet(count) >= TRIM_INTERVAL) {
+                counter.set(0)
+                db.logDao.dropOldRowsToFitLimit(userId = userId, limit = getLogLimit())
             }
         }
-        Unit
     }
 
     override suspend fun processAllLogs(userId: UserId, block: suspend (List<Log>) -> Unit) = db.inTransaction {
@@ -110,5 +109,9 @@ class LogRepositoryImpl @Inject constructor(
         db.logDao.deleteAll(userId)
         db.logLevelDao.deleteAll(userId)
         db.logOriginDao.deleteAll(userId)
+    }
+
+    private companion object {
+        const val TRIM_INTERVAL = 100
     }
 }

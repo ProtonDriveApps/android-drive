@@ -19,12 +19,12 @@
 package me.proton.core.drive.drivelink.device.presentation.component
 
 import androidx.annotation.StringRes
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.component.list.ListError
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.i18n.R as I18N
 
 @Composable
@@ -45,7 +45,7 @@ fun DevicesError(
 @Preview
 @Composable
 fun PreviewDevicesError() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             DevicesError(
                 errorMessage = "No connection",
@@ -58,7 +58,7 @@ fun PreviewDevicesError() {
 @Preview
 @Composable
 fun PreviewDevicesErrorWithRetry() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             DevicesError(
                 errorMessage = "Server error occurred",

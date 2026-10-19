@@ -38,8 +38,9 @@ class ObserveApplicationState @Inject constructor(
             inForeground = state == AppLifecycleProvider.State.Foreground,
             connectivity = when(connectivity){
                 BackupConnectivityManager.Connectivity.NONE -> "disconnected"
-                BackupConnectivityManager.Connectivity.UNMETERED -> "connected (unmetered)"
-                BackupConnectivityManager.Connectivity.CONNECTED -> "connected (metered)"
+                BackupConnectivityManager.Connectivity.CONNECTED_UNMETERED -> "connected (unmetered)"
+                BackupConnectivityManager.Connectivity.CONNECTED_UNCONFIRMED -> "connected (unconfirmed metered)"
+                BackupConnectivityManager.Connectivity.CONNECTED_METERED -> "connected (metered)"
             },
             currentNetworkStatus = connectivityManager.getCurrentNetworkStatusInfo()?.let { cnsi ->
                 buildString {

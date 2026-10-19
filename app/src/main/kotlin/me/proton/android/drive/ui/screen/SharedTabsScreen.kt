@@ -27,7 +27,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -117,7 +117,7 @@ fun SharedTabs(
             }
         }
         Box {
-            Divider(
+            HorizontalDivider(
                 color = ProtonTheme.colors.separatorNorm,
                 modifier = Modifier
                     .fillMaxWidth()

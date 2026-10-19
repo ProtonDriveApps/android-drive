@@ -26,7 +26,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.android.drive.photos.presentation.viewmodel.EnableBackupForBucketsDialogViewModel
-import me.proton.core.compose.component.bottomsheet.RunAction
+import me.proton.core.drive.base.presentation.component.RunAction
 
 @Composable
 @ExperimentalCoroutinesApi

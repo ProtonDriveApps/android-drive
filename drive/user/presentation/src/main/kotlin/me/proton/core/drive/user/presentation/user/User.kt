@@ -26,8 +26,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +52,7 @@ import me.proton.core.compose.theme.defaultSmallWeak
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.firstCodePointAsStringOrNull
 import me.proton.core.drive.base.presentation.extension.currentLocale
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.user.domain.entity.Type
 import me.proton.core.user.domain.entity.User
 import me.proton.core.drive.i18n.R as I18N
@@ -136,7 +137,7 @@ fun UserDetails(
 @Preview(backgroundColor = 0xFFF)
 @Composable
 fun PreviewUserDetails() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             UserDetails(PREVIEW_USER)
         }
@@ -149,7 +150,7 @@ fun PreviewUserDetails() {
 )
 @Composable
 fun PreviewUserDetailsWithLongNameAndAddress() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             UserDetails(
                 PREVIEW_USER.copy(
@@ -164,7 +165,7 @@ fun PreviewUserDetailsWithLongNameAndAddress() {
 @Preview
 @Composable
 private fun PreviewUserSelector() {
-    ProtonTheme(colors = ProtonColors.light()) {
+    DriveTheme(colors = ProtonColors.light()) {
         Surface {
             UserSelector(
                 currentUser = PREVIEW_USER

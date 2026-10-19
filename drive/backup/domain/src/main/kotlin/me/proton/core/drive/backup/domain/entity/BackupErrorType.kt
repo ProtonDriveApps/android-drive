@@ -21,6 +21,7 @@ package me.proton.core.drive.backup.domain.entity
 enum class BackupErrorType {
     OTHER,
     WIFI_CONNECTIVITY,
+    CONNECTIVITY_UNCONFIRMED,
     CONNECTIVITY,
     PERMISSION,
     LOCAL_STORAGE,

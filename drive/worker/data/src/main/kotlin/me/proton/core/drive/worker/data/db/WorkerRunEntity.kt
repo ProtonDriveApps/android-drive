@@ -26,6 +26,7 @@ import androidx.room.PrimaryKey
 import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column
+import me.proton.core.drive.base.data.db.Column.BLOCKED
 import me.proton.core.drive.base.data.db.Column.RUN_AT
 import me.proton.core.drive.base.data.db.Column.USER_ID
 import me.proton.core.drive.base.data.db.Column.WORKER_ID
@@ -52,4 +53,12 @@ data class WorkerRunEntity(
     val workerId: String,
     @ColumnInfo(name = RUN_AT)
     val runAt: Long,
-)
+    @ColumnInfo(name = BLOCKED, defaultValue = "0")
+    val blocked: Int = NOT_BLOCKED,
+) {
+    companion object {
+        const val NOT_BLOCKED = 0
+        const val BLOCKED_LIMITED = 1
+        const val BLOCKED_UNLIMITED = 2
+    }
+}

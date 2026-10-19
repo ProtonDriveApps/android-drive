@@ -17,12 +17,12 @@
  */
 package me.proton.core.drive.files.preview.presentation.component
 
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.domain.entity.FileTypeCategory
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 
 @Composable
 fun UnknownPreview(
@@ -37,7 +37,7 @@ fun UnknownPreview(
 @Preview
 @Composable
 fun PreviewUnknownPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             UnknownPreview()
         }

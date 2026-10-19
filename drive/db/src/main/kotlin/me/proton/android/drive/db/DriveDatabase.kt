@@ -57,6 +57,7 @@ import me.proton.core.data.room.db.CommonConverters
 import me.proton.core.drive.announce.event.data.db.EventConverters
 import me.proton.core.drive.backup.data.db.BackupDatabase
 import me.proton.core.drive.backup.data.db.BackupErrorTypeConverters
+import me.proton.core.drive.backup.data.db.BackupNetworkTypeConverters
 import me.proton.core.drive.backup.data.db.entity.BackupConfigurationEntity
 import me.proton.core.drive.backup.data.db.entity.BackupDuplicateEntity
 import me.proton.core.drive.backup.data.db.entity.BackupErrorEntity
@@ -206,6 +207,8 @@ import me.proton.drive.android.settings.data.db.AppUiSettingsDatabase
 import me.proton.drive.android.settings.data.db.entity.UiSettingsEntity
 import me.proton.core.drive.base.data.db.BaseDatabase as DriveBaseDatabase
 import me.proton.core.drive.observability.data.db.ObservabilityDatabase as DriveObservabilityDatabase
+import me.proton.core.drive.recently.accessed.data.db.RecentlyAccessedDatabase
+import me.proton.core.drive.recently.accessed.data.db.entity.RecentlyAccessedEntity
 import me.proton.core.notification.data.local.db.NotificationConverters as CoreNotificationConverters
 import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNotificationDatabase
 
@@ -336,6 +339,8 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         StalePublicAddressKeyEntity::class,
         // Observability
         CounterEntity::class,
+        // Recently accessed
+        RecentlyAccessedEntity::class,
         // Document scanner
         ScanResultInfoEntity::class,
         ScanResultDocumentEntity::class,
@@ -377,6 +382,7 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
     EventConverters::class,
     LinkSelectionConverters::class,
     BackupErrorTypeConverters::class,
+    BackupNetworkTypeConverters::class,
     DriveUidConverters::class,
 )
 abstract class DriveDatabase :
@@ -438,10 +444,11 @@ abstract class DriveDatabase :
     PublicAddressKeyDatabase,
     AuthDatabase,
     DriveObservabilityDatabase,
+    RecentlyAccessedDatabase,
     DocumentScannerDatabase {
 
     companion object {
-        const val VERSION = 109
+        const val VERSION = 111
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -552,6 +559,8 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_106_107,
             DriveDatabaseMigrations.MIGRATION_107_108,
             DriveDatabaseMigrations.MIGRATION_108_109,
+            DriveDatabaseMigrations.MIGRATION_109_110,
+            DriveDatabaseMigrations.MIGRATION_110_111,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

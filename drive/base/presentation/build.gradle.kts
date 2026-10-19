@@ -35,7 +35,6 @@ driveModule(
     api(libs.androidx.activity.compose)
     api(libs.androidx.compose.constraintlayout)
     api(libs.androidx.compose.foundation)
-    api(libs.androidx.compose.material)
     api(libs.androidx.compose.material3)
     api(libs.androidx.compose.runtime)
     api(libs.androidx.compose.ui)
@@ -50,6 +49,7 @@ driveModule(
     implementation(project(":drive:base:data"))
     implementation(libs.bundles.accompanist)
     implementation(libs.retrofit)
+    runtimeOnly(libs.androidx.compose.material)
 }
 
 configureJacoco()

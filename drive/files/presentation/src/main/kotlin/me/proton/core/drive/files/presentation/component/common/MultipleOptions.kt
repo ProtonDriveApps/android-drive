@@ -22,8 +22,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import me.proton.core.compose.component.bottomsheet.BottomSheetContent
-import me.proton.core.compose.component.bottomsheet.BottomSheetEntry
+import me.proton.core.drive.base.presentation.component.BottomSheetContent
+import me.proton.core.drive.base.presentation.component.BottomSheetEntry
 import me.proton.core.drive.files.presentation.entry.OptionEntry
 import me.proton.core.drive.i18n.R as I18N
 

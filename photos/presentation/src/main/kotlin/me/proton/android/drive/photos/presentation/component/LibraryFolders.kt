@@ -36,9 +36,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Surface
-import androidx.compose.material.Switch
-import androidx.compose.material.Text
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -59,14 +59,15 @@ import coil.size.Scale
 import me.proton.android.drive.photos.presentation.state.LibraryFolder
 import me.proton.android.drive.photos.presentation.state.LibraryFoldersState
 import me.proton.android.drive.photos.presentation.viewmodel.LibraryFoldersViewModel
-import me.proton.core.compose.component.ProtonRawListItem
-import me.proton.core.compose.component.ProtonSettingsHeader
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.captionWeak
 import me.proton.core.compose.theme.defaultNorm
 import me.proton.core.compose.theme.defaultSmallNorm
+import me.proton.core.drive.base.presentation.component.ProtonRawListItem
+import me.proton.core.drive.base.presentation.component.ProtonSettingsHeader
+import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.link.domain.entity.FolderId
 
 @Composable
@@ -235,7 +236,7 @@ private val ThumbnailSize = 40.dp
 @Preview
 @Composable
 fun LibraryFoldersListPreview() {
-    ProtonTheme {
+    DriveTheme {
         Surface {
             LibraryFoldersList(
                 content = LibraryFoldersState.Content(

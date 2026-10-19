@@ -32,7 +32,8 @@ class BackupStoppedEventMapper @Inject constructor(
     suspend operator fun invoke(event: Event.BackupStopped) = when (event.state) {
         BackupState.FAILED -> Reason.FAILED_OTHER
         BackupState.FAILED_CONNECTIVITY -> Reason.PAUSED_CONNECTIVITY
-        BackupState.FAILED_WIFI_CONNECTIVITY -> Reason.PAUSED_CONNECTIVITY
+        BackupState.FAILED_WIFI_CONNECTIVITY -> Reason.PAUSED_WIFI_CONNECTIVITY
+        BackupState.FAILED_CONNECTIVITY_UNCONFIRMED -> Reason.PAUSED_CONNECTIVITY_UNCONFIRMED
         BackupState.FAILED_PERMISSION -> Reason.FAILED_PERMISSIONS
         BackupState.FAILED_LOCAL_STORAGE -> Reason.FAILED_LOCAL_STORAGE
         BackupState.FAILED_DRIVE_STORAGE -> Reason.FAILED_DRIVE_STORAGE

@@ -25,6 +25,7 @@ fun BackupErrorType.toEventBackupState() = when (this) {
     BackupErrorType.OTHER -> Event.Backup.BackupState.FAILED
     BackupErrorType.CONNECTIVITY -> Event.Backup.BackupState.FAILED_CONNECTIVITY
     BackupErrorType.WIFI_CONNECTIVITY -> Event.Backup.BackupState.FAILED_WIFI_CONNECTIVITY
+    BackupErrorType.CONNECTIVITY_UNCONFIRMED -> Event.Backup.BackupState.FAILED_CONNECTIVITY_UNCONFIRMED
     BackupErrorType.PERMISSION -> Event.Backup.BackupState.FAILED_PERMISSION
     BackupErrorType.LOCAL_STORAGE -> Event.Backup.BackupState.FAILED_LOCAL_STORAGE
     BackupErrorType.DRIVE_STORAGE -> Event.Backup.BackupState.FAILED_DRIVE_STORAGE

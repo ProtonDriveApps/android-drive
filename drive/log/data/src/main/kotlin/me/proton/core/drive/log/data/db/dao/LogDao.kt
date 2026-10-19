@@ -21,7 +21,6 @@ package me.proton.core.drive.log.data.db.dao
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
-import androidx.room.Transaction
 import me.proton.core.data.room.db.BaseDao
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.log.data.db.entity.LogEntity
@@ -58,29 +57,6 @@ abstract class LogDao : BaseDao<LogEntity>() {
             )
     """)
     abstract suspend fun dropOldRowsToFitLimit(userId: UserId, limit: Int)
-
-    @Query("SELECT COUNT(*) FROM LogEntity WHERE user_id = :userId")
-    abstract suspend fun countByUser(userId: UserId): Int
-
-    @Query("""
-        DELETE FROM LogEntity WHERE
-            id IN (
-                SELECT id FROM LogEntity WHERE
-                    user_id = :userId
-                ORDER BY creation_time ASC, id ASC
-                LIMIT 1
-            )
-    """)
-    abstract suspend fun deleteOldest(userId: UserId)
-
-
-    @Transaction
-    open suspend fun insertWithLimit(userId: UserId, entity: LogEntity, limit: Int) {
-        if (countByUser(userId) >= limit) {
-            deleteOldest(userId)
-        }
-        insertOrIgnore(entity)
-    }
 
     @Query("""
         DELETE FROM LogEntity WHERE user_id = :userId

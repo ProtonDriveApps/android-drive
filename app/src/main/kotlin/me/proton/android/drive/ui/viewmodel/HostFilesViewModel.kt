@@ -35,10 +35,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.effect.SnackbarEffect
-import me.proton.core.compose.component.ProtonSnackbarType
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
+import me.proton.core.drive.base.presentation.component.ProtonSnackbarType
 import me.proton.core.drive.base.presentation.effect.ListEffect
 import me.proton.core.drive.base.presentation.state.ListContentAppendingState
 import me.proton.core.drive.base.presentation.state.ListContentState
