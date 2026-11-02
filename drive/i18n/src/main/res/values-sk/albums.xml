@@ -56,10 +56,10 @@
             "Add 33 to album"
     -->
   <plurals name="albums_add_non_zero_to_album_button">
-    <item quantity="one">Pridať do %1$d albumu</item>
-    <item quantity="few">Pridať do %1$d albumov</item>
-    <item quantity="many">Pridať do %1$d albumov</item>
-    <item quantity="other">Pridať do %1$d albumov</item>
+    <item quantity="one">Pridať %1$d do albumu</item>
+    <item quantity="few">Pridať %1$d do albumu</item>
+    <item quantity="many">Pridať %1$d do albumu</item>
+    <item quantity="other">Pridať %1$d do albumu</item>
   </plurals>
   <string name="albums_set_album_as_cover_success">Nastaviť ako obal albumu</string>
   <!--

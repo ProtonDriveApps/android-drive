@@ -82,8 +82,8 @@
             "Created 15 folders"
     -->
   <plurals name="folder_upload_created_subfolders">
-    <item quantity="one">Created %1$d folder</item>
-    <item quantity="other">Created %1$d folders</item>
+    <item quantity="one">%1$d pasta criada</item>
+    <item quantity="other">%1$d pastas criadas</item>
   </plurals>
   <!--
         Variable %1$d is a quantity of files scheduled for upload
@@ -92,7 +92,7 @@
             "Scheduled 102 files for upload"
     -->
   <plurals name="folder_upload_scheduled_files_for_upload">
-    <item quantity="one">Scheduled %1$d file for upload</item>
-    <item quantity="other">Scheduled %1$d files for upload</item>
+    <item quantity="one">%1$d ficheiro agendado para carregamento</item>
+    <item quantity="other">%1$d ficheiros agendados para carregamento</item>
   </plurals>
 </resources>

@@ -15,6 +15,10 @@ config/
 app/variables.env
 .claude/*
 !.claude/skills/
+!.claude/hooks/
+.claude/hooks/__pycache__/
+# Shared hook config; personal settings and secrets go in the ignored .claude/settings.local.json.
+!.claude/settings.json
 
 # Local log analysis (analyze-logs skill) — never commit raw logs, sanitized
 # copies, or the token -> real-value reverse map.

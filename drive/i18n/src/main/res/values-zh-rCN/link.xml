@@ -23,7 +23,7 @@
         Variable %1$s is a string representation of a percentage
         Example: "23% uploaded"
     -->
-  <string name="files_upload_stage_uploading_with_progress">%1$s 已上传</string>
+  <string name="files_upload_stage_uploading_with_progress">已上传 %1$s</string>
   <string name="files_upload_content_description_cancel_upload">取消文件上传</string>
   <string name="files_upload_failure_storage_full_title">存储空间已满</string>
   <string name="files_upload_failure_storage_full_description">您账户的存储空间已用完。释放空间或升级到存储空间更大的套餐。</string>

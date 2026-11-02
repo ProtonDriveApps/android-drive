@@ -65,8 +65,8 @@
             "17 items added to album"
     -->
   <plurals name="in_app_notification_add_to_album_success">
-    <item quantity="one">%1$d item adicionado ao álbum</item>
-    <item quantity="other">%1$d itens adicionados ao álbum</item>
+    <item quantity="one">%1$d item adicionado do álbum</item>
+    <item quantity="other">%1$d itens adicionados do álbum</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because they already exist
@@ -126,7 +126,7 @@
     -->
   <plurals name="in_app_notification_remove_from_album_success">
     <item quantity="one">%1$d item removido do álbum</item>
-    <item quantity="other">%1$d item removidos do álbum</item>
+    <item quantity="other">%1$d itens removidos do álbum</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not removed because removing failed
@@ -135,8 +135,8 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_removed_from_album_failed">
-    <item quantity="one">%1$d item falhou</item>
-    <item quantity="other">%1$d itens falharam</item>
+    <item quantity="one">Erro com %1$d item</item>
+    <item quantity="other">Erro com %1$d itens</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Sem fotos</string>
   <string name="albums_empty_album_screen_description">As fotos que você ou outros membros adicionarem aparecerão aqui</string>

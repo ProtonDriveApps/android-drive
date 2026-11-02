@@ -29,10 +29,10 @@
             "2 persons added"
     -->
   <plurals name="share_via_invitations_person_added">
-    <item quantity="one">Дададзена 1 асоба</item>
-    <item quantity="few">Дададзены %1$d асобы</item>
-    <item quantity="many">Дададзены %1$d асоб</item>
-    <item quantity="other">Дададзены %1$d асоб</item>
+    <item quantity="one">Дададзена %1$d асоба</item>
+    <item quantity="few">Дададзена %1$d асобы</item>
+    <item quantity="many">Дададзена %1$d асоб</item>
+    <item quantity="other">Дададзена %1$d асоб</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -40,7 +40,7 @@
             "2 persons cannot be invited"
     -->
   <plurals name="share_via_invitations_person_added_error">
-    <item quantity="one">1 асоба не можа быць запрошана</item>
+    <item quantity="one">%1$d асоба не можа быць запрошана</item>
     <item quantity="few">%1$d асобы не могуць быць запрошаны</item>
     <item quantity="many">%1$d асоб не могуць быць запрошаны</item>
     <item quantity="other">%1$d асоб не могуць быць запрошаны</item>
@@ -51,7 +51,7 @@
             "Sharing with 2 persons"
     -->
   <plurals name="share_via_invitations_sharing_with">
-    <item quantity="one">Абагулена з 1 асобай</item>
+    <item quantity="one">Абагулена з %1$d асобай</item>
     <item quantity="few">Абагулена з %1$d асобамі</item>
     <item quantity="many">Абагулена з %1$d асобамі</item>
     <item quantity="other">Абагулена з %1$d асобамі</item>

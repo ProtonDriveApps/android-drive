@@ -210,7 +210,7 @@
             "13 selected"
     -->
   <plurals name="common_selected">
-    <item quantity="one">%1$d valgte</item>
+    <item quantity="one">%1$d valgt</item>
     <item quantity="other">%1$d valgte</item>
   </plurals>
   <!-- region In-app notification -->

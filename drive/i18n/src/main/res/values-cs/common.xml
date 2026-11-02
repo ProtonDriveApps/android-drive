@@ -218,8 +218,8 @@
             "13 selected"
     -->
   <plurals name="common_selected">
-    <item quantity="one">%1$d vybrán</item>
-    <item quantity="few">vybráno: %1$d</item>
+    <item quantity="one">%1$d vybráno</item>
+    <item quantity="few">%1$d vybrány</item>
     <item quantity="many">%1$d vybráno</item>
     <item quantity="other">%1$d vybráno</item>
   </plurals>

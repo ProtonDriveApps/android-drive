@@ -18,7 +18,7 @@
   -->
 <resources>
   <!-- tag(q1campaign) -->
-  <string name="promo_storage_title">1 TB storage: 200x current plan</string>
+  <string name="promo_storage_title">1TB 저장공간: 현재 요금제의 200배</string>
   <!-- tag(q1campaign) -->
   <string name="promo_claim_offer_button">제안 수락하기</string>
   <!-- tag(q1campaign)
@@ -27,31 +27,44 @@
             "only $6.99"
     -->
   <string name="promo_offer_per_month_details">only %1$s</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_drawer_title">특별 할인</string>
-  <!-- tag(q3campaign2026) Free vs. Unlimited comparison table on the Q3 campaign promo screen -->
-  <string name="promo_q3_campaign_comparison_header_free">무료</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_header_unlimited">무제한</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_storage_label">저장 공간</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_storage_free">5 GB</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_storage_unlimited">500 GB</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_storage_unlimited_subtitle">무료 대비 100배</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_share_edit_label">수정 접근 권한 공유</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_mail_label">사용자 지정 이메일 도메인이 포함된 Mail Plus</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_vpn_label">140개 이상의 국가에 20,000개 이상의 서버를 갖춘 VPN Plus</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_pass_label">50개의 보안 보관함을 갖춘 Pass Plus</string>
-  <!-- tag(q3campaign2026) Preview-only mock price for Q3CampaignPromoScreenPortraitPreview, not a real formatted currency amount -->
-  <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
-  <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
+  <!-- tag(q4campaign2026) Side menu item and badge title for the Black Friday 2026 promo -->
+  <string name="promo_black_friday_2026_special_offer_title">블랙프라이데이</string>
+  <!-- tag(q4campaign2026) Content description of the header image, which shows the discount, the campaign name and its tagline -->
+  <string name="promo_black_friday_2026_header_description">블랙프라이데이, 50% 할인. 연중 최대 세일</string>
+  <!-- tag(q4campaign2026) Column title in the plan comparison table: the free plan -->
+  <string name="promo_black_friday_2026_free_column_title">Free</string>
+  <!-- tag(q4campaign2026) Column title in the plan comparison table: Drive Plus -->
+  <string name="promo_black_friday_2026_plus_column_title">Plus</string>
+  <!-- tag(q4campaign2026) Column title in the plan comparison table: Proton Unlimited -->
+  <string name="promo_black_friday_2026_unlimited_column_title">Unlimited</string>
+  <!-- tag(q4campaign2026) Storage of the free plan in the comparison table -->
+  <string name="promo_black_friday_2026_storage_free">5 GB</string>
+  <!-- tag(q4campaign2026) Storage of Drive Plus in the comparison table -->
+  <string name="promo_black_friday_2026_storage_plus">200 GB</string>
+  <!-- tag(q4campaign2026) Storage of Proton Unlimited in the comparison table -->
+  <string name="promo_black_friday_2026_storage_unlimited">500 GB</string>
+  <!-- tag(q4campaign2026) Row label in the plan comparison table. Mail, VPN, Drive and Pass are Proton product names -->
+  <string name="promo_black_friday_2026_premium_access_label">Mail, VPN, Drive, Pass의 프리미엄 기능에 접근</string>
+  <!-- tag(q4campaign2026) Row label in the plan comparison table: unlimited email aliases -->
+  <string name="promo_black_friday_2026_aliases_label">신원 보호를 위한 무제한 별칭</string>
+  <!-- tag(q4campaign2026) Row label in the plan comparison table -->
+  <string name="promo_black_friday_2026_custom_email_domain_label">사용자 지정 이메일 도메인</string>
+  <!-- tag(q4campaign2026) Row label in the plan comparison table -->
+  <string name="promo_black_friday_2026_priority_support_label">우선 고객 지원</string>
+  <!-- tag(q4campaign2026)
+        Variable %1$d is a discount percentage
+        Example:
+            "-50%"
+    -->
+  <string name="promo_black_friday_2026_discount">%1$d%% 할인</string>
+  <!-- tag(q4campaign2026)
+        Variable %1$s is the yearly price after the first year
+        Example:
+            "Discounts are based on standard monthly pricing.\nAuto-renews at $47.88/year."
+    -->
+  <string name="promo_black_friday_2026_footer">할인은 표준 월간 요금을 기준으로 합니다.\n매년 %1$s에 자동 갱신됩니다.</string>
+  <!-- tag(q4campaign2026) Button on the upgrade offer that keeps the current plan and stops showing the offer. Drive Plus is a plan name -->
+  <string name="promo_black_friday_2026_stay_on_plan_button">Drive Plus 유지하기</string>
   <!-- Upsell promo -->
   <!--
         Variable %1$s is a plan name and %2$s is a price for first period

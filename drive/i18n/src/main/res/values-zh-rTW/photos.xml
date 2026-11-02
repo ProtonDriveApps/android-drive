@@ -71,9 +71,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">對於持續與自動備份，請在設定中允許 %1$s 存取所有照片。</string>
-  <string name="photos_error_waiting_connectivity">沒有網際網路連線</string>
+  <string name="photos_error_waiting_connectivity">Waiting for connection</string>
   <string name="photos_error_waiting_wifi_connectivity">正在等待 Wi-Fi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">使用行動數據</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">This network might charge for data</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">允許</string>
   <string name="photos_error_local_storage">裝置儲存空間已滿</string>
   <string name="photos_error_local_storage_description">要繼續備份，您必須釋放裝置上的儲存空間。</string>
   <string name="photos_error_background_restrictions">設定背景應用程式活動的電池用量為「無限制」</string>
@@ -82,7 +84,10 @@
   <string name="photos_empty_title">尚無備份</string>
   <string name="photos_empty_description">一旦您的裝置上有照片或影片，它們就會在此處出現。</string>
   <string name="photos_backup_title">備份照片</string>
-  <string name="photos_backup_option_mobile_data">使用行動數據備份照片</string>
+  <string name="photos_backup_option_mobile_data">Back up over cellular</string>
+  <string name="photos_backup_option_mobile_data_description">Backs up on any network, which may use paid data.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Back up over unverified networks</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Includes hotspots, public Wi-Fi, and other networks we can\'t confirm are free. May occasionally use paid data.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">停用電量優化</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">當應用程式於背景執行時讓備份不受間斷。</string>
   <string name="photos_backup_in_app_notification_turned_on">照片備份已開啟</string>

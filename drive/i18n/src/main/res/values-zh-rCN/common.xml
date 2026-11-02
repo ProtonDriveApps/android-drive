@@ -60,7 +60,7 @@
             "12 months"
     -->
   <plurals name="common_x_months">
-    <item quantity="other">%1$d months</item>
+    <item quantity="other">%1$d 个月</item>
   </plurals>
   <!--
         Variable %1$d is a number of weeks
@@ -197,7 +197,7 @@
             "50% downloaded"
             "100% downloaded"
     -->
-  <string name="common_percent_downloaded">%1$s 已下载</string>
+  <string name="common_percent_downloaded">已下载 %1$s</string>
   <string name="common_sign_out">退出账户</string>
   <!--
         Variable %1$d is a quantity of files or folders that have been selected
@@ -206,7 +206,7 @@
             "13 selected"
     -->
   <plurals name="common_selected">
-    <item quantity="other">已选%1$d项</item>
+    <item quantity="other">已选择 %1$d</item>
   </plurals>
   <!-- region In-app notification -->
   <!--

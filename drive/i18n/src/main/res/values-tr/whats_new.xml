@@ -19,5 +19,5 @@
 <resources>
   <string name="whats_new_title">Yenilikler</string>
   <string name="whats_new_upload_folder_title">Tek dokunuşla tüm klasörleri yedekleyin</string>
-  <string name="whats_new_upload_folder_description">Sağ üst köşedeki + işaretine dokunup \"Klasör yükle\" seçeneği ile bir klasörün tümünü Proton Drive üzerine yükleyin.</string>
+  <string name="whats_new_upload_folder_description">Sağ üst köşedeki + işaretine dokunup \"Bir klasör yükle\" seçeneği ile bir klasörün tümünü Proton Drive üzerine yükleyin.</string>
 </resources>

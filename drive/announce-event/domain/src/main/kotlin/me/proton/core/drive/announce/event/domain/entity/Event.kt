@@ -375,6 +375,24 @@ sealed class Event {
             }
         }
 
+        data class BlackFriday2026(
+            val promoId: String,
+            val action: Payments.Action? = null,
+            val result: Payments.Result? = null,
+            val failureReason: Payments.FailureReason? = null,
+        ) : Sentry() {
+            override val message: String get() = "Black Friday 2026"
+            override val level: Level get() = Level.INFO
+            override val tags: List<Pair<String, String>> get() =
+                listOfNotNull(
+                    Payments.Tags.EVENT_TYPE.value to EventType.PROMOTION.name.lowercase(),
+                    Payments.Tags.PROMO_ID.value to promoId,
+                    action?.let { Payments.Tags.PROMO_ACTION.value to action.name.lowercase() },
+                    result?.let { Payments.Tags.PROMO_RESULT.value to result.name.lowercase() },
+                    failureReason?.let { Payments.Tags.PROMO_FAILURE_REASON.value to failureReason.name.lowercase() }
+                )
+        }
+
         data class Upsell(
             val action: Payments.Action? = null,
             val result: Payments.Result? = null,
@@ -392,23 +410,6 @@ sealed class Event {
                 )
         }
 
-        data class Q3Campaign2026(
-            val action: Payments.Action? = null,
-            val result: Payments.Result? = null,
-            val failureReason: Payments.FailureReason? = null,
-        ) : Sentry() {
-            override val message: String get() = "Q3 Campaign 2026"
-            override val level: Level get() = Level.INFO
-            override val tags: List<Pair<String, String>> get() =
-                listOfNotNull(
-                    Payments.Tags.EVENT_TYPE.value to EventType.PROMOTION.name.lowercase(),
-                    Payments.Tags.PROMO_ID.value to "q3_campaign_2026",
-                    action?.let { Payments.Tags.PROMO_ACTION.value to action.name.lowercase() },
-                    result?.let { Payments.Tags.PROMO_RESULT.value to result.name.lowercase() },
-                    failureReason?.let { Payments.Tags.PROMO_FAILURE_REASON.value to failureReason.name.lowercase() }
-                )
-        }
-
         object Payments {
             enum class Tags(val value: String) {
                 EVENT_TYPE("event.type"),
@@ -420,7 +421,8 @@ sealed class Event {
 
             enum class Action {
                 SCREEN_SHOWN,
-                CLAIM_OFFER
+                CLAIM_OFFER,
+                STAY_ON_PLAN,
             }
 
             enum class Result {

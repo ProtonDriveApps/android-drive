@@ -43,7 +43,7 @@
         Example:
             "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
     -->
-  <string name="albums_leave_album_dialog_description">¿En verdad desea salir del álbum \"%1$s\"?\nPerderá el acceso a las fotos que aún no haya guardado.</string>
+  <string name="albums_leave_album_dialog_description">¿En verdad desea salir del álbum «%1$s»?\nPerderá el acceso a las fotos que aún no haya guardado.</string>
   <string name="albums_leave_album_dialog_leave_without_saving_action">Salir sin guardar</string>
   <string name="albums_leave_album_dialog_save_and_leave_action">Guarde las fotos y salir</string>
   <string name="albums_add_zero_to_album_button">Agregar al álbum</string>
@@ -75,8 +75,8 @@
             "7 items already exist"
     -->
   <plurals name="in_app_notification_add_to_album_already_exists">
-    <item quantity="one">Ya existe %1$d elemento.</item>
-    <item quantity="other">Ya existen %1$d elementos.</item>
+    <item quantity="one">Ya existe %1$d elemento</item>
+    <item quantity="other">Ya existen %1$d elementos</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because adding failed

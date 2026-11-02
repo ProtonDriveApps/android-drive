@@ -211,7 +211,7 @@
     -->
   <plurals name="common_selected">
     <item quantity="one">%1$d selecionado</item>
-    <item quantity="other">%1$d selecionado</item>
+    <item quantity="other">%1$d selecionados</item>
   </plurals>
   <!-- region In-app notification -->
   <!--

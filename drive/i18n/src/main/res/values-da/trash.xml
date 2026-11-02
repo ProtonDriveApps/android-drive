@@ -24,7 +24,7 @@
     -->
   <plurals name="trash_operation_successful_format">
     <item quantity="one">1 element lagt i papirkurven</item>
-    <item quantity="other">%1$d elementer lagt i papirkurven</item>
+    <item quantity="other">%1$d elementer sendt til papirkurven</item>
   </plurals>
   <!--
         Variable %1$d is a number

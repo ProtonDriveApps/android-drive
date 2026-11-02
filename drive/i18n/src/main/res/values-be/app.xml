@@ -60,6 +60,14 @@
   <string name="upload_to_title_format">Запампаваць у %1$s</string>
   <string name="upload_title">Запампоўванні</string>
   <!--
+        Shown when a tap on the Upload button is ignored because another app draws a window over
+        ours (tapjacking protection).
+        Variable %1$s is an application name
+        Example:
+            "For your security, the tap was blocked because another app is displaying over Proton Drive. Close any floating windows or screen filters and try again."
+    -->
+  <string name="upload_to_obscured_touch_blocked">For your security, the tap was blocked because another app is displaying over %1$s. Close any floating windows or screen filters and try again.</string>
+  <!--
         Variable %1$s is an application name
         Example:
             "Only files can be uploaded to Proton Drive"
@@ -153,6 +161,7 @@
   <string name="notification_content_text_backup_failed_permission">Адсутнічаюць дазволы</string>
   <string name="notification_content_text_backup_failed_connectivity">Няма падключэння да інтэрнэту</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Чаканне Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">This network might charge for data</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Рэзервовая копія забаронена</string>
   <string name="notification_content_text_backup_failed_folder_not_found">Папка рэзервовага капіявання больш не існуе</string>
   <string name="notification_content_text_backup_paused_disabled">Рэзервовае капіяванне было адключана</string>
@@ -189,8 +198,8 @@
   <string name="notification_content_title_transferring">Перадача даных</string>
   <!-- endregion -->
   <string name="content_description_select_all">Выбраць усе элементы ў спісе</string>
-  <string name="content_description_select_separator">Select all items in %1$s</string>
-  <string name="photos_error_separator_selection_failed">Some items could not be selected, please try again</string>
+  <string name="content_description_select_separator">Выбраць усе элементы ў %1$s</string>
+  <string name="photos_error_separator_selection_failed">Немагчыма выбраць некаторыя элементы. Паўтарыце спробу</string>
   <string name="content_description_selected_options">Паказаць больш параметраў для выбраных файлаў і/або папак</string>
   <string name="content_description_files_upload_upload_file">Запампаваць файл</string>
   <string name="content_description_albums_new">Стварыць новы альбом</string>

@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapLatest
@@ -45,6 +46,7 @@ import me.proton.android.drive.ui.navigation.HomeTab
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.viewevent.HomeViewEvent
 import me.proton.android.drive.ui.viewstate.HomeViewState
+import me.proton.android.drive.usecase.BlackFriday2026OfferCache
 import me.proton.android.drive.usecase.CanGetMoreFreeStorage
 import me.proton.android.drive.usecase.GetDynamicHomeTabsFlow
 import me.proton.android.drive.usecase.ShouldShowOverlay
@@ -61,6 +63,7 @@ import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewEvent
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewState
+import me.proton.core.drive.navigationdrawer.presentation.SpecialOffer
 import me.proton.core.drive.share.user.domain.usecase.HasUserInvitationFlow
 import me.proton.core.user.domain.UserManager
 import me.proton.core.user.domain.entity.User
@@ -69,6 +72,7 @@ import me.proton.drive.android.settings.domain.entity.DynamicHomeTab
 import me.proton.drive.android.settings.domain.entity.UserOverlay
 import me.proton.drive.android.settings.domain.entity.WhatsNewKey
 import javax.inject.Inject
+import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.drive.android.settings.domain.entity.HomeTab as HomeTabEntity
 
@@ -85,6 +89,7 @@ class HomeViewModel @Inject constructor(
     private val shouldShowOverlay: ShouldShowOverlay,
     private val getPaymentStatus: GetPaymentStatus,
     private val configurationProvider: ConfigurationProvider,
+    private val blackFriday2026OfferCache: BlackFriday2026OfferCache,
 ) : ViewModel(), NotificationDotViewModel, UserViewModel by UserViewModel(savedStateHandle) {
     private var navigateToTab: ((route: String) -> Unit)? = null
 
@@ -139,13 +144,15 @@ class HomeViewModel @Inject constructor(
             currentDestination.filterNotNull(),
             tabs.filter { tabs -> tabs.isNotEmpty() },
             isPaymentEnabled,
-        ) { user, selectedScreen, tabs, isPaymentEnabled ->
+            blackFriday2026OfferCache.availableOffer(userId),
+        ) { user, selectedScreen, tabs, isPaymentEnabled, blackFriday2026Offer ->
             handleInvalidDestination(selectedScreen, tabs)
             getViewState(
                 user = user,
                 startDestination = selectedScreen,
                 tabs = tabs,
                 showSubscription = user != null && isPaymentEnabled,
+                isBlackFriday2026OfferAvailable = blackFriday2026Offer != null,
             )
         }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
@@ -160,7 +167,7 @@ class HomeViewModel @Inject constructor(
         navigateToGetMoreFreeStorage: () -> Unit,
         navigateToOnboarding: () -> Unit,
         navigateToWhatsNew: (WhatsNewKey) -> Unit,
-        navigateToQ3CampaignPromo: () -> Unit,
+        navigateToBlackFriday2026Promo: () -> Unit,
         navigateToAppPromo: () -> Unit,
     ): HomeViewEvent = object : HomeViewEvent {
         override val onTab = { tab: NavigationTab -> navigateToTab(tab.screen(userId)) }
@@ -179,7 +186,7 @@ class HomeViewModel @Inject constructor(
                     UserOverlay.Onboarding -> navigateToOnboarding()
                     is UserOverlay.WhatsNew -> navigateToWhatsNew(overlay.key)
                     UserOverlay.RatingBooster -> navigateToAppPromo()
-                    UserOverlay.Q3CampaignPromo -> navigateToQ3CampaignPromo()
+                    UserOverlay.Promo -> navigateToBlackFriday2026Promo()
                     null -> {}
                 }
             }
@@ -194,14 +201,23 @@ class HomeViewModel @Inject constructor(
                 override val onBugReport = navigateToBugReport
                 override val onSubscription = navigateToSubscription
                 override val onGetFreeStorage = navigateToGetMoreFreeStorage
-                override val onQ3CampaignPromo = navigateToQ3CampaignPromo
+                override val onSpecialOffer = navigateToBlackFriday2026Promo
             }
     }.also {
         this.navigateToTab = navigateToTab
     }
 
     suspend fun shouldShowOverlay(currentHomeTab: HomeTabEntity?): UserOverlay? =
-        shouldShowOverlay(userId, currentHomeTab).getOrNull(VIEW_MODEL, "Should show overlay failed")
+        shouldShowOverlay(
+            userId = userId,
+            currentHomeTab = currentHomeTab,
+            blackFriday2026Offer = {
+                blackFriday2026OfferCache(userId)
+                    .filterIsInstance<BlackFriday2026OfferCache.State.Loaded>()
+                    .first()
+                    .offer
+            },
+        ).getOrNull(VIEW_MODEL, "Should show overlay failed")
             ?.also { overlay -> CoreLogger.i(VIEW_MODEL, "Showing overlay: $overlay") }
 
     private val NavigationTab.screen: HomeTab
@@ -232,6 +248,7 @@ class HomeViewModel @Inject constructor(
         startDestination: String,
         tabs: Map<out HomeTab, NavigationTab>,
         showSubscription: Boolean,
+        isBlackFriday2026OfferAvailable: Boolean,
     ) =
         HomeViewState(
             tabs = tabs.values.toList(),
@@ -244,8 +261,14 @@ class HomeViewModel @Inject constructor(
                 currentUser = user,
                 showGetFreeStorage = user?.let { canGetMoreFreeStorage(user) } ?: false,
                 showSubscription = showSubscription,
+                specialOffer = blackFriday2026SpecialOffer.takeIf { isBlackFriday2026OfferAvailable },
             )
         )
+
+    private val blackFriday2026SpecialOffer = SpecialOffer(
+        titleResId = I18N.string.promo_black_friday_2026_special_offer_title,
+        badgeResId = BasePresentation.drawable.drive_subscription_badge_black_friday_2026,
+    )
 
     private fun handleInvalidDestination(
         destinationRoute: String,

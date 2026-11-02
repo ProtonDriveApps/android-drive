@@ -27,7 +27,7 @@
     -->
   <string name="manage_access_current_user">%1$s (you)</string>
   <string name="manage_access_share_with_anyone">与他人分享</string>
-  <string name="manage_access_allow_editors_to_share_title">Access</string>
+  <string name="manage_access_allow_editors_to_share_title">访问</string>
   <string name="manage_access_allow_editors_to_share_description">Allow editors to change permissions and share</string>
   <string name="manage_access_link_settings_action">链接设置</string>
   <string name="manage_access_link_description_public">知道此链接的任何人</string>

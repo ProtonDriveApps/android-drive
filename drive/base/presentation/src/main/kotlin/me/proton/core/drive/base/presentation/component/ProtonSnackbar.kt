@@ -30,11 +30,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import me.proton.core.compose.theme.ProtonTheme
@@ -89,11 +86,10 @@ fun ProtonSnackbar(
     shape: Shape = ProtonTheme.shapes.medium,
     contentColor: Color = ProtonTheme.colors.textInverted,
     actionColor: Color = ProtonTheme.colors.textInverted,
-    elevation: Dp = 6.dp,
 ) {
     Snackbar(
         snackbarData = snackbarData,
-        modifier = modifier.shadow(elevation, shape),
+        modifier = modifier,
         actionOnNewLine = actionOnNewLine,
         shape = shape,
         containerColor = when (type) {

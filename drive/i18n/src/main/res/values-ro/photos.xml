@@ -73,9 +73,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Pentru o conservare automată și continuă, permiteți din setări ca %1$s să poată accesa fotografiile.</string>
-  <string name="photos_error_waiting_connectivity">Nu există conexiune la internet.</string>
+  <string name="photos_error_waiting_connectivity">Se așteaptă conexiunea</string>
   <string name="photos_error_waiting_wifi_connectivity">Se așteaptă Wi-Fi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Folosire date mobile</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">Este posibil ca această rețea să perceapă taxe pentru date.</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Permitere</string>
   <string name="photos_error_local_storage">Spațiu de stocare dispozitiv plin.</string>
   <string name="photos_error_local_storage_description">Pentru a continua conservarea trebuie să eliberați spațiu pe dispozitiv.</string>
   <string name="photos_error_background_restrictions">Setați utilizarea bateriei la „Fără restricții” pentru activitatea din fundal a aplicației.</string>
@@ -84,7 +86,10 @@
   <string name="photos_empty_title">Nu există conservări</string>
   <string name="photos_empty_description">De îndată ce stocați fotografii sau filme pe dispozitiv, acestea vor apărea aici.</string>
   <string name="photos_backup_title">Conservare fotografii</string>
-  <string name="photos_backup_option_mobile_data">Folosire date mobile pentru a conserva fotografiile</string>
+  <string name="photos_backup_option_mobile_data">Folosire date mobile la conservare</string>
+  <string name="photos_backup_option_mobile_data_description">Conservare prin orice rețea, inclusiv cele care pot solicita costuri pentru date.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Conservare prin rețele neverificate</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Include hotspoturi, rețele Wi-Fi publice și alte rețele a căror gratuitate nu poate fi confirmată. Este posibil să utilizeze ocazional date contra cost.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Dezactivare optimizare baterie</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Permitere conservări neîntrerupte când aplicația rulează în fundal.</string>
   <string name="photos_backup_in_app_notification_turned_on">Conservarea fotografiilor este activată.</string>
@@ -103,8 +108,8 @@
     -->
   <plurals name="photos_backup_state_uploading_items_left">
     <item quantity="one">Rămase: %1$s</item>
-    <item quantity="few">Rămase: %1$s</item>
-    <item quantity="other">Rămase: %1$s</item>
+    <item quantity="few">Au rămas %1$s de articole</item>
+    <item quantity="other">Au rămas %1$s articole</item>
   </plurals>
   <!--
         Variable %1$s is a quantity (formatted) of photos saved

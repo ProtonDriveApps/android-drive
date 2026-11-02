@@ -25,7 +25,7 @@
             "Jack Frost (you)"
             "jack.frost@example.com (you)"
     -->
-  <string name="manage_access_current_user">%1$s (you)</string>
+  <string name="manage_access_current_user">%1$s (你)</string>
   <string name="manage_access_share_with_anyone">與任何人分享</string>
   <string name="manage_access_allow_editors_to_share_title">存取</string>
   <string name="manage_access_allow_editors_to_share_description">Allow editors to change permissions and share</string>

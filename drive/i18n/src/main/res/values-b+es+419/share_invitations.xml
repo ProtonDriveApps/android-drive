@@ -29,8 +29,8 @@
             "2 persons added"
     -->
   <plurals name="share_via_invitations_person_added">
-    <item quantity="one">1 persona agregada</item>
-    <item quantity="other">%1$d personas agregadas</item>
+    <item quantity="one">1 persona añadida</item>
+    <item quantity="other">%1$d personas añadidas</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -38,8 +38,8 @@
             "2 persons cannot be invited"
     -->
   <plurals name="share_via_invitations_person_added_error">
-    <item quantity="one">No se puede invitar a 1 persona.</item>
-    <item quantity="other">No se puede invitar a %1$d personas.</item>
+    <item quantity="one">No se puede invitar a 1 persona</item>
+    <item quantity="other">No se pueden invitar a %1$d personas</item>
   </plurals>
   <!--
         Variable %1$d is a number

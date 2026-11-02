@@ -30,7 +30,7 @@
     <item quantity="other">%1$d 個項目已成功移動。</item>
   </plurals>
   <string name="file_operation_error_file_already_exists_at_destination">目標資料夾已存在一個具有相同名稱的項目</string>
-  <string name="folder_options_header_title">位於「%1$s」</string>
+  <string name="folder_options_header_title">在「%1$s」中</string>
   <string name="folder_options_header_title_encrypted">位於</string>
   <string name="files_toggle_layout_to_list_content_description">清單版面配置</string>
   <string name="files_toggle_layout_to_grid_content_description">網格版面配置</string>

@@ -72,9 +72,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Para realizar copias de seguridad continuas y automáticas, permita a %1$s acceder a todas las fotos en los ajustes.</string>
-  <string name="photos_error_waiting_connectivity">No hay conexión a internet</string>
+  <string name="photos_error_waiting_connectivity">Esperando la conexión</string>
   <string name="photos_error_waiting_wifi_connectivity">Esperando una conexión Wi-Fi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Usar datos móviles</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">Esta red puede cobrar por el uso de datos</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Permitir</string>
   <string name="photos_error_local_storage">El almacenamiento del dispositivo está lleno</string>
   <string name="photos_error_local_storage_description">Para continuar con la copia de seguridad, necesita liberar espacio de almacenamiento en el dispositivo.</string>
   <string name="photos_error_background_restrictions">Establece la batería a «Sin restricciones» para la actividad de la aplicación en segundo plano.</string>
@@ -83,7 +85,10 @@
   <string name="photos_empty_title">Todavía no hay copias de seguridad.</string>
   <string name="photos_empty_description">Tan pronto tenga fotos o videos en el dispositivo, aparecerán aquí.</string>
   <string name="photos_backup_title">Copia de seguridad de fotos</string>
-  <string name="photos_backup_option_mobile_data">Use los datos móviles para hacer copias de seguridad de las fotos.</string>
+  <string name="photos_backup_option_mobile_data">Copia de seguridad con datos móviles</string>
+  <string name="photos_backup_option_mobile_data_description">Hace copias de seguridad en cualquier red, lo que puede consumir datos de pago.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Copia de seguridad en redes no verificadas</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Incluye puntos de acceso, redes Wi-Fi públicas y otras redes en las que no se puede verificar si son gratuitas. Puede consumir datos de pago ocasionalmente.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Desactivar optimización de la batería</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Permite realizar copias de seguridad ininterrumpidas cuando la aplicación se ejecuta en segundo plano.</string>
   <string name="photos_backup_in_app_notification_turned_on">La copia de seguridad de fotos está activa</string>
@@ -101,8 +106,8 @@
             "12 345 items left"
     -->
   <plurals name="photos_backup_state_uploading_items_left">
-    <item quantity="one">Queda %1$s elemento</item>
-    <item quantity="other">Quedan %1$s elementos</item>
+    <item quantity="one">%1$s elemento restante</item>
+    <item quantity="other">%1$s elementos restantes</item>
   </plurals>
   <!--
         Variable %1$s is a quantity (formatted) of photos saved

@@ -72,9 +72,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">För kontinuerlig och automatisk säkerhetskopiering, tillåt %1$s åtkomst till alla foton i inställningarna.</string>
-  <string name="photos_error_waiting_connectivity">Ingen internetanslutning</string>
+  <string name="photos_error_waiting_connectivity">Väntar på anslutning</string>
   <string name="photos_error_waiting_wifi_connectivity">Väntar på Wi-Fi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Använd mobilt nätverk</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">This network might charge for data</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Tillåt</string>
   <string name="photos_error_local_storage">Enhetens lagringsutrymme fullt</string>
   <string name="photos_error_local_storage_description">För att fortsätta säkerhetskopieringen måste du frigöra lagringsutrymme på din enhet.</string>
   <string name="photos_error_background_restrictions">Ställ in batterianvändning på ”Obegränsat” för appaktivitet i bakgrunden</string>
@@ -83,7 +85,10 @@
   <string name="photos_empty_title">Inga säkerhetskopior än</string>
   <string name="photos_empty_description">Så fort du har foton eller video på din enhet kommer de att visas här.</string>
   <string name="photos_backup_title">Säkerhetskopiera foton</string>
-  <string name="photos_backup_option_mobile_data">Använd mobildata för att säkerhetskopiera foton</string>
+  <string name="photos_backup_option_mobile_data">Back up over cellular</string>
+  <string name="photos_backup_option_mobile_data_description">Backs up on any network, which may use paid data.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Back up over unverified networks</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Includes hotspots, public Wi-Fi, and other networks we can\'t confirm are free. May occasionally use paid data.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Inaktivera batterioptimering</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Tillåter oavbruten säkerhetskopiering när appen körs i bakgrunden.</string>
   <string name="photos_backup_in_app_notification_turned_on">Säkerhetskopiering av foton är på</string>

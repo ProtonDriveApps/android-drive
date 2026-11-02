@@ -919,8 +919,8 @@ sealed class Screen(val route: String) {
             }
     }
     data object Promo {
-        data object Q3Campaign2026 : Screen("promo/{userId}/q3Campaign2026") {
-            operator fun invoke(userId: UserId) = "promo/${userId.id}/q3Campaign2026"
+        data object BlackFriday2026 : Screen("promo/{userId}/blackFriday2026") {
+            operator fun invoke(userId: UserId) = "promo/${userId.id}/blackFriday2026"
             const val USER_ID = Screen.USER_ID
         }
         data object Upsell : Screen("promo/{userId}/upsell"){

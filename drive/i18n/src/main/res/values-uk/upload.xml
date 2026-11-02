@@ -69,7 +69,7 @@
         Example:
             "Uploads are currently limited to 250 files at a time. Try again with fewer files."
     -->
-  <string name="files_upload_limit_reached">Наразі можна одночасно вивантажувати до %1$d файлів. Повторіть спробу з меншою кількістю файлів.</string>
+  <string name="files_upload_limit_reached">Наразі завантажувати можна до %1$d файлів одночасно. Повторіть спробу з меншою кількістю файлів.</string>
   <!--
         Variable %1$d is a quantity of items that are being used
         Example:

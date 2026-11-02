@@ -72,9 +72,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Para backups contínuos e automáticos, permita o acesso de %1$s a Fotos e Vídeos nas configurações.</string>
-  <string name="photos_error_waiting_connectivity">Sem conexão com a internet</string>
+  <string name="photos_error_waiting_connectivity">Agurdando pela conexão</string>
   <string name="photos_error_waiting_wifi_connectivity">Aguardando por Wi-Fi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Usar dados móveis</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">This network might charge for data</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Permitir</string>
   <string name="photos_error_local_storage">Armazenamento do dispositivo está cheio</string>
   <string name="photos_error_local_storage_description">Para continuar o backup, você precisa liberar espaço no seu dispositivo.</string>
   <string name="photos_error_background_restrictions">Defina o uso de bateria como \"Sem restrições\" para a atividade em segundo plano do aplicativo</string>
@@ -83,7 +85,10 @@
   <string name="photos_empty_title">Ainda não há backups</string>
   <string name="photos_empty_description">Assim que você tiver fotos ou vídeos no seu dispositivo, eles aparecerão aqui.</string>
   <string name="photos_backup_title">Backup de fotos</string>
-  <string name="photos_backup_option_mobile_data">Usar dados móveis para backup de fotos</string>
+  <string name="photos_backup_option_mobile_data">Back up over cellular</string>
+  <string name="photos_backup_option_mobile_data_description">Backs up on any network, which may use paid data.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Back up over unverified networks</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Includes hotspots, public Wi-Fi, and other networks we can\'t confirm are free. May occasionally use paid data.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Desativar otimização de bateria</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Permite backup ininterrupto quando o aplicativo está operando em segundo plano.</string>
   <string name="photos_backup_in_app_notification_turned_on">O backup de fotos está ativado</string>

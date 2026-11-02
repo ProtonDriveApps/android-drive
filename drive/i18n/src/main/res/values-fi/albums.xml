@@ -29,7 +29,7 @@
     -->
   <plurals name="albums_photo_count">
     <item quantity="one">%1$s kohde</item>
-    <item quantity="other">%1$s kohteen</item>
+    <item quantity="other">%1$s kohdetta</item>
   </plurals>
   <string name="albums_delete_album_action">Poista albumi</string>
   <string name="albums_delete_album_dialog_title">Poistetaanko albumi?</string>

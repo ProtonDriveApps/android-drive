@@ -24,9 +24,9 @@
     -->
   <plurals name="trash_operation_successful_format">
     <item quantity="one">Element został przeniesiony do kosza</item>
-    <item quantity="few">%1$d elementy zostały przeniesione do kosza</item>
-    <item quantity="many">%1$d elementów zostało przeniesionych do kosza</item>
-    <item quantity="other">%1$d elementów zostało przeniesionych do kosza</item>
+    <item quantity="few">%1$d elementy zostały przeniesione do Kosza</item>
+    <item quantity="many">%1$d elementów zostało przeniesionych do Kosza</item>
+    <item quantity="other">%1$d elementów zostało przeniesionych do Kosza</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -35,7 +35,7 @@
     -->
   <plurals name="trash_restore_operation_successful_format">
     <item quantity="one">Element został przywrócony</item>
-    <item quantity="few">%d elementy został przywróconych</item>
+    <item quantity="few">%d elementy zostały przywrócone</item>
     <item quantity="many">%d elementów zostało przywróconych</item>
     <item quantity="other">%d elementów zostało przywróconych</item>
   </plurals>

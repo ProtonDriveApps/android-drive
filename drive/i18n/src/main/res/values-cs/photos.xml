@@ -74,9 +74,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Pro průběžné a automatické zálohování povolte v nastavení přístup aplikaci %1$s ke všem fotkám.</string>
-  <string name="photos_error_waiting_connectivity">Bez připojení k Internetu</string>
+  <string name="photos_error_waiting_connectivity">Čekání na připojení</string>
   <string name="photos_error_waiting_wifi_connectivity">Čekání na síť Wi-Fi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Použít mobilní data</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">This network might charge for data</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Povolit</string>
   <string name="photos_error_local_storage">Úložiště zařízení je plné</string>
   <string name="photos_error_local_storage_description">Chcete-li pokračovat v zálohování, musíte uvolnit místo na úložišti vašeho zařízení.</string>
   <string name="photos_error_background_restrictions">Nastavte využití baterie na \'Neomezeno\' kvůli aktivitě aplikací na pozadí</string>
@@ -85,7 +87,10 @@
   <string name="photos_empty_title">Zatím žádné zálohy</string>
   <string name="photos_empty_description">Jakmile budete mít v zařízení fotky nebo videa, zobrazí se zde.</string>
   <string name="photos_backup_title">Zálohování fotek</string>
-  <string name="photos_backup_option_mobile_data">Použít mobilní data pro zálohování fotek</string>
+  <string name="photos_backup_option_mobile_data">Back up over cellular</string>
+  <string name="photos_backup_option_mobile_data_description">Backs up on any network, which may use paid data.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Back up over unverified networks</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Includes hotspots, public Wi-Fi, and other networks we can\'t confirm are free. May occasionally use paid data.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Zakázat optimalizaci baterie</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Umožňuje nepřerušené zálohování, když aplikace běží na pozadí.</string>
   <string name="photos_backup_in_app_notification_turned_on">Zálohování fotek je zapnuto</string>

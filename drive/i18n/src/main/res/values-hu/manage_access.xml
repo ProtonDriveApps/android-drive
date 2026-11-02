@@ -27,7 +27,7 @@
     -->
   <string name="manage_access_current_user">%1$s (you)</string>
   <string name="manage_access_share_with_anyone">Megosztás bárkivel</string>
-  <string name="manage_access_allow_editors_to_share_title">Access</string>
+  <string name="manage_access_allow_editors_to_share_title">Elérés</string>
   <string name="manage_access_allow_editors_to_share_description">Allow editors to change permissions and share</string>
   <string name="manage_access_link_settings_action">Hivatkozás beállítások</string>
   <string name="manage_access_link_description_public">Bárki a hivatkozás birtokában</string>

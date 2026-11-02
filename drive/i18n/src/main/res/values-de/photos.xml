@@ -72,9 +72,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Für kontinuierliche und automatische Backups erlaube %1$s den Zugriff auf alle Fotos in den Einstellungen.</string>
-  <string name="photos_error_waiting_connectivity">Keine Internetverbindung</string>
+  <string name="photos_error_waiting_connectivity">Auf Verbindung wird gewartet</string>
   <string name="photos_error_waiting_wifi_connectivity">Warte auf WLAN-Verbindung</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Mobilfunkdaten nutzen</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">Bei dieser Netzwerkverbindung können Datengebühren anfallen.</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Erlauben</string>
   <string name="photos_error_local_storage">Gerätespeicherplatz voll</string>
   <string name="photos_error_local_storage_description">Um die Sicherung fortzusetzen, musst du Speicherplatz auf deinem Gerät freigeben.</string>
   <string name="photos_error_background_restrictions">Setze die Akkunutzung für die Hintergrundaktivität von Anwendungen auf \"uneingeschränkt\".</string>
@@ -83,7 +85,10 @@
   <string name="photos_empty_title">Noch keine Sicherungen</string>
   <string name="photos_empty_description">Sobald du Fotos oder Videos auf deinem Gerät hast, werden sie hier angezeigt.</string>
   <string name="photos_backup_title">Fotosicherung</string>
-  <string name="photos_backup_option_mobile_data">Mobile Daten verwenden, um Fotos zu sichern</string>
+  <string name="photos_backup_option_mobile_data">Datensicherung über Mobilfunk</string>
+  <string name="photos_backup_option_mobile_data_description">Sichert auf jedem Netzwerk, wobei möglicherweise die Datenübertragung kostenpflichtig ist.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Sichern über nicht verifizierte Netzwerke</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Umfasst Hotspots, öffentliches WLAN und andere Netzwerke, bei denen nicht ganz klar ist, ob diese kostenlos sind. Es kann möglicherweise die Datenübertragung kostenpflichtig sein.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Batterieoptimierung deaktivieren</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Ermöglicht eine ununterbrochene Sicherung, wenn die Anwendung im Hintergrund läuft.</string>
   <string name="photos_backup_in_app_notification_turned_on">Fotosicherung ist eingeschaltet</string>

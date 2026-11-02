@@ -92,9 +92,9 @@
     -->
   <plurals name="share_via_invitations_group_members">
     <item quantity="one">%1$d członek</item>
-    <item quantity="few">%1$d członków</item>
+    <item quantity="few">%1$d członkowie</item>
     <item quantity="many">%1$d członków</item>
-    <item quantity="other">%1$d członków</item>
+    <item quantity="other">%1$d członka</item>
   </plurals>
   <string name="share_via_invitations_message_placeholder">Dodaj wiadomość</string>
   <string name="share_via_invitations_send_message_and_name_label">Dołącz wiadomość i nazwę pliku w zaproszeniu</string>

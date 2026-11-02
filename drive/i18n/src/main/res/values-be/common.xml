@@ -218,10 +218,10 @@
             "13 selected"
     -->
   <plurals name="common_selected">
-    <item quantity="one">Выбрана: %1$d</item>
-    <item quantity="few">Выбрана: %1$d</item>
-    <item quantity="many">Выбрана: %1$d</item>
-    <item quantity="other">Выбрана: %1$d</item>
+    <item quantity="one">%1$d выбраны</item>
+    <item quantity="few">%1$d выбраны</item>
+    <item quantity="many">%1$d выбраны</item>
+    <item quantity="other">%1$d выбраны</item>
   </plurals>
   <!-- region In-app notification -->
   <!--

@@ -163,7 +163,7 @@
   <string name="common_error_name_with_forbidden_characters">Navn kan ikke inkludere usynlige tegn, \"%1$s\" eller \"%2$s\"</string>
   <string name="common_error_name_periods">Navn kan ikke være \".\" eller \"..\"</string>
   <string name="common_error_no_internet">Ingen internettforbindelse</string>
-  <string name="common_error_http_5xx">Tjenerfeil oppstod</string>
+  <string name="common_error_http_5xx">Serverfeil oppstod</string>
   <string name="common_error_internal">Intern feil oppstod</string>
   <string name="common_error_crypto">Kryptering eller dekryptering mislyktes</string>
   <!--

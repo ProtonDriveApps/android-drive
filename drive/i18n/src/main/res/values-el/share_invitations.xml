@@ -30,7 +30,7 @@
     -->
   <plurals name="share_via_invitations_person_added">
     <item quantity="one">Προστέθηκε 1 άτομο</item>
-    <item quantity="other">%1$d άτομα προστέθηκαν</item>
+    <item quantity="other">Προστέθηκαν %1$d άτομα</item>
   </plurals>
   <!--
         Variable %1$d is a number

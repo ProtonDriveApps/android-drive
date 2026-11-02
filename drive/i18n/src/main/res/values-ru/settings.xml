@@ -26,25 +26,25 @@
   <plurals name="settings_auto_lock_durations_seconds">
     <item quantity="one">Через %1$d секунду</item>
     <item quantity="few">Через %1$d секунды</item>
-    <item quantity="many">Через %1$d секунд</item>
+    <item quantity="many">Через %1$d секунды</item>
     <item quantity="other">Через %1$d секунд</item>
   </plurals>
   <plurals name="settings_auto_lock_durations_minutes">
     <item quantity="one">Через %1$d минуту</item>
     <item quantity="few">Через %1$d минуты</item>
-    <item quantity="many">Через %1$d минут</item>
+    <item quantity="many">Через %1$d минуты</item>
     <item quantity="other">Через %1$d минут</item>
   </plurals>
   <plurals name="settings_auto_lock_durations_hours">
     <item quantity="one">Через %1$d час</item>
     <item quantity="few">Через %1$d часа</item>
-    <item quantity="many">Через %1$d часов</item>
+    <item quantity="many">Через %1$d часа</item>
     <item quantity="other">Через %1$d часов</item>
   </plurals>
   <plurals name="settings_auto_lock_durations_days">
     <item quantity="one">Через %1$d день</item>
     <item quantity="few">Через %1$d дня</item>
-    <item quantity="many">Через %1$d дней</item>
+    <item quantity="many">Через %1$d дня</item>
     <item quantity="other">Через %1$d дней</item>
   </plurals>
   <string name="settings_section_backup">Резервное копирование</string>

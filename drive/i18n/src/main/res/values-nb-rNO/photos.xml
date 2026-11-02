@@ -37,7 +37,7 @@
             "...available across all your devices.
              Proton Drive takes your privacy seriously..."
     -->
-  <string name="photos_permission_rational_description">Dette er nødvendig for å sikre at alle bildene dine er sikkerhetskopiert og tilgjengelige på alle enhetene dine.\n%1$s tar personvernet ditt på alvor og får bare tilgang til bildene dine for synkronisering og sikkerhetskopiering.</string>
+  <string name="photos_permission_rational_description">Dette er nødvendig for å sikre at alle bildene dine er sikkerhetskopiert og tilgjengelige på alle enhetene.\n%1$s tar personvernet på alvor og får bare tilgang til bildene dine for synkronisering og sikkerhetskopiering.</string>
   <string name="photos_permission_rational_confirm_action">Innstillinger</string>
   <string name="photos_empty_loading_label_encrypted">Ende-til-ende-kryptert</string>
   <string name="photos_empty_loading_label_progress">Sikkerhetskopiering pågår.\nDet kan ta litt tid</string>
@@ -72,9 +72,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">For kontinuerlig og automatisk sikkerhetskopiering, gi %1$s tilgang til \'alle bilder\' i innstillingene.</string>
-  <string name="photos_error_waiting_connectivity">Ingen internettforbindelse</string>
+  <string name="photos_error_waiting_connectivity">Venter på tilkobling</string>
   <string name="photos_error_waiting_wifi_connectivity">Venter på Wi-Fi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Bruk mobil</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">Dette nettverket kan ta betalt for data</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Tillat</string>
   <string name="photos_error_local_storage">Enhetens lagringsplass full</string>
   <string name="photos_error_local_storage_description">For å fortsette sikkerhetskopieringen må du frigjøre lagringsplass på enheten.</string>
   <string name="photos_error_background_restrictions">Sett batteriet til \'ubegrenset\' for bakgrunnsappaktivitet</string>
@@ -83,7 +85,10 @@
   <string name="photos_empty_title">Ingen sikkerhetskopier enda</string>
   <string name="photos_empty_description">Så snart du har bilder eller videoer på enheten din, vises de her.</string>
   <string name="photos_backup_title">Sikkerhetskopiering av bilder</string>
-  <string name="photos_backup_option_mobile_data">Bruk mobildata for å ta sikkerhetskopi av bilder</string>
+  <string name="photos_backup_option_mobile_data">Sikkerhetskopier over mobilnettet</string>
+  <string name="photos_backup_option_mobile_data_description">Sikkerhetskopierer på alle nettverk, og kan bruke data du betaler for.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Sikkerhetskopier over ubekreftede nettverk</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Inkluderer hotspots, offentlig Wi-Fi og andre nettverk vi ikke kan bekrefte er gratis. Kan av og til bruke data du betaler for.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Deaktiver batterioptimalisering</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Tillater uavbrutt sikkerhetskopiering når appen kjører i bakgrunnen.</string>
   <string name="photos_backup_in_app_notification_turned_on">Sikkerhetskopiering av bilder er slått på</string>

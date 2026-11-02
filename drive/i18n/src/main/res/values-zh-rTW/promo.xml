@@ -26,32 +26,45 @@
         Example:
             "only $6.99"
     -->
-  <string name="promo_offer_per_month_details">only %1$s</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_drawer_title">特別優惠</string>
-  <!-- tag(q3campaign2026) Free vs. Unlimited comparison table on the Q3 campaign promo screen -->
-  <string name="promo_q3_campaign_comparison_header_free">免費</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_header_unlimited">吃到飽</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_storage_label">儲存空間</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_storage_free">5 GB</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_storage_unlimited">500 GB</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_storage_unlimited_subtitle">比免費方案多 100 倍</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_share_edit_label">以編輯存取權限共享</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_mail_label">隨附自訂電子郵件網域的 Mail Plus</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_vpn_label">隨附 140+ 個國家 20,000+ 個伺服器的 VPN Plus</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_pass_label">隨附 50 個安全保管庫的 Pass Plus</string>
-  <!-- tag(q3campaign2026) Preview-only mock price for Q3CampaignPromoScreenPortraitPreview, not a real formatted currency amount -->
-  <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
-  <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
+  <string name="promo_offer_per_month_details">只是 %1$s</string>
+  <!-- tag(q4campaign2026) Side menu item and badge title for the Black Friday 2026 promo -->
+  <string name="promo_black_friday_2026_special_offer_title">黑色星期五特惠活動</string>
+  <!-- tag(q4campaign2026) Content description of the header image, which shows the discount, the campaign name and its tagline -->
+  <string name="promo_black_friday_2026_header_description">黑色星期五特惠活動，立省 50%。全年力度最大的優惠活動</string>
+  <!-- tag(q4campaign2026) Column title in the plan comparison table: the free plan -->
+  <string name="promo_black_friday_2026_free_column_title">Free</string>
+  <!-- tag(q4campaign2026) Column title in the plan comparison table: Drive Plus -->
+  <string name="promo_black_friday_2026_plus_column_title">Plus</string>
+  <!-- tag(q4campaign2026) Column title in the plan comparison table: Proton Unlimited -->
+  <string name="promo_black_friday_2026_unlimited_column_title">Unlimited</string>
+  <!-- tag(q4campaign2026) Storage of the free plan in the comparison table -->
+  <string name="promo_black_friday_2026_storage_free">5 GB</string>
+  <!-- tag(q4campaign2026) Storage of Drive Plus in the comparison table -->
+  <string name="promo_black_friday_2026_storage_plus">200 GB</string>
+  <!-- tag(q4campaign2026) Storage of Proton Unlimited in the comparison table -->
+  <string name="promo_black_friday_2026_storage_unlimited">500 GB</string>
+  <!-- tag(q4campaign2026) Row label in the plan comparison table. Mail, VPN, Drive and Pass are Proton product names -->
+  <string name="promo_black_friday_2026_premium_access_label">存取進階版 Mail、VPN、Drive、Pass</string>
+  <!-- tag(q4campaign2026) Row label in the plan comparison table: unlimited email aliases -->
+  <string name="promo_black_friday_2026_aliases_label">無限制別名，全方位隱藏您的身分</string>
+  <!-- tag(q4campaign2026) Row label in the plan comparison table -->
+  <string name="promo_black_friday_2026_custom_email_domain_label">自訂電子郵件網域名稱</string>
+  <!-- tag(q4campaign2026) Row label in the plan comparison table -->
+  <string name="promo_black_friday_2026_priority_support_label">優先客戶支援服務</string>
+  <!-- tag(q4campaign2026)
+        Variable %1$d is a discount percentage
+        Example:
+            "-50%"
+    -->
+  <string name="promo_black_friday_2026_discount">-%1$d%%</string>
+  <!-- tag(q4campaign2026)
+        Variable %1$s is the yearly price after the first year
+        Example:
+            "Discounts are based on standard monthly pricing.\nAuto-renews at $47.88/year."
+    -->
+  <string name="promo_black_friday_2026_footer">折扣以標準月費為準。\n將以每年 %1$s 自動續訂。</string>
+  <!-- tag(q4campaign2026) Button on the upgrade offer that keeps the current plan and stops showing the offer. Drive Plus is a plan name -->
+  <string name="promo_black_friday_2026_stay_on_plan_button">繼續使用 Drive Plus</string>
   <!-- Upsell promo -->
   <!--
         Variable %1$s is a plan name and %2$s is a price for first period

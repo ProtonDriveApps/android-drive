@@ -26,10 +26,14 @@ import me.proton.core.drive.i18n.R as I18N
 
 class GetSubscriptionAction @Inject constructor() {
     operator fun invoke(
-        isQ3CampaignPromoEnabled: Boolean = false,
+        isPromoAvailable: Boolean = false,
         onAction: () -> Unit,
     ) = Action.Image(
-        imageResId = if (isQ3CampaignPromoEnabled) BasePresentation.drawable.drive_subscription_badge_q3_campaign_2026 else subscriptionActionImageResId,
+        imageResId = if (isPromoAvailable) {
+            BasePresentation.drawable.drive_subscription_badge_black_friday_2026
+        } else {
+            subscriptionActionImageResId
+        },
         contentDescriptionResId = I18N.string.content_description_subscription_action,
         onAction = onAction,
     )

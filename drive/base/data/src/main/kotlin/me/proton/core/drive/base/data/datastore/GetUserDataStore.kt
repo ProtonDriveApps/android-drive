@@ -49,6 +49,13 @@ class GetUserDataStore @Inject constructor(
         }
     }
 
+    /**
+     * Every key ever written to the user DataStore. Never remove or rename an entry, even when
+     * it is no longer used: existing installs still have the value on disk, and reusing the
+     * name later would read an old, unrelated value.
+     * Keys must be plain string literals — no interpolation or computed names — so the full
+     * set is visible here at a glance.
+     */
     companion object {
         private const val DATASTORE_ROOT = "datastore"
         private const val DATASTORE_USER_PREFERENCES_FILE = "user.preferences_pb"
@@ -61,9 +68,13 @@ class GetUserDataStore @Inject constructor(
         private const val KEY_UPLOAD_FOLDER_ACTION_INVOKED = "upload_folder_action_invoked"
         private const val KEY_SCAN_DOCUMENT_ACTION_INVOKED = "scan_document_action_invoked"
         private const val KEY_SPRING_SALE_PROMO_2026_LAST_SHOWN = "spring_sale_promo_2026_last_shown"
+        // Retired (Q3 2026 promo); kept so the key name is never reused for a different type.
+        @Suppress("UnusedPrivateProperty")
         private const val KEY_Q3_CAMPAIGN_PROMO_2026_LAST_SHOWN = "q3_campaign_promo_2026_last_shown"
         private const val KEY_NEW_EDITOR_PERMISSIONS_DISMISSED = "new_editor_permissions_dismissed"
         private const val KEY_NEW_EDITOR_PERMISSIONS_FIRST_SHOWN = "new_editor_permissions_first_shown"
+        private const val KEY_BLACK_FRIDAY_2026_FREE_PROMO_LAST_SHOWN = "black_friday_2026_free_last_shown"
+        private const val KEY_BLACK_FRIDAY_2026_UPGRADE_PROMO_LAST_SHOWN = "black_friday_2026_upgrade_last_shown"
     }
 
     data object Keys {
@@ -75,8 +86,11 @@ class GetUserDataStore @Inject constructor(
         val newAlbumName get() = stringPreferencesKey(KEY_NEW_ALBUM_NAME)
         val photosMigrationTagsLastFinishedUpdate get() = longPreferencesKey(KEY_PHOTOS_MIGRATION_TAGS_LAST_FINISHED_UPDATE)
         val scanDocumentActionInvoked get() = booleanPreferencesKey(KEY_SCAN_DOCUMENT_ACTION_INVOKED)
-        val q3CampaignPromo2026LastShown get() = longPreferencesKey(KEY_Q3_CAMPAIGN_PROMO_2026_LAST_SHOWN)
         val newEditorPermissionsDismissed get() = booleanPreferencesKey(KEY_NEW_EDITOR_PERMISSIONS_DISMISSED)
         val newEditorPermissionsFirstShown get() = longPreferencesKey(KEY_NEW_EDITOR_PERMISSIONS_FIRST_SHOWN)
+        val blackFriday2026FreePromoLastShown get() = longPreferencesKey(KEY_BLACK_FRIDAY_2026_FREE_PROMO_LAST_SHOWN)
+        val blackFriday2026UpgradePromoLastShown get() = longPreferencesKey(
+            KEY_BLACK_FRIDAY_2026_UPGRADE_PROMO_LAST_SHOWN
+        )
     }
 }

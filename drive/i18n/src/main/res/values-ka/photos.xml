@@ -72,9 +72,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">უწყვეტი და ავტომატური მარქაფისთვის %1$s-ს წვდომა პარამეტრებში Proton-ის ყველა სერვისთან მიეცით.</string>
-  <string name="photos_error_waiting_connectivity">ინტერნეტი არ გაქვთ</string>
+  <string name="photos_error_waiting_connectivity">დაკავშირების მოლოდინი</string>
   <string name="photos_error_waiting_wifi_connectivity">Wi-Fi-ის მოლოდინი</string>
   <string name="photos_error_waiting_wifi_connectivity_action">ფიჭური ქსელის გამოყენება</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">This network might charge for data</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">ნების დართვა</string>
   <string name="photos_error_local_storage">მოწყობილობის საცავი სავსეა</string>
   <string name="photos_error_local_storage_description">მარქაფის გასაგრძელებლად თქვენს მოწყობილობაზე ადგილი უნდა გაათავისუფლოთ.</string>
   <string name="photos_error_background_restrictions">დააყენეთ ელემენტი \'შეუზღუდავზე\' ფონური აპის აქტივობისთვის</string>
@@ -83,7 +85,10 @@
   <string name="photos_empty_title">მარქაფების გარეშე</string>
   <string name="photos_empty_description">როგორც კი თქვენს მოწყობილობაზე სურათები ან ვიდეოები გაგიჩნდებათ, ისინი აქაც გამოჩნდება.</string>
   <string name="photos_backup_title">სურათების მარქაფი</string>
-  <string name="photos_backup_option_mobile_data">მობილური ინტერნეტის გამოყენება ფოტოების მარქაფისთვის</string>
+  <string name="photos_backup_option_mobile_data">Back up over cellular</string>
+  <string name="photos_backup_option_mobile_data_description">Backs up on any network, which may use paid data.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Back up over unverified networks</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Includes hotspots, public Wi-Fi, and other networks we can\'t confirm are free. May occasionally use paid data.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">ელემენტის ოპტიმიზაციის გამორთვა</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">საშუალებას გაძლევთ, მარქაფი წყვეტის გარეშე გააკეთოთ, როცა აპი ფონურადაა გაშვებული.</string>
   <string name="photos_backup_in_app_notification_turned_on">სურათების მარქაფი ჩართულია</string>
@@ -158,8 +163,8 @@
            Finished, 12 345 files were migrated.
     -->
   <plurals name="photos_tags_migration_finished">
-    <item quantity="one">დასრულდა, გადატანილია %1$s ფაილი.</item>
-    <item quantity="other">დასრულდა, გადატანილია %1$s ფაილი.</item>
+    <item quantity="one">Finished, %1$s file was migrated.</item>
+    <item quantity="other">Finished, %1$s files were migrated.</item>
   </plurals>
   <!--
         Variable %1$s is a quantity (formatted) of photos to migrate
@@ -169,8 +174,8 @@
            Ongoing, migrating 12 345 files, 123 waiting for download.
     -->
   <plurals name="photos_tags_migration_ongoing">
-    <item quantity="one">მიმდინარეობს %1$s ფაილის გადატანა, %2$s ელის ჩამოტვირთვას.</item>
-    <item quantity="other">მიმდინარეობს %1$s ფაილის გადატანა, %2$s ელის ჩამოტვირთვას.</item>
+    <item quantity="one">Ongoing, migrating %1$s file, %2$s waiting for download.</item>
+    <item quantity="other">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
   </plurals>
   <string name="photos_folder_selection_title">ფოტოების მარქაფი საიდან</string>
   <string name="photos_folder_selection_description">მონიშნეთ დასამარქაფებელი საქაღალდეები და მათი ფოტოები ფოტოების ჩანართსი გამოჩნდება.</string>

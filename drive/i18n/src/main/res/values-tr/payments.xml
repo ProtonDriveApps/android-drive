@@ -23,7 +23,7 @@
             "Subscription auto renews at $9.99/month"
     -->
   <string name="plan_subscription_auto_renews_monthly">Abonelik %1$s/ay tutar ile otomatik olarak yenilenir</string>
-  <string name="plan_subscription_auto_renews_annual">Abonelik %1$s/yıl tutar ile otomatik olarak yenilenir</string>
+  <string name="plan_subscription_auto_renews_annual">Abonelik %1$s/yıl tutar ile otomatik yenilenir</string>
   <string name="plan_welcome_offer_auto_renews_monthly">Karşılama teklifi. %1$s/ay tutar ile otomatik olarak yenilenir</string>
   <string name="plan_welcome_offer_auto_renews_annual">Karşılama teklifi. %1$s/yıl tutar ile otomatik olarak yenilenir</string>
 </resources>

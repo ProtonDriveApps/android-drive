@@ -63,7 +63,7 @@
             "17 items added to album"
     -->
   <plurals name="in_app_notification_add_to_album_success">
-    <item quantity="other">%1$d개 항목이 앨범에 추가되었습니다</item>
+    <item quantity="other">%1$d개 항목이 앨범으로 이동되었습니다.</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because they already exist
@@ -117,7 +117,7 @@
             "13 items removed from album"
     -->
   <plurals name="in_app_notification_remove_from_album_success">
-    <item quantity="other">%1$d개 항목이 앨범에서 제거되었습니다</item>
+    <item quantity="other">%1$d개 항목이 앨범에서 제거되었습니다.</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not removed because removing failed

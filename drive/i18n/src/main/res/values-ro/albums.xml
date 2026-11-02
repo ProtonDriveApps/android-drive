@@ -29,8 +29,8 @@
     -->
   <plurals name="albums_photo_count">
     <item quantity="one">%1$s articol</item>
-    <item quantity="few">%1$s articole</item>
-    <item quantity="other">%1$s de articole</item>
+    <item quantity="few">%1$s de articole</item>
+    <item quantity="other">%1$s articole</item>
   </plurals>
   <string name="albums_delete_album_action">Ștergere album</string>
   <string name="albums_delete_album_dialog_title">Ștergeți albumul?</string>

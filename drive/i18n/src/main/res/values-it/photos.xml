@@ -72,9 +72,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Per backup continui e automatici, consenti a %1$s l\'accesso a tutte le foto nelle impostazioni.</string>
-  <string name="photos_error_waiting_connectivity">Nessuna connessione a Internet</string>
+  <string name="photos_error_waiting_connectivity">In attesa di connessione</string>
   <string name="photos_error_waiting_wifi_connectivity">In attesa di una rete Wi-Fi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Usa la rete mobile</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">Questa rete potrebbe applicare un costo per il traffico dati</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Consenti</string>
   <string name="photos_error_local_storage">Spazio di archiviazione del dispositivo pieno</string>
   <string name="photos_error_local_storage_description">Per continuare il backup, devi liberare spazio di archiviazione sul tuo dispositivo.</string>
   <string name="photos_error_background_restrictions">Imposta l\'utilizzo della batteria su \"Senza restrizioni\" per consentire l\'attività dell\'app in background</string>
@@ -83,7 +85,10 @@
   <string name="photos_empty_title">Nessun backup</string>
   <string name="photos_empty_description">Appena avrai foto o video sul tuo dispositivo, questi appariranno qui.</string>
   <string name="photos_backup_title">Backup delle foto</string>
-  <string name="photos_backup_option_mobile_data">Usa la rete mobile per effettuare il backup delle foto</string>
+  <string name="photos_backup_option_mobile_data">Backup tramite rete mobile</string>
+  <string name="photos_backup_option_mobile_data_description">Esegue il backup su qualsiasi rete, il che potrebbe comportare l\'utilizzo di traffico dati a pagamento.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Eseguire il backup su reti non verificate</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Include hotspot, reti Wi-Fi pubbliche e altre reti di cui non possiamo confermare la gratuità. Occasionalmente potrebbe essere necessario utilizzare dati a pagamento.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Disabilita ottimizzazione batteria</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Consente il backup senza interruzioni quando l\'app è in esecuzione in background.</string>
   <string name="photos_backup_in_app_notification_turned_on">Backup delle foto abilitato</string>

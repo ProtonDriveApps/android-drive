@@ -82,7 +82,7 @@
     -->
   <plurals name="in_app_notification_add_to_album_already_exists">
     <item quantity="one">%1$d елемент уже існує</item>
-    <item quantity="few">%1$d елементи вже існує</item>
+    <item quantity="few">%1$d елементи вже існують</item>
     <item quantity="many">%1$d елементів уже існує</item>
     <item quantity="other">%1$d елементів уже існує</item>
   </plurals>
@@ -118,7 +118,7 @@
     -->
   <plurals name="in_app_notification_add_to_stream_already_exists">
     <item quantity="one">%1$d елемент уже існує</item>
-    <item quantity="few">%1$d елементи вже існує</item>
+    <item quantity="few">%1$d елементи вже існують</item>
     <item quantity="many">%1$d елементів уже існує</item>
     <item quantity="other">%1$d елементів уже існує</item>
   </plurals>

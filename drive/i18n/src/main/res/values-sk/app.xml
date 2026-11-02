@@ -60,6 +60,14 @@
   <string name="upload_to_title_format">Nahrať do %1$s</string>
   <string name="upload_title">Nahrať</string>
   <!--
+        Shown when a tap on the Upload button is ignored because another app draws a window over
+        ours (tapjacking protection).
+        Variable %1$s is an application name
+        Example:
+            "For your security, the tap was blocked because another app is displaying over Proton Drive. Close any floating windows or screen filters and try again."
+    -->
+  <string name="upload_to_obscured_touch_blocked">Z bezpečnostných dôvodov bolo kliknutie zablokované, pretože nad %1$s sa zobrazuje iná aplikácia. Zatvorte všetky plávajúce okná alebo filtre obrazovky a skúste to znova.</string>
+  <!--
         Variable %1$s is an application name
         Example:
             "Only files can be uploaded to Proton Drive"
@@ -153,6 +161,7 @@
   <string name="notification_content_text_backup_failed_permission">Chýbajú oprávnenia</string>
   <string name="notification_content_text_backup_failed_connectivity">Žiadne internetové pripojenie</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Čakám na Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">Táto sieť môže účtovať poplatky za prenos dát</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Záloha nie je povolená</string>
   <string name="notification_content_text_backup_failed_folder_not_found">Zálohovací priečinok už neexistuje</string>
   <string name="notification_content_text_backup_paused_disabled">Zálohovanie bolo vypnuté</string>
@@ -280,7 +289,7 @@
         Example:
             "Get Drive Lite"
     -->
-  <string name="drive_lite_promo_action">Získať %1$s</string>
+  <string name="drive_lite_promo_action">Získajte %1$s</string>
   <!--
         Variable %1$s is a string representation of a storage size
         Variable %2$s is a string representation of a price

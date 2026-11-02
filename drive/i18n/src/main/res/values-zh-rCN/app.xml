@@ -60,6 +60,14 @@
   <string name="upload_to_title_format">上传到 %1$s</string>
   <string name="upload_title">上传</string>
   <!--
+        Shown when a tap on the Upload button is ignored because another app draws a window over
+        ours (tapjacking protection).
+        Variable %1$s is an application name
+        Example:
+            "For your security, the tap was blocked because another app is displaying over Proton Drive. Close any floating windows or screen filters and try again."
+    -->
+  <string name="upload_to_obscured_touch_blocked">For your security, the tap was blocked because another app is displaying over %1$s. Close any floating windows or screen filters and try again.</string>
+  <!--
         Variable %1$s is an application name
         Example:
             "Only files can be uploaded to Proton Drive"
@@ -128,7 +136,7 @@
         "12 345 items left"
     -->
   <plurals name="notification_content_text_backup_in_progress">
-    <item quantity="other">剩余 %1$s 个项目</item>
+    <item quantity="other">剩余 %1$s 项</item>
   </plurals>
   <string name="notification_content_text_backup_complete">备份完成</string>
   <string name="notification_content_text_backup_uncompleted">备份已完成，但是存在问题</string>
@@ -138,6 +146,7 @@
   <string name="notification_content_text_backup_failed_permission">缺少权限</string>
   <string name="notification_content_text_backup_failed_connectivity">无网络连接</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">等待Wi-Fi网络</string>
+  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">This network might charge for data</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">备份未被允许</string>
   <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
   <string name="notification_content_text_backup_paused_disabled">备份已关闭</string>
@@ -248,7 +257,7 @@
         Example:
             "More storage for only $1.00"
     -->
-  <string name="drive_lite_promo_title">仅需 %1$s 即可获得更多存储空间</string>
+  <string name="drive_lite_promo_title">仅需 %1$s 获得更多存储空间</string>
   <!--
         Variable %1$s is the name of the plan
         Variable %2$s is a string representation of a storage size
@@ -262,7 +271,7 @@
         Example:
             "Get Drive Lite"
     -->
-  <string name="drive_lite_promo_action">获取 %1$s</string>
+  <string name="drive_lite_promo_action">开通 %1$s</string>
   <!--
         Variable %1$s is a string representation of a storage size
         Variable %2$s is a string representation of a price

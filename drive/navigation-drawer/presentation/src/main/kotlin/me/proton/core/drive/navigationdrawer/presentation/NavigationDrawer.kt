@@ -119,8 +119,8 @@ fun NavigationDrawer(
                         .testTag(NavigationDrawerTestTag.content),
                     verticalArrangement = Arrangement.Top
                 ) {
-                    if (viewState.isQ3CampaignPromoEligible) {
-                        Q3CampaignPromoListItem(closeDrawerAction, viewEvent)
+                    if (viewState.specialOffer != null) {
+                        SpecialOfferListItem(viewState.specialOffer, closeDrawerAction, viewEvent)
                     } else {
                         UpgradeStorageInfo(
                             onUpgradeClicked = { viewEvent.onSubscription() },
@@ -315,18 +315,19 @@ private fun GetFreeStorageListItem(
 }
 
 @Composable
-private fun Q3CampaignPromoListItem(
+private fun SpecialOfferListItem(
+    specialOffer: SpecialOffer,
     closeDrawerAction: (() -> Unit) -> Unit,
     viewEvent: NavigationDrawerViewEvent,
     modifier: Modifier = Modifier,
 ) {
     NavigationDrawerListItem(
-        imagePainter = painterResource(BasePresentation.drawable.drive_subscription_badge_q3_campaign_2026),
-        title = stringResource(I18N.string.promo_q3_campaign_drawer_title),
+        image = specialOffer.badgeResId,
+        title = specialOffer.titleResId,
         textStyle = ProtonTheme.typography.defaultStrongNorm,
         closeDrawerAction = closeDrawerAction,
         modifier = modifier,
-        onClick = { viewEvent.onQ3CampaignPromo() },
+        onClick = { viewEvent.onSpecialOffer() },
     )
 }
 
@@ -434,17 +435,27 @@ fun PreviewDrawerWithUser() {
                 "Version",
                 currentUser = PREVIEW_USER
             ),
-            viewEvent = object : NavigationDrawerViewEvent {
-                override val onMyFiles = {}
-                override val onTrash = {}
-                override val onOffline = {}
-                override val onSettings = {}
-                override val onSignOut = {}
-                override val onBugReport = {}
-                override val onSubscription = {}
-                override val onGetFreeStorage = {}
-                override val onQ3CampaignPromo = {}
-            }
+            viewEvent = previewViewEvent,
+        )
+    }
+}
+
+@Preview(name = "Drawer opened with special offer")
+@Composable
+private fun PreviewDrawerWithSpecialOffer() {
+    DriveTheme {
+        NavigationDrawer(
+            drawerState = DrawerState(DrawerValue.Open) { true },
+            viewState = NavigationDrawerViewState(
+                I18N.string.common_app,
+                "Version",
+                currentUser = PREVIEW_USER,
+                specialOffer = SpecialOffer(
+                    titleResId = I18N.string.navigation_item_subscription,
+                    badgeResId = BasePresentation.drawable.drive_subscription_badge_light,
+                ),
+            ),
+            viewEvent = previewViewEvent,
         )
     }
 }
@@ -456,17 +467,19 @@ private fun PreviewDrawerWithoutUser() {
         NavigationDrawer(
             drawerState = DrawerState(DrawerValue.Open) { true },
             viewState = NavigationDrawerViewState(I18N.string.common_app, "Version"),
-            viewEvent = object : NavigationDrawerViewEvent {
-                override val onMyFiles = {}
-                override val onTrash = {}
-                override val onOffline = {}
-                override val onSettings = {}
-                override val onSignOut = {}
-                override val onBugReport = {}
-                override val onSubscription = {}
-                override val onGetFreeStorage = {}
-                override val onQ3CampaignPromo = {}
-            }
+            viewEvent = previewViewEvent,
         )
     }
+}
+
+private val previewViewEvent = object : NavigationDrawerViewEvent {
+    override val onMyFiles = {}
+    override val onTrash = {}
+    override val onOffline = {}
+    override val onSettings = {}
+    override val onSignOut = {}
+    override val onBugReport = {}
+    override val onSubscription = {}
+    override val onGetFreeStorage = {}
+    override val onSpecialOffer = {}
 }

@@ -88,7 +88,7 @@
         Example:
             "Pending shared items (1)"
     -->
-  <string name="shared_user_invitations_title">待处理的共享项目（%1$d）</string>
+  <string name="shared_user_invitations_title">待处理的共享项目 ( %1$d )</string>
   <!--
         Variable %1$d is a quantity of albums shared
         Example:

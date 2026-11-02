@@ -38,8 +38,8 @@
             "2 persons cannot be invited"
     -->
   <plurals name="share_via_invitations_person_added_error">
-    <item quantity="one">uma pessoa não pode ser convidada</item>
-    <item quantity="other">%1$d pessoas não pode ser convidada</item>
+    <item quantity="one">1 pessoa não pode ser convidada</item>
+    <item quantity="other">%1$d pessoas não podem ser convidadas</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -47,7 +47,7 @@
             "Sharing with 2 persons"
     -->
   <plurals name="share_via_invitations_sharing_with">
-    <item quantity="one">Compartilhando com uma pessoa</item>
+    <item quantity="one">Compartilhando com 1 pessoa</item>
     <item quantity="other">Compartilhando com %1$d pessoas</item>
   </plurals>
   <string name="common_permission_owner">Proprietário</string>

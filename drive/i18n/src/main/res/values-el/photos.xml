@@ -72,9 +72,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Για συνεχή και αυτόματα αντίγραφα ασφαλείας, επιτρέψτε στο %1$s την πρόσβαση σε όλες τις φωτογραφίες στις ρυθμίσεις.</string>
-  <string name="photos_error_waiting_connectivity">Δεν υπάρχει σύνδεση στο Διαδίκτυο</string>
+  <string name="photos_error_waiting_connectivity">Αναμονή για σύνδεση</string>
   <string name="photos_error_waiting_wifi_connectivity">Αναμονή για Wi-Fi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Χρήση κινητού δικτύου</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">Αυτό το δίκτυο ενδέχεται να χρεώνει για τα δεδομένα.</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Να επιτραπεί</string>
   <string name="photos_error_local_storage">Ο χώρος αποθήκευσης της συσκευής είναι γεμάτος</string>
   <string name="photos_error_local_storage_description">Για να συνεχίσετε τη δημιουργία αντίγραφου ασφαλείας, πρέπει να ελευθερώσετε χώρο αποθήκευσης στη συσκευή σας.</string>
   <string name="photos_error_background_restrictions">Ρυθμίστε τη χρήση μπαταρίας σε \"Χωρίς περιορισμό\" για τη δραστηριότητα εφαρμογών στο παρασκήνιο</string>
@@ -83,7 +85,10 @@
   <string name="photos_empty_title">Δεν υπάρχουν αντίγραφα ασφαλείας ακόμη</string>
   <string name="photos_empty_description">Μόλις έχετε φωτογραφίες ή βίντεο στη συσκευή σας, θα εμφανιστούν εδώ.</string>
   <string name="photos_backup_title">Αντίγραφα ασφαλείας φωτογραφιών</string>
-  <string name="photos_backup_option_mobile_data">Χρήση δεδομένων κινητής τηλεφωνίας για δημιουργία αντιγράφων ασφαλείας φωτογραφιών</string>
+  <string name="photos_backup_option_mobile_data">Δημιουργία αντιγράφων ασφαλείας μέσω κινητού δικτύου</string>
+  <string name="photos_backup_option_mobile_data_description">Πραγματοποιεί αντίγραφα ασφαλείας σε οποιοδήποτε δίκτυο, το οποίο ενδέχεται να χρησιμοποιεί δεδομένα με χρέωση.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Δημιουργία αντιγράφων ασφαλείας μέσω μη επαληθευμένων δικτύων</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Περιλαμβάνει hotspots, δημόσια δίκτυα Wi-Fi και άλλα δίκτυα για τα οποία δεν μπορούμε να επιβεβαιώσουμε ότι είναι δωρεάν. Ενδέχεται περιστασιακά να χρησιμοποιηθούν δεδομένα με χρέωση.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Απενεργοποίηση βελτιστοποίησης μπαταρίας</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Επιτρέπει την αδιάλειπτη δημιουργία αντιγράφων ασφαλείας όταν η εφαρμογή εκτελείται στο παρασκήνιο.</string>
   <string name="photos_backup_in_app_notification_turned_on">Η δημιουργία αντιγράφων ασφαλείας φωτογραφιών είναι ενεργοποιημένη</string>

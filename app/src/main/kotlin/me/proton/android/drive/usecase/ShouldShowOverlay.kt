@@ -20,6 +20,8 @@ package me.proton.android.drive.usecase
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.promo.domain.entity.BlackFriday2026Offer
+import me.proton.core.drive.promo.domain.usecase.ShouldShowBlackFriday2026Promo
 import me.proton.drive.android.settings.domain.UiSettingsRepository
 import me.proton.drive.android.settings.domain.entity.HomeTab
 import me.proton.drive.android.settings.domain.entity.UserOverlay
@@ -31,12 +33,13 @@ class ShouldShowOverlay @Inject constructor(
     private val shouldShowOnboarding: ShouldShowOnboarding,
     private val shouldShowWhatsNew: ShouldShowWhatsNew,
     private val shouldShowRatingBooster: ShouldShowRatingBooster,
-    private val shouldShowQ3CampaignPromo: ShouldShowQ3CampaignPromo,
+    private val shouldShowBlackFriday2026Promo: ShouldShowBlackFriday2026Promo,
     private val repository: UiSettingsRepository,
 ) {
     suspend operator fun invoke(
         userId: UserId,
-        currentHomeTab: HomeTab? = null,
+        currentHomeTab: HomeTab?,
+        blackFriday2026Offer: suspend () -> BlackFriday2026Offer?,
     ): Result<UserOverlay?> = coRunCatching {
         if (repository.hasShownOverlay()) {
             return@coRunCatching null
@@ -44,8 +47,8 @@ class ShouldShowOverlay @Inject constructor(
         if (shouldShowOnboarding(userId).getOrThrow()) {
             return@coRunCatching UserOverlay.Onboarding
         }
-        if (shouldShowQ3CampaignPromo(userId).getOrThrow()) {
-            return@coRunCatching UserOverlay.Q3CampaignPromo
+        if (shouldShowBlackFriday2026Promo(userId, blackFriday2026Offer()).getOrThrow()) {
+            return@coRunCatching UserOverlay.Promo
         }
         val whatsNewKey = shouldShowWhatsNew(userId, currentHomeTab).getOrThrow()
         if (whatsNewKey != null) {

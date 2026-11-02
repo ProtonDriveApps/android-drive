@@ -22,7 +22,7 @@
         Example:
             "Share Document"
     -->
-  <string name="title_share_via_invitations">與 %1$s 共享</string>
+  <string name="title_share_via_invitations">共享 %1$s</string>
   <!--
         Variable %1$d is a number
         Examples:
@@ -82,7 +82,7 @@
             "2 members"
     -->
   <plurals name="share_via_invitations_group_members">
-    <item quantity="other">%1$d 個成員</item>
+    <item quantity="other">%1$d 位成員</item>
   </plurals>
   <string name="share_via_invitations_message_placeholder">新增訊息</string>
   <string name="share_via_invitations_send_message_and_name_label">在邀請電子郵件中包含訊息與檔案名稱</string>

@@ -129,7 +129,7 @@ import me.proton.android.drive.ui.screen.ScanDocumentScreen
 import me.proton.android.drive.ui.screen.SettingsScreen
 import me.proton.android.drive.ui.screen.SigningOutScreen
 import me.proton.android.drive.ui.screen.SubscriptionScreen
-import me.proton.android.drive.ui.screen.Q3CampaignPromoScreen
+import me.proton.android.drive.ui.screen.BlackFriday2026PromoScreen
 import me.proton.android.drive.ui.screen.TrashScreen
 import me.proton.android.drive.ui.screen.UploadToScreen
 import me.proton.android.drive.ui.screen.UpsellUfcScreen
@@ -411,7 +411,7 @@ fun AppNavGraph(
         addAddToAlbumsOptions(navController)
         addScanDocument(navController)
         addScanDocumentName(navController)
-        addQ3CampaignPromoScreen(navController)
+        addBlackFriday2026PromoScreen(navController)
         addUpsellScreen(navController, navigateToSubscription)
         addSubscriptionScreen(navController)
         addAppPromoOptions(navController, navigateToRatingBooster)
@@ -1114,8 +1114,8 @@ internal fun NavGraphBuilder.addHome(
         navigateToAlbum = { albumId ->
             navController.navigate(Screen.Album(albumId))
         },
-        navigateToQ3CampaignPromo = {
-            navController.navigate(Screen.Promo.Q3Campaign2026(userId))
+        navigateToBlackFriday2026Promo = {
+            navController.navigate(Screen.Promo.BlackFriday2026(userId))
         },
         navigateToUpsellPromo = {
             navController.navigate(Screen.Promo.Upsell(userId))
@@ -2126,20 +2126,20 @@ fun NavGraphBuilder.addPhotosUpsell(
 }
 
 @OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.addQ3CampaignPromoScreen(
+fun NavGraphBuilder.addBlackFriday2026PromoScreen(
     navController: NavHostController,
 ) = composable(
-    route = Screen.Promo.Q3Campaign2026.route,
+    route = Screen.Promo.BlackFriday2026.route,
     arguments = listOf(
-        navArgument(Screen.Promo.Q3Campaign2026.USER_ID) { type = NavType.StringType }
+        navArgument(Screen.Promo.BlackFriday2026.USER_ID) { type = NavType.StringType }
     ),
     enterTransition = defaultEnterSlideTransition { true },
     popExitTransition = defaultPopExitSlideTransition { true },
 ) {
-    Q3CampaignPromoScreen(
+    BlackFriday2026PromoScreen(
         navigateBack = {
             navController.popBackStack(
-                route = Screen.Promo.Q3Campaign2026.route,
+                route = Screen.Promo.BlackFriday2026.route,
                 inclusive = true,
             )
         },

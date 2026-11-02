@@ -82,7 +82,7 @@
     -->
   <plurals name="shared_by_me_invitation_banner_description">
     <item quantity="one">%1$d s vami zdieľaná položka</item>
-    <item quantity="few">%1$d s vami zdieľané žiadne položky</item>
+    <item quantity="few">%1$d s vami zdieľané položky</item>
     <item quantity="many">%1$d s vami zdieľaných položiek</item>
     <item quantity="other">%1$d s vami zdieľaných položiek</item>
   </plurals>

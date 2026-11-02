@@ -65,7 +65,7 @@
         Example:
             "Expiration date must not be after more than 90 days"
     -->
-  <string name="shared_link_error_message_expiration_date_too_late">ვადის გასვლის თარიღი არ უნდა იყოს %1$d დღეზე გვიან</string>
+  <string name="shared_link_error_message_expiration_date_too_late">Expiration date must not be after more than %1$d days</string>
   <string name="shared_link_error_legacy_link">ეს ძველი ბმულია, რომლის მართვაც მხარდაჭერილი არაა. რეკომენდებულია, შეწყვიტოთ ამ ბმულის გაზიარება და ახალი ბმული გამოითხოვოთ.</string>
   <string name="title_share_via_link">ბმულით გაზიარება</string>
   <string name="shared_with_me_title">ჩემთან გაზიარებული</string>
@@ -95,7 +95,7 @@
         Example:
             "Pending shared albums (2)"
     -->
-  <string name="shared_user_album_invitations_title">მომლოდინე გაზიარებული ალბომები (%1$d)</string>
+  <string name="shared_user_album_invitations_title">Pending shared albums (%1$d)</string>
   <string name="shared_user_invitations_title_empty">დარჩენილი გაზიარებული ელემენტების გარეშე</string>
   <string name="shared_user_album_invitations_title_empty">მომლოდინე გაზიარებული ალბომები არ არის</string>
   <string name="shared_user_invitations_description_empty">ყველა ახალი მოსაწვევი აქ გამოჩნდება</string>

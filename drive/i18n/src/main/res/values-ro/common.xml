@@ -214,9 +214,9 @@
             "13 selected"
     -->
   <plurals name="common_selected">
-    <item quantity="one">Selectate: %1$d</item>
-    <item quantity="few">Selectate: %1$d</item>
-    <item quantity="other">Selectate: %1$d</item>
+    <item quantity="one">%1$d selectat</item>
+    <item quantity="few">%1$d selectate</item>
+    <item quantity="other">%1$d selectate</item>
   </plurals>
   <!-- region In-app notification -->
   <!--
@@ -239,9 +239,9 @@
             "17 files successfully downloaded"
     -->
   <plurals name="common_in_app_notification_files_download_complete">
-    <item quantity="one">Fișiere descărcate: %1$d</item>
-    <item quantity="few">Fișiere descărcate: %1$d</item>
-    <item quantity="other">Fișiere descărcate: %1$d</item>
+    <item quantity="one">S-a descărcat %1$d fișier.</item>
+    <item quantity="few">S-au descărcat %1$d fișiere.</item>
+    <item quantity="other">S-au descărcat %1$d de fișiere.</item>
   </plurals>
   <!--
         Variable %1$s is a file name

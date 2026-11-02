@@ -24,7 +24,7 @@
     -->
   <plurals name="trash_operation_successful_format">
     <item quantity="one">1 ელემენტი გადატანილია ნაგვის ყუთში</item>
-    <item quantity="other">%1$d ელემენტი გადატანილია ნაგავში</item>
+    <item quantity="other">%1$d ელემენტი გადატანილია ნაგვის ყუთში</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -33,7 +33,7 @@
     -->
   <plurals name="trash_restore_operation_successful_format">
     <item quantity="one">აღდგენილია 1 ელემენტი</item>
-    <item quantity="other">%d ელემენტი აღდგენილია</item>
+    <item quantity="other">აღდგენილია %d ელემენტი</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -42,7 +42,7 @@
     -->
   <plurals name="trash_delete_operation_successful_format">
     <item quantity="one">1 ელემენტი სამუდამოდ წაიშალა</item>
-    <item quantity="other">%d ელემენტი სამუდამოდ წაშლილია</item>
+    <item quantity="other">%d ელემენტი სამუდამოდ წაიშალა</item>
   </plurals>
   <string name="trash_empty_operation_successful">ნაგის ყუთი გასუფთავდა</string>
   <string name="trash_error_occurred_sending_to_trash">შეცდომა, თქვენი ფაილების სანაგვე ყუთში გადაგზავნის მცდელობისას</string>

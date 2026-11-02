@@ -24,5 +24,5 @@ import javax.inject.Inject
 class CancelAllExport @Inject constructor(
     private val exportWorkManager: ExportWorkManager
 ) {
-    operator fun invoke(userId: UserId) = exportWorkManager.cancelAll(userId)
+    suspend operator fun invoke(userId: UserId) = exportWorkManager.cancelAll(userId)
 }

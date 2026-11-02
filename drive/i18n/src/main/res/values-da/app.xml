@@ -60,6 +60,14 @@
   <string name="upload_to_title_format">Upload til %1$s</string>
   <string name="upload_title">Upload</string>
   <!--
+        Shown when a tap on the Upload button is ignored because another app draws a window over
+        ours (tapjacking protection).
+        Variable %1$s is an application name
+        Example:
+            "For your security, the tap was blocked because another app is displaying over Proton Drive. Close any floating windows or screen filters and try again."
+    -->
+  <string name="upload_to_obscured_touch_blocked">Af hensyn til din sikkerhed blev dit tryk blokeret fordi en anden app vises over %1$s. Luk overlappende vinduer eller skærmfiltre og prøv igen.</string>
+  <!--
         Variable %1$s is an application name
         Example:
             "Only files can be uploaded to Proton Drive"
@@ -143,6 +151,7 @@
   <string name="notification_content_text_backup_failed_permission">Tilladelser mangler</string>
   <string name="notification_content_text_backup_failed_connectivity">Ingen internetforbindelse</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Venter på WiFi</string>
+  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">Netværksforbindelsen kan være betalt</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Sikkerhedskopiering er ikke tilladt</string>
   <string name="notification_content_text_backup_failed_folder_not_found">Backupmappen eksisterer ikke længere</string>
   <string name="notification_content_text_backup_paused_disabled">Sikkerhedskopiering blev deaktiveret</string>

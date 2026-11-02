@@ -48,7 +48,7 @@
   <string name="folder_option_create_document">Utwórz dokument</string>
   <string name="folder_option_create_spreadsheet">Utwórz arkusz kalkulacyjny</string>
   <string name="folder_option_import_folder">Prześlij folder</string>
-  <string name="folder_option_scan_document">Scan document</string>
+  <string name="folder_option_scan_document">Zeskanuj dokument</string>
   <string name="settings_theme_system_default">Domyślny systemu</string>
   <string name="settings_theme_dark">Ciemny</string>
   <string name="settings_theme_light">Jasny</string>
@@ -59,6 +59,14 @@
     -->
   <string name="upload_to_title_format">Prześlij do %1$s</string>
   <string name="upload_title">Prześlij</string>
+  <!--
+        Shown when a tap on the Upload button is ignored because another app draws a window over
+        ours (tapjacking protection).
+        Variable %1$s is an application name
+        Example:
+            "For your security, the tap was blocked because another app is displaying over Proton Drive. Close any floating windows or screen filters and try again."
+    -->
+  <string name="upload_to_obscured_touch_blocked">For your security, the tap was blocked because another app is displaying over %1$s. Close any floating windows or screen filters and try again.</string>
   <!--
         Variable %1$s is an application name
         Example:
@@ -153,6 +161,7 @@
   <string name="notification_content_text_backup_failed_permission">Brak uprawnień</string>
   <string name="notification_content_text_backup_failed_connectivity">Brak połączenia z Internetem</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Oczekiwanie na sieć Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">This network might charge for data</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Kopia zapasowa nie jest dozwolona</string>
   <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
   <string name="notification_content_text_backup_paused_disabled">Kopia zapasowa została wyłączona</string>
@@ -304,5 +313,5 @@
   <string name="drive_plus_promo_action">Ulepsz za %1$s</string>
   <string name="support_contact_options_title">Help us enhance your experience</string>
   <string name="support_contact_options_description">If you are having an issue our Help Docs and support team are here to help!</string>
-  <string name="support_contact_options_action_button">Contact us</string>
+  <string name="support_contact_options_action_button">Skontaktuj się z nami</string>
 </resources>

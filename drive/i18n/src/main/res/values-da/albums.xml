@@ -155,7 +155,7 @@
     -->
   <plurals name="shared_with_me_album_invitations_banner_description">
     <item quantity="one">%1$d album delt med dig</item>
-    <item quantity="other">%1$d albums delt med dig</item>
+    <item quantity="other">%1$d albummer delt med dig</item>
   </plurals>
   <string name="albums_share_multiple_photos_options_section_title">Del via</string>
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Tilføj til delt album</string>

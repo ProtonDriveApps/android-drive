@@ -60,6 +60,14 @@
   <string name="upload_to_title_format">Naloži v %1$s</string>
   <string name="upload_title">Naloži</string>
   <!--
+        Shown when a tap on the Upload button is ignored because another app draws a window over
+        ours (tapjacking protection).
+        Variable %1$s is an application name
+        Example:
+            "For your security, the tap was blocked because another app is displaying over Proton Drive. Close any floating windows or screen filters and try again."
+    -->
+  <string name="upload_to_obscured_touch_blocked">For your security, the tap was blocked because another app is displaying over %1$s. Close any floating windows or screen filters and try again.</string>
+  <!--
         Variable %1$s is an application name
         Example:
             "Only files can be uploaded to Proton Drive"
@@ -87,9 +95,9 @@
     -->
   <plurals name="notification_content_text_upload_uploading">
     <item quantity="one">Nalaganje %1$d datoteke</item>
-    <item quantity="two">Nalaganje %1$d datotek</item>
+    <item quantity="two">Nalagam %1$d datoteki</item>
     <item quantity="few">Nalaganje %1$d datotek</item>
-    <item quantity="other">Nalaganje %1$d datotek</item>
+    <item quantity="other">Nalaganje %1$d datoteke</item>
   </plurals>
   <!--
         Variable %1$d is a quantity of files that have been uploaded
@@ -101,7 +109,7 @@
     <item quantity="one">Naložena je %1$d datoteka</item>
     <item quantity="two">Naloženi sta %1$d datoteki</item>
     <item quantity="few">Naložene so %1$d datoteke</item>
-    <item quantity="other">Naloženih je %1$d datotek</item>
+    <item quantity="other">Naložene so %1$d datoteke</item>
   </plurals>
   <!--
         Variable %1$d is a quantity of files that have been cancelled
@@ -110,10 +118,10 @@
             "3 files cancelled"
     -->
   <plurals name="notification_content_text_upload_cancelled">
-    <item quantity="one">%1$d datoteka je preklicana</item>
+    <item quantity="one">%1$d datoteka preklicana</item>
     <item quantity="two">%1$d datoteki sta preklicani</item>
     <item quantity="few">%1$d datoteke so preklicane</item>
-    <item quantity="other">%1$d datotek je preklicanih</item>
+    <item quantity="other">%1$d datoteke so preklicane</item>
   </plurals>
   <!--
         Variable %1$d is a quantity of files that have fail to upload
@@ -125,7 +133,7 @@
     <item quantity="one">%1$d datoteka ni uspela</item>
     <item quantity="two">%1$d datoteki nista uspeli</item>
     <item quantity="few">%1$d datoteke niso uspele</item>
-    <item quantity="other">%1$d datotek ni uspelih</item>
+    <item quantity="other">%1$d datoteke niso uspele</item>
   </plurals>
   <!--
         Variable %1$s is an application name
@@ -153,6 +161,7 @@
   <string name="notification_content_text_backup_failed_permission">Manjkajo dovoljenja.</string>
   <string name="notification_content_text_backup_failed_connectivity">Ni spletne povezave</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Čakanje na Wifi</string>
+  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">This network might charge for data</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Varnostno kopiranje ni dovoljeno</string>
   <string name="notification_content_text_backup_failed_folder_not_found">Mapa za varnostne kopije ne obstaja več.</string>
   <string name="notification_content_text_backup_paused_disabled">Varnostno kopiranje je bilo onemogočeno</string>

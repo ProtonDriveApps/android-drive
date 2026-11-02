@@ -75,7 +75,7 @@
             "7 items already exist"
     -->
   <plurals name="in_app_notification_add_to_album_already_exists">
-    <item quantity="one">%1$d objektet finns redan</item>
+    <item quantity="one">%1$d objekt finns redan</item>
     <item quantity="other">%1$d objekt finns redan</item>
   </plurals>
   <!--
@@ -85,7 +85,7 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_add_to_album_failed">
-    <item quantity="one">%1$d objektet misslyckades</item>
+    <item quantity="one">%1$d objekt misslyckades</item>
     <item quantity="other">%1$d objekt misslyckades</item>
   </plurals>
   <!--

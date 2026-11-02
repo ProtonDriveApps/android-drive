@@ -60,6 +60,14 @@
   <string name="upload_to_title_format">上傳至 %1$s</string>
   <string name="upload_title">上傳</string>
   <!--
+        Shown when a tap on the Upload button is ignored because another app draws a window over
+        ours (tapjacking protection).
+        Variable %1$s is an application name
+        Example:
+            "For your security, the tap was blocked because another app is displaying over Proton Drive. Close any floating windows or screen filters and try again."
+    -->
+  <string name="upload_to_obscured_touch_blocked">For your security, the tap was blocked because another app is displaying over %1$s. Close any floating windows or screen filters and try again.</string>
+  <!--
         Variable %1$s is an application name
         Example:
             "Only files can be uploaded to Proton Drive"
@@ -138,6 +146,7 @@
   <string name="notification_content_text_backup_failed_permission">權限遺失</string>
   <string name="notification_content_text_backup_failed_connectivity">沒有網際網路連線</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">正在等待 Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">This network might charge for data</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">不允許備份</string>
   <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
   <string name="notification_content_text_backup_paused_disabled">已關閉備份</string>
@@ -151,7 +160,7 @@
             "Downloading 3 files"
     -->
   <plurals name="notification_content_text_download_downloading">
-    <item quantity="other">Downloading %1$d files</item>
+    <item quantity="other">下載 %1$d 檔案</item>
   </plurals>
   <string name="notification_content_title_download_complete">下載完成</string>
   <string name="notification_content_title_forced_sign_out">請登入</string>
@@ -171,7 +180,7 @@
   <string name="notification_content_title_transferring">正在傳輸資料</string>
   <!-- endregion -->
   <string name="content_description_select_all">顯示清單中所有的項目</string>
-  <string name="content_description_select_separator">Select all items in %1$s</string>
+  <string name="content_description_select_separator">選取在 %1$s 所有項目</string>
   <string name="photos_error_separator_selection_failed">Some items could not be selected, please try again</string>
   <string name="content_description_selected_options">顯示所選檔案及/或資料夾的更多選項</string>
   <string name="content_description_files_upload_upload_file">上傳檔案</string>
@@ -262,7 +271,7 @@
         Example:
             "Get Drive Lite"
     -->
-  <string name="drive_lite_promo_action">取得 %1$s</string>
+  <string name="drive_lite_promo_action">選用 %1$s</string>
   <!--
         Variable %1$s is a string representation of a storage size
         Variable %2$s is a string representation of a price

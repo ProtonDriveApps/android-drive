@@ -103,7 +103,7 @@
     -->
   <plurals name="folder_upload_scheduled_files_for_upload">
     <item quantity="one">Načrtovana %1$d datoteka za nalaganje</item>
-    <item quantity="two">Načrtovani %1$d datoteki nalaganje</item>
+    <item quantity="two">Načrtovani %1$d datoteki za nalaganje</item>
     <item quantity="few">Načrtovane %1$d datoteke za nalaganje</item>
     <item quantity="other">Načrtovanih %1$d datotek za nalaganje</item>
   </plurals>

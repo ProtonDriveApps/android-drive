@@ -27,31 +27,44 @@
             "only $6.99"
     -->
   <string name="promo_offer_per_month_details">kun %1$s</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_drawer_title">Særtilbud</string>
-  <!-- tag(q3campaign2026) Free vs. Unlimited comparison table on the Q3 campaign promo screen -->
-  <string name="promo_q3_campaign_comparison_header_free">Free</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_header_unlimited">Unlimited</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_storage_label">Lagerplads</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_storage_free">5 GB</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_storage_unlimited">500 GB</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_storage_unlimited_subtitle">100x mere end Free</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_share_edit_label">Del med redigeringsadgang</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_mail_label">Mail Plus med tilpassede e-maildomæner</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_vpn_label">VPN Plus med 20,000+ servers in 140+ countries</string>
-  <!-- tag(q3campaign2026) -->
-  <string name="promo_q3_campaign_comparison_pass_label">Pass Plus med 50 sikre boks</string>
-  <!-- tag(q3campaign2026) Preview-only mock price for Q3CampaignPromoScreenPortraitPreview, not a real formatted currency amount -->
-  <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
-  <!-- tag(q3campaign2026) Preview-only mock price, see promo_q3_campaign_total_price_preview -->
+  <!-- tag(q4campaign2026) Side menu item and badge title for the Black Friday 2026 promo -->
+  <string name="promo_black_friday_2026_special_offer_title">Black Friday</string>
+  <!-- tag(q4campaign2026) Content description of the header image, which shows the discount, the campaign name and its tagline -->
+  <string name="promo_black_friday_2026_header_description">Black Friday, 50 % rabat. Årets største tilbud</string>
+  <!-- tag(q4campaign2026) Column title in the plan comparison table: the free plan -->
+  <string name="promo_black_friday_2026_free_column_title">Free</string>
+  <!-- tag(q4campaign2026) Column title in the plan comparison table: Drive Plus -->
+  <string name="promo_black_friday_2026_plus_column_title">Plus</string>
+  <!-- tag(q4campaign2026) Column title in the plan comparison table: Proton Unlimited -->
+  <string name="promo_black_friday_2026_unlimited_column_title">Unlimited</string>
+  <!-- tag(q4campaign2026) Storage of the free plan in the comparison table -->
+  <string name="promo_black_friday_2026_storage_free">5 GB</string>
+  <!-- tag(q4campaign2026) Storage of Drive Plus in the comparison table -->
+  <string name="promo_black_friday_2026_storage_plus">200 GB</string>
+  <!-- tag(q4campaign2026) Storage of Proton Unlimited in the comparison table -->
+  <string name="promo_black_friday_2026_storage_unlimited">500 GB</string>
+  <!-- tag(q4campaign2026) Row label in the plan comparison table. Mail, VPN, Drive and Pass are Proton product names -->
+  <string name="promo_black_friday_2026_premium_access_label">Premium-adgang til Mail, VPN, Drive og Pass</string>
+  <!-- tag(q4campaign2026) Row label in the plan comparison table: unlimited email aliases -->
+  <string name="promo_black_friday_2026_aliases_label">Ubegrænsede aliasser til at skjule din identitet</string>
+  <!-- tag(q4campaign2026) Row label in the plan comparison table -->
+  <string name="promo_black_friday_2026_custom_email_domain_label">Tilpasset e-mail-domæne</string>
+  <!-- tag(q4campaign2026) Row label in the plan comparison table -->
+  <string name="promo_black_friday_2026_priority_support_label">Prioriteret kundesupport</string>
+  <!-- tag(q4campaign2026)
+        Variable %1$d is a discount percentage
+        Example:
+            "-50%"
+    -->
+  <string name="promo_black_friday_2026_discount">-%1$d %%</string>
+  <!-- tag(q4campaign2026)
+        Variable %1$s is the yearly price after the first year
+        Example:
+            "Discounts are based on standard monthly pricing.\nAuto-renews at $47.88/year."
+    -->
+  <string name="promo_black_friday_2026_footer">Rabatter er baseret på standard månedspriser.\nFornyes automatisk til %1$s/år.</string>
+  <!-- tag(q4campaign2026) Button on the upgrade offer that keeps the current plan and stops showing the offer. Drive Plus is a plan name -->
+  <string name="promo_black_friday_2026_stay_on_plan_button">Bliv på Drive Plus</string>
   <!-- Upsell promo -->
   <!--
         Variable %1$s is a plan name and %2$s is a price for first period

@@ -62,12 +62,9 @@ class TestFeatureFlagRepository(
         featureFlagId: FeatureFlagId.Legacy,
         value: Boolean
     ): Result<Unit> {
-        val featureFlag = featureFlags[featureFlagId]
-        return if (featureFlag != null && featureFlag.state == FeatureFlag.State.ENABLED) {
-            featureFlags[featureFlagId] = featureFlag.copy(state = FeatureFlag.State.DISABLED)
-            Result.success(Unit)
-        } else {
-            Result.failure(NoSuchElementException())
-        }
+        val featureFlag = featureFlags[featureFlagId] ?: return Result.failure(NoSuchElementException())
+        val state = if (value) FeatureFlag.State.ENABLED else FeatureFlag.State.DISABLED
+        featureFlags[featureFlagId] = featureFlag.copy(state = state)
+        return Result.success(Unit)
     }
 }

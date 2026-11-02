@@ -28,7 +28,7 @@
             "345 items"
     -->
   <plurals name="albums_photo_count">
-    <item quantity="other">%1$s 项</item>
+    <item quantity="other">%1$s 个项目</item>
   </plurals>
   <string name="albums_delete_album_action">删除相册</string>
   <string name="albums_delete_album_dialog_title">删除相册？</string>
@@ -63,7 +63,7 @@
             "17 items added to album"
     -->
   <plurals name="in_app_notification_add_to_album_success">
-    <item quantity="other">%1$d 个项目添加到相册</item>
+    <item quantity="other">已将 %1$d 项添加到相册</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because they already exist
@@ -72,7 +72,7 @@
             "7 items already exist"
     -->
   <plurals name="in_app_notification_add_to_album_already_exists">
-    <item quantity="other">%1$d 个项目已存在</item>
+    <item quantity="other">%1$d 项已存在</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because adding failed
@@ -99,7 +99,7 @@
             "7 items already exist"
     -->
   <plurals name="in_app_notification_add_to_stream_already_exists">
-    <item quantity="other">%1$d 个项目已存在</item>
+    <item quantity="other">%1$d 项已存在</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because adding failed
@@ -117,7 +117,7 @@
             "13 items removed from album"
     -->
   <plurals name="in_app_notification_remove_from_album_success">
-    <item quantity="other">%1$d 个项目已从相册中移除</item>
+    <item quantity="other">%1$d 项从相册移除</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not removed because removing failed
@@ -144,7 +144,7 @@
             "3 albums shared with you"
     -->
   <plurals name="shared_with_me_album_invitations_banner_description">
-    <item quantity="other">%1$d 个与您共享的相册</item>
+    <item quantity="other">与您共享的 %1$d 个相册</item>
   </plurals>
   <string name="albums_share_multiple_photos_options_section_title">通过以下方式分享</string>
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">添加到共享相册</string>

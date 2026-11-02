@@ -43,7 +43,7 @@
         Example:
             "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
     -->
-  <string name="albums_leave_album_dialog_description">დარწმუნებული ხართ, რომ გსურთ ალბომის „%1$s“ დატოვება?\nდაკარგავთ წვდომას ფოტოებზე, რომლებიც ჯერ არ შეგინახავთ.</string>
+  <string name="albums_leave_album_dialog_description">Are you sure that you want to leave album \"%1$s\"?\nYou will lose access to photos you haven\'t saved yet.</string>
   <string name="albums_leave_album_dialog_leave_without_saving_action">დატოვება შენახვის გარეშე</string>
   <string name="albums_leave_album_dialog_save_and_leave_action">ფოტოების შენახვა და დატოვება</string>
   <string name="albums_add_zero_to_album_button">ალბომში დამატება</string>
@@ -54,8 +54,8 @@
             "Add 33 to album"
     -->
   <plurals name="albums_add_non_zero_to_album_button">
-    <item quantity="one">ალბომში %1$d-ის დამატება</item>
-    <item quantity="other">ალბომში %1$d-ის დამატება</item>
+    <item quantity="one">Add %1$d to album</item>
+    <item quantity="other">Add %1$d to album</item>
   </plurals>
   <string name="albums_set_album_as_cover_success">ალბომის გარეკნად დაყენება</string>
   <!--
@@ -65,8 +65,8 @@
             "17 items added to album"
     -->
   <plurals name="in_app_notification_add_to_album_success">
-    <item quantity="one">ალბომს დაემატა %1$d ერთეული</item>
-    <item quantity="other">ალბომს დაემატა %1$d ერთეული</item>
+    <item quantity="one">ალბომში ჩაემატა %1$d ელემენტი</item>
+    <item quantity="other">ალბომში ჩაემატა %1$d ელემენტი</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because they already exist
@@ -75,8 +75,8 @@
             "7 items already exist"
     -->
   <plurals name="in_app_notification_add_to_album_already_exists">
-    <item quantity="one">%1$d ერთეული უკვე არსებობს</item>
-    <item quantity="other">%1$d ერთეული უკვე არსებობს</item>
+    <item quantity="one">%1$d item already exists</item>
+    <item quantity="other">%1$d items already exist</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because adding failed
@@ -85,8 +85,8 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_add_to_album_failed">
-    <item quantity="one">%1$d ერთეული ვერ დაემატა</item>
-    <item quantity="other">%1$d ერთეული ვერ დაემატა</item>
+    <item quantity="one">%1$d item failed</item>
+    <item quantity="other">%1$d items failed</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos added to your Drive
@@ -95,8 +95,8 @@
             "17 items added to your Drive"
     -->
   <plurals name="in_app_notification_add_to_stream_success">
-    <item quantity="one">თქვენს Drive-ს დაემატა %1$d ერთეული</item>
-    <item quantity="other">თქვენს Drive-ს დაემატა %1$d ერთეული</item>
+    <item quantity="one">%1$d item added to your Drive</item>
+    <item quantity="other">%1$d items added to your Drive</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because they already exist
@@ -105,8 +105,8 @@
             "7 items already exist"
     -->
   <plurals name="in_app_notification_add_to_stream_already_exists">
-    <item quantity="one">%1$d ერთეული უკვე არსებობს</item>
-    <item quantity="other">%1$d ერთეული უკვე არსებობს</item>
+    <item quantity="one">%1$d item already exists</item>
+    <item quantity="other">%1$d items already exist</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because adding failed
@@ -115,8 +115,8 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_add_to_stream_failed">
-    <item quantity="one">%1$d ერთეული ვერ დაემატა</item>
-    <item quantity="other">%1$d ერთეული ვერ დაემატა</item>
+    <item quantity="one">%1$d item failed</item>
+    <item quantity="other">%1$d items failed</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos removed from album
@@ -125,8 +125,8 @@
             "13 items removed from album"
     -->
   <plurals name="in_app_notification_remove_from_album_success">
-    <item quantity="one">ალბომიდან ამოიშალა %1$d ერთეული</item>
-    <item quantity="other">ალბომიდან ამოიშალა %1$d ერთეული</item>
+    <item quantity="one">%1$d ელემენტი წაიშალა ალბომიდან</item>
+    <item quantity="other">%1$d ელემენტი წაიშალა ალბომიდან</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not removed because removing failed
@@ -135,8 +135,8 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_removed_from_album_failed">
-    <item quantity="one">%1$d ერთეულის ამოშლა ვერ მოხერხდა</item>
-    <item quantity="other">%1$d ერთეულის ამოშლა ვერ მოხერხდა</item>
+    <item quantity="one">%1$d item failed</item>
+    <item quantity="other">%1$d items failed</item>
   </plurals>
   <string name="albums_empty_album_screen_title">ფოტოები არ არის</string>
   <string name="albums_empty_album_screen_description">ფოტოები, რომლებსაც თქვენ ან სხვა წევრები დაამატებთ, აქ გამოჩნდება</string>
@@ -154,8 +154,8 @@
             "3 albums shared with you"
     -->
   <plurals name="shared_with_me_album_invitations_banner_description">
-    <item quantity="one">თქვენთვის გაზიარდა %1$d ალბომი</item>
-    <item quantity="other">თქვენთვის გაზიარდა %1$d ალბომი</item>
+    <item quantity="one">თქვენთან გაზიარებულია %1$d ალბომი</item>
+    <item quantity="other">თქვენთან გაზიარებულია %1$d ალბომი</item>
   </plurals>
   <string name="albums_share_multiple_photos_options_section_title">გაზიარება მეშვეობით</string>
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">გაზიარებულ ალბომში დამატება</string>
@@ -170,5 +170,5 @@
             "By Pablo Picasso"
             "By pablo.picasso@example.com"
     -->
-  <string name="albums_shared_with_me_details">ავტორი: %1$s</string>
+  <string name="albums_shared_with_me_details">By %1$s</string>
 </resources>

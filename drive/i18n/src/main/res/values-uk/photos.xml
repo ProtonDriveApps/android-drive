@@ -74,9 +74,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Для безперервного та автоматичного резервного копіювання надайте доступ до всіх фотографій для %1$s в налаштуваннях пристрою.</string>
-  <string name="photos_error_waiting_connectivity">Немає з\'єднання з інтернетом</string>
+  <string name="photos_error_waiting_connectivity">Waiting for connection</string>
   <string name="photos_error_waiting_wifi_connectivity">Очікування на Wi-Fi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Використовувати мобільні дані</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">This network might charge for data</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Дозволити</string>
   <string name="photos_error_local_storage">Сховище пристрою заповнене</string>
   <string name="photos_error_local_storage_description">Щоб надалі виконувати резервне копіювання, необхідно звільнити місце у сховищі вашого пристрою.</string>
   <string name="photos_error_background_restrictions">Установіть для акумулятора режим «Без обмежень», щоби застосунок продовжив роботу у фоновому режимі</string>
@@ -85,7 +87,10 @@
   <string name="photos_empty_title">Ще немає резервних копій</string>
   <string name="photos_empty_description">Після створення фото або відео на пристрої вони з\'являтимуться тут.</string>
   <string name="photos_backup_title">Резервне копіювання фото</string>
-  <string name="photos_backup_option_mobile_data">Використовувати мобільні дані для резервного копіювання фото</string>
+  <string name="photos_backup_option_mobile_data">Back up over cellular</string>
+  <string name="photos_backup_option_mobile_data_description">Backs up on any network, which may use paid data.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Back up over unverified networks</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Includes hotspots, public Wi-Fi, and other networks we can\'t confirm are free. May occasionally use paid data.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Вимкнути оптимізацію акумулятора</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Забезпечення безперебійного резервного копіювання під час роботи програми на задньому плані.</string>
   <string name="photos_backup_in_app_notification_turned_on">Резервне копіювання фото увімкнено</string>

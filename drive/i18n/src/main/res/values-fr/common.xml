@@ -52,7 +52,7 @@
     -->
   <plurals name="common_x_years">
     <item quantity="one">%1$d année</item>
-    <item quantity="other">%1$d années</item>
+    <item quantity="other">%1$d ans</item>
   </plurals>
   <!-- tag(q2campaign2026)
         Variable %1$d is a number of months

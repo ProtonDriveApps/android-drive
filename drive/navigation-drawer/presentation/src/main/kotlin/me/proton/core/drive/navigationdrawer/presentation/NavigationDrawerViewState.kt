@@ -30,5 +30,5 @@ data class NavigationDrawerViewState(
     val currentUser: User? = null,
     val showGetFreeStorage: Boolean = false,
     val showSubscription: Boolean = false,
-    val isQ3CampaignPromoEligible: Boolean = false,
+    val specialOffer: SpecialOffer? = null,
 )

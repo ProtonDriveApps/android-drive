@@ -25,6 +25,7 @@ import androidx.paging.CombinedLoadStates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -45,6 +46,7 @@ import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.base.presentation.entity.ObscuredTouch
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
@@ -59,6 +61,7 @@ import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.upload.domain.exception.NotEnoughSpaceException
 import me.proton.core.drive.upload.domain.provider.FileProvider
 import me.proton.core.drive.upload.domain.usecase.CopyUriToCacheTempFolder
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
@@ -81,6 +84,7 @@ class UploadToViewModel @Inject constructor(
     FolderCreatedHandler by folderCreatedHandlerDelegate {
 
     val folderCreatedFlow: Flow<FolderId> = folderCreatedHandlerDelegate.folderCreatedFlow
+    private var obscuredUploadMessageJob: Job? = null
 
     fun consumeFolderCreated() = folderCreatedHandlerDelegate.consume()
     private val parentShareId: ShareId? = savedStateHandle.get<String?>(PARENT_SHARE_ID)?.let { id ->
@@ -158,6 +162,7 @@ class UploadToViewModel @Inject constructor(
         override val onAppendErrorAction: () -> Unit = this@UploadToViewModel.onRetry
         override val upload: () -> Unit = { upload(navigateToStorageFull, exitApp) }
         override val onCreateFolder: () -> Unit = { this@UploadToViewModel.onCreateFolder(navigateToCreateFolder) }
+        override val onUploadObscured: (ObscuredTouch) -> Unit = this@UploadToViewModel::onUploadObscured
         override val onRenderThumbnail: (DriveLink) -> Unit = {}
     }
 
@@ -205,6 +210,22 @@ class UploadToViewModel @Inject constructor(
         }
     }
 
+    private fun onUploadObscured(obscuredTouch: ObscuredTouch) {
+        if (obscuredUploadMessageJob?.isActive == true) return
+        CoreLogger.i(VIEW_MODEL, "Upload tap rejected, window obscured: ${obscuredTouch.name}")
+        obscuredUploadMessageJob = viewModelScope.launch {
+            showError(
+                appContext.getString(
+                    I18N.string.upload_to_obscured_touch_blocked,
+                    appContext.getString(I18N.string.app_name),
+                )
+            )
+            // Emitting completes once the message is taken from the queue, waiting here covers the
+            // time it is shown, so repeated taps don't pile up copies of it
+            delay(OBSCURED_UPLOAD_MESSAGE_DURATION)
+        }
+    }
+
     private fun cleanupOnFailure(localUris: List<String>) = localUris.forEach { uriString ->
         fileProvider.getFile(uriString).delete()
     }
@@ -213,5 +234,7 @@ class UploadToViewModel @Inject constructor(
         const val URIS = "uris"
         const val PARENT_SHARE_ID = "parentShareId"
         const val PARENT_ID = "parentId"
+        // Same as SnackbarDuration.Short
+        val OBSCURED_UPLOAD_MESSAGE_DURATION = 4.seconds
     }
 }

@@ -44,7 +44,7 @@ core-test-quark = "14.1.0"
 dagger = "2.58"
 # Drive
 # Go crypto build; dev & alpha use the "-rust" variant (see app/build.gradle.kts).
-drive-sdk = "0.31.0"
+drive-sdk = "0.32.1"
 # Desugar
 desugar = "2.0.4"
 # Github
@@ -74,7 +74,7 @@ sentry = "7.21.0"
 showkase = "1.0.5"
 # Squareup
 leakCanary = "2.8.1"
-okhttp = "4.10.0"
+okhttp = "4.12.1"
 retrofit = "2.9.0"
 # Test
 junit = "4.13.2"
@@ -250,10 +250,12 @@ core-payment-data = { module = "me.proton.core:payment-data", version.ref = "cor
 core-payment-iap = { module = "me.proton.core:payment-iap", version.ref = "core" }
 core-payment-presentation = { module = "me.proton.core:payment-presentation", version.ref = "core" }
 
+ufc-android-payment = { module = "me.proton.android.payment:payment", version.ref = "ufc-android-payment" }
 ufc-android-payment-billing-google = { module = "me.proton.android.payment:payment-billing-google", version.ref = "ufc-android-payment" }
 ufc-android-payment-ui = { module = "me.proton.android.payment:payment-ui", version.ref = "ufc-android-payment" }
 
 core-plan = { module = "me.proton.core:plan", version.ref = "core" }
+core-plan-domain = { module = "me.proton.core:plan-domain", version.ref = "core" }
 core-plan-presentation-compose = { module = "me.proton.core:plan-presentation-compose", version.ref = "core" }
 core-plan-test = { module = "me.proton.core:plan-test", version.ref = "core" }
 core-presentation = { module = "me.proton.core:presentation", version.ref = "core" }

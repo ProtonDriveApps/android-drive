@@ -46,7 +46,7 @@
         Examples:
             "Your Camera folder is backed up automatically."
     -->
-  <string name="settings_photos_backup_folders_description">Mappen %1$s sikkerhetskopieres automatisk. Velg flere mapper for å sikkerhetskopiere, og bildene deres vises i Bilder-fanen.</string>
+  <string name="settings_photos_backup_folders_description">Mappen %1$s sikkerhetskopieres automatisk. Velg flere mapper som skal sikkerhetskopieres, så vises bildene fra dem i fanen Bilder.</string>
   <string name="settings_photos_backup_folders_not_found">Finner ikke mappen</string>
   <string name="settings_photos_backup_folders_confirm_stop_sync_title">Stopp sikkerhetskopiering av mappen?</string>
   <!--
@@ -54,7 +54,7 @@
         Examples:
             "Camera will no longer be backing up to the cloud."
     -->
-  <string name="settings_photos_backup_folders_confirm_stop_sync_description">%1$s vil ikke lenger sikkerhetskopiere til skyen. Bilder som allerede er sikkerhetskopiert, blir ikke slettet.</string>
+  <string name="settings_photos_backup_folders_confirm_stop_sync_description">%1$s vil ikke lenger sikkerhetskopieres til skyen. Bilder som allerede er sikkerhetskopiert, blir ikke slettet.</string>
   <string name="settings_photos_backup_folders_confirm_stop_sync_confirm_action">Stopp sikkerhetkopiering</string>
   <plurals name="settings_photos_backup_folders_description_photos">
     <item quantity="one">%1$d bilde</item>

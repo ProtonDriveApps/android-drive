@@ -81,8 +81,8 @@ import me.proton.android.drive.ui.common.onClick
 import me.proton.android.drive.ui.effect.HomeEffect
 import me.proton.android.drive.ui.effect.HomeTabViewModel
 import me.proton.android.drive.ui.effect.PhotosEffect
+import me.proton.android.drive.usecase.BlackFriday2026OfferCache
 import me.proton.android.drive.usecase.GetSubscriptionAction
-import me.proton.android.drive.usecase.ObserveQ3CampaignPromoEligible
 import me.proton.android.drive.usecase.OnFilesDriveLinkError
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.onSuccess
@@ -148,6 +148,7 @@ import me.proton.core.drive.observability.domain.metrics.common.mobile.performan
 import me.proton.core.drive.photo.domain.usecase.GetPhotoListingIdsInRange
 import me.proton.core.drive.photo.domain.usecase.GetPhotoListingIdsInRangeFlow
 import me.proton.core.drive.photo.domain.usecase.GetTagsMigrationStatusFlow
+import me.proton.core.drive.promo.domain.entity.BlackFriday2026Offer
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.user.domain.entity.UserMessage
 import me.proton.core.drive.user.domain.extension.isFree
@@ -204,7 +205,7 @@ class PhotosViewModel @Inject constructor(
     private val checkMissingFolders: CheckMissingFolders,
     private val cancelUserMessage: CancelUserMessage,
     private val toFirstItemMetricsNotifier: ToFirstItemMetricsNotifier,
-    private val observeQ3CampaignPromoEligible: ObserveQ3CampaignPromoEligible,
+    private val blackFriday2026OfferCache: BlackFriday2026OfferCache,
     private val getFeatureFlagFlow: GetFeatureFlagFlow,
     private val getPhotoListingIdsInRange: GetPhotoListingIdsInRange,
     private val getPhotoListingIdsInRangeFlow: GetPhotoListingIdsInRangeFlow,
@@ -226,8 +227,9 @@ class PhotosViewModel @Inject constructor(
     HomeTabViewModel,
     NotificationDotViewModel by NotificationDotViewModel(shouldUpgradeStorage) {
 
-    // Shared across tabs (see ObserveQ3CampaignPromoEligible) so switching tabs doesn't re-trigger
-    private val isQ3CampaignPromoEligibleFlow: StateFlow<Boolean?> = observeQ3CampaignPromoEligible(userId)
+    private val blackFriday2026Offer: StateFlow<BlackFriday2026Offer?> = blackFriday2026OfferCache
+        .availableOffer(userId)
+        .stateIn(viewModelScope, Eagerly, null)
 
     private val isSeparatorSelectionEnabledFlow: Flow<Boolean> = getFeatureFlagFlow(
         featureFlagId = FeatureFlagId.driveAndroidPhotosSeparatorSelectionDisabled(userId),
@@ -513,9 +515,9 @@ class PhotosViewModel @Inject constructor(
         userManager.observeUser(userId),
         isFastScrollEnabled,
         photosFilters,
-        isQ3CampaignPromoEligibleFlow,
+        blackFriday2026Offer,
         isSeparatorSelectionEnabledFlow,
-    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand, notificationDotRequested, photoListingsFilter, hasPhotoVolume, user, isFastScrollEnabled, photosFilters, isQ3CampaignPromoEligible, isSeparatorSelectionEnabled ->
+    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand, notificationDotRequested, photoListingsFilter, hasPhotoVolume, user, isFastScrollEnabled, photosFilters, blackFriday2026Offer, isSeparatorSelectionEnabled ->
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
@@ -524,10 +526,9 @@ class PhotosViewModel @Inject constructor(
         }
         if (selected.isEmpty()) {
             topBarActions.value = setOfNotNull(
-                isQ3CampaignPromoEligible
-                    ?.takeIf { user != null && user.isFree }
-                    ?.let { eligible ->
-                        getSubscriptionAction(eligible) {
+                takeIf { (user != null && user.isFree) || blackFriday2026Offer != null }
+                    ?.let {
+                        getSubscriptionAction(isPromoAvailable = blackFriday2026Offer != null) {
                             viewEvent?.onGetStorage?.invoke()
                         }
                     },
@@ -599,16 +600,14 @@ class PhotosViewModel @Inject constructor(
         )
     }.stateIn(viewModelScope, Eagerly, Unit)
 
-    private fun navigateToUpsellOrQ3Campaign(
+    private fun navigateToPromoOrUpsell(
+        navigateToBlackFriday2026Promo: () -> Unit,
         navigateToUpsellPromo: () -> Unit,
-        navigateToQ3CampaignPromo: () -> Unit,
     ) {
-        viewModelScope.launch {
-            if (isQ3CampaignPromoEligibleFlow.filterNotNull().first()) {
-                navigateToQ3CampaignPromo()
-            } else {
-                navigateToUpsellPromo()
-            }
+        if (blackFriday2026Offer.value != null) {
+            navigateToBlackFriday2026Promo()
+        } else {
+            navigateToUpsellPromo()
         }
     }
 
@@ -618,7 +617,7 @@ class PhotosViewModel @Inject constructor(
         navigateToMultiplePhotosOptions: (selectionId: SelectionId) -> Unit,
         navigateToPhotosIssues: (FolderId) -> Unit,
         navigateToPhotosUpsell: () -> Unit,
-        navigateToQ3CampaignPromo: () -> Unit,
+        navigateToBlackFriday2026Promo: () -> Unit,
         navigateToUpsellPromo: () -> Unit,
         navigateToBackupSettings: () -> Unit,
         navigateToEnableBackupDialog: () -> Unit,
@@ -733,7 +732,9 @@ class PhotosViewModel @Inject constructor(
         override val onRetry = this@PhotosViewModel::onRetry
         override val onScroll = this@PhotosViewModel::onScroll
         override val onStatusClicked = this@PhotosViewModel::onStatusClicked
-        override val onGetStorage: () -> Unit = { navigateToUpsellOrQ3Campaign(navigateToUpsellPromo, navigateToQ3CampaignPromo) }
+        override val onGetStorage: () -> Unit = {
+            navigateToPromoOrUpsell(navigateToBlackFriday2026Promo, navigateToUpsellPromo)
+        }
         override val onResolveMissingFolder: () -> Unit = navigateToBackupSettings
         override val onChangeNetwork: () -> Unit = navigateToBackupSettings
         override val onAllowUnconfirmedNetwork: () -> Unit = navigateToBackupSettings

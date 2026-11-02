@@ -43,7 +43,7 @@
   <string name="common_all">全部</string>
   <string name="common_unknown">未知</string>
   <string name="common_month">月份</string>
-  <string name="common_year">Year</string>
+  <string name="common_year">年</string>
   <!--
         Variable %1$d is a number of years
         Example:
@@ -51,7 +51,7 @@
             "17 years"
     -->
   <plurals name="common_x_years">
-    <item quantity="other">%1$d years</item>
+    <item quantity="other">%1$d 年</item>
   </plurals>
   <!-- tag(q2campaign2026)
         Variable %1$d is a number of months
@@ -60,7 +60,7 @@
             "12 months"
     -->
   <plurals name="common_x_months">
-    <item quantity="other">%1$d months</item>
+    <item quantity="other">%1$d 月</item>
   </plurals>
   <!--
         Variable %1$d is a number of weeks
@@ -69,7 +69,7 @@
             "4 weeks"
     -->
   <plurals name="common_x_weeks">
-    <item quantity="other">%1$d weeks</item>
+    <item quantity="other">%1$d 星期</item>
   </plurals>
   <!--
         Variable %1$d is a number of days
@@ -78,7 +78,7 @@
             "37 days"
     -->
   <plurals name="common_x_days">
-    <item quantity="other">%1$d days</item>
+    <item quantity="other">%1$d 天</item>
   </plurals>
   <!-- endregion -->
   <!-- region Common actions -->
@@ -117,8 +117,8 @@
   <string name="common_add_to_albums_action">新增至相簿</string>
   <string name="common_tag_photo_action">掃描相片是否有標籤</string>
   <string name="common_save_as_action">儲存為</string>
-  <string name="common_open_action">Open</string>
-  <string name="common_back_action">Back</string>
+  <string name="common_open_action">打開</string>
+  <string name="common_back_action">返回</string>
   <string name="common_open_side_menu_action">Open side menu</string>
   <string name="common_not_now">容後再說</string>
   <!-- endregion -->

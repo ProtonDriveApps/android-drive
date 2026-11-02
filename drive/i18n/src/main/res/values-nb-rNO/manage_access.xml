@@ -34,14 +34,14 @@
   <string name="manage_access_link_description_password_protected">Alle med koblingen og passordet</string>
   <string name="manage_access_link_default_permission">Kan se</string>
   <string name="manage_access_link_editor_permission">Kan redigere</string>
-  <string name="manage_access_change_access_to_viewer_title">Endre tilgang til seeren?</string>
+  <string name="manage_access_change_access_to_viewer_title">Endre tilgang til leseren?</string>
   <!--
         Variable %1$s is a file or folder name
         Example:
             You won’t be able to share "Some folder" after changing your access to viewer. The owner or an editor with sharing access can restore your edit access. You can’t undo this change yourself.
     -->
   <string name="manage_access_change_access_to_viewer_description">"Du vil ikke kunne dele \"%1$s\" etter at du har endret tilgangen til leser. Eieren eller en redigerer med delingstilgang kan gjenopprette redigeringstilgangen. Du kan ikke angre denne endringen selv."</string>
-  <string name="manage_access_change_access_to_viewer_action">Endre tilgangen</string>
+  <string name="manage_access_change_access_to_viewer_action">Endre tilgangen min</string>
   <string name="manage_access_new_editor_permissions_title">Nye redigeringstillatelser</string>
   <string name="manage_access_new_editor_permissions_description">Redigerere kan nå administrere deling og invitere andre. Du kan slå det av når som helst.</string>
 </resources>

@@ -60,6 +60,14 @@
   <string name="upload_to_title_format">Enviar para %1$s</string>
   <string name="upload_title">Enviar</string>
   <!--
+        Shown when a tap on the Upload button is ignored because another app draws a window over
+        ours (tapjacking protection).
+        Variable %1$s is an application name
+        Example:
+            "For your security, the tap was blocked because another app is displaying over Proton Drive. Close any floating windows or screen filters and try again."
+    -->
+  <string name="upload_to_obscured_touch_blocked">Para sua segurança, o toque foi bloqueado porque outro aplicativo está sendo exibido sobre %1$s. Feche todas as janelas flutuantes ou filtros de tela e tente novamente.</string>
+  <!--
         Variable %1$s is an application name
         Example:
             "Only files can be uploaded to Proton Drive"
@@ -143,6 +151,7 @@
   <string name="notification_content_text_backup_failed_permission">Faltam algumas permissões</string>
   <string name="notification_content_text_backup_failed_connectivity">Sem conexão com a internet</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Aguardando por Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">This network might charge for data</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">O backup não é permitido</string>
   <string name="notification_content_text_backup_failed_folder_not_found">A pasta de backupnão existe mais.</string>
   <string name="notification_content_text_backup_paused_disabled">Backup foi desativado</string>

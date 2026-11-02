@@ -74,9 +74,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Pre nepretržité a automatické zálohovanie povoľte v nastaveniach prístup %1$s ku všetkým fotografiám.</string>
-  <string name="photos_error_waiting_connectivity">Žiadne internetové pripojenie</string>
+  <string name="photos_error_waiting_connectivity">Čaká sa na pripojenie...</string>
   <string name="photos_error_waiting_wifi_connectivity">Čakám na Wi-Fi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Použiť mobilné dáta</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">Táto sieť môže účtovať poplatky za prenos dát</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Povoliť</string>
   <string name="photos_error_local_storage">Úložisko zariadenia je plné</string>
   <string name="photos_error_local_storage_description">Ak chcete pokračovať v zálohovaní, musíte uvoľniť úložisko v zariadení.</string>
   <string name="photos_error_background_restrictions">Nastavte používanie batérie na \"neobmedzené\" pre aktivitu aplikácie na pozadí</string>
@@ -85,7 +87,10 @@
   <string name="photos_empty_title">Zatiaľ bez zálohovania</string>
   <string name="photos_empty_description">Hneď, ako budete mať v zariadení fotografie alebo videá, zobrazia sa tu.</string>
   <string name="photos_backup_title">Zálohovanie fotiek</string>
-  <string name="photos_backup_option_mobile_data">Použiť mobilné dáta na zálohovanie fotografií</string>
+  <string name="photos_backup_option_mobile_data">Zálohovanie cez mobilnú sieť</string>
+  <string name="photos_backup_option_mobile_data_description">Zálohovanie prebieha v akejkoľvek sieti, pričom môže dochádzať k spotrebe platených dát.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Zálohovanie cez neoverené siete</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Zahŕňa hotspoty, verejné Wi-Fi a ďalšie siete, u ktorých nemôžeme potvrdiť, že sú bezplatné. Občas môže dochádzať k využívaniu platených dát.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Vypnúť optimalizáciu batérie</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Povolí neprerušované zálohovanie, keď je aplikácia spustená na pozadí.</string>
   <string name="photos_backup_in_app_notification_turned_on">Zálohovanie fotiek je zapnuté</string>

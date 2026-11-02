@@ -60,6 +60,14 @@
   <string name="upload_to_title_format">Uploaden naar %1$s</string>
   <string name="upload_title">Uploaden</string>
   <!--
+        Shown when a tap on the Upload button is ignored because another app draws a window over
+        ours (tapjacking protection).
+        Variable %1$s is an application name
+        Example:
+            "For your security, the tap was blocked because another app is displaying over Proton Drive. Close any floating windows or screen filters and try again."
+    -->
+  <string name="upload_to_obscured_touch_blocked">For your security, the tap was blocked because another app is displaying over %1$s. Close any floating windows or screen filters and try again.</string>
+  <!--
         Variable %1$s is an application name
         Example:
             "Only files can be uploaded to Proton Drive"
@@ -132,7 +140,7 @@
         "12 345 items left"
     -->
   <plurals name="notification_content_text_backup_in_progress">
-    <item quantity="one">%1$s items over</item>
+    <item quantity="one">%1$s item over</item>
     <item quantity="other">%1$s items over</item>
   </plurals>
   <string name="notification_content_text_backup_complete">Back-up voltooid</string>
@@ -143,8 +151,9 @@
   <string name="notification_content_text_backup_failed_permission">Machtigingen ontbreken</string>
   <string name="notification_content_text_backup_failed_connectivity">Geen internetverbinding</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Wachten op Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">Dit netwerk kan kosten in rekening brengen voor data</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Back-up is niet toegestaan</string>
-  <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
+  <string name="notification_content_text_backup_failed_folder_not_found">Back-up map bestaat niet meer</string>
   <string name="notification_content_text_backup_paused_disabled">Back-up uitgeschakeld</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Back-up kan niet op de achtergrond worden uitgevoerd</string>
   <string name="notification_content_text_backup_preparing">Back-up voorbereiden</string>
@@ -177,8 +186,8 @@
   <string name="notification_content_title_transferring">Gegevens overdragen</string>
   <!-- endregion -->
   <string name="content_description_select_all">Selecteer alle items in de lijst</string>
-  <string name="content_description_select_separator">Select all items in %1$s</string>
-  <string name="photos_error_separator_selection_failed">Some items could not be selected, please try again</string>
+  <string name="content_description_select_separator">Selecteer alle items in %1$s</string>
+  <string name="photos_error_separator_selection_failed">Sommige items konden niet worden geselecteerd, probeer het opnieuw</string>
   <string name="content_description_selected_options">Toon meer opties voor geselecteerde bestanden en/of mappen</string>
   <string name="content_description_files_upload_upload_file">Upload een bestand</string>
   <string name="content_description_albums_new">Nieuw album maken</string>

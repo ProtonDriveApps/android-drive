@@ -154,9 +154,9 @@
     -->
   <plurals name="in_app_notification_removed_from_album_failed">
     <item quantity="one">%1$d predmet ni uspel.</item>
-    <item quantity="two">%1$d predmeta nista uspela</item>
-    <item quantity="few">%1$d predmeti niso uspeli</item>
-    <item quantity="other">%1$d predmetov ni uspelo</item>
+    <item quantity="two">%1$d predmeta nista uspela.</item>
+    <item quantity="few">%1$d predmeti niso uspeli.</item>
+    <item quantity="other">%1$d predmetov ni uspelo.</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Brez fotografij</string>
   <string name="albums_empty_album_screen_description">Fotografije, ki jih boste dodali vi ali drugi člani, bodo prikazane tukaj</string>

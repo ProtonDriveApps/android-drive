@@ -23,7 +23,7 @@
             "Subscription auto renews at $9.99/month"
     -->
   <string name="plan_subscription_auto_renews_monthly">L\'abbonamento si rinnova automaticamente a %1$s/mese</string>
-  <string name="plan_subscription_auto_renews_annual">L\'abbonamento si rinnova automaticamente a %1$s/anno</string>
-  <string name="plan_welcome_offer_auto_renews_monthly">Offerta di benvenuto. Si rinnova automaticamente a %1$s/mese</string>
-  <string name="plan_welcome_offer_auto_renews_annual">Offerta di benvenuto. Si rinnova automaticamente a %1$s/anno</string>
+  <string name="plan_subscription_auto_renews_annual">L\'abbonamento si rinnova automaticamente a %1$s/anno</string>
+  <string name="plan_welcome_offer_auto_renews_monthly">Offerta di benvenuto. Si rinnova automaticamente a %1$s/mese</string>
+  <string name="plan_welcome_offer_auto_renews_annual">Offerta di benvenuto. Si rinnova automaticamente a %1$s/anno</string>
 </resources>

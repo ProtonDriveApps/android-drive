@@ -63,10 +63,10 @@
             "12 months"
     -->
   <plurals name="common_x_months">
-    <item quantity="one">%1$d month</item>
-    <item quantity="two">%1$d months</item>
-    <item quantity="few">%1$d months</item>
-    <item quantity="other">%1$d months</item>
+    <item quantity="one">%1$d mesec</item>
+    <item quantity="two">%1$d meseca</item>
+    <item quantity="few">%1$d meseci</item>
+    <item quantity="other">%1$d mesecev</item>
   </plurals>
   <!--
         Variable %1$d is a number of weeks
@@ -89,7 +89,7 @@
   <plurals name="common_x_days">
     <item quantity="one">%1$d dan</item>
     <item quantity="two">%1$d dneva</item>
-    <item quantity="few">%1$d dni</item>
+    <item quantity="few">%1$d dnevi</item>
     <item quantity="other">%1$d dni</item>
   </plurals>
   <!-- endregion -->

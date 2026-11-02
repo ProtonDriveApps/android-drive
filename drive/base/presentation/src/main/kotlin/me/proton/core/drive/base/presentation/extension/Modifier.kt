@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import me.proton.core.drive.base.presentation.entity.ObscuredTouch
 
 fun Modifier.conditional(condition: Boolean, block: Modifier.() -> Modifier) =
     if (condition) {
@@ -37,12 +38,22 @@ fun Modifier.conditional(condition: Boolean, block: Modifier.() -> Modifier) =
     }
 
 @OptIn(ExperimentalComposeUiApi::class)
-fun Modifier.rejectObscuredTouches() = pointerInteropFilter { event ->
-    event.flags and (
-        MotionEvent.FLAG_WINDOW_IS_OBSCURED or
-            MotionEvent.FLAG_WINDOW_IS_PARTIALLY_OBSCURED
-        ) != 0
+fun Modifier.rejectObscuredTouches(
+    onRejected: (ObscuredTouch) -> Unit = {},
+) = pointerInteropFilter { event ->
+    val obscuredTouch = event.obscuredTouch
+    if (obscuredTouch != null && event.actionMasked == MotionEvent.ACTION_DOWN) {
+        onRejected(obscuredTouch)
+    }
+    obscuredTouch != null
 }
+
+private val MotionEvent.obscuredTouch: ObscuredTouch?
+    get() = when {
+        flags and MotionEvent.FLAG_WINDOW_IS_OBSCURED != 0 -> ObscuredTouch.FULL
+        flags and MotionEvent.FLAG_WINDOW_IS_PARTIALLY_OBSCURED != 0 -> ObscuredTouch.PARTIAL
+        else -> null
+    }
 
 fun Modifier.shadow(
     color: Color = Color.Black,

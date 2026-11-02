@@ -29,8 +29,8 @@
             "2 persons added"
     -->
   <plurals name="share_via_invitations_person_added">
-    <item quantity="one">Yksi henki lisättiin</item>
-    <item quantity="other">%1$d henki lisättiin</item>
+    <item quantity="one">1 henki lisättiin</item>
+    <item quantity="other">%1$d henkeä lisättiin</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -38,7 +38,7 @@
             "2 persons cannot be invited"
     -->
   <plurals name="share_via_invitations_person_added_error">
-    <item quantity="one">Yhtä henkeä ei voida kutsua</item>
+    <item quantity="one">1 henkeä ei voida kutsua</item>
     <item quantity="other">%1$d henkeä ei voida kutsua</item>
   </plurals>
   <!--
@@ -47,7 +47,7 @@
             "Sharing with 2 persons"
     -->
   <plurals name="share_via_invitations_sharing_with">
-    <item quantity="one">Jaetaan yhdelle hengelle</item>
+    <item quantity="one">Jaetaan 1 hengelle</item>
     <item quantity="other">Jaetaan %1$d hengelle</item>
   </plurals>
   <string name="common_permission_owner">Omistaja</string>

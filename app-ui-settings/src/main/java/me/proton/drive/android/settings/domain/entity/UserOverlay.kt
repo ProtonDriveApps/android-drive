@@ -22,5 +22,5 @@ sealed interface UserOverlay {
     data object Onboarding : UserOverlay
     data class WhatsNew(val key: WhatsNewKey) : UserOverlay
     data object RatingBooster : UserOverlay
-    data object Q3CampaignPromo : UserOverlay
+    data object Promo : UserOverlay
 }

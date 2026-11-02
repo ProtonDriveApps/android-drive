@@ -39,6 +39,7 @@ import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.documentsprovider.data.extension.exportTo
+import me.proton.core.drive.documentsprovider.data.manager.ExportDestinationPermissions
 import me.proton.core.drive.documentsprovider.data.worker.WorkerKeys.KEY_DESTINATION_URI
 import me.proton.core.drive.documentsprovider.data.worker.WorkerKeys.KEY_FILE_ID
 import me.proton.core.drive.documentsprovider.data.worker.WorkerKeys.KEY_SHARE_ID
@@ -61,6 +62,7 @@ class ExportToDestinationUriWorker @AssistedInject constructor(
     broadcastMessages: BroadcastMessages,
     private val getDriveLink: GetDecryptedDriveLink,
     announceEvent: AnnounceEvent,
+    private val exportDestinationPermissions: ExportDestinationPermissions,
 ) : ExportCoroutineWorker(appContext, workerParams, getFile, getFileUri, configurationProvider, broadcastMessages, announceEvent) {
     private val shareId = ShareId(userId, requireNotNull(inputData.getString(KEY_SHARE_ID)) { "Share id is required" })
     private val fileId = FileId(shareId, requireNotNull(inputData.getString(KEY_FILE_ID)) { "File id is required" })
@@ -87,9 +89,13 @@ class ExportToDestinationUriWorker @AssistedInject constructor(
     override fun exportFileUri(uri: Uri, driveLink: DriveLink.File): kotlin.Result<Unit> =
         uri.exportTo(applicationContext.contentResolver, destinationUri)
 
-    override suspend fun handleResult(result: Result) = Unit
+    override suspend fun handleResult(result: Result) {
+        exportDestinationPermissions.releaseUnused(excludeWorkId = id)
+    }
 
     companion object {
+        const val TAG = "export_to_destination_uri"
+
         fun getWorkRequest(
             fileId: FileId,
             destinationUri: Uri,
@@ -109,7 +115,7 @@ class ExportToDestinationUriWorker @AssistedInject constructor(
                         .putString(KEY_DESTINATION_URI, destinationUri.toString())
                         .build()
                 )
-                .addTags(listOf(fileId.userId.id) + tags)
+                .addTags(listOf(fileId.userId.id, TAG) + tags)
                 .build()
     }
 }

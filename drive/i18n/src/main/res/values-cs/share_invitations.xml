@@ -52,7 +52,7 @@
     -->
   <plurals name="share_via_invitations_sharing_with">
     <item quantity="one">Sdílení s 1 osobou</item>
-    <item quantity="few">Sdílení se %1$d osobami</item>
+    <item quantity="few">Sdílení s %1$d osobami</item>
     <item quantity="many">Sdílení s %1$d osobami</item>
     <item quantity="other">Sdílení s %1$d osobami</item>
   </plurals>

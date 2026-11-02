@@ -74,9 +74,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Для бесперапыннага і аўтаматычнага рэзервовага капіявання неабходна дазволіць %1$s доступ да ўсіх фатаграфій у наладах прылады.</string>
-  <string name="photos_error_waiting_connectivity">Няма падключэння да інтэрнэту</string>
+  <string name="photos_error_waiting_connectivity">Чаканне падключэння</string>
   <string name="photos_error_waiting_wifi_connectivity">Чаканне Wi-Fi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Выкарыстоўваюць мабільную сетку</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">This network might charge for data</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Дазволіць</string>
   <string name="photos_error_local_storage">Сховішча прылады запоўнена</string>
   <string name="photos_error_local_storage_description">Для працягу рэзервовага капіявання неабходна вызваліць месца ў сховішчы вашай прылады.</string>
   <string name="photos_error_background_restrictions">Задайце статус выкарыстання для акумулятара \"Неабмежавана\" для тых праграм, якія працуюць у фоне</string>
@@ -85,7 +87,10 @@
   <string name="photos_empty_title">Пакуль рэзервовыя копіі адсутнічаюць</string>
   <string name="photos_empty_description">Як толькі на вашай прыладзе будуць з\'яўляцца відэа і фатаграфіі, яны адразу ж будуць трапляць і сюды.</string>
   <string name="photos_backup_title">Рэзервовая капіяванне фатаграфій</string>
-  <string name="photos_backup_option_mobile_data">Выкарыстоўваць мабільныя даныя для рэзервовага капіявання фатаграфій</string>
+  <string name="photos_backup_option_mobile_data">Back up over cellular</string>
+  <string name="photos_backup_option_mobile_data_description">Backs up on any network, which may use paid data.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Back up over unverified networks</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Includes hotspots, public Wi-Fi, and other networks we can\'t confirm are free. May occasionally use paid data.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Адключыць аптымізацыю акумулятара</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Дазваляць бесперапыннае рэзервовае капіяванне, калі праграма працуе ў фоне.</string>
   <string name="photos_backup_in_app_notification_turned_on">Рэзервовае капіяванне фатаграфій уключана</string>
@@ -179,8 +184,8 @@
   <plurals name="photos_tags_migration_ongoing">
     <item quantity="one">Адбываецца перанос %1$s файла. Чакаюць спампоўвання %2$s.</item>
     <item quantity="few">Адбываецца перанос %1$s файлаў. Чакаюць спампоўвання %2$s.</item>
-    <item quantity="many">Адбываецца перанос %1$s файлаў. Чакаюць спампоўвання %2$s.</item>
-    <item quantity="other">Адбываецца перанос %1$s файлаў. Чакаюць спампоўвання %2$s.</item>
+    <item quantity="many">Ідзе перанос %1$s файлаў, %2$s чакае загрузкі.</item>
+    <item quantity="other">Ідзе перанос %1$s файлаў, %2$s чакае загрузкі.</item>
   </plurals>
   <string name="photos_folder_selection_title">Рэзерваваць фатаграфіі з</string>
   <string name="photos_folder_selection_description">Выберыце папкі для рэзервовага капіявання, і іх фатаграфіі з\'явяцца на ўкладцы \"Фотаграфіі\".</string>

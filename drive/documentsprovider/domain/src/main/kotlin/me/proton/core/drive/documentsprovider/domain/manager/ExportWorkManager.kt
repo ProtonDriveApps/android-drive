@@ -24,6 +24,6 @@ import me.proton.core.drive.link.domain.entity.FileId
 interface ExportWorkManager {
     fun exportTo(fileId: FileId, destinationUri: Uri)
     suspend fun exportToDownload(fileIds: List<FileId>): Result<Unit>
-    fun cancel(fileId: FileId)
-    fun cancelAll(userId: UserId)
+    suspend fun cancel(fileId: FileId)
+    suspend fun cancelAll(userId: UserId)
 }

@@ -102,6 +102,7 @@ fun ProtonOutlinedButton(
     contained: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     colors: ButtonColors = ButtonDefaults.protonOutlinedButtonColors(loading),
+    shape: Shape = ProtonTheme.shapes.medium,
     content: @Composable () -> Unit,
 ) {
     ProtonButton(
@@ -112,7 +113,7 @@ fun ProtonOutlinedButton(
         contained = contained,
         interactionSource = interactionSource,
         elevation = null,
-        shape = ProtonTheme.shapes.medium,
+        shape = shape,
         border = ButtonDefaults.protonOutlinedBorder(enabled, loading),
         colors = colors,
         contentPadding = ButtonDefaults.ContentPadding,

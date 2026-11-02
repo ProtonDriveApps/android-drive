@@ -18,9 +18,11 @@
 
 package me.proton.android.drive.ui.viewevent
 
+import me.proton.core.drive.base.presentation.entity.ObscuredTouch
 import me.proton.core.drive.files.presentation.event.FilesViewEvent
 
 interface UploadToViewEvent : FilesViewEvent {
     val upload: () -> Unit
     val onCreateFolder: () -> Unit
+    val onUploadObscured: (ObscuredTouch) -> Unit
 }

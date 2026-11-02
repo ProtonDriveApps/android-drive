@@ -60,6 +60,14 @@
   <string name="upload_to_title_format">Tallenna kohteeseen %1$s</string>
   <string name="upload_title">Tallenna</string>
   <!--
+        Shown when a tap on the Upload button is ignored because another app draws a window over
+        ours (tapjacking protection).
+        Variable %1$s is an application name
+        Example:
+            "For your security, the tap was blocked because another app is displaying over Proton Drive. Close any floating windows or screen filters and try again."
+    -->
+  <string name="upload_to_obscured_touch_blocked">For your security, the tap was blocked because another app is displaying over %1$s. Close any floating windows or screen filters and try again.</string>
+  <!--
         Variable %1$s is an application name
         Example:
             "Only files can be uploaded to Proton Drive"
@@ -143,6 +151,7 @@
   <string name="notification_content_text_backup_failed_permission">Käyttöoikeuksia puuttuu</string>
   <string name="notification_content_text_backup_failed_connectivity">Internet-yhteyttä ei ole</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Odotetaan Wi-Fi-yhteyttä</string>
+  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">This network might charge for data</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Varmuuskopiointia ei sallita</string>
   <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
   <string name="notification_content_text_backup_paused_disabled">Varmuuskopiointi poistettiin käytöstä</string>
@@ -248,7 +257,7 @@
         Example:
             "Untitled document 2025-11-28 12.34.56"
     -->
-  <string name="new_document_name">Nimetön asiakirja %1$s</string>
+  <string name="new_document_name">Nimetön dokumentti %1$s</string>
   <!--
         Variable %1$s is a string representation of a price
         Example:

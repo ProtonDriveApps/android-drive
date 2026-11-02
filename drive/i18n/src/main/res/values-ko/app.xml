@@ -60,6 +60,14 @@
   <string name="upload_to_title_format">%1$s 으로 업로드</string>
   <string name="upload_title">업로드</string>
   <!--
+        Shown when a tap on the Upload button is ignored because another app draws a window over
+        ours (tapjacking protection).
+        Variable %1$s is an application name
+        Example:
+            "For your security, the tap was blocked because another app is displaying over Proton Drive. Close any floating windows or screen filters and try again."
+    -->
+  <string name="upload_to_obscured_touch_blocked">For your security, the tap was blocked because another app is displaying over %1$s. Close any floating windows or screen filters and try again.</string>
+  <!--
         Variable %1$s is an application name
         Example:
             "Only files can be uploaded to Proton Drive"
@@ -138,6 +146,7 @@
   <string name="notification_content_text_backup_failed_permission">권한이 부여되지 않았습니다</string>
   <string name="notification_content_text_backup_failed_connectivity">인터넷 연결 없음</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Wi-Fi를 기다리는 중</string>
+  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">This network might charge for data</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">백업이 허용되지 않음</string>
   <string name="notification_content_text_backup_failed_folder_not_found">백업 폴더가 더 이상 존재하지 않습니다</string>
   <string name="notification_content_text_backup_paused_disabled">백업이 비활성화 되었습니다</string>

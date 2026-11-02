@@ -72,9 +72,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Para cópias de segurança automáticas e contínuas, permita que %1$s aceda a Todas as Fotografias nas definições.</string>
-  <string name="photos_error_waiting_connectivity">Sem ligação à internet</string>
+  <string name="photos_error_waiting_connectivity">Waiting for connection</string>
   <string name="photos_error_waiting_wifi_connectivity">A aguardar por Wi-Fi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Utilizar os dados móveis</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">This network might charge for data</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Permitir</string>
   <string name="photos_error_local_storage">Capacidade de armazenamento do dispositivo está cheia</string>
   <string name="photos_error_local_storage_description">Para continuar a cópia de segurança, precisa de libertar espaço de armazenamento no seu dispositivo.</string>
   <string name="photos_error_background_restrictions">Defina o uso da bateria como «Sem restrições» para a atividade da aplicação em segundo plano.</string>
@@ -83,7 +85,10 @@
   <string name="photos_empty_title">Ainda sem cópias de segurança.</string>
   <string name="photos_empty_description">Assim que tenha fotografias ou vídeos no seu dispositivo, eles vão aparecer aqui.</string>
   <string name="photos_backup_title">Cópia de segurança de fotografias</string>
-  <string name="photos_backup_option_mobile_data">Utilizar os dados móveis para a cópia de segurança das fotos</string>
+  <string name="photos_backup_option_mobile_data">Back up over cellular</string>
+  <string name="photos_backup_option_mobile_data_description">Backs up on any network, which may use paid data.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Back up over unverified networks</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Includes hotspots, public Wi-Fi, and other networks we can\'t confirm are free. May occasionally use paid data.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Desativar a otimização da bateria</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Permite um backup contínuo quando a aplicação está a ser executada em segundo plano.</string>
   <string name="photos_backup_in_app_notification_turned_on">A cópia de segurança de fotografias está ativada.</string>

@@ -47,8 +47,8 @@
             "Sharing with 2 persons"
     -->
   <plurals name="share_via_invitations_sharing_with">
-    <item quantity="one">Geteilt mit 1 Person</item>
-    <item quantity="other">Geteilt mit %1$d Personen</item>
+    <item quantity="one">Mit 1 Person geteilt</item>
+    <item quantity="other">Mit %1$d Personen geteilt</item>
   </plurals>
   <string name="common_permission_owner">Besitzer</string>
   <string name="common_permission_admin">Administrator</string>

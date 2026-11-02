@@ -192,7 +192,7 @@
         Example:
             "SDK error occurred:  file or folder with that name already exists"
     -->
-  <string name="common_error_sdk_with_message">SDK hatası oluştu: %1$s</string>
+  <string name="common_error_sdk_with_message">SDK sorunu çıktı: %1$s</string>
   <!-- endregion -->
   <!--
         Variable %1$s is a percentage

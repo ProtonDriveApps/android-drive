@@ -30,7 +30,7 @@
     <item quantity="one">%1$d элемент паспяхова перамешчаны.</item>
     <item quantity="few">%1$d элементы паспяхова перамешчаны.</item>
     <item quantity="many">%1$d элементаў паспяхова перамешчаны.</item>
-    <item quantity="other">%1$d элементаў паспяхова перамешчаны.</item>
+    <item quantity="other">Паспяхова перамешчана элементаў: %1$d</item>
   </plurals>
   <string name="file_operation_error_file_already_exists_at_destination">Элемент з такой назвай ужо існуе ў папцы прызначэння</string>
   <string name="folder_options_header_title">У \"%1$s\"</string>

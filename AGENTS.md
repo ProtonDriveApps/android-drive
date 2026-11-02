@@ -2,13 +2,35 @@
 
 Guidance for agents working in this repository. This file is always loaded; the detailed
 documentation lives under [docs/agents/](docs/agents/README.md) and is read on demand.
-`FLANDERS.md` defines the MR review bot's mandate (it reviews non-draft MRs against this file).
+`FLANDERS.md` defines the MR review bot's mandate (when asked, it reviews non-draft MRs against this
+file and the `docs/agents/` documents it links, in particular `docs/agents/conventions/general.md`).
 
 ## Before planning a change
 
 Any change that will end in an MR starts by reading [docs/agents/README.md](docs/agents/README.md)
 and the documents it lists for the kind of change you are making. Plans must fit the architecture
 described there.
+
+## Before opening an MR
+
+Every MR is preceded by a code review and a security review by fresh-context subagents, judged
+against the change's requirements: run the [pre-mr-review](.claude/skills/pre-mr-review/SKILL.md)
+skill on the committed branch and include its summary in the MR description.
+
+Agents never merge MRs; a developer merges in GitLab after CI and human review.
+
+In Claude Code, the `.claude/hooks/mr_guard.py` hook enforces both: it blocks opening an MR (through
+`glab`, the GitLab API or push options) until a review is recorded for the current HEAD, and always
+blocks merging. It matches the raw command text, so a command that only mentions these operations,
+such as a commit message, is blocked too: put that text in a file (`git commit -F <file>`). It
+guards against accidents, not deliberate evasion (its docstring lists what it does not cover), and
+needs `python3`; CI, Flanders and human review remain the real gates. Its tests run locally, not in
+CI: `python3 -m unittest discover -s .claude/hooks`.
+
+Flanders does not start on its own, and it does not review draft MRs. Once the MR is out of draft,
+ask for its review with an MR comment `@sa-devex-Flanders review please` or by requesting a review
+from `sa-devex-Flanders`. Ask again after pushing fixes for its comments: a new commit resets its
+approval.
 
 ## Build & test commands
 
@@ -38,6 +60,8 @@ Android app, Gradle + Kotlin DSL, ~200 modules. `dev` is the default product fla
 Local config (both git-ignored): `local.properties` needs `sdk.dir`. Optional `private.properties`
 at the repo root supplies `HOST` (dev backend, defaults to `proton.black`) and `PROXY_TOKEN`; the
 build warns and continues without it. `TEST_ENV_DOMAIN` overrides `HOST` in CI.
+`.claude/settings.json` is committed and shared (it registers the MR hook); personal Claude Code
+settings, permissions and any secrets go in the git-ignored `.claude/settings.local.json`.
 
 Proton Core modules are pulled in by the `include-core-build` settings plugin, not vendored here.
 The Drive SDK (`me.proton.drive:sdk`) is an external artifact; set `me.proton.drive.sdk.path` in
@@ -46,43 +70,9 @@ SDK variant, `beta`/`prod` the Go one — this is forced per-variant in `app/bui
 
 ## Conventions
 
-- New Kotlin files carry the GPLv3 Proton header; copy it from a neighbouring file, but set the
-  year to the current year (`Copyright (c) <current year> Proton AG.`). Do not change the year on
-  existing files.
-- Commits on feature branches and MR titles use a plain imperative subject without a
-  conventional-commit prefix; commits add an explanatory body. MRs are squashed on merge, and the
-  merge commit onto `develop` adds the conventional-commit type (`feat:`, `fix:`, `chore:`,
-  `refactor:`, `test:`), which release candidates are built from.
-- Detekt runs with a `maxIssues` budget and is `allow_failure` in CI, but do not add new
-  violations. Its config is generated into the git-ignored `config/detekt/` by the Proton Core
-  detekt plugin; do not edit it.
-
-## Team Conventions
-
-- Avoid deprecated APIs; use the recommended replacement wherever possible.
-- Never swallow `CancellationException`: log or post what you need, then rethrow it. A
-  `TimeoutCancellationException` from your own `withTimeout` is not a cancellation of the caller;
-  turn it into a regular error (or use `withTimeoutOrNull`) instead of letting it escape.
-- Code that cancels work owns the cleanup that goes with it. A worker is not told reliably that it
-  was cancelled for good (queued work never runs, and stop reasons are only known on API 31+), so
-  it must not be the only place that cleans up.
-- Pick `ExistingWorkPolicy` deliberately. `KEEP` is the default for unique per-user work; do not use
-  `APPEND_OR_REPLACE` or `REPLACE` without a stated reason in the commit or MR.
-- Chunk `IN (:list)` queries to the SQLite variable limit (999 on older Android) unless the list is
-  bounded by `dbPageSize`.
-- Prefer one bulk statement over per-row loops for deletes and updates; if a per-row guard is
-  needed, find a single-statement formulation first.
-- The ViewModel owns UI state. Do not shadow it with `rememberSaveable` in the composable.
-- Tables that reference a link, share or account carry a `ForeignKey` with the right
-  `onDelete` (usually `CASCADE`), modelled on `LinkOfflineEntity`.
-- Never hardcode one `LinkId` subtype for another (`FileId` for a folder). Derive the concrete type
-  from the link properties tables, or keep the `LinkId` you were given.
-- Minimal diff first: among the solutions that follow the architecture in
-  [docs/agents/](docs/agents/README.md) (Clean Architecture, SOLID, reusable solutions), prefer the
-  one with the fewest changes. A smaller diff never justifies breaking those rules, such as
-  skipping a layer or special-casing a feature where a shared component lacks a general capability.
-  Do not change DAOs, schemas or abstractions the solution does not need, and do not bundle
-  unrelated refactors. No arbitrary caps or batch limits.
+Repository and team conventions apply to every change and live in
+[docs/agents/conventions/general.md](docs/agents/conventions/general.md); read it before planning
+or reviewing a change.
 
 ## Skills
 
@@ -100,6 +90,13 @@ and committing it.
   locally first, then investigate only the sanitized copies (never the raw logs).
 - **[log-analysis](.claude/skills/log-analysis/SKILL.md)** — investigate the
   sanitized logs to find the root cause of a reported issue.
+- **[release-changelog](.claude/skills/release-changelog/SKILL.md)** — changelog
+  of everything not yet published in a GitLab release.
+- **[release-announce](.claude/skills/release-announce/SKILL.md)** — Slack
+  release announcement for `candidate`, copied to the clipboard.
+- **[pre-mr-review](.claude/skills/pre-mr-review/SKILL.md)** — fresh-context
+  code and security review against the requirements before opening any MR
+  (enforced by a hook).
 
 ## Logging & privacy (privacy-critical)
 

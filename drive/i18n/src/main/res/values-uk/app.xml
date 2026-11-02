@@ -48,7 +48,7 @@
   <string name="folder_option_create_document">Створити документ</string>
   <string name="folder_option_create_spreadsheet">Створити електронну таблицю</string>
   <string name="folder_option_import_folder">Вивантажити теку</string>
-  <string name="folder_option_scan_document">Scan document</string>
+  <string name="folder_option_scan_document">Сканувати документ</string>
   <string name="settings_theme_system_default">Системна</string>
   <string name="settings_theme_dark">Темна</string>
   <string name="settings_theme_light">Світла</string>
@@ -59,6 +59,14 @@
     -->
   <string name="upload_to_title_format">Вивантажити до %1$s</string>
   <string name="upload_title">Вивантажити</string>
+  <!--
+        Shown when a tap on the Upload button is ignored because another app draws a window over
+        ours (tapjacking protection).
+        Variable %1$s is an application name
+        Example:
+            "For your security, the tap was blocked because another app is displaying over Proton Drive. Close any floating windows or screen filters and try again."
+    -->
+  <string name="upload_to_obscured_touch_blocked">For your security, the tap was blocked because another app is displaying over %1$s. Close any floating windows or screen filters and try again.</string>
   <!--
         Variable %1$s is an application name
         Example:
@@ -143,7 +151,7 @@
     <item quantity="one">Залишився %1$s елемент</item>
     <item quantity="few">Залишилось %1$s елементи</item>
     <item quantity="many">Залишилось %1$s елементів</item>
-    <item quantity="other">Залишилось %1$s елементів</item>
+    <item quantity="other">Залишилось %1$s елементи</item>
   </plurals>
   <string name="notification_content_text_backup_complete">Резервне копіювання завершено</string>
   <string name="notification_content_text_backup_uncompleted">Резервне копіювання завершено з проблемами</string>
@@ -153,6 +161,7 @@
   <string name="notification_content_text_backup_failed_permission">Відсутні дозволи</string>
   <string name="notification_content_text_backup_failed_connectivity">Немає з\'єднання з інтернетом</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Очікування на Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">This network might charge for data</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Резервне копіювання не дозволено</string>
   <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
   <string name="notification_content_text_backup_paused_disabled">Резервне копіювання було вимкнено</string>
@@ -304,5 +313,5 @@
   <string name="drive_plus_promo_action">Покращити за %1$s</string>
   <string name="support_contact_options_title">Help us enhance your experience</string>
   <string name="support_contact_options_description">If you are having an issue our Help Docs and support team are here to help!</string>
-  <string name="support_contact_options_action_button">Contact us</string>
+  <string name="support_contact_options_action_button">Зв\'язок з нами</string>
 </resources>

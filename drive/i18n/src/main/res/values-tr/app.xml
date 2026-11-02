@@ -42,12 +42,12 @@
   <string name="move_to">Şuraya taşı</string>
   <string name="move_file_confirm_action">Taşı</string>
   <string name="move_file_error_cannot_move_folder_into_itself">Bir klasör kendi içine taşınamaz</string>
-  <string name="folder_option_import_file">Bir dosya yükleyin</string>
+  <string name="folder_option_import_file">Bir dosya yükle</string>
   <string name="folder_option_create_folder">Klasör ekle</string>
   <string name="folder_option_take_a_photo">Yeni bir fotoğraf çekin</string>
   <string name="folder_option_create_document">Belge oluştur</string>
   <string name="folder_option_create_spreadsheet">Elektronik tablo oluştur</string>
-  <string name="folder_option_import_folder">Klasör yükle</string>
+  <string name="folder_option_import_folder">Bir klasör yükle</string>
   <string name="folder_option_scan_document">Belge tara</string>
   <string name="settings_theme_system_default">Sistem varsayılanı</string>
   <string name="settings_theme_dark">Koyu</string>
@@ -59,6 +59,14 @@
     -->
   <string name="upload_to_title_format">Şuraya yükle: %1$s</string>
   <string name="upload_title">Yükle</string>
+  <!--
+        Shown when a tap on the Upload button is ignored because another app draws a window over
+        ours (tapjacking protection).
+        Variable %1$s is an application name
+        Example:
+            "For your security, the tap was blocked because another app is displaying over Proton Drive. Close any floating windows or screen filters and try again."
+    -->
+  <string name="upload_to_obscured_touch_blocked">Başka bir uygulama %1$s üzerinde görüntülendiğinden güvenliğiniz için dokunma engellendi. Kayan pencereleri veya ekran süzgeçlerini kapatıp yeniden deneyin.</string>
   <!--
         Variable %1$s is an application name
         Example:
@@ -143,6 +151,7 @@
   <string name="notification_content_text_backup_failed_permission">İzinler eksik</string>
   <string name="notification_content_text_backup_failed_connectivity">İnternet bağlantısı yok</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Wi-Fi bekleniyor</string>
+  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">Bu ağ veri kullanımı için ücret alabilir</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Yedeklemeye izin verilmiyor</string>
   <string name="notification_content_text_backup_failed_folder_not_found">Yedek klasörü artık yok</string>
   <string name="notification_content_text_backup_paused_disabled">Yedekleme kapalı</string>
@@ -180,7 +189,7 @@
   <string name="content_description_select_separator">%1$s içindeki tüm ögeleri seç</string>
   <string name="photos_error_separator_selection_failed">Bazı ögeler seçilemed. Lütfen yeniden deneyin</string>
   <string name="content_description_selected_options">Seçilmiş dosya ve/veya klasörler için diğer seçenekleri görüntüle</string>
-  <string name="content_description_files_upload_upload_file">Bir dosya yükleyin</string>
+  <string name="content_description_files_upload_upload_file">Bir dosya yükle</string>
   <string name="content_description_albums_new">Yeni albüm oluştur</string>
   <string name="content_description_subscription_action">Açık abonelik</string>
   <string name="description_empty_my_files">Dosyalar eklemeye başlamak için düğmeye dokunun.</string>
@@ -192,7 +201,7 @@
   <string name="description_file_download_failed">İndirilemedi. Ağ bağlantısını denetleyip yeniden deneyin.</string>
   <string name="description_file_decryption_failed">Dosyanın şifresi çözülemedi</string>
   <string name="description_file_verify_signature_failed">Dosyanın imzası doğrulanamadı</string>
-  <string name="description_files_stop_sharing">Bu işlem, bağlantıyı siler ve bağlantıya sahip olan herkesin dosyanıza erişimini kaldırır.</string>
+  <string name="description_files_stop_sharing">Bu işlem, bağlantıyı siler ve bağlantıyı bilen herkesin dosyanıza erişimini kaldırır.</string>
   <string name="description_files_stop_sharing_action_success">Dosya bağlantınız silindi.</string>
   <string name="description_files_stop_sharing_action_error">Dosya bağlantınız silinirken bir sorun çıktı.</string>
   <string name="description_files_stop_all_sharing">Bu işlem, bağlantıyı siler ve herkesin erişimini kaldırır.</string>
@@ -202,7 +211,7 @@
   <string name="action_empty_files_add_files">Yükle</string>
   <string name="error_could_not_send_file">Dosya gönderilirken bir sorun çıktı</string>
   <string name="error_could_not_load_folder_content">Klasör içeriği yüklenirken bir sorun çıktı</string>
-  <string name="error_main_share_locked">Bir parola sıfırlama işlemi nedeniyle dosyalarınız erişilebilir değil. Erişimi yeniden sağlamak için eski şifreleme anahtarını yeniden yükleyin.</string>
+  <string name="error_main_share_locked">Bir parola sıfırlama işlemi nedeniyle dosyalarınız erişilebilir değil. Yeniden erişebilmek için eski şifreleme anahtarını yeniden yükleyin.</string>
   <string name="error_share_locked">Paylaşım kilitli.</string>
   <string name="error_main_share_not_found">Temel paylaşım bulunamadı.</string>
   <string name="error_share_not_found">Paylaşım bulunamadı.</string>

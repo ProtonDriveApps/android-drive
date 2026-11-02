@@ -71,8 +71,8 @@
             "33 items"
     -->
   <plurals name="number_of_items">
-    <item quantity="one">%1$d tétel</item>
-    <item quantity="other">%1$d tétel</item>
+    <item quantity="one">%1$d elem</item>
+    <item quantity="other">%1$d elem</item>
   </plurals>
   <string name="files_upload_verification_failed">A feltöltés sikertelen: Az adatok ellenőrzése sikertelen</string>
   <!--

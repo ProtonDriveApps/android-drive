@@ -72,9 +72,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Jatkuvia, automaattisia varmuuskopioita varten %1$slle on myönnettävä laitteen asetuksista \"Valokuvat ja videot\" -käyttöoikeus.</string>
-  <string name="photos_error_waiting_connectivity">Internet-yhteyttä ei ole</string>
+  <string name="photos_error_waiting_connectivity">Odotetaan yhteyttä</string>
   <string name="photos_error_waiting_wifi_connectivity">Odotetaan Wi-Fi-yhteyttä</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Käytä mobiiliverkkoa</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">This network might charge for data</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Salli</string>
   <string name="photos_error_local_storage">Laitteen tallennustila on täynnä</string>
   <string name="photos_error_local_storage_description">Varmuuskopioinnin jatkamiseksi sinun on vapautettava tallennustilaa laitteeltasi.</string>
   <string name="photos_error_background_restrictions">Aseta virrankäyttö \'Rajoittamattomaksi\' sovelluksen taustatoiminnalle</string>
@@ -83,7 +85,10 @@
   <string name="photos_empty_title">Varmuuskopioita ei vielä ole.</string>
   <string name="photos_empty_description">Heti kun laitteellasi havaitaan kuvia tai videoita, näytetään ne täällä.</string>
   <string name="photos_backup_title">Kuvien varmuuskopiointi</string>
-  <string name="photos_backup_option_mobile_data">Varmuuskopioi kuvat mobiiliverkon välityksellä</string>
+  <string name="photos_backup_option_mobile_data">Back up over cellular</string>
+  <string name="photos_backup_option_mobile_data_description">Backs up on any network, which may use paid data.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Back up over unverified networks</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Includes hotspots, public Wi-Fi, and other networks we can\'t confirm are free. May occasionally use paid data.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Poista akkuvirran optimointi käytöstä</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Mahdollistaa keskeyttämättömän varmuuskopioinnin sovelluksen toimiessa taustalla.</string>
   <string name="photos_backup_in_app_notification_turned_on">Kuvien varmuuskopiointi on käytössä</string>

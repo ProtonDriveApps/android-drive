@@ -29,9 +29,9 @@
     -->
   <plurals name="albums_photo_count">
     <item quantity="one">%1$s element</item>
-    <item quantity="few">%1$s elementów</item>
+    <item quantity="few">%1$s elementy</item>
     <item quantity="many">%1$s elementów</item>
-    <item quantity="other">%1$s elementów</item>
+    <item quantity="other">%1$s elementu</item>
   </plurals>
   <string name="albums_delete_album_action">Usuń album</string>
   <string name="albums_delete_album_dialog_title">Usunąć album?</string>
@@ -84,7 +84,7 @@
     <item quantity="one">%1$d element już istnieje</item>
     <item quantity="few">%1$d elementy już istnieją</item>
     <item quantity="many">%1$d elementów już istnieje</item>
-    <item quantity="other">%1$d elementów już istnieje</item>
+    <item quantity="other">%1$d elementu już istnieje</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because adding failed
@@ -93,10 +93,10 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_add_to_album_failed">
-    <item quantity="one">Dodanie %1$d elementu nie powiodło się</item>
-    <item quantity="few">Dodanie %1$d elementów nie powiodło się</item>
-    <item quantity="many">Dodanie %1$d elementów nie powiodło się</item>
-    <item quantity="other">Dodanie %1$d elementów nie powiodło się</item>
+    <item quantity="one">Nie udało się dodać %1$d elementu</item>
+    <item quantity="few">Nie udało się dodać %1$d elementów</item>
+    <item quantity="many">Nie udało się dodać %1$d elementów</item>
+    <item quantity="other">Nie udało się dodać %1$d elementów</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos added to your Drive
@@ -120,7 +120,7 @@
     <item quantity="one">%1$d element już istnieje</item>
     <item quantity="few">%1$d elementy już istnieją</item>
     <item quantity="many">%1$d elementów już istnieje</item>
-    <item quantity="other">%1$d elementów już istnieje</item>
+    <item quantity="other">%1$d elementu już istnieje</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because adding failed
@@ -153,10 +153,10 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_removed_from_album_failed">
-    <item quantity="one">Usunięcie %1$d elementu nie powiodło się</item>
-    <item quantity="few">Usunięcie %1$d elementów nie powiodło się</item>
-    <item quantity="many">Usunięcie %1$d elementów nie powiodło się</item>
-    <item quantity="other">Usunięcie %1$d elementów nie powiodło się</item>
+    <item quantity="one">Nie udało się usunąć %1$d elementu</item>
+    <item quantity="few">Nie udało się usunąć %1$d elementów</item>
+    <item quantity="many">Nie udało się usunąć %1$d elementów</item>
+    <item quantity="other">Nie udało się usunąć %1$d elementów</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Brak zdjęć</string>
   <string name="albums_empty_album_screen_description">Zdjęcia dodane przez Ciebie lub innych użytkowników pojawią się tutaj</string>
@@ -174,10 +174,10 @@
             "3 albums shared with you"
     -->
   <plurals name="shared_with_me_album_invitations_banner_description">
-    <item quantity="one">Udostępniono Ci %1$d album</item>
-    <item quantity="few">Udostępniono Ci %1$d albumy</item>
-    <item quantity="many">Udostępniono Ci %1$d albumów</item>
-    <item quantity="other">Udostępniono Ci %1$d albumów</item>
+    <item quantity="one">%1$d album udostępniony Tobie</item>
+    <item quantity="few">%1$d albumy udostępnione Tobie</item>
+    <item quantity="many">%1$d albumów udostępnionych Tobie</item>
+    <item quantity="other">%1$d albumów udostępnionych Tobie</item>
   </plurals>
   <string name="albums_share_multiple_photos_options_section_title">Udostępnij</string>
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Dodaj do udostępnionego albumu</string>

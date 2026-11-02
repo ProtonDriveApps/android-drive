@@ -113,7 +113,7 @@ fun HomeScreen(
     navigateToUserInvitation: (Boolean) -> Unit,
     navigateToCreateNewAlbum: () -> Unit,
     navigateToAlbum: (AlbumId) -> Unit,
-    navigateToQ3CampaignPromo: () -> Unit,
+    navigateToBlackFriday2026Promo: () -> Unit,
     navigateToUpsellPromo: () -> Unit,
     navigateToAppPromo: () -> Unit,
     modifier: Modifier = Modifier,
@@ -148,7 +148,7 @@ fun HomeScreen(
             navigateToGetMoreFreeStorage = navigateToGetMoreFreeStorage,
             navigateToOnboarding = navigateToOnboarding,
             navigateToWhatsNew = navigateToWhatsNew,
-            navigateToQ3CampaignPromo = navigateToQ3CampaignPromo,
+            navigateToBlackFriday2026Promo = navigateToBlackFriday2026Promo,
             navigateToAppPromo = navigateToAppPromo,
         )
     }
@@ -174,7 +174,7 @@ fun HomeScreen(
             navigateToUserInvitation = navigateToUserInvitation,
             navigateToCreateNewAlbum = navigateToCreateNewAlbum,
             navigateToAlbum = navigateToAlbum,
-            navigateToQ3CampaignPromo = navigateToQ3CampaignPromo,
+            navigateToBlackFriday2026Promo = navigateToBlackFriday2026Promo,
             navigateToUpsellPromo = navigateToUpsellPromo,
             arguments = arguments,
             viewState = currentViewState,
@@ -217,7 +217,7 @@ internal fun Home(
     navigateToUserInvitation: (Boolean) -> Unit,
     navigateToCreateNewAlbum: () -> Unit,
     navigateToAlbum: (AlbumId) -> Unit,
-    navigateToQ3CampaignPromo: () -> Unit,
+    navigateToBlackFriday2026Promo: () -> Unit,
     navigateToUpsellPromo: () -> Unit,
 ) {
     val homeScaffoldState = rememberHomeScaffoldState()
@@ -329,7 +329,7 @@ internal fun Home(
                         navigateToUserInvitation,
                         navigateToCreateNewAlbum,
                         navigateToAlbum,
-                        navigateToQ3CampaignPromo,
+                        navigateToBlackFriday2026Promo,
                         navigateToUpsellPromo,
                     )
                 }

@@ -51,7 +51,7 @@
             "17 years"
     -->
   <plurals name="common_x_years">
-    <item quantity="other">%1$d years</item>
+    <item quantity="other">%1$d 年</item>
   </plurals>
   <!-- tag(q2campaign2026)
         Variable %1$d is a number of months
@@ -60,7 +60,7 @@
             "12 months"
     -->
   <plurals name="common_x_months">
-    <item quantity="other">%1$d months</item>
+    <item quantity="other">%1$d か月</item>
   </plurals>
   <!--
         Variable %1$d is a number of weeks
@@ -69,7 +69,7 @@
             "4 weeks"
     -->
   <plurals name="common_x_weeks">
-    <item quantity="other">%1$d weeks</item>
+    <item quantity="other">%1$d週間</item>
   </plurals>
   <!--
         Variable %1$d is a number of days
@@ -78,7 +78,7 @@
             "37 days"
     -->
   <plurals name="common_x_days">
-    <item quantity="other">%1$d days</item>
+    <item quantity="other">%1$d 日</item>
   </plurals>
   <!-- endregion -->
   <!-- region Common actions -->
@@ -118,9 +118,9 @@
   <string name="common_tag_photo_action">写真のタグをスキャン</string>
   <string name="common_save_as_action">として保存</string>
   <string name="common_open_action">開く</string>
-  <string name="common_back_action">Back</string>
+  <string name="common_back_action">戻る</string>
   <string name="common_open_side_menu_action">Open side menu</string>
-  <string name="common_not_now">Not now</string>
+  <string name="common_not_now">今はしない</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">音声</string>
@@ -206,7 +206,7 @@
             "13 selected"
     -->
   <plurals name="common_selected">
-    <item quantity="other">%1$d個が選択済み</item>
+    <item quantity="other">%1$d 個が選択されました</item>
   </plurals>
   <!-- region In-app notification -->
   <!--

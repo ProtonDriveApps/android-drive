@@ -29,7 +29,7 @@
             "2 persons added"
     -->
   <plurals name="share_via_invitations_person_added">
-    <item quantity="one">Додано 1 користувача</item>
+    <item quantity="one">Додано %1$d користувача</item>
     <item quantity="few">Додано %1$d користувачів</item>
     <item quantity="many">Додано %1$d користувачів</item>
     <item quantity="other">Додано %1$d користувачів</item>
@@ -40,7 +40,7 @@
             "2 persons cannot be invited"
     -->
   <plurals name="share_via_invitations_person_added_error">
-    <item quantity="one">Не вдається запросити 1 користувача</item>
+    <item quantity="one">Не вдається запросити %1$d користувача</item>
     <item quantity="few">Не вдається запросити %1$d користувачів</item>
     <item quantity="many">Не вдається запросити %1$d користувачів</item>
     <item quantity="other">Не вдається запросити %1$d користувачів</item>
@@ -51,7 +51,7 @@
             "Sharing with 2 persons"
     -->
   <plurals name="share_via_invitations_sharing_with">
-    <item quantity="one">Поширено для 1 користувача</item>
+    <item quantity="one">Поширено для %1$d користувача</item>
     <item quantity="few">Поширено для %1$d користувачів</item>
     <item quantity="many">Поширено для %1$d користувачів</item>
     <item quantity="other">Поширено для %1$d користувачів</item>

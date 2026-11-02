@@ -80,7 +80,7 @@
     <item quantity="one">%1$d элемент</item>
     <item quantity="few">%1$d элемента</item>
     <item quantity="many">%1$d элементов</item>
-    <item quantity="other">%1$d элементов</item>
+    <item quantity="other">%1$d элемента</item>
   </plurals>
   <string name="files_upload_verification_failed">Upload failed: Verification of data failed</string>
   <!--
@@ -90,10 +90,10 @@
             "Created 15 folders"
     -->
   <plurals name="folder_upload_created_subfolders">
-    <item quantity="one">Created %1$d folder</item>
-    <item quantity="few">Created %1$d folders</item>
-    <item quantity="many">Created %1$d folders</item>
-    <item quantity="other">Created %1$d folders</item>
+    <item quantity="one">Создана %1$d папка</item>
+    <item quantity="few">Создано %1$d папки</item>
+    <item quantity="many">Создано %1$d папок</item>
+    <item quantity="other">Создано %1$d папки</item>
   </plurals>
   <!--
         Variable %1$d is a quantity of files scheduled for upload
@@ -102,9 +102,9 @@
             "Scheduled 102 files for upload"
     -->
   <plurals name="folder_upload_scheduled_files_for_upload">
-    <item quantity="one">Scheduled %1$d file for upload</item>
-    <item quantity="few">Scheduled %1$d files for upload</item>
-    <item quantity="many">Scheduled %1$d files for upload</item>
-    <item quantity="other">Scheduled %1$d files for upload</item>
+    <item quantity="one">Запланирована загрузка %1$d файла</item>
+    <item quantity="few">Запланирована загрузка %1$d файлов</item>
+    <item quantity="many">Запланирована загрузка %1$d файлов</item>
+    <item quantity="other">Запланирована загрузка %1$d файла</item>
   </plurals>
 </resources>

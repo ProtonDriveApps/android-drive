@@ -71,9 +71,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">对于持续性的自动备份，请在设置中允许 %1$s 访问所有照片。</string>
-  <string name="photos_error_waiting_connectivity">无网络连接</string>
+  <string name="photos_error_waiting_connectivity">等待连接</string>
   <string name="photos_error_waiting_wifi_connectivity">等待Wi-Fi网络</string>
   <string name="photos_error_waiting_wifi_connectivity_action">使用数据流量</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">This network might charge for data</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">白名单</string>
   <string name="photos_error_local_storage">设备存储空间已满</string>
   <string name="photos_error_local_storage_description">若要继续备份，您需要释放设备上的存储空间。</string>
   <string name="photos_error_background_restrictions">将后台应用活动的电池使用设置为 “无限制”</string>
@@ -82,7 +84,10 @@
   <string name="photos_empty_title">尚无备份</string>
   <string name="photos_empty_description">一旦您的设备上有照片或视频，它们就会出现在此处。</string>
   <string name="photos_backup_title">照片备份</string>
-  <string name="photos_backup_option_mobile_data">使用移动数据备份照片</string>
+  <string name="photos_backup_option_mobile_data">Back up over cellular</string>
+  <string name="photos_backup_option_mobile_data_description">Backs up on any network, which may use paid data.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Back up over unverified networks</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Includes hotspots, public Wi-Fi, and other networks we can\'t confirm are free. May occasionally use paid data.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">禁用电池优化</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">当应用程序在后台运行时允许不间断备份。</string>
   <string name="photos_backup_in_app_notification_turned_on">照片备份已开启</string>
@@ -100,7 +105,7 @@
             "12 345 items left"
     -->
   <plurals name="photos_backup_state_uploading_items_left">
-    <item quantity="other">剩余 %1$s 个项目</item>
+    <item quantity="other">剩余 %1$s 项</item>
   </plurals>
   <!--
         Variable %1$s is a quantity (formatted) of photos saved

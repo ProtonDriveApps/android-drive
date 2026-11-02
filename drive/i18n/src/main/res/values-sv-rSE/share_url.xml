@@ -65,7 +65,7 @@
         Example:
             "Expiration date must not be after more than 90 days"
     -->
-  <string name="shared_link_error_message_expiration_date_too_late">Utgångsdatumet får inte vara mer än %1$d dagar framåt.</string>
+  <string name="shared_link_error_message_expiration_date_too_late">Expiration date must not be after more than %1$d days</string>
   <string name="shared_link_error_legacy_link">Detta är en gammal länk vars hantering inte stöds. Det rekommenderas att du slutar dela denna länk och skaffar en ny länk.</string>
   <string name="title_share_via_link">Dela via länk</string>
   <string name="shared_with_me_title">Delat med mig</string>

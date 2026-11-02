@@ -48,7 +48,7 @@
   <string name="folder_option_create_document">Dokumentum létrehozása</string>
   <string name="folder_option_create_spreadsheet">Táblázat létrehozása</string>
   <string name="folder_option_import_folder">Mappa feltöltése</string>
-  <string name="folder_option_scan_document">Scan document</string>
+  <string name="folder_option_scan_document">Dokumentum szkennelése</string>
   <string name="settings_theme_system_default">Rendszer alapértelmezett</string>
   <string name="settings_theme_dark">Sötét</string>
   <string name="settings_theme_light">Világos</string>
@@ -59,6 +59,14 @@
     -->
   <string name="upload_to_title_format">Feltöltés ide: %1$s</string>
   <string name="upload_title">Feltöltés</string>
+  <!--
+        Shown when a tap on the Upload button is ignored because another app draws a window over
+        ours (tapjacking protection).
+        Variable %1$s is an application name
+        Example:
+            "For your security, the tap was blocked because another app is displaying over Proton Drive. Close any floating windows or screen filters and try again."
+    -->
+  <string name="upload_to_obscured_touch_blocked">For your security, the tap was blocked because another app is displaying over %1$s. Close any floating windows or screen filters and try again.</string>
   <!--
         Variable %1$s is an application name
         Example:
@@ -143,6 +151,7 @@
   <string name="notification_content_text_backup_failed_permission">Hiányoznak az engedélyek</string>
   <string name="notification_content_text_backup_failed_connectivity">Nincs internetkapcsolat</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Várakozás Wi-Fi-re</string>
+  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">This network might charge for data</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">A biztonsági mentés nem engedélyezett</string>
   <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
   <string name="notification_content_text_backup_paused_disabled">Biztonsági mentés letiltva</string>
@@ -292,5 +301,5 @@
   <string name="drive_plus_promo_action">Előfizetés %1$s</string>
   <string name="support_contact_options_title">Help us enhance your experience</string>
   <string name="support_contact_options_description">If you are having an issue our Help Docs and support team are here to help!</string>
-  <string name="support_contact_options_action_button">Contact us</string>
+  <string name="support_contact_options_action_button">Lépjen velünk kapcsolatba</string>
 </resources>

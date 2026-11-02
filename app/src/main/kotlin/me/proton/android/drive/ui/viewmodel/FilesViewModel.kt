@@ -56,6 +56,7 @@ import me.proton.android.drive.ui.effect.HomeTabViewModel
 import me.proton.android.drive.ui.handler.FolderCreatedHandler
 import me.proton.android.drive.ui.handler.FolderCreatedHandlerDelegate
 import me.proton.android.drive.ui.navigation.Screen
+import me.proton.android.drive.usecase.BlackFriday2026OfferCache
 import me.proton.android.drive.usecase.GetSubscriptionAction
 import me.proton.android.drive.usecase.OnFilesDriveLinkError
 import me.proton.android.drive.usecase.OpenProtonDocumentInBrowser
@@ -89,7 +90,6 @@ import me.proton.core.drive.drivelink.download.domain.usecase.GetDownloadProgres
 import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
-import me.proton.android.drive.usecase.ObserveQ3CampaignPromoEligible
 import me.proton.core.drive.files.domain.usecase.ToFirstItemMetricsNotifier
 import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.files.presentation.state.FilesViewState
@@ -104,6 +104,7 @@ import me.proton.core.drive.link.selection.domain.usecase.SelectLinks
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinks
 import me.proton.core.drive.observability.domain.metrics.common.mobile.performance.PageType
+import me.proton.core.drive.promo.domain.entity.BlackFriday2026Offer
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
@@ -151,7 +152,7 @@ class FilesViewModel @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val toFirstItemMetricsNotifier: ToFirstItemMetricsNotifier,
     private val isScannerAvailable: IsScannerAvailable,
-    private val observeQ3CampaignPromoEligible: ObserveQ3CampaignPromoEligible,
+    private val blackFriday2026OfferCache: BlackFriday2026OfferCache,
     private val openFolderActionProvider: OpenFolderActionProvider,
     private val folderCreatedHandlerDelegate: FolderCreatedHandlerDelegate,
 ) : SelectionViewModel(
@@ -206,8 +207,9 @@ class FilesViewModel @Inject constructor(
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, Unit)
 
-    // Shared across tabs (see ObserveQ3CampaignPromoEligible) so switching tabs doesn't re-trigger
-    private val isQ3CampaignPromoEligibleFlow: StateFlow<Boolean?> = observeQ3CampaignPromoEligible(userId)
+    private val blackFriday2026Offer: StateFlow<BlackFriday2026Offer?> = blackFriday2026OfferCache
+        .availableOffer(userId)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     val driveLinks: Flow<PagingData<DriveLink>> =
         driveLink.filterNotNull()
@@ -277,8 +279,8 @@ class FilesViewModel @Inject constructor(
         notificationDotRequested,
         scanDocumentNotificationDotViewModel.notificationDotRequested,
         userManager.observeUser(userId),
-        isQ3CampaignPromoEligibleFlow,
-    ) { driveLink, sorting, contentState, appendingState, layoutType, selected, notificationDotRequested, scanDocumentNotificationDotRequested, user, isQ3CampaignPromoEligible ->
+        blackFriday2026Offer,
+    ) { driveLink, sorting, contentState, appendingState, layoutType, selected, notificationDotRequested, scanDocumentNotificationDotRequested, user, blackFriday2026Offer ->
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
@@ -289,10 +291,9 @@ class FilesViewModel @Inject constructor(
             val permissions = driveLink?.sharePermissions ?: Permissions.owner
             topBarActions.value = if (permissions.canWrite) {
                 setOfNotNull(
-                    isQ3CampaignPromoEligible
-                        ?.takeIf { eligible -> ((user != null && user.isFree) || eligible) && isRootFolder }
-                        ?.let { eligible ->
-                            getSubscriptionAction(eligible) {
+                    takeIf { ((user != null && user.isFree) || blackFriday2026Offer != null) && isRootFolder }
+                        ?.let {
+                            getSubscriptionAction(isPromoAvailable = blackFriday2026Offer != null) {
                                 viewEvent?.onSubscription?.invoke()
                             }
                         },
@@ -381,16 +382,14 @@ class FilesViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, defaultEmptyState)
     private var viewEvent: FilesViewEvent? = null
 
-    private fun navigateToUpsellOrQ3Campaign(
+    private fun navigateToPromoOrUpsell(
+        navigateToBlackFriday2026Promo: () -> Unit,
         navigateToUpsellPromo: () -> Unit,
-        navigateToQ3CampaignPromo: () -> Unit,
     ) {
-        viewModelScope.launch {
-            if (isQ3CampaignPromoEligibleFlow.filterNotNull().first()) {
-                navigateToQ3CampaignPromo()
-            } else {
-                navigateToUpsellPromo()
-            }
+        if (blackFriday2026Offer.value != null) {
+            navigateToBlackFriday2026Promo()
+        } else {
+            navigateToUpsellPromo()
         }
     }
 
@@ -401,7 +400,7 @@ class FilesViewModel @Inject constructor(
         navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
         navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId) -> Unit,
         navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
-        navigateToQ3CampaignPromo: () -> Unit,
+        navigateToBlackFriday2026Promo: () -> Unit,
         navigateToUpsellPromo: () -> Unit,
         navigateBack: () -> Unit,
         lifecycle: Lifecycle,
@@ -464,7 +463,9 @@ class FilesViewModel @Inject constructor(
         override val onSelectDriveLink = { driveLink: DriveLink -> onSelectDriveLink(driveLink) }
         override val onDeselectDriveLink = { driveLink: DriveLink -> onDeselectDriveLink(driveLink) }
         override val onBack = { onBack() }
-        override val onSubscription = { navigateToUpsellOrQ3Campaign(navigateToUpsellPromo, navigateToQ3CampaignPromo) }
+        override val onSubscription = {
+            navigateToPromoOrUpsell(navigateToBlackFriday2026Promo, navigateToUpsellPromo)
+        }
         override val onRenderThumbnail = { driveLink: DriveLink ->
             val stopTime = TimestampMs(SystemClock.elapsedRealtime())
             viewModelScope.launch {

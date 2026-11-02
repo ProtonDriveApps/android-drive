@@ -22,6 +22,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -52,14 +53,16 @@ fun ListEmpty(
     Column(
         modifier = modifier.fillMaxSize(),
     ) {
+        // Weighted spacers instead of a weighted message: in a vertically scrollable modifier
+        // the message keeps its full height and scrolls when it does not fit
+        Spacer(modifier = Modifier.weight(1f))
         IllustratedMessage(
             imageResId = imageResId,
             titleResId = titleResId,
             descriptionResId = descriptionResId,
-            modifier = Modifier
-                .fillMaxSize()
-                .weight(1f),
+            modifier = Modifier.fillMaxWidth(),
         )
+        Spacer(modifier = Modifier.weight(1f))
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center,

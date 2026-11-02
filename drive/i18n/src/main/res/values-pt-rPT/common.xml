@@ -29,7 +29,7 @@
   <string name="common_type">Tipo</string>
   <string name="common_yes">Sim</string>
   <string name="common_download">Transferir</string>
-  <string name="common_downloaded">Downloaded</string>
+  <string name="common_downloaded">Transferido</string>
   <string name="common_downloading">Transferência em curso</string>
   <string name="common_waiting_for_download">Waiting for download</string>
   <string name="common_link">Ligação</string>
@@ -42,8 +42,8 @@
   <string name="common_off">Desligado</string>
   <string name="common_all">Tudo</string>
   <string name="common_unknown">Desconhecido</string>
-  <string name="common_month">Month</string>
-  <string name="common_year">Year</string>
+  <string name="common_month">Mês</string>
+  <string name="common_year">Ano</string>
   <!--
         Variable %1$d is a number of years
         Example:
@@ -51,8 +51,8 @@
             "17 years"
     -->
   <plurals name="common_x_years">
-    <item quantity="one">%1$d year</item>
-    <item quantity="other">%1$d years</item>
+    <item quantity="one">%1$d ano</item>
+    <item quantity="other">%1$d anos</item>
   </plurals>
   <!-- tag(q2campaign2026)
         Variable %1$d is a number of months
@@ -61,8 +61,8 @@
             "12 months"
     -->
   <plurals name="common_x_months">
-    <item quantity="one">%1$d month</item>
-    <item quantity="other">%1$d months</item>
+    <item quantity="one">%1$d mês</item>
+    <item quantity="other">%1$d meses</item>
   </plurals>
   <!--
         Variable %1$d is a number of weeks
@@ -71,8 +71,8 @@
             "4 weeks"
     -->
   <plurals name="common_x_weeks">
-    <item quantity="one">%1$d week</item>
-    <item quantity="other">%1$d weeks</item>
+    <item quantity="one">%1$d semana</item>
+    <item quantity="other">%1$d semanas</item>
   </plurals>
   <!--
         Variable %1$d is a number of days
@@ -81,8 +81,8 @@
             "37 days"
     -->
   <plurals name="common_x_days">
-    <item quantity="one">%1$d day</item>
-    <item quantity="other">%1$d days</item>
+    <item quantity="one">%1$d dia</item>
+    <item quantity="other">%1$d dias</item>
   </plurals>
   <!-- endregion -->
   <!-- region Common actions -->
@@ -121,10 +121,10 @@
   <string name="common_add_to_albums_action">Adicionar aos álbuns</string>
   <string name="common_tag_photo_action">Analisar a foto para identificar etiquetas</string>
   <string name="common_save_as_action">Save as</string>
-  <string name="common_open_action">Open</string>
-  <string name="common_back_action">Back</string>
+  <string name="common_open_action">Abrir</string>
+  <string name="common_back_action">Recuar</string>
   <string name="common_open_side_menu_action">Open side menu</string>
-  <string name="common_not_now">Not now</string>
+  <string name="common_not_now">Agora não</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Áudio</string>
@@ -211,7 +211,7 @@
     -->
   <plurals name="common_selected">
     <item quantity="one">%1$d selecionado</item>
-    <item quantity="other">%1$d selecionado</item>
+    <item quantity="other">%1$d selecionados</item>
   </plurals>
   <!-- region In-app notification -->
   <!--

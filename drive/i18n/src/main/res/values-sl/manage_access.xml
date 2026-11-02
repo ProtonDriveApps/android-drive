@@ -27,7 +27,7 @@
     -->
   <string name="manage_access_current_user">%1$s (you)</string>
   <string name="manage_access_share_with_anyone">Skupna raba z vsemi</string>
-  <string name="manage_access_allow_editors_to_share_title">Access</string>
+  <string name="manage_access_allow_editors_to_share_title">Dostop</string>
   <string name="manage_access_allow_editors_to_share_description">Allow editors to change permissions and share</string>
   <string name="manage_access_link_settings_action">Nastavitve povezave</string>
   <string name="manage_access_link_description_public">Kdorkoli s to povezavo</string>

@@ -72,9 +72,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">For kontinuerlig og automatisk sikkerhedskopiering skal du give %1$s adgang til Alle fotos i indstillingerne.</string>
-  <string name="photos_error_waiting_connectivity">Ingen internetforbindelse</string>
+  <string name="photos_error_waiting_connectivity">Venter på forbindelse</string>
   <string name="photos_error_waiting_wifi_connectivity">Venter på WiFi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Brug mobilnettet</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">Netværksforbindelsen kan være betalt</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Tillad</string>
   <string name="photos_error_local_storage">Enhedens lager er fyldt</string>
   <string name="photos_error_local_storage_description">For at fortsætte sikkerhedskopieringen skal du frigøre lagerplads på din enhed.</string>
   <string name="photos_error_background_restrictions">Indstil batteriforbrug til \'Ubegrænset\' for app-aktivitet i baggrunden</string>
@@ -83,7 +85,10 @@
   <string name="photos_empty_title">Ingen sikkerhedskopier endnu</string>
   <string name="photos_empty_description">Så snart du har fotos eller videoer på din enhed, vil de blive vist her.</string>
   <string name="photos_backup_title">Sikkerhedskopiering af fotos</string>
-  <string name="photos_backup_option_mobile_data">Brug mobildata til at sikkerhedskopiere fotos</string>
+  <string name="photos_backup_option_mobile_data">Sikkerhedskopiér over mobildata</string>
+  <string name="photos_backup_option_mobile_data_description">Sikkerhedskopiér på ethvert netværk, hvilket kan bruge betalt mobildata.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Sikkerhedskopiér over ubekræftede netværk</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Omfatter hotspots, offentligt Wi-Fi og andre netværk, som vi ikke kan bekræfte er gratis. Det kan nogle gange bruge betalt data.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Deaktivér batterioptimering</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Tillader uafbrudt sikkerhedskopiering, når appen kører i baggrunden.</string>
   <string name="photos_backup_in_app_notification_turned_on">Sikkerhedskopiering af fotos er slået til</string>

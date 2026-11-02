@@ -21,19 +21,25 @@ import android.net.Uri
 import android.os.Build
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
+import androidx.work.await
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.base.domain.util.coRunCatchingException
 import me.proton.core.drive.documentsprovider.data.worker.ExportToDestinationUriWorker
 import me.proton.core.drive.documentsprovider.data.worker.ExportToDownloadWorker
 import me.proton.core.drive.documentsprovider.domain.manager.ExportWorkManager
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.link.selection.domain.usecase.SelectLinks
+import java.util.concurrent.Executor
 import javax.inject.Inject
 
 class ExportWorkManagerImpl @Inject constructor(
     private val workManager: WorkManager,
     private val selectLinks: SelectLinks,
+    private val exportDestinationPermissions: ExportDestinationPermissions,
 ) : ExportWorkManager {
 
     private val FileId.uniqueExportWorkName: String get() = id
@@ -53,6 +59,11 @@ class ExportWorkManagerImpl @Inject constructor(
                     fileId.uniqueExportWorkName,
                 ),
             )
+        ).result.addListener(
+            // The grant from the document picker is temporary and can be revoked before the download
+            // completes, persist it so the worker can still write to the destination.
+            { exportDestinationPermissions.take(destinationUri) },
+            Executor(Runnable::run),
         )
     }
 
@@ -75,11 +86,21 @@ class ExportWorkManagerImpl @Inject constructor(
         )
     }
 
-    override fun cancel(fileId: FileId) {
-        workManager.cancelAllWorkByTag(fileId.uniqueExportWorkName)
+    override suspend fun cancel(fileId: FileId) {
+        coRunCatchingException {
+            workManager.cancelAllWorkByTag(fileId.uniqueExportWorkName).await()
+        }.onFailure { error ->
+            error.log(LogTag.DOCUMENTS_PROVIDER, "Cannot cancel export work")
+        }
+        exportDestinationPermissions.releaseUnused()
     }
 
-    override fun cancelAll(userId: UserId) {
-        workManager.cancelAllWorkByTag(userId.uniqueExportWorkName)
+    override suspend fun cancelAll(userId: UserId) {
+        coRunCatchingException {
+            workManager.cancelAllWorkByTag(userId.uniqueExportWorkName).await()
+        }.onFailure { error ->
+            error.log(LogTag.DOCUMENTS_PROVIDER, "Cannot cancel export work")
+        }
+        exportDestinationPermissions.releaseUnused()
     }
 }

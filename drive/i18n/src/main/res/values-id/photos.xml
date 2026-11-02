@@ -71,9 +71,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Untuk pencadangan yang otomatis dan berkelanjutan, berikan %1$s izin akses ke Semua Foto di pengaturan.</string>
-  <string name="photos_error_waiting_connectivity">Tidak ada koneksi internet</string>
+  <string name="photos_error_waiting_connectivity">Waiting for connection</string>
   <string name="photos_error_waiting_wifi_connectivity">Menunggu Wi-Fi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Gunakan data seluler</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">This network might charge for data</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Izinkan</string>
   <string name="photos_error_local_storage">Penyimpanan perangkat penuh</string>
   <string name="photos_error_local_storage_description">Untuk melanjutkan pencadangan, Anda perlu membebaskan ruang penyimpanan di perangkat Anda.</string>
   <string name="photos_error_background_restrictions">Atur penggunaan baterai ke \'Tak terbatas\' untuk menjalankan aplikasi di latar belakang</string>
@@ -82,7 +84,10 @@
   <string name="photos_empty_title">Belum ada cadangan</string>
   <string name="photos_empty_description">Saat Anda memiliki foto atau video di perangkat Anda, mereka akan muncul di sini.</string>
   <string name="photos_backup_title">Pencadangan foto</string>
-  <string name="photos_backup_option_mobile_data">Gunakan data seluler untuk mencadangkan foto</string>
+  <string name="photos_backup_option_mobile_data">Back up over cellular</string>
+  <string name="photos_backup_option_mobile_data_description">Backs up on any network, which may use paid data.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Back up over unverified networks</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Includes hotspots, public Wi-Fi, and other networks we can\'t confirm are free. May occasionally use paid data.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Nonaktifkan optimisasi baterai</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Memungkinkan pencadangan yang berlangsung tanpa gangguan pada saat aplikasi berjalan di latar belakang.</string>
   <string name="photos_backup_in_app_notification_turned_on">Pencadangan foto diaktifkan</string>

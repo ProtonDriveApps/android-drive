@@ -201,7 +201,7 @@
             "50% downloaded"
             "100% downloaded"
     -->
-  <string name="common_percent_downloaded">%1$s έχουν ληφθεί</string>
+  <string name="common_percent_downloaded">%1$s έχει ληφθεί</string>
   <string name="common_sign_out">Αποσύνδεση</string>
   <!--
         Variable %1$d is a quantity of files or folders that have been selected
@@ -210,8 +210,8 @@
             "13 selected"
     -->
   <plurals name="common_selected">
-    <item quantity="one">%1$d επιλεγμένο/α</item>
-    <item quantity="other">%1$d επιλεγμένο/α</item>
+    <item quantity="one">%1$d επιλεγμένο</item>
+    <item quantity="other">%1$d επιλεγμένα</item>
   </plurals>
   <!-- region In-app notification -->
   <!--

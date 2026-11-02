@@ -71,8 +71,8 @@
             "33 items"
     -->
   <plurals name="number_of_items">
-    <item quantity="one">%1$d element</item>
-    <item quantity="other">%1$d elemente</item>
+    <item quantity="one">%1$d Eintrag</item>
+    <item quantity="other">%1$d Einträge</item>
   </plurals>
   <string name="files_upload_verification_failed">Upload fehlgeschlagen: Die Überprüfung der Daten ist gescheitert.</string>
   <!--

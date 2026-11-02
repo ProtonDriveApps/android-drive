@@ -72,9 +72,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">A folyamatos és automatikus biztonsági mentésekhez engedélyezze ennek az alkalmazásnak a hozzáférést az összes fényképéhez a beállításaiban: %1$s</string>
-  <string name="photos_error_waiting_connectivity">Nincs internetkapcsolat</string>
+  <string name="photos_error_waiting_connectivity">Waiting for connection</string>
   <string name="photos_error_waiting_wifi_connectivity">Várakozás Wi-Fi-re</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Mobiladat használata</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">This network might charge for data</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Engedélyezés</string>
   <string name="photos_error_local_storage">Az eszköz tárolója megtelt</string>
   <string name="photos_error_local_storage_description">A biztonsági mentés folytatásához fel kell szabadítania tárhelyet a készülékén.</string>
   <string name="photos_error_background_restrictions">Állítsa az akkumulátor-használatot \'Korlátlan\'-ra a háttérben futó tevékenységek érdekében</string>
@@ -83,7 +85,10 @@
   <string name="photos_empty_title">Még nincsenek biztonsági mentések</string>
   <string name="photos_empty_description">Amint fényképek vagy videók lesznek a készülékén, azok itt fognak megjelenni.</string>
   <string name="photos_backup_title">Fotók biztonsági mentése</string>
-  <string name="photos_backup_option_mobile_data">Mobilinternet használata a fotók biztonsági mentéséhez</string>
+  <string name="photos_backup_option_mobile_data">Back up over cellular</string>
+  <string name="photos_backup_option_mobile_data_description">Backs up on any network, which may use paid data.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Back up over unverified networks</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Includes hotspots, public Wi-Fi, and other networks we can\'t confirm are free. May occasionally use paid data.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Az akkumulátor optimalizálás letiltása</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Lehetővé teszi a megszakítás nélküli biztonsági mentést, ha az alkalmazás a háttérben fut.</string>
   <string name="photos_backup_in_app_notification_turned_on">A fotók biztonsági mentése be van kapcsolva</string>

@@ -18,7 +18,9 @@
 
 package me.proton.android.drive.ui.screen
 
+import android.os.Build
 import androidx.activity.compose.BackHandler
+import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -60,9 +62,11 @@ import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.captionWeak
 import me.proton.core.compose.theme.defaultNorm
 import me.proton.core.drive.base.presentation.component.ActionButton
+import me.proton.core.drive.base.presentation.component.HideOverlayWindowsEffect
 import me.proton.core.drive.base.presentation.component.ProtonSnackbarHost
 import me.proton.core.drive.base.presentation.component.ProtonSnackbarHostState
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.base.presentation.extension.rejectObscuredTouches
 import me.proton.core.drive.files.presentation.component.DriveLinksFlow
 import me.proton.core.drive.files.presentation.component.Files
@@ -88,6 +92,9 @@ fun UploadToScreen(
     }
     val snackbarHostState = remember { ProtonSnackbarHostState() }
     val folderHighlightState = rememberFolderHighlightState()
+    if (canHideOverlayWindows()) {
+        HideOverlayWindowsEffect()
+    }
     FolderCreatedEffect(
         flow = viewModel.folderCreatedFlow,
         onConsumed = viewModel::consumeFolderCreated,
@@ -190,8 +197,11 @@ fun UploadTo(
 
                 Button(
                     modifier = Modifier
-                        .rejectObscuredTouches()
-                        .padding(start = SmallSpacing),
+                        .conditional(!canHideOverlayWindows()) {
+                            rejectObscuredTouches(viewEvent.onUploadObscured)
+                        }
+                        .padding(start = SmallSpacing)
+                        .testTag(UploadToScreenTestTag.uploadButton),
                     onClick = { viewEvent.upload() },
                 ) {
                     Text(text = stringResource(id = I18N.string.upload_title))
@@ -247,9 +257,15 @@ fun SingleRowLinkNames(
     }
 }
 
+// From Android 12 the system blocks touches passing through other apps' windows, so hiding
+// overlays is enough; before that obscured taps on Upload are rejected and reported
+@ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)
+private fun canHideOverlayWindows() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+
 object UploadToScreenTestTag {
     const val screen = "upload to screen"
     const val plusFolderButton = "plus folder button"
+    const val uploadButton = "upload button"
 }
 
 @Preview

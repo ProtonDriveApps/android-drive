@@ -22,8 +22,8 @@
         Example:
             "Subscription auto renews at $9.99/month"
     -->
-  <string name="plan_subscription_auto_renews_monthly">Subscription auto renews at %1$s/month</string>
-  <string name="plan_subscription_auto_renews_annual">Subscription auto renews at %1$s/year</string>
-  <string name="plan_welcome_offer_auto_renews_monthly">Welcome offer. Auto renews at %1$s/month</string>
-  <string name="plan_welcome_offer_auto_renews_annual">Welcome offer. Auto renews at %1$s/year</string>
+  <string name="plan_subscription_auto_renews_monthly">Langganan diperbarui secara otomatis seharga %1$s/bulan</string>
+  <string name="plan_subscription_auto_renews_annual">Langganan diperbarui secara otomatis seharga %1$s/tahun</string>
+  <string name="plan_welcome_offer_auto_renews_monthly">Penawaran selamat datang. Diperpanjang secara otomatis seharga %1$s/bulan</string>
+  <string name="plan_welcome_offer_auto_renews_annual">Penawaran selamat datang. Diperpanjang secara otomatis seharga %1$s/tahun</string>
 </resources>

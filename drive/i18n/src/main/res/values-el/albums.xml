@@ -155,7 +155,7 @@
     -->
   <plurals name="shared_with_me_album_invitations_banner_description">
     <item quantity="one">%1$d άλμπουμ κοινοποιημένο σε σας</item>
-    <item quantity="other">%1$d άλμπουμ κοινοποιημένα σε σας</item>
+    <item quantity="other">%1$d άλμπουμ κοινοποιημένα σε εσάς</item>
   </plurals>
   <string name="albums_share_multiple_photos_options_section_title">Κοινοποίηση μέσω</string>
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Προσθήκη στο κοινοποιημένο άλμπουμ</string>

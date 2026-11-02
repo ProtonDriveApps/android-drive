@@ -29,7 +29,7 @@
   <string name="common_type">Тип</string>
   <string name="common_yes">Так</string>
   <string name="common_download">Завантажити</string>
-  <string name="common_downloaded">Downloaded</string>
+  <string name="common_downloaded">Завантажено</string>
   <string name="common_downloading">Завантаження</string>
   <string name="common_waiting_for_download">Waiting for download</string>
   <string name="common_link">Посилання</string>
@@ -43,7 +43,7 @@
   <string name="common_all">Всі</string>
   <string name="common_unknown">Невідомо</string>
   <string name="common_month">Місяць</string>
-  <string name="common_year">Year</string>
+  <string name="common_year">Рік</string>
   <!--
         Variable %1$d is a number of years
         Example:
@@ -51,10 +51,10 @@
             "17 years"
     -->
   <plurals name="common_x_years">
-    <item quantity="one">%1$d year</item>
-    <item quantity="few">%1$d years</item>
-    <item quantity="many">%1$d years</item>
-    <item quantity="other">%1$d years</item>
+    <item quantity="one">%1$d рік</item>
+    <item quantity="few">%1$d роки</item>
+    <item quantity="many">%1$d років</item>
+    <item quantity="other">%1$d років</item>
   </plurals>
   <!-- tag(q2campaign2026)
         Variable %1$d is a number of months
@@ -63,10 +63,10 @@
             "12 months"
     -->
   <plurals name="common_x_months">
-    <item quantity="one">%1$d month</item>
-    <item quantity="few">%1$d months</item>
-    <item quantity="many">%1$d months</item>
-    <item quantity="other">%1$d months</item>
+    <item quantity="one">%1$d місяць</item>
+    <item quantity="few">%1$d місяці</item>
+    <item quantity="many">%1$d місяців</item>
+    <item quantity="other">%1$d місяців</item>
   </plurals>
   <!--
         Variable %1$d is a number of weeks
@@ -75,10 +75,10 @@
             "4 weeks"
     -->
   <plurals name="common_x_weeks">
-    <item quantity="one">%1$d week</item>
-    <item quantity="few">%1$d weeks</item>
-    <item quantity="many">%1$d weeks</item>
-    <item quantity="other">%1$d weeks</item>
+    <item quantity="one">%1$d тиждень</item>
+    <item quantity="few">%1$d тижні</item>
+    <item quantity="many">%1$d тижнів</item>
+    <item quantity="other">%1$d тижнів</item>
   </plurals>
   <!--
         Variable %1$d is a number of days
@@ -87,10 +87,10 @@
             "37 days"
     -->
   <plurals name="common_x_days">
-    <item quantity="one">%1$d day</item>
-    <item quantity="few">%1$d days</item>
-    <item quantity="many">%1$d days</item>
-    <item quantity="other">%1$d days</item>
+    <item quantity="one">%1$d день</item>
+    <item quantity="few">%1$d дні</item>
+    <item quantity="many">%1$d днів</item>
+    <item quantity="other">%1$d днів</item>
   </plurals>
   <!-- endregion -->
   <!-- region Common actions -->
@@ -129,10 +129,10 @@
   <string name="common_add_to_albums_action">Додати до альбомів</string>
   <string name="common_tag_photo_action">Сканувати фото для тегів</string>
   <string name="common_save_as_action">Save as</string>
-  <string name="common_open_action">Open</string>
-  <string name="common_back_action">Back</string>
+  <string name="common_open_action">Відкрити</string>
+  <string name="common_back_action">Назад</string>
   <string name="common_open_side_menu_action">Open side menu</string>
-  <string name="common_not_now">Not now</string>
+  <string name="common_not_now">Не зараз</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Аудіо</string>
@@ -168,7 +168,7 @@
         Example:
             "Name cannot include invisible characters, "/" or "\"
     -->
-  <string name="common_error_name_with_forbidden_characters">Ім\'я не може містити невидимі символи, \"%1$s\" або \"%2$s\"</string>
+  <string name="common_error_name_with_forbidden_characters">Ім\'я не може містити невидимі символи, «%1$s» або «%2$s»</string>
   <string name="common_error_name_periods">Назва не повинна бути \".\" або \"..\"</string>
   <string name="common_error_no_internet">Немає з\'єднання з інтернетом</string>
   <string name="common_error_http_5xx">Сталася помилка сервера</string>
@@ -218,10 +218,10 @@
             "13 selected"
     -->
   <plurals name="common_selected">
-    <item quantity="one">Вибрано %1$d</item>
-    <item quantity="few">Вибрано %1$d</item>
-    <item quantity="many">Вибрано %1$d</item>
-    <item quantity="other">Вибрано %1$d</item>
+    <item quantity="one">%1$d вибрано</item>
+    <item quantity="few">%1$d вибрано</item>
+    <item quantity="many">%1$d вибрано</item>
+    <item quantity="other">%1$d вибрано</item>
   </plurals>
   <!-- region In-app notification -->
   <!--

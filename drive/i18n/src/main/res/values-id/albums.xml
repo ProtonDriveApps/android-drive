@@ -81,7 +81,7 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_add_to_album_failed">
-    <item quantity="other">%1$d item gagal ditambahkan</item>
+    <item quantity="other">%1$d item gagal</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos added to your Drive
@@ -126,7 +126,7 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_removed_from_album_failed">
-    <item quantity="other">%1$d item gagal dihapus</item>
+    <item quantity="other">%1$d item gagal</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Tidak ada foto</string>
   <string name="albums_empty_album_screen_description">Foto yang Anda atau anggota lain tambahkan akan muncul di sini</string>

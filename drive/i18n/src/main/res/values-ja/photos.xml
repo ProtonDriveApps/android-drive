@@ -71,9 +71,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">継続的かつ自動バックアップを行うには、設定で %1$s によるすべての写真へのアクセスを許可してください。</string>
-  <string name="photos_error_waiting_connectivity">インターネット接続なし</string>
+  <string name="photos_error_waiting_connectivity">Waiting for connection</string>
   <string name="photos_error_waiting_wifi_connectivity">Wi-Fi待ち</string>
   <string name="photos_error_waiting_wifi_connectivity_action">モバイル通信を使用</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">This network might charge for data</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">許可</string>
   <string name="photos_error_local_storage">デバイスストレージがいっぱいです</string>
   <string name="photos_error_local_storage_description">バックアップを続行するには、デバイスのストレージを解放する必要があります。</string>
   <string name="photos_error_background_restrictions">アプリのバックグラウンド動作のためにバッテリーを「無制限」に設定</string>
@@ -82,7 +84,10 @@
   <string name="photos_empty_title">まだバックアップがありません</string>
   <string name="photos_empty_description">あなたのデバイスに写真やビデオがあれば、すぐにここに表示されます。</string>
   <string name="photos_backup_title">写真のバックアップ</string>
-  <string name="photos_backup_option_mobile_data">モバイルデータを使用して写真をバックアップする</string>
+  <string name="photos_backup_option_mobile_data">Back up over cellular</string>
+  <string name="photos_backup_option_mobile_data_description">Backs up on any network, which may use paid data.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Back up over unverified networks</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Includes hotspots, public Wi-Fi, and other networks we can\'t confirm are free. May occasionally use paid data.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">バッテリーの最適化を無効にする</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">アプリがバックグラウンドで実行されているときに、中断のないバックアップが可能になります。</string>
   <string name="photos_backup_in_app_notification_turned_on">写真のバックアップがオンになっています</string>
@@ -100,7 +105,7 @@
             "12 345 items left"
     -->
   <plurals name="photos_backup_state_uploading_items_left">
-    <item quantity="other">%1$s 個のアイテムが残っています</item>
+    <item quantity="other">残り %1$s アイテム</item>
   </plurals>
   <!--
         Variable %1$s is a quantity (formatted) of photos saved

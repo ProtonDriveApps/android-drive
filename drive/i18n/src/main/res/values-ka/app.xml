@@ -60,6 +60,14 @@
   <string name="upload_to_title_format">%1$s-ზე ატვირთვა</string>
   <string name="upload_title">ატვირთვა</string>
   <!--
+        Shown when a tap on the Upload button is ignored because another app draws a window over
+        ours (tapjacking protection).
+        Variable %1$s is an application name
+        Example:
+            "For your security, the tap was blocked because another app is displaying over Proton Drive. Close any floating windows or screen filters and try again."
+    -->
+  <string name="upload_to_obscured_touch_blocked">For your security, the tap was blocked because another app is displaying over %1$s. Close any floating windows or screen filters and try again.</string>
+  <!--
         Variable %1$s is an application name
         Example:
             "Only files can be uploaded to Proton Drive"
@@ -143,6 +151,7 @@
   <string name="notification_content_text_backup_failed_permission">არასაკმარისი წვდომები</string>
   <string name="notification_content_text_backup_failed_connectivity">ინტერნეტი არ გაქვთ</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Wi-Fi-ის მოლოდინი</string>
+  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">This network might charge for data</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">მარქაფი დაშვებული არაა</string>
   <string name="notification_content_text_backup_failed_folder_not_found">Backup folder no longer exists</string>
   <string name="notification_content_text_backup_paused_disabled">მარქაფი გათიშული იყო</string>
@@ -254,7 +263,7 @@
         Example:
             "More storage for only $1.00"
     -->
-  <string name="drive_lite_promo_title">მეტი საცავი მხოლოდ %1$s-ად</string>
+  <string name="drive_lite_promo_title">მეტი საცავი, მხოლოდ, %1$s-ად</string>
   <!--
         Variable %1$s is the name of the plan
         Variable %2$s is a string representation of a storage size
@@ -262,20 +271,20 @@
         Example:
             "When you need a little more storage, but not a lot. Introducing Drive Lite, featuring 20 GB storage for only $1.00 a month."
     -->
-  <string name="drive_lite_promo_description">როცა ცოტა მეტი საცავი გჭირდებათ, მაგრამ არც ისე ბევრი. წარმოგიდგენთ %1$s-ს, %2$s საცავით, თვეში მხოლოდ %3$s-ად.</string>
+  <string name="drive_lite_promo_description">When you need a little more storage, but not a lot. Introducing %1$s, featuring %2$s storage for only %3$s a month.</string>
   <!--
         Variable %1$s is the name of the plan
         Example:
             "Get Drive Lite"
     -->
-  <string name="drive_lite_promo_action">მიიღეთ %1$s</string>
+  <string name="drive_lite_promo_action">%1$s-ის მიღება</string>
   <!--
         Variable %1$s is a string representation of a storage size
         Variable %2$s is a string representation of a price
         Example:
             "Get 200GB for just $0.99"
     -->
-  <string name="drive_plus_promo_title">მიიღეთ %1$s მხოლოდ %2$s-ად</string>
+  <string name="drive_plus_promo_title">Get %1$s for just %2$s</string>
   <!--
         Variable %1$s is a string representation of a large number
         Variable %2$s is a string representation of a price
@@ -283,13 +292,13 @@
         Example:
             "That is enough secure storage for over 50,000 high-resolution photos. Get your first month for $0.99, then $4.99/month."
     -->
-  <string name="drive_plus_promo_description">ეს საკმარისი დაცული საცავია %1$s-ზე მეტი მაღალი გარჩევადობის ფოტოსთვის. მიიღეთ პირველი თვე %2$s-ად, შემდეგ კი %3$s/თვეში.</string>
+  <string name="drive_plus_promo_description">That is enough secure storage for over %1$s high-resolution photos. Get your first month for %2$s, then %3$s/month.</string>
   <!--
         Variable %1$s is the price of the plan
         Example:
             "Upgrade for $0.99"
     -->
-  <string name="drive_plus_promo_action">განაახლეთ %1$s-ად</string>
+  <string name="drive_plus_promo_action">Upgrade for %1$s</string>
   <string name="support_contact_options_title">დაგვეხმარეთ, გავაუმჯობესოთ თქვენი გამოცდილება</string>
   <string name="support_contact_options_description">თუ პრობლემები გაქვთ ჩვენი დახმარების დოკკუმენტაცია და მხარდაჭერის გუნდი ყოველთვის მზადაა, დაგეხმაროთ!</string>
   <string name="support_contact_options_action_button">დაგვიკავშირდით</string>

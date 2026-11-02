@@ -74,9 +74,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Za neprekinjeno in samodejno varnostno kopiranje omogočite %1$s dostop do vseh fotografij v nastavitvah.</string>
-  <string name="photos_error_waiting_connectivity">Ni spletne povezave</string>
+  <string name="photos_error_waiting_connectivity">Waiting for connection</string>
   <string name="photos_error_waiting_wifi_connectivity">Čakanje na Wifi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Uporabi mobilne podatke</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">This network might charge for data</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Dovoli</string>
   <string name="photos_error_local_storage">Pomnilnik naprave je poln</string>
   <string name="photos_error_local_storage_description">Če želite nadaljevati varnostno kopiranje, morate sprostiti prostor za shranjevanje v napravi.</string>
   <string name="photos_error_background_restrictions">Nastavite porabo baterije na »Neomejeno« za aktivnost aplikacije v ozadju</string>
@@ -85,7 +87,10 @@
   <string name="photos_empty_title">Ni še varnostnih kopij</string>
   <string name="photos_empty_description">Takoj ko imate v napravi fotografije ali videoposnetke, se bodo pojavili tukaj.</string>
   <string name="photos_backup_title">Varnostna kopija fotografij</string>
-  <string name="photos_backup_option_mobile_data">Uporabi mobilne podatke za varnostno kopiranje slik</string>
+  <string name="photos_backup_option_mobile_data">Back up over cellular</string>
+  <string name="photos_backup_option_mobile_data_description">Backs up on any network, which may use paid data.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Back up over unverified networks</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Includes hotspots, public Wi-Fi, and other networks we can\'t confirm are free. May occasionally use paid data.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Onemogoči optimizacijo baterije</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Omogoča neprekinjeno varnostno kopiranje, ko aplikacija deluje v ozadju.</string>
   <string name="photos_backup_in_app_notification_turned_on">Varnostno kopiranje fotografij je vklopljeno</string>

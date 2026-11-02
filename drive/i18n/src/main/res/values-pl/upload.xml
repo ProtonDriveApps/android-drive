@@ -32,10 +32,10 @@
             "3 files are being uploaded to: Pictures"
     -->
   <plurals name="files_upload_being_uploaded_notification">
-    <item quantity="one">%1$d plik został przesłany do folderu %2$s</item>
-    <item quantity="few">%1$d pliki zostały przesłane do folderu %2$s</item>
-    <item quantity="many">%1$d plików zostało przesłanych do folderu %2$s</item>
-    <item quantity="other">%1$d plików zostało przesłanych do folderu %2$s</item>
+    <item quantity="one">Przesyłanie %1$d pliku do folderu %2$s</item>
+    <item quantity="few">Przesyłanie %1$d plików do folderu %2$s</item>
+    <item quantity="many">Przesyłanie %1$d plików do folderu %2$s</item>
+    <item quantity="other">Przesyłanie %1$d pliku do folderu %2$s</item>
   </plurals>
   <!--
         Variable %1$d is a quantity of files that failed to be uploaded
@@ -78,7 +78,7 @@
     -->
   <plurals name="number_of_items">
     <item quantity="one">%1$d element</item>
-    <item quantity="few">%1$d elementów</item>
+    <item quantity="few">%1$d elementy</item>
     <item quantity="many">%1$d elementów</item>
     <item quantity="other">%1$d elementów</item>
   </plurals>
@@ -91,7 +91,7 @@
     -->
   <plurals name="folder_upload_created_subfolders">
     <item quantity="one">Utworzono %1$d folder</item>
-    <item quantity="few">Utworzono %1$d folderów</item>
+    <item quantity="few">Utworzono %1$d foldery</item>
     <item quantity="many">Utworzono %1$d folderów</item>
     <item quantity="other">Utworzono %1$d folderów</item>
   </plurals>
@@ -103,7 +103,7 @@
     -->
   <plurals name="folder_upload_scheduled_files_for_upload">
     <item quantity="one">Zaplanowano %1$d plik do przesłania</item>
-    <item quantity="few">Zaplanowano %1$d plików do przesłania</item>
+    <item quantity="few">Zaplanowano %1$d pliki do przesłania</item>
     <item quantity="many">Zaplanowano %1$d plików do przesłania</item>
     <item quantity="other">Zaplanowano %1$d plików do przesłania</item>
   </plurals>

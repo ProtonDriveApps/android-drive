@@ -83,6 +83,13 @@ subprojects {
     configurations.all {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-android-extensions-runtime")
     }
+    // Robolectric downloads its android-all jars itself at test time, from Maven Central unless
+    // told otherwise; CI points it at an internal mirror.
+    providers.environmentVariable("ROBOLECTRIC_DEPENDENCY_REPO_URL").orNull?.let { repoUrl ->
+        tasks.withType<Test>().configureEach {
+            systemProperty("robolectric.dependency.repo.url", repoUrl)
+        }
+    }
 }
 
 tasks.register("clean", Delete::class) {

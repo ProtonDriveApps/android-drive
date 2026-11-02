@@ -71,9 +71,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">백업을 연속적이고 자동으로 진행하기 위해, 모든 사진에 접근하기 위해 설정에서 %1$s 접근을 허용하십시오.</string>
-  <string name="photos_error_waiting_connectivity">인터넷 연결 없음</string>
+  <string name="photos_error_waiting_connectivity">연결 대기 중</string>
   <string name="photos_error_waiting_wifi_connectivity">Wi-Fi를 기다리는 중</string>
   <string name="photos_error_waiting_wifi_connectivity_action">셀룰러 사용</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">This network might charge for data</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">허용</string>
   <string name="photos_error_local_storage">기기 저장 공간 가득 참</string>
   <string name="photos_error_local_storage_description">백업을 계속하기 위해, 기기에 여유 공간을 만들어야 합니다.</string>
   <string name="photos_error_background_restrictions">백그라운드 앱 활동을 위해 배터리 절약을 \'비활성화\' 하십시오.</string>
@@ -82,7 +84,10 @@
   <string name="photos_empty_title">백업 목록이 아직 없습니다.</string>
   <string name="photos_empty_description">곧 이 기기에서 찍은 사진과 비디오가 여기서 나타납니다.</string>
   <string name="photos_backup_title">사진 백업</string>
-  <string name="photos_backup_option_mobile_data">사진 백업을 위해 모바일 데이터 사용</string>
+  <string name="photos_backup_option_mobile_data">Back up over cellular</string>
+  <string name="photos_backup_option_mobile_data_description">Backs up on any network, which may use paid data.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Back up over unverified networks</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Includes hotspots, public Wi-Fi, and other networks we can\'t confirm are free. May occasionally use paid data.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">배터리 절약 비활성화</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">앱이 백그라운드에서 실행될 때 끊김없는 백업이 이루어집니다.</string>
   <string name="photos_backup_in_app_notification_turned_on">사진 백업이 켜저 있습니다</string>
@@ -100,7 +105,7 @@
             "12 345 items left"
     -->
   <plurals name="photos_backup_state_uploading_items_left">
-    <item quantity="other">%1$s개 항목 남음</item>
+    <item quantity="other">남은 항목 %1$s개</item>
   </plurals>
   <!--
         Variable %1$s is a quantity (formatted) of photos saved

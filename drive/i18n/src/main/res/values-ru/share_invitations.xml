@@ -29,10 +29,10 @@
             "2 persons added"
     -->
   <plurals name="share_via_invitations_person_added">
-    <item quantity="one">Добавлен 1 пользователь</item>
+    <item quantity="one">Добавлен %1$d пользователь</item>
     <item quantity="few">Добавлено %1$d пользователя</item>
     <item quantity="many">Добавлено %1$d пользователей</item>
-    <item quantity="other">Добавлено %1$d пользователей</item>
+    <item quantity="other">Добавлено %1$d пользователя</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -40,10 +40,10 @@
             "2 persons cannot be invited"
     -->
   <plurals name="share_via_invitations_person_added_error">
-    <item quantity="one">1 пользователь не может быть приглашен</item>
+    <item quantity="one">%1$d пользователь не может быть приглашен</item>
     <item quantity="few">%1$d пользователя не могут быть приглашены</item>
     <item quantity="many">%1$d пользователей не могут быть приглашены</item>
-    <item quantity="other">%1$d пользователей не могут быть приглашены</item>
+    <item quantity="other">%1$d пользователя не могут быть приглашены</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -51,7 +51,7 @@
             "Sharing with 2 persons"
     -->
   <plurals name="share_via_invitations_sharing_with">
-    <item quantity="one">Общий доступ с 1 пользователем</item>
+    <item quantity="one">Общий доступ с %1$d пользователем</item>
     <item quantity="few">Общий доступ с %1$d пользователями</item>
     <item quantity="many">Общий доступ с %1$d пользователями</item>
     <item quantity="other">Общий доступ с %1$d пользователями</item>

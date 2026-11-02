@@ -72,9 +72,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Sürekli ve otomatik yedeklemeler için ayarlardan %1$s uygulamasının tüm fotoğraflara erişmesine izin verin.</string>
-  <string name="photos_error_waiting_connectivity">İnternet bağlantısı yok</string>
+  <string name="photos_error_waiting_connectivity">Bağlantı kurulması bekleniyor</string>
   <string name="photos_error_waiting_wifi_connectivity">Wi-Fi bekleniyor</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Mobil veri kullanılsın</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">Bu ağ veri kullanımı için ücret alabilir</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">İzin ver</string>
   <string name="photos_error_local_storage">Aygıt depolama alanı dolu</string>
   <string name="photos_error_local_storage_description">Yedeklemeyi sürdürebilmek için aygıtınızda boş depolama alanı açmalısınız.</string>
   <string name="photos_error_background_restrictions">Uygulamanın arka planda çalışabilmesi için pili \'Kısıtlanmamış\' olarak ayarlayın</string>
@@ -83,7 +85,10 @@
   <string name="photos_empty_title">Henüz bir yedek alınmamış.</string>
   <string name="photos_empty_description">Aygıtınızda fotoğraflarınız veya videolarınız bulunduğunda burada görüntülenir.</string>
   <string name="photos_backup_title">Fotoğraf yedekleme</string>
-  <string name="photos_backup_option_mobile_data">Fotoğrafları yedeklemek için mobil veri kullanılsın</string>
+  <string name="photos_backup_option_mobile_data">Hücresel ağ üzerinden yedekle</string>
+  <string name="photos_backup_option_mobile_data_description">Herhangi bir ağ ile yedekleme yapar. Veri kullanımı ücreti alınabilir.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Doğrulanmamış ağlar üzerinden yedekleme</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Erişim noktaları, herkese açık Wi-Fi ağları ve ücretsiz olup olmadığını doğrulayamadığımız diğer ağları içerir. Bazen veri kullanımı ücreti alınabilir.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Pil kullanımı iyileştirmesini kapatın</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Uygulama arka planda çalışırken yedekleme işleminin sürdürülebilmesini sağlar.</string>
   <string name="photos_backup_in_app_notification_turned_on">Fotoğraf yedekleme açık</string>

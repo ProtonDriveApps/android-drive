@@ -95,8 +95,8 @@
             "17 items added to your Drive"
     -->
   <plurals name="in_app_notification_add_to_stream_success">
-    <item quantity="one">%1$d öge Drive alanınıza eklendi</item>
-    <item quantity="other">%1$d öge Drive alanınıza eklendi</item>
+    <item quantity="one">%1$d öge Drive depolama alanınıza eklendi</item>
+    <item quantity="other">%1$d öge Drive depolama alanınıza eklendi</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because they already exist

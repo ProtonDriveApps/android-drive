@@ -63,7 +63,7 @@
   <string name="photos_error_backup_disabled_action">Inschakelen</string>
   <string name="photos_error_backup_missing_folder">Standaard camera map niet gevonden</string>
   <string name="photos_error_backup_failed">Back-up mislukt.</string>
-  <string name="photos_error_backup_folder_not_found">Backup folder no longer exists.</string>
+  <string name="photos_error_backup_folder_not_found">Back-up map bestaat niet meer.</string>
   <string name="photos_error_backup_temporarily_disabled">Back-up is tijdelijk onbeschikbaar.</string>
   <string name="photos_error_missing_permissions">Ontbrekende machtigingen.</string>
   <!--
@@ -72,9 +72,11 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Voor continue en automatische back-ups, sta %1$s toegang toe tot Alle Foto\'s in de instellingen.</string>
-  <string name="photos_error_waiting_connectivity">Geen internetverbinding</string>
+  <string name="photos_error_waiting_connectivity">Controleren op verbinding</string>
   <string name="photos_error_waiting_wifi_connectivity">Wachten op Wi-Fi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Mobiel gebruiken</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed">Dit netwerk kan kosten in rekening brengen voor data</string>
+  <string name="photos_error_wifi_connectivity_unconfirmed_action">Toestaan</string>
   <string name="photos_error_local_storage">Apparaatopslag vol</string>
   <string name="photos_error_local_storage_description">Om verder te gaan met de back-up moet u opslag vrijmaken op uw toestel.</string>
   <string name="photos_error_background_restrictions">Stel batterijgebruik in op \'Onbeperkt\' voor achtergrondactiviteit van de app</string>
@@ -83,7 +85,10 @@
   <string name="photos_empty_title">Nog geen back-ups</string>
   <string name="photos_empty_description">Zodra u foto\'s of video\'s heeft op uw toestel verschijnen ze hier.</string>
   <string name="photos_backup_title">Foto back-up</string>
-  <string name="photos_backup_option_mobile_data">Mobiele data gebruiken om foto\'s te back-uppen</string>
+  <string name="photos_backup_option_mobile_data">Maak een back-up via mobiel</string>
+  <string name="photos_backup_option_mobile_data_description">Maakt een back-up op elk netwerk dat mogelijk betaalde gegevens gebruikt.</string>
+  <string name="photos_backup_option_allow_unconfirmed_network">Maak een back-up via niet-geverifieerde netwerken</string>
+  <string name="photos_backup_option_allow_unconfirmed_network_description">Inclusief hotspots, openbare wifi en andere netwerken waarvan we niet kunnen bevestigen dat ze gratis zijn. Kan af en toe betaalde data gebruiken.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Batterij-optimalisatie uitschakelen</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Staat ononderbroken back-up toe wanneer de app op de achtergrond wordt uitgevoerd.</string>
   <string name="photos_backup_in_app_notification_turned_on">Foto back-up is ingeschakeld</string>

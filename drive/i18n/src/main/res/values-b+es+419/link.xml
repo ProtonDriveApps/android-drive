@@ -35,7 +35,7 @@
             "12 failed"
     -->
   <plurals name="files_operation_failed_count_of_failures">
-    <item quantity="one">%1$d error</item>
+    <item quantity="one">%1$d errores</item>
     <item quantity="other">%1$d errores</item>
   </plurals>
   <!--

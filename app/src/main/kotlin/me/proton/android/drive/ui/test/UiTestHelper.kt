@@ -22,7 +22,8 @@ import androidx.annotation.RestrictTo
 import androidx.datastore.preferences.core.edit
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.datastore.GetUserDataStore
-import me.proton.core.drive.base.data.datastore.GetUserDataStore.Keys.q3CampaignPromo2026LastShown
+import me.proton.core.drive.base.data.datastore.GetUserDataStore.Keys.blackFriday2026FreePromoLastShown
+import me.proton.core.drive.base.data.datastore.GetUserDataStore.Keys.blackFriday2026UpgradePromoLastShown
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.drive.android.settings.data.datastore.AppUiSettingsDataStore
 import me.proton.drive.android.settings.domain.entity.WhatsNewKey
@@ -47,9 +48,10 @@ class UiTestHelper @Inject constructor(
         appUiSettingsDataStore.ratingBooster = 1L
     }
 
-    suspend fun doNotShowQ3CampaignPromo2026(userId: UserId) {
+    suspend fun doNotShowBlackFriday2026Promo(userId: UserId) {
         getUserDataStore(userId).edit { preferences ->
-            preferences[q3CampaignPromo2026LastShown] = Date().time
+            preferences[blackFriday2026FreePromoLastShown] = Date().time
+            preferences[blackFriday2026UpgradePromoLastShown] = Date().time
         }
     }
 }

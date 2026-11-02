@@ -60,6 +60,14 @@
   <string name="upload_to_title_format">Nahrát do %1$s</string>
   <string name="upload_title">Nahrát</string>
   <!--
+        Shown when a tap on the Upload button is ignored because another app draws a window over
+        ours (tapjacking protection).
+        Variable %1$s is an application name
+        Example:
+            "For your security, the tap was blocked because another app is displaying over Proton Drive. Close any floating windows or screen filters and try again."
+    -->
+  <string name="upload_to_obscured_touch_blocked">Z bezpečnostních důvodů bylo klepnutí zablokováno, protože nad %1$s je zobrazena jiná aplikace. Zavřete všechna plovoucí okna nebo filtry obrazovky a zkuste to znovu.</string>
+  <!--
         Variable %1$s is an application name
         Example:
             "Only files can be uploaded to Proton Drive"
@@ -153,6 +161,7 @@
   <string name="notification_content_text_backup_failed_permission">Chybí oprávnění</string>
   <string name="notification_content_text_backup_failed_connectivity">Bez připojení k Internetu</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Čekání na síť Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">Tato síť může účtovat poplatky za přenos dat</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Zálohování není povoleno</string>
   <string name="notification_content_text_backup_failed_folder_not_found">Záložní složka již neexistuje</string>
   <string name="notification_content_text_backup_paused_disabled">Zálohování bylo vypnuto</string>

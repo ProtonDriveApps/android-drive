@@ -18,11 +18,11 @@
   -->
 <resources>
   <string name="content_description_file_preview">ファイルコンテンツのプレビュー</string>
-  <string name="content_description_more_options">Show more options for the file</string>
+  <string name="content_description_more_options">ファイルの他のオプションを表示</string>
   <string name="preview_downloading_state">ダウンロード中…</string>
   <string name="preview_processing_state">処理中...</string>
   <string name="preview_empty">プレビューするものがありません...</string>
-  <string name="preview_text_too_large">This file is too large to preview</string>
+  <string name="preview_text_too_large">このファイルは、非常に大きいためプレビューできません</string>
   <string name="title_not_found">見つかりません</string>
   <string name="proton_docs_insert_image_header_title">画像を挿入</string>
   <string name="proton_docs_option_select_file">ファイルを選択</string>

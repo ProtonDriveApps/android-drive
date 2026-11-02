@@ -22,14 +22,14 @@
         Example:
             "Share Document"
     -->
-  <string name="title_share_via_invitations">Skupna raba %1$s</string>
+  <string name="title_share_via_invitations">Deli %1$s</string>
   <!--
         Variable %1$d is a number
         Examples:
             "2 persons added"
     -->
   <plurals name="share_via_invitations_person_added">
-    <item quantity="one">Dodan 1 uporabnik</item>
+    <item quantity="one">Dodan %1$d uporabnik</item>
     <item quantity="two">Dodana %1$d uporabnika</item>
     <item quantity="few">Dodani %1$d uporabniki</item>
     <item quantity="other">Dodanih %1$d uporabnikov</item>
@@ -40,7 +40,7 @@
             "2 persons cannot be invited"
     -->
   <plurals name="share_via_invitations_person_added_error">
-    <item quantity="one">1 oseba ne more biti povabljena</item>
+    <item quantity="one">%1$d oseba ne more biti povabljena</item>
     <item quantity="two">%1$d osebi ne moreta biti povabljeni</item>
     <item quantity="few">%1$d osebe ne morejo biti povabljene</item>
     <item quantity="other">%1$d oseb ne more biti povabljenih</item>
@@ -51,10 +51,10 @@
             "Sharing with 2 persons"
     -->
   <plurals name="share_via_invitations_sharing_with">
-    <item quantity="one">V skupni rabi z 1 uporabnikom</item>
+    <item quantity="one">V skupni rabi z %1$d uporabnikom</item>
     <item quantity="two">V skupni rabi z %1$d uporabnikoma</item>
-    <item quantity="few">V skupni rabi s %1$d uporabniki</item>
-    <item quantity="other">V skupni rabi s %1$d uporabniki</item>
+    <item quantity="few">V skupni rabi z %1$d uporabniki</item>
+    <item quantity="other">V skupni rabi z %1$d uporabniki</item>
   </plurals>
   <string name="common_permission_owner">Lastnik</string>
   <string name="common_permission_admin">Skrbnik</string>

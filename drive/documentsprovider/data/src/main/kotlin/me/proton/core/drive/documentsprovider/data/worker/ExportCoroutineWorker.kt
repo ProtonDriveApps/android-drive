@@ -87,7 +87,7 @@ abstract class ExportCoroutineWorker(
             exportFileUri(uri, driveLink)
                 .onSuccess { succeeded.add(driveLink) }
                 .onFailure { error ->
-                    error.log(LogTag.DOCUMENTS_PROVIDER, "Cannot export file: $uri")
+                    error.log(LogTag.DOCUMENTS_PROVIDER, "Cannot export file ${driveLink.id.id}")
                     showExportError(error)
                 }
         }

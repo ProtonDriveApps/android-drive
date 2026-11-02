@@ -22,15 +22,15 @@
         Example:
             "Share Document"
     -->
-  <string name="title_share_via_invitations">Comparteix %1$s</string>
+  <string name="title_share_via_invitations">Compartiu %1$s</string>
   <!--
         Variable %1$d is a number
         Examples:
             "2 persons added"
     -->
   <plurals name="share_via_invitations_person_added">
-    <item quantity="one">S\'ha afegit 1 persona.</item>
-    <item quantity="other">S\'han afegit %1$d persones.</item>
+    <item quantity="one">S\'ha afegit 1 persona</item>
+    <item quantity="other">S\'han afegit %1$d persones</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -38,8 +38,8 @@
             "2 persons cannot be invited"
     -->
   <plurals name="share_via_invitations_person_added_error">
-    <item quantity="one">No es pot convidar a 1 persona.</item>
-    <item quantity="other">No es pot invitar a %1$d persones.</item>
+    <item quantity="one">No es pot convidar a 1 persona</item>
+    <item quantity="other">No es pot invitar a %1$d persones</item>
   </plurals>
   <!--
         Variable %1$d is a number

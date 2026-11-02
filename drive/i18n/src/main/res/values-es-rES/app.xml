@@ -60,6 +60,14 @@
   <string name="upload_to_title_format">Cargar en %1$s</string>
   <string name="upload_title">Cargar</string>
   <!--
+        Shown when a tap on the Upload button is ignored because another app draws a window over
+        ours (tapjacking protection).
+        Variable %1$s is an application name
+        Example:
+            "For your security, the tap was blocked because another app is displaying over Proton Drive. Close any floating windows or screen filters and try again."
+    -->
+  <string name="upload_to_obscured_touch_blocked">For your security, the tap was blocked because another app is displaying over %1$s. Close any floating windows or screen filters and try again.</string>
+  <!--
         Variable %1$s is an application name
         Example:
             "Only files can be uploaded to Proton Drive"
@@ -143,6 +151,7 @@
   <string name="notification_content_text_backup_failed_permission">Faltan los permisos.</string>
   <string name="notification_content_text_backup_failed_connectivity">No hay conexión a internet.</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Esperando una conexión Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">Esta red puede cobrar por el uso de datos</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">La copia de seguridad no está permitida.</string>
   <string name="notification_content_text_backup_failed_folder_not_found">La carpeta de copia de seguridad ya no existe</string>
   <string name="notification_content_text_backup_paused_disabled">Se ha desactivado la copia de seguridad.</string>
