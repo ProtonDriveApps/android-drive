@@ -1,0 +1,16 @@
+Private and secure cloud storage app brought to you by the world-class team behind Proton Mail. Proton Drive is an end-to-end encrypted Swiss storage space for your files, photos, and videos, ensuring that nobody, except those authorized by you, can access your data.
+
+Why use Proton Drive?
+* Keep your files and folders private. Control who has access to them
+* Easy to use: Fast, reliable, and intuitive file storage experience
+* End-to-end encrypted: Privacy guaranteed by automatic and seamless encryption
+* Zero knowledge encrypted: all files are stored in encrypted format — not even Proton can read your files
+* Free storage space: Get started with a free basic plan: no advertising, no data harvesting, and no strings attached
+* Swiss privacy and neutrality: Proton Drive is hosted in Switzerland, so your data is protected by the world's strongest privacy laws
+* Open-source cryptography: Proton Drive’s uses open source software so that anyone can check our code, which has also been audited by third-party professionals so you can know it's secure.
+
+With the Proton Drive app, you can:
+* Upload documents and store photos and videos from your mobile device
+* Share a secure link to your files or your photo storage with anyone, even those without a Proton account
+* Select and access your files or folders offline
+* Organize your files easily and securely in the app: rename, move or delete them
