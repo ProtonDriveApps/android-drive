@@ -190,4 +190,25 @@
 
     <string name="photos_folder_selection_title">Backup photos from</string>
     <string name="photos_folder_selection_description">Select folders to back up and their photos will appear in the Photos tab.</string>
+    <string name="photos_map_title">Map</string>
+    <string name="photos_map_album_title">Album map</string>
+    <string name="photos_map_date_range">%1$s – %2$s</string>
+    <string name="photos_map_show_path">See the path</string>
+    <string name="photos_map_loading_locations">Finding photo locations…</string>
+    <string name="photos_map_location_progress">Photo locations · %1$d of %2$d checked</string>
+    <string name="photos_map_thumbnail_progress">Thumbnails · %1$d downloading · %2$d queued</string>
+    <string name="photos_map_zoom_in">Zoom in</string>
+    <string name="photos_map_zoom_out">Zoom out</string>
+    <string name="photos_map_attribution" translatable="false">© OpenStreetMap contributors</string>
+    <string name="photos_map_no_photos">No photos in this date range.</string>
+    <string name="photos_map_photos_unavailable">Some photo locations couldn’t be loaded.</string>
+    <string name="photos_map_tiles_unavailable">Map tiles couldn’t be loaded.</string>
+    <plurals name="photos_map_without_location">
+        <item quantity="one">%d photo has no location</item>
+        <item quantity="other">%d photos have no location</item>
+    </plurals>
+    <plurals name="photos_map_pin_count">
+        <item quantity="one">%d photo</item>
+        <item quantity="other">%d photos</item>
+    </plurals>
 </resources>

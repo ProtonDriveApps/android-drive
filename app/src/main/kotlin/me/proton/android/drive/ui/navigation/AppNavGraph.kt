@@ -134,6 +134,7 @@ import me.proton.android.drive.ui.screen.TrashScreen
 import me.proton.android.drive.ui.screen.UploadToScreen
 import me.proton.android.drive.ui.screen.UpsellUfcScreen
 import me.proton.android.drive.ui.screen.UserInvitationScreen
+import me.proton.android.drive.ui.screen.map.AlbumMapScreen
 import me.proton.android.drive.ui.viewmodel.ConfirmStopSyncFolderDialogViewModel
 import me.proton.android.drive.ui.viewmodel.PreviewViewModel
 import me.proton.android.drive.ui.viewmodel.SignOutConfirmationViewModel
@@ -402,6 +403,7 @@ fun AppNavGraph(
         addNotificationPermissionRationale(navController)
         addCreateNewAlbum(navController)
         addAlbum(navController)
+        addAlbumMap(navController)
         addAlbumOptions(navController)
         addConfirmDeleteAlbumDialog(navController)
         addPickerPhotos(navController)
@@ -2525,6 +2527,33 @@ fun NavGraphBuilder.addAlbum(navController: NavHostController) = composable(
     )
 }
 
+@ExperimentalAnimationApi
+private fun NavGraphBuilder.addAlbumMap(navController: NavHostController) = composable(
+    route = Screen.Album.Map.route,
+    enterTransition = defaultEnterSlideTransition { true },
+    exitTransition = { ExitTransition.None },
+    popEnterTransition = { EnterTransition.None },
+    popExitTransition = defaultPopExitSlideTransition { true },
+    arguments = listOf(
+        navArgument(Screen.Album.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.Album.SHARE_ID) { type = NavType.StringType },
+        navArgument(Screen.Album.ALBUM_ID) { type = NavType.StringType },
+    ),
+) { navBackStackEntry ->
+    val userId = UserId(navBackStackEntry.require(Screen.Album.USER_ID))
+    AlbumMapScreen(
+        onBack = { navController.popBackStack() },
+        onOpenPhoto = { fileId, albumId ->
+            navController.navigate(Screen.PagerPreview(
+                pagerType = PagerType.ALBUM,
+                userId = userId,
+                fileId = fileId,
+                albumId = albumId,
+            ))
+        },
+    )
+}
+
 fun NavGraphBuilder.addAlbumOptions(
     navController: NavHostController,
 ) = modalBottomSheet(
@@ -2538,6 +2567,11 @@ fun NavGraphBuilder.addAlbumOptions(
     val userId = UserId(navBackStackEntry.require(Screen.Files.USER_ID))
     AlbumOptions(
         runAction = runAction,
+        navigateToMap = { albumId ->
+            navController.navigate(Screen.Album.Map(albumId)) {
+                popUpTo(Screen.AlbumOptions.route) { inclusive = true }
+            }
+        },
         navigateToShareViaInvitations = { linkId ->
             navController.navigate(Screen.ShareViaInvitations(userId, linkId)) {
                 popUpTo(Screen.AlbumOptions.route) { inclusive = true }

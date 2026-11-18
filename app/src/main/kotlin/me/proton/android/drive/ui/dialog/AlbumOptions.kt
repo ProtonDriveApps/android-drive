@@ -50,6 +50,7 @@ import me.proton.core.drive.base.presentation.R as BasePresentation
 @Composable
 fun AlbumOptions(
     runAction: RunAction,
+    navigateToMap: (AlbumId) -> Unit,
     navigateToShareViaInvitations: (linkId: LinkId) -> Unit,
     navigateToManageAccess: (linkId: LinkId) -> Unit,
     navigateToRename: (linkId: LinkId) -> Unit,
@@ -66,6 +67,7 @@ fun AlbumOptions(
     val entries by remember(viewModel, lifecycle) {
         viewModel.entries(
             runAction = runAction,
+            navigateToMap = navigateToMap,
             navigateToShareViaInvitations = navigateToShareViaInvitations,
             navigateToManageAccess = navigateToManageAccess,
             navigateToRename = navigateToRename,

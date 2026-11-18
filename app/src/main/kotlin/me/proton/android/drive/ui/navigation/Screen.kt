@@ -434,6 +434,10 @@ sealed class Screen(val route: String) {
 
         operator fun invoke(albumId: AlbumId) = "photos/${albumId.userId.id}/shares/${albumId.shareId.id}/albums/${albumId.id}"
 
+        data object Map : Screen("photos/{userId}/shares/{shareId}/albums/{albumId}/map") {
+            operator fun invoke(albumId: AlbumId) = "${Album(albumId)}/map"
+        }
+
         object Dialogs {
             data object ConfirmDeleteAlbum : Screen("delete/photos/{userId}/shares/{shareId}/albums/{albumId}/confirm") {
                 operator fun invoke(albumId: AlbumId) =

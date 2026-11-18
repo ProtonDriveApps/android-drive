@@ -23,6 +23,6 @@ data class PhotosAndAlbumsViewState(
     val isAlbumsTabVisible: Boolean,
 ) {
     enum class Tab {
-        PHOTOS, ALBUMS
+        PHOTOS, ALBUMS, MAP
     }
 }

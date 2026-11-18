@@ -106,6 +106,7 @@ class AlbumOptionsViewModel @Inject constructor(
 
     fun entries(
         runAction: RunAction,
+        navigateToMap: (AlbumId) -> Unit,
         navigateToShareViaInvitations: (linkId: LinkId) -> Unit,
         navigateToManageAccess: (linkId: LinkId) -> Unit,
         navigateToRename: (linkId: LinkId) -> Unit,
@@ -124,6 +125,7 @@ class AlbumOptionsViewModel @Inject constructor(
                 .filterRoot(driveLink, sharingDevelopment)
                 .map { option ->
                     when (option) {
+                        is Option.ShowAlbumOnMap -> option.build(runAction, navigateToMap)
                         is Option.OfflineToggle -> option.build(runAction) { driveLink ->
                             applicationScope.launch {
                                 toggleOffline(driveLink).onFailure { error ->
@@ -155,6 +157,7 @@ class AlbumOptionsViewModel @Inject constructor(
         const val KEY_ALBUM_ID = "albumId"
 
         private val options = setOf(
+            Option.ShowAlbumOnMap,
             Option.OfflineToggle,
             Option.ShareViaInvitations,
             Option.ManageAccess,

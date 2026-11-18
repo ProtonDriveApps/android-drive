@@ -18,6 +18,8 @@
 
 package me.proton.android.drive.ui.options
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import me.proton.android.drive.ui.common.FolderEntry
 import me.proton.android.drive.ui.common.folderEntry
 import me.proton.core.drive.base.domain.entity.Permissions
@@ -511,6 +513,26 @@ sealed class Option(
         }
     }
 
+    data object ShowAlbumOnMap : Option(
+        ApplicableQuantity.Single,
+        setOf(ApplicableTo.ALBUM),
+        setOf(State.NOT_TRASHED) + State.ANY_SHARED,
+    ) {
+        fun build(
+            runAction: RunAction,
+            navigateToMap: (AlbumId) -> Unit,
+        ): FileOptionEntry.SimpleEntry<DriveLink.Album> =
+            object : FileOptionEntry.SimpleEntry<DriveLink.Album> {
+                override val icon = CorePresentation.drawable.ic_proton_globe
+                override val onClick: (DriveLink.Album) -> Unit = { album ->
+                    runAction { navigateToMap(album.id) }
+                }
+
+                @Composable
+                override fun getLabel() = stringResource(I18N.string.albums_show_on_map_action)
+            }
+    }
+
     data object TagPhotoFile : Option(
         ApplicableQuantity.All,
         setOf(ApplicableTo.FILE_PHOTO),
@@ -648,6 +670,7 @@ fun Iterable<Option>.filterPermissions(
         Option.SetAsAlbumCover -> permissions.isAdmin
         Option.ShareViaInvitations -> canManageSharing
         Option.ShareMultiplePhotos -> permissions.isAdmin
+        Option.ShowAlbumOnMap -> permissions.canRead
         Option.TagPhotoFile -> permissions.isAdmin
         Option.TakeAPhoto -> permissions.canWrite
         Option.Trash -> permissions.canWrite

@@ -70,6 +70,7 @@ driveModule(
     implementation(libs.androidx.webkit)
     implementation(libs.bundles.accompanist)
     implementation(libs.bundles.core)
+    implementation(libs.coil.compose)
     implementation(libs.drive.sdk)
     implementation(libs.google.play.review)
     implementation(libs.lottie.compose)

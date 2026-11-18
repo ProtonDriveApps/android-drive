@@ -24,6 +24,8 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -32,16 +34,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -69,6 +75,7 @@ import me.proton.android.drive.photos.presentation.viewevent.PhotosViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.PhotosViewState
 import me.proton.android.drive.ui.effect.HandleHomeEffect
 import me.proton.android.drive.ui.effect.PhotosEffect
+import me.proton.android.drive.ui.screen.map.PhotoMapScreen
 import me.proton.android.drive.ui.viewevent.PhotosAndAlbumsViewEvent
 import me.proton.android.drive.ui.viewmodel.AlbumsViewModel
 import me.proton.android.drive.ui.viewmodel.PhotosAndAlbumsViewModel
@@ -99,6 +106,7 @@ import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.i18n.R as I18N
+import me.proton.core.presentation.R as CorePresentation
 
 @Composable
 fun PhotosAndAlbumsScreen(
@@ -127,6 +135,8 @@ fun PhotosAndAlbumsScreen(
     val viewEvent = remember(lifecycle) {
         viewModel.viewEvent()
     }
+    val stateHolder = rememberSaveableStateHolder()
+    val tabScrollState = rememberScrollState()
 
     Box(modifier) {
         val defaultTitle = @Composable { modifier: Modifier ->
@@ -134,6 +144,7 @@ fun PhotosAndAlbumsScreen(
                 modifier = modifier.offset(x = (-4).dp),
                 viewState = viewState,
                 viewEvent = viewEvent,
+                scrollState = tabScrollState,
             )
         }
         when (viewState.selectedTab) {
@@ -160,8 +171,42 @@ fun PhotosAndAlbumsScreen(
                 navigateToUserInvitation = navigateToUserInvitation,
                 defaultTitle = defaultTitle,
             )
+
+            Tab.MAP -> stateHolder.SaveableStateProvider(Tab.MAP.name) {
+                MapTab(
+                    homeScaffoldState = homeScaffoldState,
+                    onOpenPhoto = { navigateToPhotosPreview(it, null) },
+                    defaultTitle = defaultTitle,
+                )
+            }
         }
     }
+}
+
+@Composable
+private fun MapTab(
+    homeScaffoldState: HomeScaffoldState,
+    onOpenPhoto: (FileId) -> Unit,
+    defaultTitle: @Composable (Modifier) -> Unit,
+) {
+    val scope = rememberCoroutineScope()
+    val currentTitle by rememberUpdatedState(defaultTitle)
+    DisposableEffect(homeScaffoldState) {
+        val gesturesEnabled = homeScaffoldState.drawerGesturesEnabled.value
+        homeScaffoldState.drawerGesturesEnabled.value = false
+        onDispose { homeScaffoldState.drawerGesturesEnabled.value = gesturesEnabled }
+    }
+    LaunchedEffect(homeScaffoldState) {
+        homeScaffoldState.topAppBar.value = {
+            TopAppBar(
+                navigationIcon = painterResource(CorePresentation.drawable.ic_proton_hamburger),
+                navigationContentDescription = stringResource(I18N.string.common_open_side_menu_action),
+                onNavigationIcon = { scope.launch { homeScaffoldState.drawerState.open() } },
+                title = { currentTitle(it) },
+            )
+        }
+    }
+    PhotoMapScreen(onOpenPhoto = onOpenPhoto)
 }
 
 @Composable
@@ -394,9 +439,10 @@ fun Tabs(
     viewState: PhotosAndAlbumsViewState,
     viewEvent: PhotosAndAlbumsViewEvent,
     modifier: Modifier = Modifier,
+    scrollState: ScrollState = rememberScrollState(),
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.horizontalScroll(scrollState),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         TabItem(
@@ -416,13 +462,25 @@ fun Tabs(
             TabItem(
                 modifier = Modifier
                     .testTag(PhotosAndAlbumsScreenTestTag.albumsTitleTab)
-                    .padding(start = ProtonDimens.SmallSpacing),
+                    .padding(horizontal = ProtonDimens.SmallSpacing),
                 tab = Tab.ALBUMS,
                 text = I18N.string.albums_title,
                 viewState = viewState,
                 viewEvent = viewEvent,
             )
         }
+        VerticalDivider(
+            modifier = Modifier.padding(vertical = ProtonDimens.DefaultSpacing),
+            color = ProtonTheme.colors.separatorNorm,
+        )
+        TabItem(
+            modifier = Modifier.testTag(PhotosAndAlbumsScreenTestTag.mapTitleTab)
+                .padding(start = ProtonDimens.SmallSpacing),
+            tab = Tab.MAP,
+            text = I18N.string.photos_map_title,
+            viewState = viewState,
+            viewEvent = viewEvent,
+        )
     }
 }
 
@@ -479,7 +537,7 @@ fun TabsPreview() {
                 selectedTab = Tab.PHOTOS,
                 isAlbumsTabVisible = true,
             ),
-            viewEvent = object : PhotosAndAlbumsViewEvent {}
+            viewEvent = object : PhotosAndAlbumsViewEvent {},
         )
     }
 }
@@ -487,4 +545,5 @@ fun TabsPreview() {
 object PhotosAndAlbumsScreenTestTag {
     const val photosTitleTab = "photos title tab"
     const val albumsTitleTab = "albums title tab"
+    const val mapTitleTab = "map title tab"
 }
