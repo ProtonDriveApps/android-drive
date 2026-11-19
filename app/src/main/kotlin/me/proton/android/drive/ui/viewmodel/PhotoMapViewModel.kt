@@ -58,6 +58,7 @@ import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.firstErrorDomainOrNull
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ProtonPhotosClientProvider
 import me.proton.core.drive.base.domain.usecase.Sha256
 import me.proton.core.drive.base.domain.util.coRunCatchingException
@@ -92,6 +93,7 @@ import me.proton.core.drive.thumbnail.presentation.extension.thumbnailVOOrNull
 import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.drive.volume.domain.usecase.GetActiveVolumes
+import me.proton.core.util.kotlin.CoreLogger
 import me.proton.drive.sdk.ProtonDriveSdkException
 import me.proton.drive.sdk.ProtonPhotosClient
 import me.proton.drive.sdk.ProtonSdkError.ErrorDomain
@@ -116,7 +118,6 @@ internal data class PhotoMapContent(
     val withoutLocationCount: Int = 0,
     val locationsChecked: Int = 0,
     val locationsTotal: Int = 0,
-    val locationRecordsRequested: Int = 0,
 )
 
 internal data class PhotoMapState(val range: MapDateRange, val content: PhotoMapContent)
@@ -204,7 +205,7 @@ internal class PhotoMapViewModel @Inject constructor(
                     missing += scan.locateCached(page)
                 }
                 scan.locateMissing(missing)
-                emit(scan.content())
+                emit(scan.completedContent())
             }
         }.distinctUntilChanged()
         emitAll(combine(photos, photoListingsLoader.stateFor(key)) { content, sync ->
@@ -269,7 +270,7 @@ internal class PhotoMapViewModel @Inject constructor(
             } while (true)
         }
         if (remote.isSuccess) scan.retain(freshIds) else scan.locateMissing(missingCached)
-        val content = scan.content()
+        val content = scan.completedContent()
         emit(content.copy(hasError = content.hasError || remote.isFailure))
     }
 
@@ -301,6 +302,7 @@ internal class PhotoMapViewModel @Inject constructor(
         private val failures = mutableSetOf<FileId>()
         private val progress = PhotoLocationProgress()
         private var recordsRequested = 0
+        private var lastLoggedRequestCount: Int? = null
         private var lastUpdate: TimeSource.Monotonic.ValueTimeMark? = null
 
         fun retain(ids: Set<FileId>) {
@@ -311,15 +313,22 @@ internal class PhotoMapViewModel @Inject constructor(
             progress.replaceListings(ids)
         }
 
-        fun content(loading: Boolean = false) = PhotoMapContent(
+        fun content(loading: Boolean) = PhotoMapContent(
             photos = photos.values.toList(),
             loading = loading,
             hasError = failures.isNotEmpty(),
             withoutLocationCount = photosWithoutLocation.size,
             locationsChecked = progress.checked,
             locationsTotal = progress.total,
-            locationRecordsRequested = recordsRequested,
         )
+
+        fun completedContent(): PhotoMapContent {
+            if (recordsRequested != lastLoggedRequestCount) {
+                CoreLogger.d(LogTag.PHOTO, "Photos Map location records requested=$recordsRequested")
+                lastLoggedRequestCount = recordsRequested
+            }
+            return content(loading = false)
+        }
 
         suspend fun locateCached(listings: List<PhotoListing>): List<PhotoListing> {
             if (progress.includeListings(listings.map(PhotoListing::linkId))) publishProgress()
@@ -384,7 +393,6 @@ internal class PhotoMapViewModel @Inject constructor(
             return coRunCatchingException {
                 client.enumerateNodes(nodeUids).onStart {
                     recordsRequested += nodeUids.size
-                    publishProgress(force = true)
                 }.collect { node ->
                     val listing = listingsByNode[node.uid.value] ?: return@collect
                     val revision = when (node) {

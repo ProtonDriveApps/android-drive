@@ -157,12 +157,6 @@ internal fun PhotoMapScreen(
 
     Column(modifier.fillMaxSize().background(ProtonTheme.colors.backgroundNorm)) {
         PhotoMapDates(state.range) { showDatePicker = true }
-        Text(
-            text = stringResource(I18N.string.photos_map_location_records_requested, state.content.locationRecordsRequested),
-            modifier = Modifier.fillMaxWidth().padding(start = 12.dp, end = 12.dp, bottom = 6.dp),
-            style = MaterialTheme.typography.bodySmall,
-            color = ProtonTheme.colors.textNorm,
-        )
         Box(Modifier.weight(1f).fillMaxWidth().onSizeChanged { viewport = it }) {
             PhotoMapViewport(
                 camera = camera,
