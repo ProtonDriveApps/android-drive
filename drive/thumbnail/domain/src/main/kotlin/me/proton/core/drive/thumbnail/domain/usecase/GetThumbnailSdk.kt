@@ -58,7 +58,7 @@ class GetThumbnailSdk @Inject constructor(
         private const val UID_LOG_LENGTH = 8
     }
 
-    private val batcher = RequestBatcher<BatchKey, NodeUid, InputStream>(
+    private val batcher = RequestBatcher<BatchKey, NodeUid, ByteArray>(
         scope = CoroutineScope(SupervisorJob() + Dispatchers.IO + unhandledErrorHandler(THUMBNAIL)),
         delay = 50.milliseconds,
         timeout = 30.seconds,
@@ -86,7 +86,7 @@ class GetThumbnailSdk @Inject constructor(
                         thumbnail.uid.value.takeLast(UID_LOG_LENGTH)
                     } in $status"
                 )
-                thumbnail.uid to thumbnail.result.map { bytes -> bytes.inputStream() }
+                thumbnail.uid to thumbnail.result
             }
     }
 
@@ -101,7 +101,7 @@ class GetThumbnailSdk @Inject constructor(
                 volumeType = revisionContext.volumeType,
             ),
             item = revisionContext.nodeUid,
-        )
+        ).inputStream()
     }
 }
 

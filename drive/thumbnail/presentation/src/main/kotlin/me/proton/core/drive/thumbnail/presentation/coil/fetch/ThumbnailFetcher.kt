@@ -42,7 +42,11 @@ import okio.BufferedSource
 import okio.buffer
 import okio.source
 import java.io.File
+import java.io.IOException
 import java.io.InputStream
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption.ATOMIC_MOVE
+import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 
 object ThumbnailKeyer : Keyer<ThumbnailVO> {
     override fun key(data: ThumbnailVO, options: Options): String = data.cacheKey
@@ -124,11 +128,16 @@ class ThumbnailFetcher(
     ): SourceResult {
         val allowDiskWrite = options.diskCachePolicy.writeEnabled
         return if (allowDiskWrite) {
-            if (!cacheFile.exists()) {
-                cacheFile.createNewFile()
-            }
-            cacheFile.outputStream().use { outputStream ->
-                inputStream.copyTo(outputStream)
+            val target = cacheFile.toPath()
+            val temporary = Files.createTempFile(target.parent, "thumbnail-", ".tmp")
+            try {
+                val bytesCopied = Files.newOutputStream(temporary).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+                if (bytesCopied == 0L) throw IOException("Thumbnail is empty")
+                Files.move(temporary, target, ATOMIC_MOVE, REPLACE_EXISTING)
+            } finally {
+                temporary.toFile().delete()
             }
             CoreLogger.d(
                 THUMBNAIL,

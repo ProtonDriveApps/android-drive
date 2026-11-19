@@ -36,12 +36,11 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DateRangePicker
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -49,16 +48,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
-import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -66,6 +61,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalAccessibilityManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -76,19 +72,19 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import java.time.Instant
-import java.time.LocalDate
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import kotlinx.coroutines.delay
 import me.proton.android.drive.ui.viewmodel.LocatedMapPhoto
 import me.proton.android.drive.ui.viewmodel.PhotoMapContent
 import me.proton.android.drive.ui.viewmodel.PhotoMapViewModel
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.drive.base.presentation.component.ActionButton
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
@@ -110,6 +106,7 @@ internal fun AlbumMapScreen(
             navigationContentDescription = stringResource(I18N.string.common_back_action),
             onNavigationIcon = onBack,
             title = stringResource(I18N.string.photos_map_album_title),
+            actions = { PhotoMapMenu(viewModel) },
         )
         PhotoMapScreen(onOpenPhoto = { onOpenPhoto(it, albumId) }, viewModel = viewModel)
     }
@@ -118,20 +115,14 @@ internal fun AlbumMapScreen(
 @Composable
 internal fun PhotoMapScreen(
     onOpenPhoto: (FileId) -> Unit,
+    viewModel: PhotoMapViewModel,
     modifier: Modifier = Modifier,
-    viewModel: PhotoMapViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val photos = state.content.photos
-    var showPath by rememberSaveable { mutableStateOf(false) }
+    val showPath by viewModel.showPaths.collectAsStateWithLifecycle()
     var downloadThumbnails by rememberSaveable(state.range) { mutableStateOf(true) }
-    val scope = rememberCoroutineScope()
-    val thumbnailSession = remember(state.range, viewModel.thumbnails, scope) {
-        viewModel.thumbnails.openSession(scope)
-    }
-    DisposableEffect(thumbnailSession) {
-        onDispose { thumbnailSession.cancel() }
-    }
+    val thumbnailRequests = remember(state.range) { mutableStateMapOf<Any, ThumbnailVO>() }
     var showDatePicker by rememberSaveable { mutableStateOf(false) }
     var camera by rememberSaveable(stateSaver = MapCameraSaver) { mutableStateOf(MapCamera.World) }
     var autoFit by rememberSaveable { mutableStateOf(true) }
@@ -166,7 +157,13 @@ internal fun PhotoMapScreen(
     BackHandler(selectedPhotos.isNotEmpty(), onBack = dismissPin)
 
     Column(modifier.fillMaxSize().background(ProtonTheme.colors.backgroundNorm)) {
-        PhotoMapFilters(state.range, showPath, { showDatePicker = true }, { showPath = it })
+        PhotoMapDates(state.range) { showDatePicker = true }
+        Text(
+            text = stringResource(I18N.string.photos_map_location_records_requested, state.content.locationRecordsRequested),
+            modifier = Modifier.fillMaxWidth().padding(start = 12.dp, end = 12.dp, bottom = 6.dp),
+            style = MaterialTheme.typography.bodySmall,
+            color = ProtonTheme.colors.textNorm,
+        )
         Box(Modifier.weight(1f).fillMaxWidth().onSizeChanged { viewport = it }) {
             PhotoMapViewport(
                 camera = camera,
@@ -174,8 +171,7 @@ internal fun PhotoMapScreen(
                 photos = photos,
                 paths = paths,
                 downloadThumbnails = downloadThumbnails,
-                thumbnailSession = thumbnailSession,
-                thumbnails = viewModel.thumbnails,
+                thumbnailRequests = thumbnailRequests,
                 tileStore = viewModel.tiles,
                 onTransform = { pan, anchor, zoom ->
                     autoFit = false
@@ -194,13 +190,11 @@ internal fun PhotoMapScreen(
                 modifier = Modifier.fillMaxSize(),
             )
             PhotoMapStatus(
+                range = state.range,
                 content = state.content,
-                thumbnailSession = thumbnailSession,
+                thumbnailRequests = thumbnailRequests,
                 downloadThumbnails = downloadThumbnails,
-                onCancelThumbnails = {
-                    thumbnailSession.cancel()
-                    downloadThumbnails = false
-                },
+                onCancelThumbnails = { downloadThumbnails = false },
                 onRetry = viewModel::retry,
                 modifier = Modifier.align(Alignment.TopCenter).padding(8.dp),
             )
@@ -211,8 +205,7 @@ internal fun PhotoMapScreen(
                 photos = selectedPhotos,
                 zone = viewModel.zone,
                 downloadThumbnails = downloadThumbnails,
-                thumbnailSession = thumbnailSession,
-                thumbnails = viewModel.thumbnails,
+                thumbnailRequests = thumbnailRequests,
                 onClose = dismissPin,
                 onOpenPhoto = onOpenPhoto,
                 modifier = Modifier.fillMaxWidth().weight(1f),
@@ -223,6 +216,7 @@ internal fun PhotoMapScreen(
     if (showDatePicker) {
         PhotoMapDatePicker(
             initialRange = state.range,
+            zone = viewModel.zone,
             onDismiss = { showDatePicker = false },
             onConfirm = { range ->
                 showDatePicker = false
@@ -237,150 +231,155 @@ internal fun PhotoMapScreen(
 }
 
 @Composable
-private fun PhotoMapFilters(
-    range: MapDateRange,
-    showPath: Boolean,
-    onSelectDates: () -> Unit,
-    onTogglePath: (Boolean) -> Unit,
-) {
-    val locale = LocalConfiguration.current.locales[0]
-    val formatter = remember(locale) { DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale) }
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 2.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        TextButton(onClick = onSelectDates, modifier = Modifier.weight(1f)) {
-            Text(
-                text = stringResource(I18N.string.photos_map_date_range, range.start.format(formatter), range.end.format(formatter)),
-                color = ProtonTheme.colors.textNorm,
+internal fun PhotoMapMenu(viewModel: PhotoMapViewModel) {
+    val showPaths by viewModel.showPaths.collectAsStateWithLifecycle()
+    var expanded by remember { mutableStateOf(false) }
+    Box {
+        ActionButton(
+            icon = CorePresentation.drawable.ic_proton_three_dots_vertical,
+            contentDescription = I18N.string.common_more,
+            onClick = { expanded = true },
+        )
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(
+                text = {
+                    Text(stringResource(if (showPaths) I18N.string.photos_map_hide_path else I18N.string.photos_map_show_path))
+                },
+                onClick = {
+                    expanded = false
+                    viewModel.togglePaths()
+                },
             )
-        }
-        Row(
-            modifier = Modifier.toggleable(showPath, role = Role.Checkbox, onValueChange = onTogglePath)
-                .padding(horizontal = 8.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Checkbox(checked = showPath, onCheckedChange = null)
-            Text(stringResource(I18N.string.photos_map_show_path), color = ProtonTheme.colors.textNorm)
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PhotoMapDatePicker(
-    initialRange: MapDateRange,
-    onDismiss: () -> Unit,
-    onConfirm: (MapDateRange) -> Unit,
-) {
-    val picker = rememberDateRangePickerState(
-        initialSelectedStartDateMillis = initialRange.start.toUtcMillis(),
-        initialSelectedEndDateMillis = initialRange.end.toUtcMillis(),
-    )
-    val start = picker.selectedStartDateMillis
-    val end = picker.selectedEndDateMillis
-    val primary = ProtonTheme.colors.interactionNorm
-    val colors = if (ProtonTheme.colors.isDark) darkColorScheme(primary = primary) else lightColorScheme(primary = primary)
-    MaterialTheme(colorScheme = colors) {
-        DatePickerDialog(
-            onDismissRequest = onDismiss,
-            confirmButton = {
-                TextButton(
-                    enabled = start != null && end != null,
-                    onClick = {
-                        if (start != null && end != null) {
-                            onConfirm(MapDateRange(start.utcDate(), end.utcDate()))
-                        }
-                    },
-                ) {
-                    Text(stringResource(I18N.string.common_done_action))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text(stringResource(I18N.string.common_cancel_action))
-                }
-            },
-        ) {
-            DateRangePicker(state = picker, modifier = Modifier.weight(1f))
-        }
+private fun PhotoMapDates(range: MapDateRange, onSelectDates: () -> Unit) {
+    val locale = LocalConfiguration.current.locales[0]
+    val formatter = remember(locale) { DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale) }
+    TextButton(onClick = onSelectDates, modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(I18N.string.photos_map_date_range, range.start.format(formatter), range.end.format(formatter)),
+            color = ProtonTheme.colors.textNorm,
+        )
     }
 }
 
 @Composable
 private fun PhotoMapStatus(
+    range: MapDateRange,
     content: PhotoMapContent,
-    thumbnailSession: PhotoMapThumbnails.Session,
+    thumbnailRequests: Map<Any, ThumbnailVO>,
     downloadThumbnails: Boolean,
     onCancelThumbnails: () -> Unit,
     onRetry: () -> Unit,
     modifier: Modifier,
 ) {
-    val thumbnailProgress by thumbnailSession.progress.collectAsStateWithLifecycle()
-    val showThumbnailProgress = downloadThumbnails && thumbnailProgress.loading
+    val loadingThumbnails = thumbnailRequests.values.toSet().size
+    val showThumbnailStatus = !content.loading && downloadThumbnails && loadingThumbnails > 0
+    var missingLocationsDismissed by rememberSaveable(range) { mutableStateOf(false) }
     val missingCount = content.withoutLocationCount
-    val showMissingLocations = !content.loading && missingCount > 0
+    val showMissingLocations = !content.loading && missingCount > 0 && !missingLocationsDismissed
     val showEmptyRange = !content.loading && !content.hasError && content.photos.isEmpty() && missingCount == 0
-    if (!content.loading && !content.hasError && !showMissingLocations && !showEmptyRange && !showThumbnailProgress) {
+    if (!content.loading && !content.hasError && !showMissingLocations && !showEmptyRange && !showThumbnailStatus) {
         return
     }
     Surface(
-        modifier = if (content.loading || showThumbnailProgress) modifier.fillMaxWidth() else modifier,
+        modifier = if (content.loading || showThumbnailStatus) modifier.fillMaxWidth() else modifier,
         shape = RoundedCornerShape(8.dp),
         color = ProtonTheme.colors.backgroundNorm,
         shadowElevation = 2.dp,
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            when {
-                content.loading -> {
-                    val label = if (content.locationsTotal > 0) {
-                        stringResource(
-                            I18N.string.photos_map_location_progress, content.locationsChecked, content.locationsTotal,
-                        )
-                    } else {
-                        stringResource(I18N.string.photos_map_loading_locations)
+            Column(
+                modifier = Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                when {
+                    content.loading -> {
+                        val label = if (content.locationsTotal > 0) {
+                            stringResource(
+                                I18N.string.photos_map_location_progress,
+                                content.locationsChecked,
+                                content.locationsTotal,
+                            )
+                        } else {
+                            stringResource(I18N.string.photos_map_loading_locations)
+                        }
+                        PhotoMapProgress(label, content.locationsChecked, content.locationsTotal)
                     }
-                    PhotoMapProgress(label, content.locationsChecked, content.locationsTotal)
+                    content.hasError -> Row(
+                        modifier = Modifier.padding(horizontal = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = stringResource(I18N.string.photos_map_photos_unavailable),
+                            modifier = Modifier.weight(1f, fill = false),
+                            color = ProtonTheme.colors.textNorm,
+                        )
+                        TextButton(onClick = onRetry) { Text(stringResource(I18N.string.common_retry_action)) }
+                    }
+                    showEmptyRange -> Text(
+                        text = stringResource(I18N.string.photos_map_no_photos),
+                        modifier = Modifier.padding(12.dp),
+                        color = ProtonTheme.colors.textNorm,
+                    )
                 }
-                content.hasError -> Row(
-                    modifier = Modifier.padding(horizontal = 10.dp),
+                if (showMissingLocations) {
+                    val accessibilityManager = LocalAccessibilityManager.current
+                    LaunchedEffect(range, accessibilityManager) {
+                        val timeout = accessibilityManager?.calculateRecommendedTimeoutMillis(
+                            originalTimeoutMillis = MISSING_LOCATIONS_TIMEOUT_MILLIS,
+                            containsText = true,
+                            containsControls = true,
+                        ) ?: MISSING_LOCATIONS_TIMEOUT_MILLIS
+                        delay(timeout)
+                        missingLocationsDismissed = true
+                    }
+                    Row(
+                        modifier = Modifier.padding(start = 12.dp, end = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = pluralStringResource(
+                                I18N.plurals.photos_map_without_location, missingCount, missingCount,
+                            ),
+                            modifier = Modifier.weight(1f, fill = false),
+                            color = ProtonTheme.colors.textNorm,
+                        )
+                        IconButton(onClick = { missingLocationsDismissed = true }) {
+                            Icon(
+                                painter = painterResource(CorePresentation.drawable.ic_proton_cross),
+                                contentDescription = stringResource(I18N.string.common_close_action),
+                            )
+                        }
+                    }
+                }
+            }
+            if (showThumbnailStatus) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = stringResource(I18N.string.photos_map_photos_unavailable),
-                        modifier = Modifier.weight(1f, fill = false),
+                        text = pluralStringResource(
+                            I18N.plurals.photos_map_thumbnail_progress, loadingThumbnails, loadingThumbnails,
+                        ),
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.bodySmall,
                         color = ProtonTheme.colors.textNorm,
                     )
-                    TextButton(onClick = onRetry) { Text(stringResource(I18N.string.common_retry_action)) }
+                    TextButton(onClick = onCancelThumbnails) {
+                        Text(stringResource(I18N.string.photos_map_cancel_thumbnails))
+                    }
                 }
-                showEmptyRange -> Text(
-                    text = stringResource(I18N.string.photos_map_no_photos),
-                    modifier = Modifier.padding(12.dp),
-                    color = ProtonTheme.colors.textNorm,
-                )
-            }
-            if (showMissingLocations) {
-                Text(
-                    text = pluralStringResource(I18N.plurals.photos_map_without_location, missingCount, missingCount),
-                    modifier = Modifier.padding(12.dp),
-                    color = ProtonTheme.colors.textNorm,
-                )
-            }
-            if (showThumbnailProgress) {
-                val total = thumbnailProgress.active + thumbnailProgress.queued + thumbnailProgress.downloaded
-                PhotoMapProgress(
-                    label = stringResource(
-                        I18N.string.photos_map_thumbnail_progress, thumbnailProgress.active, thumbnailProgress.queued,
-                    ),
-                    completed = thumbnailProgress.downloaded,
-                    total = total,
-                )
-                TextButton(onClick = onCancelThumbnails) { Text(stringResource(I18N.string.common_cancel_action)) }
             }
         }
     }
 }
+
+private const val MISSING_LOCATIONS_TIMEOUT_MILLIS = 6_000L
 
 @Composable
 private fun PhotoMapProgress(label: String, completed: Int, total: Int) {
@@ -404,8 +403,7 @@ private fun MapPhotosCard(
     photos: List<LocatedMapPhoto>,
     zone: ZoneId,
     downloadThumbnails: Boolean,
-    thumbnailSession: PhotoMapThumbnails.Session,
-    thumbnails: PhotoMapThumbnails,
+    thumbnailRequests: MutableMap<Any, ThumbnailVO>,
     onClose: () -> Unit,
     onOpenPhoto: (FileId) -> Unit,
     modifier: Modifier,
@@ -450,8 +448,7 @@ private fun MapPhotosCard(
                             photo = photo,
                             description = photo.name,
                             download = downloadThumbnails,
-                            thumbnailSession = thumbnailSession,
-                            thumbnails = thumbnails,
+                            thumbnailRequests = thumbnailRequests,
                             modifier = Modifier.aspectRatio(1f)
                                 .clip(RoundedCornerShape(6.dp))
                                 .background(ProtonTheme.colors.backgroundSecondary)
@@ -466,8 +463,6 @@ private fun MapPhotosCard(
 
 private val LocatedMapPhoto.key: String get() = "${id.shareId.id}/${id.id}"
 
-private fun LocalDate.toUtcMillis(): Long = atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-private fun Long.utcDate(): LocalDate = Instant.ofEpochMilli(this).atOffset(ZoneOffset.UTC).toLocalDate()
 
 private val MapCameraSaver = listSaver<MapCamera, Double>(
     save = { listOf(it.center.x, it.center.y, it.zoom) },

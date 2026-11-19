@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.ui.viewmodel
 
+import android.os.SystemClock
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,21 +28,15 @@ import java.time.ZoneId
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
@@ -49,21 +44,19 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.TimeSource
 import me.proton.android.drive.ui.screen.map.MapDateRange
 import me.proton.android.drive.ui.screen.map.MapPoint
-import me.proton.android.drive.ui.screen.map.PhotoMapDownloadKind
-import me.proton.android.drive.ui.screen.map.PhotoMapDownloadLimiter
-import me.proton.android.drive.ui.screen.map.PhotoMapThumbnails
 import me.proton.android.drive.ui.screen.map.PhotoMapTiles
 import me.proton.android.drive.ui.screen.map.mapPoint
+import me.proton.core.crypto.common.pgp.DecryptedText
+import me.proton.core.crypto.common.pgp.VerificationStatus
 import me.proton.core.drive.base.data.api.Dto
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
@@ -86,6 +79,8 @@ import me.proton.core.drive.file.base.domain.extension.toXAttr
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.extension.nodeUid
+import me.proton.core.drive.link.domain.extension.revisionId
+import me.proton.core.drive.link.domain.extension.revisionUid
 import me.proton.core.drive.link.domain.extension.xAttrKey
 import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.photo.domain.repository.AlbumRepository
@@ -125,16 +120,16 @@ internal data class PhotoMapContent(
     val withoutLocationCount: Int = 0,
     val locationsChecked: Int = 0,
     val locationsTotal: Int = 0,
+    val locationRecordsRequested: Int = 0,
 )
 
 internal data class PhotoMapState(val range: MapDateRange, val content: PhotoMapContent)
 
-@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 internal class PhotoMapViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     val tiles: PhotoMapTiles,
-    val thumbnails: PhotoMapThumbnails,
     private val getPhotoShare: GetPhotoShare,
     private val getShare: GetShare,
     private val getActiveVolumes: GetActiveVolumes,
@@ -147,14 +142,14 @@ internal class PhotoMapViewModel @Inject constructor(
     private val decryptedTextRepository: DecryptedTextRepository,
     private val sha256: Sha256,
     private val photosClientProvider: ProtonPhotosClientProvider,
-    private val downloadLimiter: PhotoMapDownloadLimiter,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     val albumId = savedStateHandle.get<String>(AlbumViewModel.ALBUM_ID)?.let { id ->
         AlbumId(ShareId(userId, requireNotNull(savedStateHandle[AlbumViewModel.SHARE_ID])), id)
     }
     val zone: ZoneId = ZoneId.systemDefault()
-    private val today = LocalDate.now(zone).toEpochDay()
-    private val epochDays = savedStateHandle.getStateFlow(DATE_RANGE, longArrayOf(today, today))
+    val showPaths = savedStateHandle.getStateFlow(SHOW_PATHS, false)
+    private val defaultRange = MapDateRange.lastThirtyDays(LocalDate.now(zone))
+    private val epochDays = savedStateHandle.getStateFlow(DATE_RANGE, defaultRange.toEpochDays())
     private val retry = MutableStateFlow(0)
     private val loading = PhotoMapContent(loading = true)
     private val initialRange = epochDays.value.toRange()
@@ -173,7 +168,11 @@ internal class PhotoMapViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), PhotoMapState(initialRange, loading))
 
     fun selectRange(range: MapDateRange) {
-        savedStateHandle[DATE_RANGE] = longArrayOf(range.start.toEpochDay(), range.end.toEpochDay())
+        savedStateHandle[DATE_RANGE] = range.toEpochDays()
+    }
+
+    fun togglePaths() {
+        savedStateHandle[SHOW_PATHS] = !showPaths.value
     }
 
     fun retry() {
@@ -304,6 +303,7 @@ internal class PhotoMapViewModel @Inject constructor(
         private val photosWithoutLocation = mutableSetOf<FileId>()
         private val failures = mutableSetOf<FileId>()
         private val progress = PhotoLocationProgress()
+        private var recordsRequested = 0
         private var lastUpdate: TimeSource.Monotonic.ValueTimeMark? = null
 
         fun retain(ids: Set<FileId>) {
@@ -321,6 +321,7 @@ internal class PhotoMapViewModel @Inject constructor(
             withoutLocationCount = photosWithoutLocation.size,
             locationsChecked = progress.checked,
             locationsTotal = progress.total,
+            locationRecordsRequested = recordsRequested,
         )
 
         suspend fun locateCached(listings: List<PhotoListing>): List<PhotoListing> {
@@ -333,15 +334,22 @@ internal class PhotoMapViewModel @Inject constructor(
             }
             val pending = listings.distinctBy(PhotoListing::linkId).filterNot { it.linkId in resolved }
             if (pending.isEmpty()) return emptyList()
-            for (batch in pending.chunked(METADATA_BATCH_SIZE)) {
-                val byId = batch.associateBy(PhotoListing::linkId)
-                val files = driveLinkRepository.getDriveLinks(byId.keys.toList()).first()
-                for (file in files.filterIsInstance<DriveLink.File>()) {
-                    val listing = byId.getValue(file.id)
-                    val point = cachedXAttr(file)?.location?.point() ?: continue
-                    resolved += file.id
-                    progress.recordChecked(file.id)
-                    addPhoto(listing, point, null, file.thumbnailVOOrNull(ThumbnailType.DEFAULT))
+            val files = driveLinkRepository.getDriveLinks(pending.map(PhotoListing::linkId)).first()
+                .filterIsInstance<DriveLink.File>().associateBy(DriveLink.File::id)
+            for (listing in pending) {
+                val file = files[listing.linkId]?.takeIf {
+                    listing.activeRevisionId == null || listing.activeRevisionId == it.activeRevisionId
+                }
+                val point = file?.let { cachedXAttr(it)?.location?.point() }
+                if (file != null && point != null) {
+                    recordLocation(
+                        listing, PhotoLocation.Located(point), null, file.thumbnailVOOrNull(ThumbnailType.DEFAULT),
+                    )
+                } else {
+                    val revisionId = listing.activeRevisionId ?: file?.activeRevisionId
+                    cachedSdkLocation(listing, revisionId)?.let { attributes ->
+                        recordLocation(listing, attributes.location, attributes.name, attributes.thumbnail(listing))
+                    }
                 }
             }
             return pending.filterNot { it.linkId in resolved }
@@ -356,36 +364,76 @@ internal class PhotoMapViewModel @Inject constructor(
                 pending.mapTo(failures, PhotoListing::linkId)
                 return
             }
-            pending.asSequence().chunked(METADATA_BATCH_SIZE).asFlow()
-                .flatMapMerge(concurrency = LOCATION_BATCH_CONCURRENCY) { batch -> readBatch(client, batch) }
-                .transformWhile { event ->
-                    emit(event)
-                    event !is LocationReadEvent.Finished || !event.connectionFailed
+            // Keep failures isolated to a page. The Photos SDK handles request batching.
+            for (page in pending.asSequence().chunked(LOCATION_PAGE_SIZE)) {
+                val result = readLocations(client, page)
+                val unreturned = page.map(PhotoListing::linkId).filterNot(resolved::contains)
+                failures += unreturned
+                resolved += unreturned
+                val sdkError = (result.exceptionOrNull() as? ProtonDriveSdkException)?.error
+                if (sdkError.firstErrorDomainOrNull(ErrorDomain.Network) != null ||
+                    sdkError.firstErrorDomainOrNull(ErrorDomain.Transport) != null
+                ) {
+                    pending.asSequence().map(PhotoListing::linkId).filterNotTo(failures, resolved::contains)
+                    break
                 }
-                .collect { event ->
-                    when (event) {
-                        is LocationReadEvent.Examined -> recordExamined(event)
-                        is LocationReadEvent.Finished -> {
-                            event.unreturned.filterNotTo(failures, resolved::contains)
-                            resolved += event.unreturned
-                            if (event.connectionFailed) {
-                                pending.asSequence().map(PhotoListing::linkId)
-                                    .filterNot(resolved::contains).forEach(failures::add)
-                            }
-                        }
-                    }
-                }
+            }
         }
 
-        private suspend fun recordExamined(event: LocationReadEvent.Examined) {
-            val id = event.listing.linkId
-            resolved += id
+        private suspend fun readLocations(client: ProtonPhotosClient, page: List<PhotoListing>): Result<Unit> {
+            val entries = page.map { it.linkId.nodeUid(it.volumeId) to it }
+            val listingsByNode = entries.associate { (uid, listing) -> uid.value to listing }
+            val nodeUids = entries.map { (uid, _) -> uid }.distinctBy { it.value }
+            return coRunCatchingException {
+                client.enumerateNodes(nodeUids).onStart {
+                    recordsRequested += nodeUids.size
+                    publishProgress(force = true)
+                }.collect { node ->
+                    val listing = listingsByNode[node.uid.value] ?: return@collect
+                    val revision = when (node) {
+                        is PhotoNode -> node.activeRevision
+                        is FileNode -> node.activeRevision
+                        else -> return@collect
+                    }
+                    val hasErrors = node.errors.isNotEmpty()
+                    val location = sdkPhotoLocation(revision.claimedAdditionalMetadata, hasErrors)
+                    val name = node.name.getOrNull()
+                    val thumbnail = if (location is PhotoLocation.Located) revision.thumbnail() else null
+                    if (!hasErrors && location != PhotoLocation.Unavailable) {
+                        val entry = CachedSdkLocation(
+                            revisionId = revision.uid.revisionId,
+                            cachedAt = SystemClock.elapsedRealtime(),
+                            point = (location as? PhotoLocation.Located)?.point,
+                            name = name.takeIf { location is PhotoLocation.Located },
+                            hasThumbnail = thumbnail != null,
+                        )
+                        // This repository holds decrypted values in the account's existing RAM cache.
+                        decryptedTextRepository.addDecryptedText(
+                            userId,
+                            listing.sdkLocationCacheKey,
+                            DecryptedText(locationJson.encodeToString(entry), VerificationStatus.Unknown),
+                        )
+                    }
+                    recordLocation(listing, location, name, thumbnail)
+                }
+            }
+        }
+
+        private suspend fun recordLocation(
+            listing: PhotoListing,
+            location: PhotoLocation,
+            name: String?,
+            thumbnail: ThumbnailVO?,
+        ) {
+            val id = listing.linkId
+            if (!resolved.add(id)) return
             progress.recordChecked(id)
             failures -= id
-            when (val location = event.location) {
-                is PhotoLocation.Located -> addPhoto(event.listing, location.point, event.name, event.thumbnail)
+            when (location) {
+                is PhotoLocation.Located -> addPhoto(listing, location.point, name, thumbnail)
                 PhotoLocation.Missing -> {
-                    if (photosWithoutLocation.add(id)) publishProgress()
+                    photosWithoutLocation += id
+                    publishProgress()
                 }
                 PhotoLocation.Unavailable -> {
                     failures += id
@@ -408,52 +456,21 @@ internal class PhotoMapViewModel @Inject constructor(
         }
     }
 
-    private fun readBatch(client: ProtonPhotosClient, batch: List<PhotoListing>) = channelFlow<LocationReadEvent> {
-        val nodeListings = batch.map { it.linkId.nodeUid(it.volumeId) to it }
-        val byNode = nodeListings.associate { (node, listing) -> node.value to listing }
-        val nodeUids = nodeListings.map { it.first }
-        val unreturned = batch.mapTo(mutableSetOf(), PhotoListing::linkId)
-        val result = coRunCatchingException {
-            downloadLimiter.download(PhotoMapDownloadKind.LOCATION) {
-                withTimeoutOrNull(60.seconds) {
-                    client.enumerateNodes(nodeUids).collect { node ->
-                        val listing = byNode[node.uid.value] ?: return@collect
-                        val revision = when (node) {
-                            is PhotoNode -> node.activeRevision
-                            is FileNode -> node.activeRevision
-                            else -> return@collect
-                        }
-                        if (listing.linkId !in unreturned) return@collect
-                        val location = sdkPhotoLocation(revision.claimedAdditionalMetadata, node.errors.isNotEmpty())
-                        send(
-                            LocationReadEvent.Examined(
-                                listing = listing,
-                                location = location,
-                                name = node.name.getOrNull(),
-                                thumbnail = if (location is PhotoLocation.Located) revision.thumbnail() else null,
-                            )
-                        )
-                        unreturned -= listing.linkId
-                    }
-                }
-            }
-        }
-        val sdkError = (result.exceptionOrNull() as? ProtonDriveSdkException)?.error
-        send(
-            LocationReadEvent.Finished(
-                unreturned = unreturned,
-                connectionFailed = sdkError.firstErrorDomainOrNull(ErrorDomain.Network) != null ||
-                    sdkError.firstErrorDomainOrNull(ErrorDomain.Transport) != null,
-            )
-        )
-    }.buffer(Channel.RENDEZVOUS)
-
     private suspend fun cachedXAttr(file: DriveLink.File): XAttr? {
         val ciphertext = file.xAttr ?: return null
         val hash = sha256(ciphertext, Sha256.OutputFormat.BASE_64).getOrNull()
         return decryptedTextRepository.getDecryptedText(userId, file.xAttrKey(hash))
             ?.text?.toXAttr()?.getOrNull()
     }
+
+    private fun cachedSdkLocation(listing: PhotoListing, revisionId: String?): CachedSdkLocation? {
+        val text = decryptedTextRepository.getDecryptedText(userId, listing.sdkLocationCacheKey)?.text ?: return null
+        return coRunCatchingException { locationJson.decodeFromString<CachedSdkLocation>(text) }.getOrNull()
+            ?.takeIf { it.canReuse(revisionId, SystemClock.elapsedRealtime()) }
+    }
+
+    private val PhotoListing.sdkLocationCacheKey: String
+        get() = "photo-map:sdk-location:v1:${linkId.shareId.id}:${linkId.nodeUid(volumeId).value}"
 
     private fun FileRevision.thumbnail(): ThumbnailVO? =
         if (thumbnails.any { it.type == SdkThumbnailType.THUMBNAIL }) {
@@ -464,23 +481,42 @@ internal class PhotoMapViewModel @Inject constructor(
 
     private fun LongArray.toRange() = MapDateRange(LocalDate.ofEpochDay(this[0]), LocalDate.ofEpochDay(this[1]))
 
-    private sealed interface LocationReadEvent {
-        data class Examined(
-            val listing: PhotoListing,
-            val location: PhotoLocation,
-            val name: String?,
-            val thumbnail: ThumbnailVO?,
-        ) : LocationReadEvent
-
-        data class Finished(val unreturned: Set<FileId>, val connectionFailed: Boolean) : LocationReadEvent
-    }
+    private fun MapDateRange.toEpochDays() = longArrayOf(start.toEpochDay(), end.toEpochDay())
 
     private companion object {
         const val DATE_RANGE = "photoMapDateRange"
+        const val SHOW_PATHS = "photoMapShowPaths"
         const val LISTING_PAGE_SIZE = 200
-        const val METADATA_BATCH_SIZE = 100
-        const val LOCATION_BATCH_CONCURRENCY = 4
+        const val LOCATION_PAGE_SIZE = 50
         val PROGRESS_INTERVAL = 200.milliseconds
+    }
+}
+
+@Serializable
+internal data class CachedSdkLocation(
+    val revisionId: String,
+    val cachedAt: Long,
+    val point: MapPoint? = null,
+    val name: String? = null,
+    val hasThumbnail: Boolean = false,
+) {
+    val location: PhotoLocation get() = point?.let(PhotoLocation::Located) ?: PhotoLocation.Missing
+
+    fun canReuse(currentRevisionId: String?, now: Long): Boolean = if (currentRevisionId == null) {
+        now - cachedAt in 0 until 10.minutes.inWholeMilliseconds
+    } else {
+        currentRevisionId == revisionId
+    }
+
+    fun thumbnail(listing: PhotoListing): ThumbnailVO? = if (hasThumbnail) {
+        ThumbnailVO(
+            userId = listing.linkId.shareId.userId,
+            revisionUid = listing.linkId.revisionUid(listing.volumeId, revisionId),
+            type = ThumbnailType.DEFAULT,
+            volumeType = Volume.Type.PHOTO,
+        )
+    } else {
+        null
     }
 }
 

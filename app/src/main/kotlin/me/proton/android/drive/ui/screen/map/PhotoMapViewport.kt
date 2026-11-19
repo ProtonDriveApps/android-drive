@@ -35,6 +35,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.produceState
@@ -52,6 +53,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.pluralStringResource
@@ -63,12 +65,17 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.log2
 import kotlin.math.roundToInt
 import me.proton.android.drive.ui.viewmodel.LocatedMapPhoto
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
 import me.proton.core.drive.i18n.R as I18N
 
 @Composable
@@ -78,8 +85,7 @@ internal fun PhotoMapViewport(
     photos: List<LocatedMapPhoto>,
     paths: List<MapPathSegment<LocatedMapPhoto>>,
     downloadThumbnails: Boolean,
-    thumbnailSession: PhotoMapThumbnails.Session,
-    thumbnails: PhotoMapThumbnails,
+    thumbnailRequests: MutableMap<Any, ThumbnailVO>,
     tileStore: PhotoMapTiles,
     onTransform: (pan: Offset, anchor: Offset, zoom: Double) -> Unit,
     onSelectPin: (MapPin<LocatedMapPhoto>) -> Unit,
@@ -165,8 +171,7 @@ internal fun PhotoMapViewport(
                     PhotoMapPin(
                         pin = pin,
                         downloadThumbnails = downloadThumbnails,
-                        thumbnailSession = thumbnailSession,
-                        thumbnails = thumbnails,
+                        thumbnailRequests = thumbnailRequests,
                         onClick = { onSelectPin(pin) },
                         modifier = Modifier.offset {
                             IntOffset(
@@ -211,8 +216,7 @@ internal fun PhotoMapViewport(
 private fun PhotoMapPin(
     pin: MapPin<LocatedMapPhoto>,
     downloadThumbnails: Boolean,
-    thumbnailSession: PhotoMapThumbnails.Session,
-    thumbnails: PhotoMapThumbnails,
+    thumbnailRequests: MutableMap<Any, ThumbnailVO>,
     onClick: () -> Unit,
     modifier: Modifier,
 ) {
@@ -238,8 +242,7 @@ private fun PhotoMapPin(
                 photo = representative,
                 description = null,
                 download = downloadThumbnails,
-                thumbnailSession = thumbnailSession,
-                thumbnails = thumbnails,
+                thumbnailRequests = thumbnailRequests,
                 modifier = Modifier.fillMaxSize().padding(2.dp).clip(shape),
             )
             if (count > 1) {
@@ -271,16 +274,32 @@ internal fun MapPhotoThumbnail(
     photo: LocatedMapPhoto,
     description: String?,
     download: Boolean,
-    thumbnailSession: PhotoMapThumbnails.Session,
-    thumbnails: PhotoMapThumbnails,
+    thumbnailRequests: MutableMap<Any, ThumbnailVO>,
     modifier: Modifier,
 ) {
     val thumbnail = photo.thumbnail
     if (thumbnail == null) {
         Box(modifier.semantics { description?.let { contentDescription = it } })
     } else {
+        val context = LocalContext.current
+        val request = remember(context, thumbnail, download) {
+            ImageRequest.Builder(context)
+                .data(thumbnail)
+                .networkCachePolicy(if (download) CachePolicy.ENABLED else CachePolicy.DISABLED)
+                .build()
+        }
+        val painter = key(download) {
+            rememberAsyncImagePainter(request, contentScale = ContentScale.Crop)
+        }
+        if (download && painter.state is AsyncImagePainter.State.Loading) {
+            DisposableEffect(thumbnailRequests, thumbnail) {
+                val token = Any()
+                thumbnailRequests[token] = thumbnail
+                onDispose { thumbnailRequests.remove(token) }
+            }
+        }
         Image(
-            painter = thumbnails.painter(thumbnail, download, thumbnailSession),
+            painter = painter,
             contentDescription = description,
             modifier = modifier,
             contentScale = ContentScale.Crop,

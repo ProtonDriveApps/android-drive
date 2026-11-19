@@ -75,9 +75,11 @@ import me.proton.android.drive.photos.presentation.viewevent.PhotosViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.PhotosViewState
 import me.proton.android.drive.ui.effect.HandleHomeEffect
 import me.proton.android.drive.ui.effect.PhotosEffect
+import me.proton.android.drive.ui.screen.map.PhotoMapMenu
 import me.proton.android.drive.ui.screen.map.PhotoMapScreen
 import me.proton.android.drive.ui.viewevent.PhotosAndAlbumsViewEvent
 import me.proton.android.drive.ui.viewmodel.AlbumsViewModel
+import me.proton.android.drive.ui.viewmodel.PhotoMapViewModel
 import me.proton.android.drive.ui.viewmodel.PhotosAndAlbumsViewModel
 import me.proton.android.drive.ui.viewmodel.PhotosViewModel
 import me.proton.android.drive.ui.viewstate.HomeScaffoldState
@@ -189,6 +191,7 @@ private fun MapTab(
     onOpenPhoto: (FileId) -> Unit,
     defaultTitle: @Composable (Modifier) -> Unit,
 ) {
+    val viewModel = hiltViewModel<PhotoMapViewModel>()
     val scope = rememberCoroutineScope()
     val currentTitle by rememberUpdatedState(defaultTitle)
     DisposableEffect(homeScaffoldState) {
@@ -196,17 +199,18 @@ private fun MapTab(
         homeScaffoldState.drawerGesturesEnabled.value = false
         onDispose { homeScaffoldState.drawerGesturesEnabled.value = gesturesEnabled }
     }
-    LaunchedEffect(homeScaffoldState) {
+    LaunchedEffect(homeScaffoldState, viewModel) {
         homeScaffoldState.topAppBar.value = {
             TopAppBar(
                 navigationIcon = painterResource(CorePresentation.drawable.ic_proton_hamburger),
                 navigationContentDescription = stringResource(I18N.string.common_open_side_menu_action),
                 onNavigationIcon = { scope.launch { homeScaffoldState.drawerState.open() } },
                 title = { currentTitle(it) },
+                actions = { PhotoMapMenu(viewModel) },
             )
         }
     }
-    PhotoMapScreen(onOpenPhoto = onOpenPhoto)
+    PhotoMapScreen(onOpenPhoto = onOpenPhoto, viewModel = viewModel)
 }
 
 @Composable

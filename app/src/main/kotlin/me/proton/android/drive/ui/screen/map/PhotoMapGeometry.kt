@@ -29,6 +29,7 @@ import kotlin.math.floor
 import kotlin.math.log2
 import kotlin.math.pow
 import kotlin.math.tan
+import kotlinx.serialization.Serializable
 
 internal data class MapDateRange(val start: LocalDate, val end: LocalDate) {
     init {
@@ -37,8 +38,13 @@ internal data class MapDateRange(val start: LocalDate, val end: LocalDate) {
 
     fun startSeconds(zone: ZoneId): Long = start.atStartOfDay(zone).toEpochSecond()
     fun endExclusiveSeconds(zone: ZoneId): Long = end.plusDays(1).atStartOfDay(zone).toEpochSecond()
+
+    companion object {
+        fun lastThirtyDays(today: LocalDate) = MapDateRange(today.minusDays(29), today)
+    }
 }
 
+@Serializable
 internal data class MapPoint(val x: Double, val y: Double)
 
 internal data class MapCamera(val center: MapPoint, val zoom: Double) {
@@ -73,6 +79,7 @@ internal const val MIN_ZOOM = 0.0
 internal const val MAX_ZOOM = 19.0
 internal const val MAP_TILE_DP = 256
 internal const val MAP_PIN_DP = 48
+internal const val MAP_CLUSTER_DISTANCE_DP = 32
 
 internal fun clusterZoom(zoom: Double): Double = floor(zoom * 4) / 4
 
@@ -123,9 +130,9 @@ internal fun <T> clusterMapPins(
     zoom: Double,
     pointOf: (T) -> MapPoint,
 ): List<MapPin<T>> {
-    // Groups are connected components of overlapping marker footprints. A
-    // smaller footprint can split a group but cannot connect two old groups.
-    val distance = MAP_PIN_DP / (MAP_TILE_DP * 2.0.pow(zoom))
+    // Groups are connected components of nearby points. As the distance
+    // shrinks, a group can split but two old groups cannot join.
+    val distance = MAP_CLUSTER_DISTANCE_DP / (MAP_TILE_DP * 2.0.pow(zoom))
     val columns = ceil(1.0 / distance).toInt()
     val points = photos.map(pointOf)
     val cells = points.map { PinCell((it.x * columns).toInt(), (it.y * columns).toInt()) }
@@ -143,7 +150,7 @@ internal fun <T> clusterMapPins(
         return index
     }
 
-    // Every point in a cell overlaps every other point there. Only test pairs
+    // Every point in a cell is within range of every other point there. Only test pairs
     // across nearby cells, wrapping columns when crossing the antimeridian.
     for ((index, cell) in occupied.withIndex()) {
         for (dx in -2..2) {

@@ -25,6 +25,8 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.drive.sdk.entity.AdditionalMetadataProperty
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class PhotoMapMetadataTest {
@@ -64,6 +66,27 @@ class PhotoMapMetadataTest {
     @Test
     fun `an SDK error does not confirm that a photo lacks GPS`() {
         assertEquals(PhotoLocation.Unavailable, sdkPhotoLocation(null, hasErrors = true))
+    }
+
+    @Test
+    fun `confirmed locations and confirmed absence round trip through the existing text cache format`() {
+        val point = requireNotNull(mapPoint(40.4168, -3.7038))
+        val located = CachedSdkLocation(revisionId = "revision", cachedAt = 10L, point = point, hasThumbnail = true)
+        val absent = CachedSdkLocation(revisionId = "revision", cachedAt = 10L)
+
+        assertEquals(PhotoLocation.Located(point), Json.decodeFromString<CachedSdkLocation>(Json.encodeToString(located)).location)
+        assertEquals(PhotoLocation.Missing, Json.decodeFromString<CachedSdkLocation>(Json.encodeToString(absent)).location)
+        assertEquals(located, Json.decodeFromString<CachedSdkLocation>(Json.encodeToString(located)))
+    }
+
+    @Test
+    fun `cache requires the current revision or a fresh result when revision is unknown`() {
+        val found = CachedSdkLocation(revisionId = "revision", cachedAt = 10L)
+
+        assertTrue(found.canReuse("revision", now = 600_010L))
+        assertFalse(found.canReuse("replacement", now = 11L))
+        assertTrue(found.canReuse(null, now = 600_009L))
+        assertFalse(found.canReuse(null, now = 600_010L))
     }
 
     @Test

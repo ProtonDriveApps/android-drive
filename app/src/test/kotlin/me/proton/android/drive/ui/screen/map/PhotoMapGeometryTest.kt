@@ -20,6 +20,7 @@ package me.proton.android.drive.ui.screen.map
 
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -28,6 +29,25 @@ import org.junit.Test
 
 class PhotoMapGeometryTest {
     private val zone = ZoneId.of("Europe/Madrid")
+
+    @Test
+    fun `default range includes thirty calendar dates ending today`() {
+        val today = LocalDate.of(2026, 4, 18)
+        val range = MapDateRange.lastThirtyDays(today)
+
+        assertEquals(today, range.end)
+        assertEquals(30L, ChronoUnit.DAYS.between(range.start, range.end.plusDays(1)))
+    }
+
+    @Test
+    fun `editing one endpoint preserves the other`() {
+        val today = LocalDate.of(2026, 4, 18)
+        val range = MapDateRange.lastThirtyDays(today)
+
+        assertEquals(range.copy(start = today.minusDays(7)), MapDateEndpoint.START.withDate(range, today.minusDays(7)))
+        assertEquals(range.copy(end = today.plusDays(1)), MapDateEndpoint.END.withDate(range, today.plusDays(1)))
+        assertEquals(MapDateRange(today, today), MapDateEndpoint.START.withDate(range, today.plusDays(1)))
+    }
 
     @Test
     fun `inclusive range follows local midnight through daylight saving`() {
@@ -83,7 +103,7 @@ class PhotoMapGeometryTest {
     }
 
     @Test
-    fun `pins with overlapping hit targets still group at maximum zoom`() {
+    fun `nearly identical locations stay grouped at maximum zoom`() {
         val north = requireNotNull(mapPoint(0.000001, 0.0))
         val south = requireNotNull(mapPoint(-0.000001, 0.0))
 
@@ -91,8 +111,16 @@ class PhotoMapGeometryTest {
     }
 
     @Test
+    fun `nearby pins split before their markers stop overlapping`() {
+        val points = listOf(MapPoint(0.5, 0.5), MapPoint(0.5 + 36.0 / (MAP_TILE_DP * 1024), 0.5))
+
+        assertEquals(listOf(points), clusterMapPins(points, 9.0) { it }.map { it.photos })
+        assertEquals(2, clusterMapPins(points, 10.0) { it }.size)
+    }
+
+    @Test
     fun `zooming in splits groups without moving photos between old groups`() {
-        val radius = 48.0 / (256 * 1024)
+        val radius = MAP_CLUSTER_DISTANCE_DP.toDouble() / (MAP_TILE_DP * 1024)
         val first = MapPoint(0.5, 0.5)
         val second = MapPoint(0.5 + 0.75 * radius, 0.5)
         val third = MapPoint(0.5 + 1.1 * radius, 0.5)
