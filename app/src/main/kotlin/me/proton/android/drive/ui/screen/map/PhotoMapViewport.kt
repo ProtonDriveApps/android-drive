@@ -53,7 +53,6 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.pluralStringResource
@@ -65,10 +64,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.CachePolicy
-import coil.request.ImageRequest
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.log2
@@ -76,6 +71,7 @@ import kotlin.math.roundToInt
 import me.proton.android.drive.ui.viewmodel.LocatedMapPhoto
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
+import me.proton.core.drive.thumbnail.presentation.extension.painter
 import me.proton.core.drive.i18n.R as I18N
 
 @Composable
@@ -84,7 +80,6 @@ internal fun PhotoMapViewport(
     viewport: IntSize,
     photos: List<LocatedMapPhoto>,
     paths: List<MapPathSegment<LocatedMapPhoto>>,
-    downloadThumbnails: Boolean,
     thumbnailRequests: MutableMap<Any, ThumbnailVO>,
     tileStore: PhotoMapTiles,
     onTransform: (pan: Offset, anchor: Offset, zoom: Double) -> Unit,
@@ -170,7 +165,6 @@ internal fun PhotoMapViewport(
                 key(pin.photos.first().id) {
                     PhotoMapPin(
                         pin = pin,
-                        downloadThumbnails = downloadThumbnails,
                         thumbnailRequests = thumbnailRequests,
                         onClick = { onSelectPin(pin) },
                         modifier = Modifier.offset {
@@ -215,7 +209,6 @@ internal fun PhotoMapViewport(
 @Composable
 private fun PhotoMapPin(
     pin: MapPin<LocatedMapPhoto>,
-    downloadThumbnails: Boolean,
     thumbnailRequests: MutableMap<Any, ThumbnailVO>,
     onClick: () -> Unit,
     modifier: Modifier,
@@ -241,7 +234,6 @@ private fun PhotoMapPin(
             MapPhotoThumbnail(
                 photo = representative,
                 description = null,
-                download = downloadThumbnails,
                 thumbnailRequests = thumbnailRequests,
                 modifier = Modifier.fillMaxSize().padding(2.dp).clip(shape),
             )
@@ -273,7 +265,6 @@ private fun PhotoMapPin(
 internal fun MapPhotoThumbnail(
     photo: LocatedMapPhoto,
     description: String?,
-    download: Boolean,
     thumbnailRequests: MutableMap<Any, ThumbnailVO>,
     modifier: Modifier,
 ) {
@@ -281,17 +272,8 @@ internal fun MapPhotoThumbnail(
     if (thumbnail == null) {
         Box(modifier.semantics { description?.let { contentDescription = it } })
     } else {
-        val context = LocalContext.current
-        val request = remember(context, thumbnail, download) {
-            ImageRequest.Builder(context)
-                .data(thumbnail)
-                .networkCachePolicy(if (download) CachePolicy.ENABLED else CachePolicy.DISABLED)
-                .build()
-        }
-        val painter = key(download) {
-            rememberAsyncImagePainter(request, contentScale = ContentScale.Crop)
-        }
-        if (download && painter.state is AsyncImagePainter.State.Loading) {
+        val thumbnailPainter = thumbnail.painter()
+        if (thumbnailPainter.isLoading) {
             DisposableEffect(thumbnailRequests, thumbnail) {
                 val token = Any()
                 thumbnailRequests[token] = thumbnail
@@ -299,7 +281,7 @@ internal fun MapPhotoThumbnail(
             }
         }
         Image(
-            painter = painter,
+            painter = thumbnailPainter.painter,
             contentDescription = description,
             modifier = modifier,
             contentScale = ContentScale.Crop,

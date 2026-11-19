@@ -203,7 +203,6 @@
     <string name="photos_map_loading_locations">Finding photo locations…</string>
     <string name="photos_map_location_progress">Photo locations · %1$d of %2$d checked</string>
     <string name="photos_map_location_records_requested">Location records requested · %1$d</string>
-    <string name="photos_map_cancel_thumbnails">Cancel thumbnails</string>
     <string name="photos_map_zoom_in">Zoom in</string>
     <string name="photos_map_zoom_out">Zoom out</string>
     <string name="photos_map_attribution" translatable="false">© OpenStreetMap contributors</string>

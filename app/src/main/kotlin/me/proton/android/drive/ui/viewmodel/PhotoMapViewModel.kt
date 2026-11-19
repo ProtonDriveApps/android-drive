@@ -18,7 +18,6 @@
 
 package me.proton.android.drive.ui.viewmodel
 
-import android.os.SystemClock
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -49,14 +48,11 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.TimeSource
 import me.proton.android.drive.ui.screen.map.MapDateRange
 import me.proton.android.drive.ui.screen.map.MapPoint
 import me.proton.android.drive.ui.screen.map.PhotoMapTiles
 import me.proton.android.drive.ui.screen.map.mapPoint
-import me.proton.core.crypto.common.pgp.DecryptedText
-import me.proton.core.crypto.common.pgp.VerificationStatus
 import me.proton.core.drive.base.data.api.Dto
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
@@ -140,6 +136,7 @@ internal class PhotoMapViewModel @Inject constructor(
     private val fetchAlbumPhotoListingPage: FetchAlbumPhotoListingPage,
     private val driveLinkRepository: DriveLinkRepository,
     private val decryptedTextRepository: DecryptedTextRepository,
+    private val locationCache: PhotoMapLocationCache,
     private val sha256: Sha256,
     private val photosClientProvider: ProtonPhotosClientProvider,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
@@ -347,7 +344,7 @@ internal class PhotoMapViewModel @Inject constructor(
                     )
                 } else {
                     val revisionId = listing.activeRevisionId ?: file?.activeRevisionId
-                    cachedSdkLocation(listing, revisionId)?.let { attributes ->
+                    locationCache.get(listing, revisionId)?.let { attributes ->
                         recordLocation(listing, attributes.location, attributes.name, attributes.thumbnail(listing))
                     }
                 }
@@ -402,17 +399,11 @@ internal class PhotoMapViewModel @Inject constructor(
                     if (!hasErrors && location != PhotoLocation.Unavailable) {
                         val entry = CachedSdkLocation(
                             revisionId = revision.uid.revisionId,
-                            cachedAt = SystemClock.elapsedRealtime(),
                             point = (location as? PhotoLocation.Located)?.point,
                             name = name.takeIf { location is PhotoLocation.Located },
                             hasThumbnail = thumbnail != null,
                         )
-                        // This repository holds decrypted values in the account's existing RAM cache.
-                        decryptedTextRepository.addDecryptedText(
-                            userId,
-                            listing.sdkLocationCacheKey,
-                            DecryptedText(locationJson.encodeToString(entry), VerificationStatus.Unknown),
-                        )
+                        locationCache.put(listing, entry)
                     }
                     recordLocation(listing, location, name, thumbnail)
                 }
@@ -463,15 +454,6 @@ internal class PhotoMapViewModel @Inject constructor(
             ?.text?.toXAttr()?.getOrNull()
     }
 
-    private fun cachedSdkLocation(listing: PhotoListing, revisionId: String?): CachedSdkLocation? {
-        val text = decryptedTextRepository.getDecryptedText(userId, listing.sdkLocationCacheKey)?.text ?: return null
-        return coRunCatchingException { locationJson.decodeFromString<CachedSdkLocation>(text) }.getOrNull()
-            ?.takeIf { it.canReuse(revisionId, SystemClock.elapsedRealtime()) }
-    }
-
-    private val PhotoListing.sdkLocationCacheKey: String
-        get() = "photo-map:sdk-location:v1:${linkId.shareId.id}:${linkId.nodeUid(volumeId).value}"
-
     private fun FileRevision.thumbnail(): ThumbnailVO? =
         if (thumbnails.any { it.type == SdkThumbnailType.THUMBNAIL }) {
             ThumbnailVO(userId = userId, revisionUid = uid, type = ThumbnailType.DEFAULT, volumeType = Volume.Type.PHOTO)
@@ -495,18 +477,14 @@ internal class PhotoMapViewModel @Inject constructor(
 @Serializable
 internal data class CachedSdkLocation(
     val revisionId: String,
-    val cachedAt: Long,
     val point: MapPoint? = null,
     val name: String? = null,
     val hasThumbnail: Boolean = false,
 ) {
     val location: PhotoLocation get() = point?.let(PhotoLocation::Located) ?: PhotoLocation.Missing
 
-    fun canReuse(currentRevisionId: String?, now: Long): Boolean = if (currentRevisionId == null) {
-        now - cachedAt in 0 until 10.minutes.inWholeMilliseconds
-    } else {
-        currentRevisionId == revisionId
-    }
+    fun canReuse(currentRevisionId: String?): Boolean =
+        currentRevisionId == null || currentRevisionId == revisionId
 
     fun thumbnail(listing: PhotoListing): ThumbnailVO? = if (hasThumbnail) {
         ThumbnailVO(

@@ -121,7 +121,6 @@ internal fun PhotoMapScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val photos = state.content.photos
     val showPath by viewModel.showPaths.collectAsStateWithLifecycle()
-    var downloadThumbnails by rememberSaveable(state.range) { mutableStateOf(true) }
     val thumbnailRequests = remember(state.range) { mutableStateMapOf<Any, ThumbnailVO>() }
     var showDatePicker by rememberSaveable { mutableStateOf(false) }
     var camera by rememberSaveable(stateSaver = MapCameraSaver) { mutableStateOf(MapCamera.World) }
@@ -170,7 +169,6 @@ internal fun PhotoMapScreen(
                 viewport = viewport,
                 photos = photos,
                 paths = paths,
-                downloadThumbnails = downloadThumbnails,
                 thumbnailRequests = thumbnailRequests,
                 tileStore = viewModel.tiles,
                 onTransform = { pan, anchor, zoom ->
@@ -193,8 +191,6 @@ internal fun PhotoMapScreen(
                 range = state.range,
                 content = state.content,
                 thumbnailRequests = thumbnailRequests,
-                downloadThumbnails = downloadThumbnails,
-                onCancelThumbnails = { downloadThumbnails = false },
                 onRetry = viewModel::retry,
                 modifier = Modifier.align(Alignment.TopCenter).padding(8.dp),
             )
@@ -204,7 +200,6 @@ internal fun PhotoMapScreen(
             MapPhotosCard(
                 photos = selectedPhotos,
                 zone = viewModel.zone,
-                downloadThumbnails = downloadThumbnails,
                 thumbnailRequests = thumbnailRequests,
                 onClose = dismissPin,
                 onOpenPhoto = onOpenPhoto,
@@ -271,13 +266,11 @@ private fun PhotoMapStatus(
     range: MapDateRange,
     content: PhotoMapContent,
     thumbnailRequests: Map<Any, ThumbnailVO>,
-    downloadThumbnails: Boolean,
-    onCancelThumbnails: () -> Unit,
     onRetry: () -> Unit,
     modifier: Modifier,
 ) {
     val loadingThumbnails = thumbnailRequests.values.toSet().size
-    val showThumbnailStatus = !content.loading && downloadThumbnails && loadingThumbnails > 0
+    val showThumbnailStatus = !content.loading && loadingThumbnails > 0
     var missingLocationsDismissed by rememberSaveable(range) { mutableStateOf(false) }
     val missingCount = content.withoutLocationCount
     val showMissingLocations = !content.loading && missingCount > 0 && !missingLocationsDismissed
@@ -358,22 +351,14 @@ private fun PhotoMapStatus(
                 }
             }
             if (showThumbnailStatus) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = pluralStringResource(
-                            I18N.plurals.photos_map_thumbnail_progress, loadingThumbnails, loadingThumbnails,
-                        ),
-                        modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = ProtonTheme.colors.textNorm,
-                    )
-                    TextButton(onClick = onCancelThumbnails) {
-                        Text(stringResource(I18N.string.photos_map_cancel_thumbnails))
-                    }
-                }
+                Text(
+                    text = pluralStringResource(
+                        I18N.plurals.photos_map_thumbnail_progress, loadingThumbnails, loadingThumbnails,
+                    ),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = ProtonTheme.colors.textNorm,
+                )
             }
         }
     }
@@ -402,7 +387,6 @@ private fun PhotoMapProgress(label: String, completed: Int, total: Int) {
 private fun MapPhotosCard(
     photos: List<LocatedMapPhoto>,
     zone: ZoneId,
-    downloadThumbnails: Boolean,
     thumbnailRequests: MutableMap<Any, ThumbnailVO>,
     onClose: () -> Unit,
     onOpenPhoto: (FileId) -> Unit,
@@ -447,7 +431,6 @@ private fun MapPhotosCard(
                         MapPhotoThumbnail(
                             photo = photo,
                             description = photo.name,
-                            download = downloadThumbnails,
                             thumbnailRequests = thumbnailRequests,
                             modifier = Modifier.aspectRatio(1f)
                                 .clip(RoundedCornerShape(6.dp))
