@@ -49,6 +49,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.TimeSource
+import me.proton.android.drive.extension.thumbnailVO
 import me.proton.android.drive.ui.screen.map.MapDateRange
 import me.proton.android.drive.ui.screen.map.MapPoint
 import me.proton.android.drive.ui.screen.map.PhotoMapTiles
@@ -113,6 +114,7 @@ internal data class LocatedMapPhoto(
 
 internal data class PhotoMapContent(
     val photos: List<LocatedMapPhoto> = emptyList(),
+    val dateBounds: MapDateRange? = null,
     val loading: Boolean = false,
     val hasError: Boolean = false,
     val withoutLocationCount: Int = 0,
@@ -120,7 +122,7 @@ internal data class PhotoMapContent(
     val locationsTotal: Int = 0,
 )
 
-internal data class PhotoMapState(val range: MapDateRange, val content: PhotoMapContent)
+internal data class PhotoMapState(val range: MapDateRange?, val content: PhotoMapContent)
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
@@ -146,15 +148,16 @@ internal class PhotoMapViewModel @Inject constructor(
     }
     val zone: ZoneId = ZoneId.systemDefault()
     val showPaths = savedStateHandle.getStateFlow(SHOW_PATHS, false)
-    private val defaultRange = MapDateRange.lastThirtyDays(LocalDate.now(zone))
-    private val epochDays = savedStateHandle.getStateFlow(DATE_RANGE, defaultRange.toEpochDays())
+    val datePickerOpen = savedStateHandle.getStateFlow(DATE_PICKER_OPEN, false)
+    private val epochDays = savedStateHandle.getStateFlow<LongArray?>(DATE_RANGE, null)
     private val retry = MutableStateFlow(0)
     private val loading = PhotoMapContent(loading = true)
-    private val initialRange = epochDays.value.toRange()
+    private val initialRange = epochDays.value?.toRange()
+    private var verifiedAlbumDates: AlbumDates? = null
 
-    val state = combine(epochDays, retry) { days, _ -> days.toRange() }
+    val state = combine(epochDays, retry) { days, _ -> days?.toRange() }
         .flatMapLatest { range ->
-            val interval = range.startSeconds(zone) until range.endExclusiveSeconds(zone)
+            val interval = range?.let { it.startSeconds(zone) until it.endExclusiveSeconds(zone) }
             var latest = loading
             (albumId?.let { albumPhotos(it, interval) } ?: libraryPhotos(interval))
                 .onStart { emit(loading) }
@@ -163,10 +166,14 @@ internal class PhotoMapViewModel @Inject constructor(
                 .map { PhotoMapState(range, it) }
         }
         .flowOn(Dispatchers.IO)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), PhotoMapState(initialRange, loading))
+        .stateIn(viewModelScope, SharingStarted.Lazily, PhotoMapState(initialRange, loading))
 
-    fun selectRange(range: MapDateRange) {
-        savedStateHandle[DATE_RANGE] = range.toEpochDays()
+    fun selectRange(range: MapDateRange?) {
+        savedStateHandle[DATE_RANGE] = range?.toEpochDays()
+    }
+
+    fun setDatePickerOpen(open: Boolean) {
+        savedStateHandle[DATE_PICKER_OPEN] = open
     }
 
     fun togglePaths() {
@@ -177,7 +184,7 @@ internal class PhotoMapViewModel @Inject constructor(
         retry.update { it + 1 }
     }
 
-    private fun libraryPhotos(interval: LongRange) = getActiveVolumes(userId)
+    private fun libraryPhotos(interval: LongRange?) = getActiveVolumes(userId)
         .filterSuccessOrError()
         .map { result -> result.toResult().getOrThrow().any { it.type == Volume.Type.PHOTO } }
         .distinctUntilChanged()
@@ -185,7 +192,7 @@ internal class PhotoMapViewModel @Inject constructor(
             if (hasVolume) libraryPhotosWithVolume(interval) else flowOf(PhotoMapContent())
         }
 
-    private fun libraryPhotosWithVolume(interval: LongRange) = flow {
+    private fun libraryPhotosWithVolume(interval: LongRange?) = flow {
         val share = getPhotoShare(userId).toResult().getOrThrow()
         val key = PhotoListingAnchor.mainKey
         photoListingsLoader.load(key, userId, share.volumeId, share.id, tag = null)
@@ -195,11 +202,10 @@ internal class PhotoMapViewModel @Inject constructor(
                 userId = userId,
                 volumeId = share.volumeId,
                 tag = null,
-                captureTimeFrom = TimestampS(interval.first),
-                captureTimeTo = TimestampS(interval.last + 1),
+                captureTimeFrom = TimestampS(interval?.first ?: Long.MIN_VALUE),
+                captureTimeTo = TimestampS(interval?.let { it.last + 1 } ?: Long.MAX_VALUE),
             ).conflate().collect { ids ->
                 scan.retain(ids.toSet())
-                scan.publishProgress()
                 val missing = mutableListOf<PhotoListing>()
                 libraryListingPages(share, interval).collect { page ->
                     missing += scan.locateCached(page)
@@ -208,8 +214,9 @@ internal class PhotoMapViewModel @Inject constructor(
                 emit(scan.completedContent())
             }
         }.distinctUntilChanged()
-        emitAll(combine(photos, photoListingsLoader.stateFor(key)) { content, sync ->
+        emitAll(combine(photos, photoListingsLoader.stateFor(key), libraryDateBounds(share.volumeId)) { content, sync, bounds ->
             content.copy(
+                dateBounds = bounds,
                 loading = content.loading || (!content.hasError && content.photos.isEmpty() &&
                     (sync == PhotoListingsSyncState.Idle || sync == PhotoListingsSyncState.Loading)),
                 hasError = content.hasError || sync is PhotoListingsSyncState.Error,
@@ -217,15 +224,24 @@ internal class PhotoMapViewModel @Inject constructor(
         })
     }
 
-    private fun libraryListingPages(share: Share, interval: LongRange) = flow {
+    private fun libraryDateBounds(volumeId: VolumeId) = combine(
+        photoRepository.getPhotoListingsFlow(userId, volumeId, 1, null, Direction.ASCENDING),
+        photoRepository.getPhotoListingsFlow(userId, volumeId, 1, null, Direction.DESCENDING),
+    ) { first, last ->
+        listingDateBounds(first.getOrNull()?.firstOrNull(), last.getOrNull()?.firstOrNull())
+    }.distinctUntilChanged()
+
+    private fun libraryListingPages(share: Share, interval: LongRange?) = flow {
         // Both keys form an exclusive cursor. An empty ID excludes all photos at the end boundary.
-        var last: PhotoListing = PhotoListing.Volume(
-            volumeId = share.volumeId,
-            linkId = FileId(share.id, ""),
-            captureTime = TimestampS(interval.last + 1),
-            nameHash = null,
-            contentHash = null,
-        )
+        var last: PhotoListing? = interval?.let {
+            PhotoListing.Volume(
+                volumeId = share.volumeId,
+                linkId = FileId(share.id, ""),
+                captureTime = TimestampS(it.last + 1),
+                nameHash = null,
+                contentHash = null,
+            )
+        }
         while (true) {
             val page = photoRepository.getPhotoListings(
                 userId = userId,
@@ -233,21 +249,41 @@ internal class PhotoMapViewModel @Inject constructor(
                 count = LISTING_PAGE_SIZE,
                 lastPhotoListing = last,
             )
-            emit(page.takeWhile { it.captureTime.value >= interval.first })
-            if (page.size < LISTING_PAGE_SIZE || page.last().captureTime.value < interval.first) break
+            val matches = if (interval == null) page else page.takeWhile { it.captureTime.value >= interval.first }
+            emit(matches)
+            if (page.size < LISTING_PAGE_SIZE || matches.size < page.size) break
             last = page.last()
         }
     }
 
-    private fun albumPhotos(albumId: AlbumId, interval: LongRange) = flow {
+    private fun albumPhotos(albumId: AlbumId, interval: LongRange?) = flow {
         val share = getShare(albumId.shareId).toResult().getOrThrow()
         val scan = PhotoLocationScan { emit(it) }
+        suspend fun albumEndpoint(direction: Direction) =
+            albumRepository.getAlbumPhotoListings(
+                userId = userId,
+                volumeId = share.volumeId,
+                albumId = albumId,
+                fromIndex = 0,
+                count = 1,
+                sortingBy = PhotoListing.Album.SortBy.CAPTURED,
+                sortingDirection = direction,
+            ).firstOrNull()
+        val verifiedDates = verifiedAlbumDates
+        scan.dateBounds = if (verifiedDates == null) {
+            listingDateBounds(albumEndpoint(Direction.ASCENDING), albumEndpoint(Direction.DESCENDING))
+        } else {
+            verifiedDates.range
+        }
         val missingCached = mutableListOf<PhotoListing>()
         cachedAlbumListingPages(albumId, share.volumeId, interval).collect { page ->
             missingCached += scan.locateCached(page)
         }
         emit(scan.content(loading = true))
         val freshIds = mutableSetOf<FileId>()
+        val missingFresh = mutableListOf<PhotoListing>()
+        var freshBounds: MapDateRange? = null
+        var fullAlbumLoaded = false
         val remote = coRunCatchingException {
             var anchor: String? = null
             val seenAnchors = mutableSetOf<String>()
@@ -261,15 +297,39 @@ internal class PhotoMapViewModel @Inject constructor(
                     sortingDirection = Direction.DESCENDING,
                 ).getOrThrow()
                 page.saveAction()
-                val listings = page.albumPhotoListings.filter { it.captureTime.value in interval }
+                val photos = page.albumPhotoListings
+                if (photos.isNotEmpty()) {
+                    val bounds = MapDateRange.fromCaptureTimes(
+                        photos.minOf { it.captureTime.value },
+                        photos.maxOf { it.captureTime.value },
+                        zone,
+                    )
+                    freshBounds = freshBounds?.including(bounds) ?: bounds
+                    scan.dateBounds = scan.dateBounds?.including(bounds) ?: bounds
+                }
+                val listings = if (interval == null) photos else photos.filter { it.captureTime.value in interval }
                 listings.mapTo(freshIds, PhotoListing::linkId)
-                scan.locateMissing(scan.locateCached(listings))
-                if (!page.hasMore || page.albumPhotoListings.any { it.captureTime.value < interval.first }) break
+                missingFresh += scan.locateCached(listings)
+                scan.publishProgress()
+                if (!page.hasMore) {
+                    fullAlbumLoaded = true
+                    break
+                }
+                if (interval != null && photos.any { it.captureTime.value < interval.first }) break
                 anchor = requireNotNull(page.anchoreId)
                 check(seenAnchors.add(anchor)) { "Album listing returned a repeated anchor" }
             } while (true)
         }
-        if (remote.isSuccess) scan.retain(freshIds) else scan.locateMissing(missingCached)
+        if (remote.isSuccess) {
+            scan.retain(freshIds)
+            if (fullAlbumLoaded) {
+                verifiedAlbumDates = AlbumDates(freshBounds)
+                scan.dateBounds = freshBounds
+            }
+            scan.locateMissing(missingFresh)
+        } else {
+            scan.locateMissing(missingCached + missingFresh)
+        }
         val content = scan.completedContent()
         emit(content.copy(hasError = content.hasError || remote.isFailure))
     }
@@ -277,7 +337,7 @@ internal class PhotoMapViewModel @Inject constructor(
     private fun cachedAlbumListingPages(
         albumId: AlbumId,
         volumeId: VolumeId,
-        interval: LongRange,
+        interval: LongRange?,
     ) = flow {
         var offset = 0
         do {
@@ -290,10 +350,19 @@ internal class PhotoMapViewModel @Inject constructor(
                 sortingBy = PhotoListing.Album.SortBy.CAPTURED,
                 sortingDirection = Direction.DESCENDING,
             )
-            emit(page.filter { it.captureTime.value in interval })
+            emit(if (interval == null) page else page.filter { it.captureTime.value in interval })
             offset += page.size
-        } while (page.size == LISTING_PAGE_SIZE && page.none { it.captureTime.value < interval.first })
+        } while (page.size == LISTING_PAGE_SIZE &&
+            (interval == null || page.none { it.captureTime.value < interval.first }))
     }
+
+    private fun listingDateBounds(first: PhotoListing?, last: PhotoListing?): MapDateRange? {
+        val earliest = first?.captureTime?.value ?: return null
+        val latest = last?.captureTime?.value ?: return null
+        return MapDateRange.fromCaptureTimes(earliest, latest, zone)
+    }
+
+    private data class AlbumDates(val range: MapDateRange?)
 
     private inner class PhotoLocationScan(private val publish: suspend (PhotoMapContent) -> Unit) {
         private val resolved = mutableSetOf<FileId>()
@@ -304,6 +373,7 @@ internal class PhotoMapViewModel @Inject constructor(
         private var recordsRequested = 0
         private var lastLoggedRequestCount: Int? = null
         private var lastUpdate: TimeSource.Monotonic.ValueTimeMark? = null
+        var dateBounds: MapDateRange? = null
 
         fun retain(ids: Set<FileId>) {
             resolved.retainAll(ids)
@@ -315,6 +385,7 @@ internal class PhotoMapViewModel @Inject constructor(
 
         fun content(loading: Boolean) = PhotoMapContent(
             photos = photos.values.toList(),
+            dateBounds = dateBounds,
             loading = loading,
             hasError = failures.isNotEmpty(),
             withoutLocationCount = photosWithoutLocation.size,
@@ -334,31 +405,45 @@ internal class PhotoMapViewModel @Inject constructor(
             if (progress.includeListings(listings.map(PhotoListing::linkId))) publishProgress()
             listings.forEach { listing ->
                 val photo = photos[listing.linkId]
-                if (photo != null && photo.captureSeconds != listing.captureTime.value) {
-                    photos[listing.linkId] = photo.copy(captureSeconds = listing.captureTime.value)
+                if (photo != null) {
+                    val thumbnail = photo.thumbnail ?: listing.thumbnailVO
+                    if (photo.captureSeconds != listing.captureTime.value || photo.thumbnail != thumbnail) {
+                        photos[listing.linkId] = photo.copy(captureSeconds = listing.captureTime.value, thumbnail = thumbnail)
+                    }
                 }
             }
             val pending = listings.distinctBy(PhotoListing::linkId).filterNot { it.linkId in resolved }
-            if (pending.isEmpty()) return emptyList()
-            val files = driveLinkRepository.getDriveLinks(pending.map(PhotoListing::linkId)).first()
-                .filterIsInstance<DriveLink.File>().associateBy(DriveLink.File::id)
+            val needsLocalLookup = mutableListOf<PhotoListing>()
+            val needsRevisionCheck = mutableMapOf<FileId, CachedSdkLocation>()
             for (listing in pending) {
+                val entry = locationCache.get(listing, listing.activeRevisionId)
+                if (entry != null && listing.activeRevisionId != null) {
+                    recordLocation(listing, entry.location, entry.name, entry.thumbnail(listing))
+                } else {
+                    needsLocalLookup += listing
+                    if (entry != null) needsRevisionCheck[listing.linkId] = entry
+                }
+            }
+            if (needsLocalLookup.isEmpty()) return emptyList()
+            val files = driveLinkRepository.getDriveLinks(needsLocalLookup.map(PhotoListing::linkId)).first()
+                .filterIsInstance<DriveLink.File>().associateBy(DriveLink.File::id)
+            for (listing in needsLocalLookup) {
                 val file = files[listing.linkId]?.takeIf {
                     listing.activeRevisionId == null || listing.activeRevisionId == it.activeRevisionId
+                }
+                val entry = needsRevisionCheck[listing.linkId]
+                if (entry != null && entry.canReuse(file?.activeRevisionId)) {
+                    recordLocation(listing, entry.location, entry.name, entry.thumbnail(listing))
+                    continue
                 }
                 val point = file?.let { cachedXAttr(it)?.location?.point() }
                 if (file != null && point != null) {
                     recordLocation(
                         listing, PhotoLocation.Located(point), null, file.thumbnailVOOrNull(ThumbnailType.DEFAULT),
                     )
-                } else {
-                    val revisionId = listing.activeRevisionId ?: file?.activeRevisionId
-                    locationCache.get(listing, revisionId)?.let { attributes ->
-                        recordLocation(listing, attributes.location, attributes.name, attributes.thumbnail(listing))
-                    }
                 }
             }
-            return pending.filterNot { it.linkId in resolved }
+            return needsLocalLookup.filterNot { it.linkId in resolved }
         }
 
         suspend fun locateMissing(listings: List<PhotoListing>) {
@@ -443,7 +528,9 @@ internal class PhotoMapViewModel @Inject constructor(
 
         private suspend fun addPhoto(listing: PhotoListing, point: MapPoint, name: String?, thumbnail: ThumbnailVO?) {
             val firstPin = photos.isEmpty()
-            photos[listing.linkId] = LocatedMapPhoto(listing.linkId, name, thumbnail, point, listing.captureTime.value)
+            photos[listing.linkId] = LocatedMapPhoto(
+                listing.linkId, name, thumbnail ?: listing.thumbnailVO, point, listing.captureTime.value,
+            )
             publishProgress(force = firstPin)
         }
 
@@ -475,6 +562,7 @@ internal class PhotoMapViewModel @Inject constructor(
 
     private companion object {
         const val DATE_RANGE = "photoMapDateRange"
+        const val DATE_PICKER_OPEN = "photoMapDatePickerOpen"
         const val SHOW_PATHS = "photoMapShowPaths"
         const val LISTING_PAGE_SIZE = 200
         const val LOCATION_PAGE_SIZE = 50

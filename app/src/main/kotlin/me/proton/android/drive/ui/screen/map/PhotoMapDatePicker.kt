@@ -71,18 +71,19 @@ import me.proton.core.presentation.R as CorePresentation
 @Composable
 internal fun PhotoMapDatePicker(
     initialRange: MapDateRange,
+    dateBounds: MapDateRange,
     zone: ZoneId,
     onDismiss: () -> Unit,
     onConfirm: (MapDateRange) -> Unit,
 ) {
-    val today = remember(zone) { LocalDate.now(zone) }
-    var startDay by rememberSaveable { mutableLongStateOf(initialRange.start.toEpochDay()) }
-    var endDay by rememberSaveable { mutableLongStateOf(initialRange.end.toEpochDay()) }
-    var sliderStart by rememberSaveable { mutableLongStateOf(minOf(initialRange.start, today.minusYears(1)).toEpochDay()) }
-    var sliderEnd by rememberSaveable { mutableLongStateOf(maxOf(initialRange.end, today).toEpochDay()) }
+    var startDay by rememberSaveable { mutableStateOf<Long?>(null) }
+    var endDay by rememberSaveable { mutableStateOf<Long?>(null) }
     var editing by rememberSaveable { mutableStateOf<MapDateEndpoint?>(null) }
     var useCalendar by rememberSaveable { mutableStateOf(false) }
-    val range = MapDateRange(LocalDate.ofEpochDay(startDay), LocalDate.ofEpochDay(endDay))
+    val range = MapDateRange(
+        (startDay?.let(LocalDate::ofEpochDay) ?: initialRange.start).coerceIn(dateBounds.start, dateBounds.end),
+        (endDay?.let(LocalDate::ofEpochDay) ?: initialRange.end).coerceIn(dateBounds.start, dateBounds.end),
+    )
     val interaction = ProtonTheme.colors.interactionNorm
     val colors = if (ProtonTheme.colors.isDark) darkColorScheme(primary = interaction) else lightColorScheme(primary = interaction)
     MaterialTheme(colorScheme = colors) {
@@ -113,15 +114,17 @@ internal fun PhotoMapDatePicker(
                                 },
                             )
                         }
-                        RangeSlider(
-                            value = startDay.toFloat()..endDay.toFloat(),
-                            valueRange = sliderStart.toFloat()..sliderEnd.toFloat(),
-                            onValueChange = {
-                                startDay = it.start.roundToLong()
-                                endDay = it.endInclusive.roundToLong()
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                        )
+                        if (dateBounds.start < dateBounds.end) {
+                            RangeSlider(
+                                value = range.start.toEpochDay().toFloat()..range.end.toEpochDay().toFloat(),
+                                valueRange = dateBounds.start.toEpochDay().toFloat()..dateBounds.end.toEpochDay().toFloat(),
+                                onValueChange = {
+                                    startDay = it.start.roundToLong()
+                                    endDay = it.endInclusive.roundToLong()
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        }
                     }
                 },
                 confirmButton = {
@@ -130,14 +133,12 @@ internal fun PhotoMapDatePicker(
                 dismissButton = { DatePickerCancel(onDismiss) },
             )
         } else {
-            val allowed = endpoint.allowedDates(range, today)
+            val allowed = endpoint.allowedDates(range, dateBounds)
             val dismissEditor = { editing = null }
             val setDate: (LocalDate) -> Unit = { date ->
                 val updated = endpoint.withDate(range, date)
                 startDay = updated.start.toEpochDay()
                 endDay = updated.end.toEpochDay()
-                sliderStart = minOf(sliderStart, startDay)
-                sliderEnd = maxOf(sliderEnd, endDay)
                 editing = null
             }
             if (useCalendar) {
@@ -272,10 +273,10 @@ internal enum class MapDateEndpoint(val label: Int, val calendarLabel: Int) {
 
     fun date(range: MapDateRange): LocalDate = if (this == START) range.start else range.end
 
-    fun allowedDates(range: MapDateRange, today: LocalDate): MapDateRange = if (this == START) {
-        MapDateRange(minOf(range.start, today.minusYears(100).withDayOfYear(1)), range.end)
+    fun allowedDates(range: MapDateRange, bounds: MapDateRange): MapDateRange = if (this == START) {
+        MapDateRange(bounds.start, range.end)
     } else {
-        MapDateRange(range.start, maxOf(range.end, today.plusYears(100).withMonth(12).withDayOfMonth(31)))
+        MapDateRange(range.start, bounds.end)
     }
 
     fun withDate(range: MapDateRange, date: LocalDate): MapDateRange = if (this == START) {

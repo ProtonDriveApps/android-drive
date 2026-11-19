@@ -192,7 +192,6 @@
     <string name="photos_folder_selection_description">Select folders to back up and their photos will appear in the Photos tab.</string>
     <string name="photos_map_title">Map</string>
     <string name="photos_map_album_title">Album map</string>
-    <string name="photos_map_date_range">%1$s – %2$s</string>
     <string name="photos_map_show_path">Show paths</string>
     <string name="photos_map_hide_path">Hide paths</string>
     <string name="photos_map_select_dates">Select date range</string>

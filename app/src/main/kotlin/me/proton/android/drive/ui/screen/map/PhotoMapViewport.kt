@@ -213,7 +213,7 @@ private fun PhotoMapPin(
     onClick: () -> Unit,
     modifier: Modifier,
 ) {
-    val representative = pin.photos.first()
+    val representative = pin.photos.firstOrNull { it.thumbnail != null } ?: pin.photos.first()
     val count = pin.photos.size
     val description = if (count == 1 && representative.name != null) representative.name else {
         pluralStringResource(I18N.plurals.photos_map_pin_count, count, count)
@@ -269,23 +269,23 @@ internal fun MapPhotoThumbnail(
     modifier: Modifier,
 ) {
     val thumbnail = photo.thumbnail
-    if (thumbnail == null) {
-        Box(modifier.semantics { description?.let { contentDescription = it } })
-    } else {
-        val thumbnailPainter = thumbnail.painter()
-        if (thumbnailPainter.isLoading) {
-            DisposableEffect(thumbnailRequests, thumbnail) {
-                val token = Any()
-                thumbnailRequests[token] = thumbnail
-                onDispose { thumbnailRequests.remove(token) }
-            }
+    val thumbnailPainter = thumbnail?.painter()
+    if (thumbnail != null && thumbnailPainter?.isLoading == true) {
+        DisposableEffect(thumbnailRequests, thumbnail) {
+            val token = Any()
+            thumbnailRequests[token] = thumbnail
+            onDispose { thumbnailRequests.remove(token) }
         }
+    }
+    if (thumbnailPainter?.isLoaded == true) {
         Image(
             painter = thumbnailPainter.painter,
             contentDescription = description,
             modifier = modifier,
             contentScale = ContentScale.Crop,
         )
+    } else {
+        Box(modifier.semantics { description?.let { contentDescription = it } })
     }
 }
 

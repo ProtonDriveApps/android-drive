@@ -18,9 +18,9 @@
 
 package me.proton.android.drive.ui.screen.map
 
+import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.temporal.ChronoUnit
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -31,19 +31,40 @@ class PhotoMapGeometryTest {
     private val zone = ZoneId.of("Europe/Madrid")
 
     @Test
-    fun `default range includes thirty calendar dates ending today`() {
-        val today = LocalDate.of(2026, 4, 18)
-        val range = MapDateRange.lastThirtyDays(today)
+    fun `date bounds include the first and last photo across several years`() {
+        val first = LocalDate.of(1968, 9, 3)
+        val last = LocalDate.of(2026, 4, 18)
+        val range = MapDateRange.fromCaptureTimes(
+            first.atStartOfDay(zone).toEpochSecond(),
+            last.atTime(23, 59).atZone(zone).toEpochSecond(),
+            zone,
+        )
 
-        assertEquals(today, range.end)
-        assertEquals(30L, ChronoUnit.DAYS.between(range.start, range.end.plusDays(1)))
+        assertEquals(MapDateRange(first, last), range)
+        assertEquals(first, captureDate(range.startSeconds(zone), zone))
+        assertEquals(last, captureDate(range.endExclusiveSeconds(zone) - 1, zone))
+    }
+
+    @Test
+    fun `date bounds support clocks moving back across midnight`() {
+        val zone = ZoneId.of("America/St_Johns")
+        val first = Instant.parse("2009-11-01T02:30:00Z").epochSecond
+        val last = Instant.parse("2009-11-01T02:31:00Z").epochSecond
+
+        assertEquals(
+            MapDateRange(LocalDate.of(2009, 10, 31), LocalDate.of(2009, 11, 1)),
+            MapDateRange.fromCaptureTimes(first, last, zone),
+        )
     }
 
     @Test
     fun `editing one endpoint preserves the other`() {
         val today = LocalDate.of(2026, 4, 18)
-        val range = MapDateRange.lastThirtyDays(today)
+        val range = MapDateRange(today.minusDays(29), today)
+        val bounds = MapDateRange(today.minusYears(5), today.plusYears(1))
 
+        assertEquals(MapDateRange(bounds.start, range.end), MapDateEndpoint.START.allowedDates(range, bounds))
+        assertEquals(MapDateRange(range.start, bounds.end), MapDateEndpoint.END.allowedDates(range, bounds))
         assertEquals(range.copy(start = today.minusDays(7)), MapDateEndpoint.START.withDate(range, today.minusDays(7)))
         assertEquals(range.copy(end = today.plusDays(1)), MapDateEndpoint.END.withDate(range, today.plusDays(1)))
         assertEquals(MapDateRange(today, today), MapDateEndpoint.START.withDate(range, today.plusDays(1)))

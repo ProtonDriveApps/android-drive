@@ -19,13 +19,8 @@
 package me.proton.android.drive.ui.viewmodel
 
 import java.io.File
-import java.util.Base64
-import javax.crypto.Cipher
-import javax.crypto.KeyGenerator
-import javax.crypto.spec.GCMParameterSpec
 import kotlinx.coroutines.runBlocking
 import me.proton.android.drive.ui.screen.map.MapPoint
-import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.crypto.common.pgp.DecryptedText
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.usecase.Sha256Impl
@@ -35,11 +30,11 @@ import me.proton.core.drive.crypto.domain.repository.DecryptedTextRepository
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.test.crypto.FakeKeyStoreCrypto
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -50,55 +45,49 @@ class PhotoMapLocationCacheTest {
 
     @Test
     fun `locations and confirmed absence survive an empty RAM cache`() = runBlocking {
-        val crypto = TestKeyStoreCrypto()
         val photo = listing("pictured")
         val unlocated = listing("unlocated")
         val entry = CachedSdkLocation("first", MapPoint(0.2, 0.4), name = "private-photograph")
         val missing = CachedSdkLocation("second")
-        cache(crypto).apply {
+        cache().apply {
             put(photo, entry)
             put(unlocated, missing)
+            assertEquals(entry, get(photo, revisionId = "first"))
         }
 
-        val files = folder.root.walk().filter(File::isFile).toList()
+        val files = File(folder.root, "cache/user/photo-map/locations-v3").walk().filter(File::isFile).toList()
         assertEquals(2, files.size)
         assertFalse(files.any { it.readText().contains("private-photograph") })
-        val reopened = cache(crypto)
-        assertEquals(entry, reopened.get(photo, revisionId = null))
+        assertFalse(files.any { it.readText().contains("photo-map:sdk-location") })
+        val reopened = cache()
+        assertEquals(entry.copy(name = null), reopened.get(photo, revisionId = null))
         assertEquals(missing, reopened.get(unlocated, revisionId = "second"))
         assertNull(reopened.get(photo, revisionId = "replacement"))
         assertNull(reopened.get(listing("pictured", user = UserId("another-user")), revisionId = null))
     }
 
     @Test
-    fun `unavailable or pass-through keystore writes only to RAM`() = runBlocking {
-        val entry = CachedSdkLocation("first", MapPoint(0.2, 0.4))
+    fun `clearing the private cache removes disk entries`() = runBlocking {
         val photo = listing("pictured")
-        val passThrough = object : KeyStoreCrypto by FakeKeyStoreCrypto() {
-            override fun isUsingKeyStore() = true
-        }
+        val entry = CachedSdkLocation("first", MapPoint(0.2, 0.4))
+        cache().put(photo, entry)
 
-        for (crypto in listOf(FakeKeyStoreCrypto(), passThrough)) {
-            val writer = cache(crypto)
-            writer.put(photo, entry)
-            assertEquals(entry, writer.get(photo, revisionId = null))
-            assertNull(cache(crypto).get(photo, revisionId = null))
-            assertFalse(folder.root.walk().any(File::isFile))
-        }
+        assertEquals(entry, cache().get(photo, revisionId = "first"))
+        assertTrue(File(folder.root, "cache").deleteRecursively())
+        assertNull(cache().get(photo, revisionId = "first"))
     }
 
     @Test
-    fun `corrupt encrypted file is a cache miss`() = runBlocking {
-        val crypto = TestKeyStoreCrypto()
+    fun `corrupt file is a cache miss`() = runBlocking {
         val photo = listing("pictured")
-        cache(crypto).put(photo, CachedSdkLocation("first"))
+        cache().put(photo, CachedSdkLocation("first"))
         folder.root.walk().single(File::isFile).writeText("corrupt")
 
-        assertNull(cache(crypto).get(photo, revisionId = null))
+        assertNull(cache().get(photo, revisionId = null))
     }
 
-    private fun cache(crypto: KeyStoreCrypto) =
-        PhotoMapLocationCache(TestStorage(folder.root), crypto, Sha256Impl(), Memory())
+    private fun cache() =
+        PhotoMapLocationCache(TestStorage(folder.root), Sha256Impl(), Memory())
 
     private fun listing(id: String, user: UserId = UserId("user")) = PhotoListing.Volume(
         volumeId = VolumeId("volume"),
@@ -123,33 +112,14 @@ class PhotoMapLocationCacheTest {
     }
 
     private class TestStorage(private val root: File) : StorageLocationProvider {
-        override suspend fun getPermanentFolder(userId: UserId, path: String): File =
-            File(File(root, userId.id), path).apply { mkdirs() }
-
         override suspend fun getCacheFolder(): File = error("Unexpected directory")
-        override suspend fun getCacheFolder(userId: UserId, path: String): File = error("Unexpected directory")
+        override suspend fun getCacheFolder(userId: UserId, path: String): File =
+            File(File(root, "cache/${userId.id}"), path).apply { mkdirs() }
+
+        override suspend fun getPermanentFolder(userId: UserId, path: String): File = error("Unexpected directory")
         override suspend fun getCacheTempFolder(userId: UserId): File = error("Unexpected directory")
         override suspend fun getPermanentTempFolder(userId: UserId, path: String): File = error("Unexpected directory")
         override fun getDebugLogFolder(): File = error("Unexpected directory")
         override suspend fun getCameraFolder(): File = error("Unexpected directory")
-    }
-
-    private class TestKeyStoreCrypto : KeyStoreCrypto by FakeKeyStoreCrypto() {
-        private val secret = KeyGenerator.getInstance("AES").generateKey()
-
-        override fun isUsingKeyStore() = true
-
-        override fun encrypt(value: String): String {
-            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-            cipher.init(Cipher.ENCRYPT_MODE, secret)
-            return Base64.getEncoder().encodeToString(cipher.iv + cipher.doFinal(value.toByteArray()))
-        }
-
-        override fun decrypt(value: String): String {
-            val ciphertext = Base64.getDecoder().decode(value)
-            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-            cipher.init(Cipher.DECRYPT_MODE, secret, GCMParameterSpec(128, ciphertext.copyOfRange(0, 12)))
-            return cipher.doFinal(ciphertext, 12, ciphertext.size - 12).decodeToString()
-        }
     }
 }

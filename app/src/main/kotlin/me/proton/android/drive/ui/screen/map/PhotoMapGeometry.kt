@@ -39,8 +39,14 @@ internal data class MapDateRange(val start: LocalDate, val end: LocalDate) {
     fun startSeconds(zone: ZoneId): Long = start.atStartOfDay(zone).toEpochSecond()
     fun endExclusiveSeconds(zone: ZoneId): Long = end.plusDays(1).atStartOfDay(zone).toEpochSecond()
 
+    fun including(other: MapDateRange) = MapDateRange(minOf(start, other.start), maxOf(end, other.end))
+
     companion object {
-        fun lastThirtyDays(today: LocalDate) = MapDateRange(today.minusDays(29), today)
+        fun fromCaptureTimes(first: Long, last: Long, zone: ZoneId): MapDateRange {
+            val firstDate = captureDate(first, zone)
+            val lastDate = captureDate(last, zone)
+            return MapDateRange(minOf(firstDate, lastDate), maxOf(firstDate, lastDate))
+        }
     }
 }
 

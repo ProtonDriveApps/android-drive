@@ -23,11 +23,13 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption.ATOMIC_MOVE
 import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.crypto.common.pgp.DecryptedText
 import me.proton.core.crypto.common.pgp.VerificationStatus
 import me.proton.core.domain.entity.UserId
@@ -38,12 +40,14 @@ import me.proton.core.drive.crypto.domain.repository.DecryptedTextRepository
 import me.proton.core.drive.link.domain.extension.nodeUid
 import me.proton.core.drive.photo.domain.entity.PhotoListing
 
+@Singleton
 internal class PhotoMapLocationCache @Inject constructor(
     private val storage: StorageLocationProvider,
-    private val keyStoreCrypto: KeyStoreCrypto,
     private val sha256: Sha256,
     private val decryptedTextRepository: DecryptedTextRepository,
 ) {
+    private val diskMutex = Mutex()
+
     suspend fun get(listing: PhotoListing, revisionId: String?): CachedSdkLocation? {
         val userId = listing.linkId.shareId.userId
         val key = listing.cacheKey
@@ -52,13 +56,13 @@ internal class PhotoMapLocationCache @Inject constructor(
 
         return withContext(Dispatchers.IO) {
             coRunCatchingException {
-                if (!keyStoreCrypto.isUsingKeyStore()) return@coRunCatchingException null
-                val file = cacheFile(userId, key)
-                if (!file.isFile) return@coRunCatchingException null
-                val ciphertext = file.readText()
-                val plaintext = keyStoreCrypto.decrypt(ciphertext)
-                plaintext.takeUnless { it == ciphertext }?.let { text ->
-                    decode(text, key)?.takeIf { it.canReuse(revisionId) }?.also { remember(userId, key, text) }
+                diskMutex.withLock {
+                    val digest = sha256(key, Sha256.OutputFormat.HEX).getOrThrow()
+                    val file = cacheFile(userId, digest)
+                    if (!file.isFile) return@withLock null
+                    decode(file.readText(), digest)
+                        ?.takeIf { it.canReuse(revisionId) }
+                        ?.also { remember(userId, key, it) }
                 }
             }.getOrNull()
         }
@@ -67,35 +71,39 @@ internal class PhotoMapLocationCache @Inject constructor(
     suspend fun put(listing: PhotoListing, entry: CachedSdkLocation) {
         val userId = listing.linkId.shareId.userId
         val key = listing.cacheKey
-        val plaintext = Json.encodeToString(StoredLocation(key, entry))
-        remember(userId, key, plaintext)
 
         withContext(Dispatchers.IO) {
-            coRunCatchingException {
-                if (!keyStoreCrypto.isUsingKeyStore()) return@coRunCatchingException
-                val ciphertext = keyStoreCrypto.encrypt(plaintext)
-                // Core can return its input when the Keystore is unavailable.
-                if (ciphertext == plaintext) return@coRunCatchingException
-                val file = cacheFile(userId, key)
-                val directory = requireNotNull(file.parentFile)
-                directory.mkdirs()
-                val temporary = Files.createTempFile(directory.toPath(), "location-", ".tmp").toFile()
-                try {
-                    temporary.writeText(ciphertext)
-                    Files.move(temporary.toPath(), file.toPath(), ATOMIC_MOVE, REPLACE_EXISTING)
-                } finally {
-                    temporary.delete()
+            diskMutex.withLock {
+                remember(userId, key, entry)
+                coRunCatchingException {
+                    val digest = sha256(key, Sha256.OutputFormat.HEX).getOrThrow()
+                    write(cacheFile(userId, digest), digest, entry)
                 }
             }
         }
     }
 
-    private fun remember(userId: UserId, key: String, plaintext: String) =
-        decryptedTextRepository.addDecryptedText(userId, key, DecryptedText(plaintext, VerificationStatus.Unknown))
+    private fun write(file: File, digest: String, entry: CachedSdkLocation) {
+        val directory = requireNotNull(file.parentFile)
+        directory.mkdirs()
+        val temporary = Files.createTempFile(directory.toPath(), "location-", ".tmp").toFile()
+        try {
+            temporary.writeText(Json.encodeToString(StoredLocation(digest, entry.copy(name = null))))
+            Files.move(temporary.toPath(), file.toPath(), ATOMIC_MOVE, REPLACE_EXISTING)
+        } finally {
+            temporary.delete()
+        }
+    }
 
-    private suspend fun cacheFile(userId: UserId, key: String): File {
-        val digest = sha256(key, Sha256.OutputFormat.HEX).getOrThrow()
-        val directory = storage.getPermanentFolder(userId, "photo-map/locations-v2")
+    private fun remember(userId: UserId, key: String, entry: CachedSdkLocation) =
+        decryptedTextRepository.addDecryptedText(
+            userId,
+            key,
+            DecryptedText(Json.encodeToString(StoredLocation(key, entry)), VerificationStatus.Unknown),
+        )
+
+    private suspend fun cacheFile(userId: UserId, digest: String): File {
+        val directory = storage.getCacheFolder(userId, "photo-map/locations-v3")
         return File(File(directory, digest.take(2)), digest)
     }
 

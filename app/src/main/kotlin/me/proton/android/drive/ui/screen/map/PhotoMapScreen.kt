@@ -121,8 +121,8 @@ internal fun PhotoMapScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val photos = state.content.photos
     val showPath by viewModel.showPaths.collectAsStateWithLifecycle()
+    val showDatePicker by viewModel.datePickerOpen.collectAsStateWithLifecycle()
     val thumbnailRequests = remember(state.range) { mutableStateMapOf<Any, ThumbnailVO>() }
-    var showDatePicker by rememberSaveable { mutableStateOf(false) }
     var camera by rememberSaveable(stateSaver = MapCameraSaver) { mutableStateOf(MapCamera.World) }
     var autoFit by rememberSaveable { mutableStateOf(true) }
     var viewport by remember { mutableStateOf(IntSize.Zero) }
@@ -156,7 +156,6 @@ internal fun PhotoMapScreen(
     BackHandler(selectedPhotos.isNotEmpty(), onBack = dismissPin)
 
     Column(modifier.fillMaxSize().background(ProtonTheme.colors.backgroundNorm)) {
-        PhotoMapDates(state.range) { showDatePicker = true }
         Box(Modifier.weight(1f).fillMaxWidth().onSizeChanged { viewport = it }) {
             PhotoMapViewport(
                 camera = camera,
@@ -202,17 +201,20 @@ internal fun PhotoMapScreen(
         }
     }
 
-    if (showDatePicker) {
+    val dateBounds = state.content.dateBounds
+    if (showDatePicker && dateBounds != null) {
         PhotoMapDatePicker(
-            initialRange = state.range,
+            initialRange = state.range ?: dateBounds,
+            dateBounds = state.range?.let(dateBounds::including) ?: dateBounds,
             zone = viewModel.zone,
-            onDismiss = { showDatePicker = false },
+            onDismiss = { viewModel.setDatePickerOpen(false) },
             onConfirm = { range ->
-                showDatePicker = false
-                if (range != state.range) {
+                viewModel.setDatePickerOpen(false)
+                val selected = range.takeUnless { it == dateBounds }
+                if (selected != state.range) {
                     dismissPin()
                     autoFit = true
-                    viewModel.selectRange(range)
+                    viewModel.selectRange(selected)
                 }
             },
         )
@@ -222,6 +224,7 @@ internal fun PhotoMapScreen(
 @Composable
 internal fun PhotoMapMenu(viewModel: PhotoMapViewModel) {
     val showPaths by viewModel.showPaths.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     var expanded by remember { mutableStateOf(false) }
     Box {
         ActionButton(
@@ -230,6 +233,14 @@ internal fun PhotoMapMenu(viewModel: PhotoMapViewModel) {
             onClick = { expanded = true },
         )
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(
+                text = { Text(stringResource(I18N.string.photos_map_select_dates)) },
+                enabled = state.content.dateBounds != null,
+                onClick = {
+                    expanded = false
+                    viewModel.setDatePickerOpen(true)
+                },
+            )
             DropdownMenuItem(
                 text = {
                     Text(stringResource(if (showPaths) I18N.string.photos_map_hide_path else I18N.string.photos_map_show_path))
@@ -244,20 +255,8 @@ internal fun PhotoMapMenu(viewModel: PhotoMapViewModel) {
 }
 
 @Composable
-private fun PhotoMapDates(range: MapDateRange, onSelectDates: () -> Unit) {
-    val locale = LocalConfiguration.current.locales[0]
-    val formatter = remember(locale) { DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale) }
-    TextButton(onClick = onSelectDates, modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = stringResource(I18N.string.photos_map_date_range, range.start.format(formatter), range.end.format(formatter)),
-            color = ProtonTheme.colors.textNorm,
-        )
-    }
-}
-
-@Composable
 private fun PhotoMapStatus(
-    range: MapDateRange,
+    range: MapDateRange?,
     content: PhotoMapContent,
     thumbnailRequests: Map<Any, ThumbnailVO>,
     onRetry: () -> Unit,
@@ -424,7 +423,7 @@ private fun MapPhotosCard(
                     items(items, key = { it.key }) { photo ->
                         MapPhotoThumbnail(
                             photo = photo,
-                            description = photo.name,
+                            description = photo.name ?: pluralStringResource(I18N.plurals.photos_map_pin_count, 1, 1),
                             thumbnailRequests = thumbnailRequests,
                             modifier = Modifier.aspectRatio(1f)
                                 .clip(RoundedCornerShape(6.dp))
