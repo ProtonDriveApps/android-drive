@@ -199,3 +199,20 @@ internal fun <T> dailyMapPathSegments(
 ): List<MapPathSegment<T>> = groupMapPhotosByDate(photos, zone, captureSeconds)
     .values
     .flatMap { day -> day.asReversed().zipWithNext(::MapPathSegment) }
+
+internal fun <T> mapPathSegmentsToPins(
+    paths: List<MapPathSegment<T>>,
+    pins: List<MapPin<T>>,
+): List<MapPathSegment<MapPoint>> {
+    if (paths.isEmpty()) return emptyList()
+    val pinByPhoto = buildMap {
+        for (pin in pins) {
+            for (photo in pin.photos) put(photo, pin.point)
+        }
+    }
+    return paths.mapNotNull { (from, to) ->
+        val start = pinByPhoto[from] ?: return@mapNotNull null
+        val end = pinByPhoto[to] ?: return@mapNotNull null
+        if (start == end) null else MapPathSegment(start, end)
+    }
+}

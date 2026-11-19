@@ -18,11 +18,13 @@
 
 package me.proton.android.drive.ui.screen.map
 
+import android.os.Parcelable
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.widget.DatePicker as WheelDatePicker
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -35,6 +37,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
@@ -54,6 +57,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import java.time.Instant
@@ -63,6 +67,7 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import kotlin.math.roundToLong
+import kotlinx.parcelize.Parcelize
 import me.proton.android.drive.R
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.i18n.R as I18N
@@ -70,11 +75,12 @@ import me.proton.core.presentation.R as CorePresentation
 
 @Composable
 internal fun PhotoMapDatePicker(
+    selection: MapDateSelection,
     initialRange: MapDateRange,
     dateBounds: MapDateRange,
     zone: ZoneId,
     onDismiss: () -> Unit,
-    onConfirm: (MapDateRange) -> Unit,
+    onConfirm: (MapDateSelection) -> Unit,
 ) {
     var startDay by rememberSaveable { mutableStateOf<Long?>(null) }
     var endDay by rememberSaveable { mutableStateOf<Long?>(null) }
@@ -93,7 +99,20 @@ internal fun PhotoMapDatePicker(
                 onDismissRequest = onDismiss,
                 title = { Text(stringResource(I18N.string.photos_map_select_dates)) },
                 text = {
-                    Column {
+                    Column(Modifier.verticalScroll(rememberScrollState())) {
+                        MapDatePreset.entries.chunked(2).forEach { presets ->
+                            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                presets.forEach { preset ->
+                                    OutlinedButton(
+                                        onClick = { onConfirm(MapDateSelection.Preset(preset)) },
+                                        modifier = Modifier.weight(1f),
+                                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                                    ) {
+                                        Text(stringResource(preset.label), textAlign = TextAlign.Center)
+                                    }
+                                }
+                            }
+                        }
                         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             DateEndpointControl(
                                 endpoint = MapDateEndpoint.START,
@@ -128,7 +147,9 @@ internal fun PhotoMapDatePicker(
                     }
                 },
                 confirmButton = {
-                    TextButton(onClick = { onConfirm(range) }) { Text(stringResource(I18N.string.common_done_action)) }
+                    TextButton(onClick = {
+                        onConfirm(if (startDay == null) selection else MapDateSelection.Custom(range))
+                    }) { Text(stringResource(I18N.string.common_done_action)) }
                 },
                 dismissButton = { DatePickerCancel(onDismiss) },
             )
@@ -147,6 +168,40 @@ internal fun PhotoMapDatePicker(
                 WheelDateDialog(endpoint, endpoint.date(range), allowed, zone, dismissEditor, setDate)
             }
         }
+    }
+}
+
+internal enum class MapDatePreset(val label: Int) {
+    LAST_WEEK(I18N.string.photos_map_last_week),
+    LAST_MONTH(I18N.string.photos_map_last_month),
+    LAST_YEAR(I18N.string.photos_map_last_year),
+    ALL_TIME(I18N.string.photos_map_all_time);
+
+    fun range(today: LocalDate): MapDateRange? {
+        val start = when (this) {
+            LAST_WEEK -> today.minusDays(6)
+            LAST_MONTH -> today.minusMonths(1).plusDays(1)
+            LAST_YEAR -> today.minusYears(1).plusDays(1)
+            ALL_TIME -> return null
+        }
+        return MapDateRange(start, today)
+    }
+}
+
+@Parcelize
+internal sealed class MapDateSelection : Parcelable {
+    data class Preset(val preset: MapDatePreset) : MapDateSelection()
+
+    data class Custom(val startDay: Long, val endDay: Long) : MapDateSelection() {
+        constructor(range: MapDateRange) : this(range.start.toEpochDay(), range.end.toEpochDay())
+
+        val range: MapDateRange
+            get() = MapDateRange(LocalDate.ofEpochDay(startDay), LocalDate.ofEpochDay(endDay))
+    }
+
+    fun range(today: LocalDate): MapDateRange? = when (this) {
+        is Preset -> preset.range(today)
+        is Custom -> range
     }
 }
 

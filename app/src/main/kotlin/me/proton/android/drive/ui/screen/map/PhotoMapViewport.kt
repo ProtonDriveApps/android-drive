@@ -95,6 +95,7 @@ internal fun PhotoMapViewport(
     val pins = remember(photos, pinZoom) {
         clusterMapPins(photos, pinZoom, LocatedMapPhoto::point)
     }
+    val pinPaths = remember(paths, pins) { mapPathSegmentsToPins(paths, pins) }
     val placements = if (viewport == IntSize.Zero) emptyList() else visibleTiles(camera, viewport, tileSize)
     val images = placements.map(TilePlacement::tile).distinct().associateWith { tile ->
         key(tile) {
@@ -130,11 +131,11 @@ internal fun PhotoMapViewport(
                     ),
                 )
             }
-            paths.forEach { (from, to) ->
-                val start = from.point.toScreen(camera, viewport, worldSize)
+            pinPaths.forEach { (from, to) ->
+                val start = from.toScreen(camera, viewport, worldSize)
                 val end = Offset(
-                    x = start.x + (wrappedDistance(to.point.x, from.point.x) * worldSize).toFloat(),
-                    y = start.y + ((to.point.y - from.point.y) * worldSize).toFloat(),
+                    x = start.x + (wrappedDistance(to.x, from.x) * worldSize).toFloat(),
+                    y = start.y + ((to.y - from.y) * worldSize).toFloat(),
                 )
                 for (copy in -1..1) {
                     val shift = Offset((worldSize * copy).toFloat(), 0f)

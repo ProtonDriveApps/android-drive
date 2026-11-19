@@ -195,12 +195,15 @@
     <string name="photos_map_show_path">Show paths</string>
     <string name="photos_map_hide_path">Hide paths</string>
     <string name="photos_map_select_dates">Select date range</string>
+    <string name="photos_map_last_week">Last week</string>
+    <string name="photos_map_last_month">Last month</string>
+    <string name="photos_map_last_year">Last year</string>
+    <string name="photos_map_all_time">All time</string>
+    <string name="photos_map_custom_dates">Custom %1$s – %2$s</string>
     <string name="photos_map_start_date">Start date</string>
     <string name="photos_map_end_date">End date</string>
     <string name="photos_map_start_calendar">Choose start date on calendar</string>
     <string name="photos_map_end_calendar">Choose end date on calendar</string>
-    <string name="photos_map_loading_locations">Finding photo locations…</string>
-    <string name="photos_map_location_progress">Photo locations · %1$d of %2$d checked</string>
     <string name="photos_map_zoom_in">Zoom in</string>
     <string name="photos_map_zoom_out">Zoom out</string>
     <string name="photos_map_attribution" translatable="false">© OpenStreetMap contributors</string>
@@ -210,10 +213,6 @@
     <plurals name="photos_map_thumbnail_progress">
         <item quantity="one">Loading %d thumbnail…</item>
         <item quantity="other">Loading %d thumbnails…</item>
-    </plurals>
-    <plurals name="photos_map_without_location">
-        <item quantity="one">%d photo has no location</item>
-        <item quantity="other">%d photos have no location</item>
     </plurals>
     <plurals name="photos_map_pin_count">
         <item quantity="one">%d photo</item>

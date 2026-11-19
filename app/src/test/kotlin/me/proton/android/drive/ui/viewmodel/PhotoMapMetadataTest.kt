@@ -20,9 +20,6 @@ package me.proton.android.drive.ui.viewmodel
 
 import kotlinx.serialization.json.Json
 import me.proton.android.drive.ui.screen.map.mapPoint
-import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.link.domain.entity.FileId
-import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.drive.sdk.entity.AdditionalMetadataProperty
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -30,8 +27,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class PhotoMapMetadataTest {
-    private val share = ShareId(UserId("user"), "share")
-
     @Test
     fun `a decrypted SDK location can place a pin without image data`() {
         val metadata = listOf(
@@ -86,37 +81,6 @@ class PhotoMapMetadataTest {
         assertTrue(found.canReuse("revision"))
         assertFalse(found.canReuse("replacement"))
         assertTrue(found.canReuse(null))
-    }
-
-    @Test
-    fun `geolocation progress counts distinct listed and examined photos`() {
-        val first = FileId(share, "first")
-        val second = FileId(share, "second")
-        val progress = PhotoLocationProgress()
-
-        progress.includeListings(listOf(first, first, second))
-        progress.recordChecked(first)
-        progress.recordChecked(first)
-        progress.recordChecked(FileId(share, "outside scope"))
-
-        assertEquals(2, progress.total)
-        assertEquals(1, progress.checked)
-    }
-
-    @Test
-    fun `listing refresh retains checks only for photos still in scope`() {
-        val removed = FileId(share, "removed")
-        val retained = FileId(share, "retained")
-        val added = FileId(share, "added")
-        val progress = PhotoLocationProgress()
-        progress.includeListings(listOf(removed, retained))
-        progress.recordChecked(removed)
-        progress.recordChecked(retained)
-
-        progress.replaceListings(setOf(retained, added))
-
-        assertEquals(2, progress.total)
-        assertEquals(1, progress.checked)
     }
 
     private fun metadataProperty(name: String, json: String) =

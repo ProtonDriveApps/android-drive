@@ -31,6 +31,27 @@ class PhotoMapGeometryTest {
     private val zone = ZoneId.of("Europe/Madrid")
 
     @Test
+    fun `relative date shortcuts include today and follow calendar month and year boundaries`() {
+        val today = LocalDate.of(2024, 3, 31)
+
+        assertEquals(MapDateRange(LocalDate.of(2024, 3, 25), today), MapDatePreset.LAST_WEEK.range(today))
+        assertEquals(MapDateRange(LocalDate.of(2024, 3, 1), today), MapDatePreset.LAST_MONTH.range(today))
+        assertEquals(MapDateRange(LocalDate.of(2023, 4, 1), today), MapDatePreset.LAST_YEAR.range(today))
+        assertNull(MapDatePreset.ALL_TIME.range(today))
+    }
+
+    @Test
+    fun `custom dates stay fixed even when they originally match a shortcut`() {
+        val today = LocalDate.of(2026, 4, 18)
+        val preset = MapDateSelection.Preset(MapDatePreset.LAST_WEEK)
+        val original = requireNotNull(preset.range(today))
+        val custom = MapDateSelection.Custom(original)
+
+        assertEquals(original, custom.range(today.plusDays(1)))
+        assertEquals(MapDateRange(original.start.plusDays(1), original.end.plusDays(1)), preset.range(today.plusDays(1)))
+    }
+
+    @Test
     fun `date bounds include the first and last photo across several years`() {
         val first = LocalDate.of(1968, 9, 3)
         val last = LocalDate.of(2026, 4, 18)
@@ -107,6 +128,21 @@ class PhotoMapGeometryTest {
         val midnight = LocalDate.of(2026, 7, 2).atStartOfDay(zone).toEpochSecond()
 
         assertTrue(dailyMapPathSegments(listOf(midnight - 1, midnight), zone) { it }.isEmpty())
+    }
+
+    @Test
+    fun `paths follow group pins and restore individual links when zooming in`() {
+        val pin = MapPoint(0.5, 0.5)
+        val nearby = MapPoint(0.5 + 36.0 / (MAP_TILE_DP * 1024), 0.5)
+        val far = MapPoint(0.6, 0.6)
+        val photos = listOf(pin, nearby, far)
+        val paths = listOf(MapPathSegment(pin, nearby), MapPathSegment(nearby, far), MapPathSegment(far, nearby))
+
+        val grouped = clusterMapPins(photos, 9.0) { it }
+        val separate = clusterMapPins(photos, 10.0) { it }
+
+        assertEquals(listOf(MapPathSegment(pin, far), MapPathSegment(far, pin)), mapPathSegmentsToPins(paths, grouped))
+        assertEquals(paths, mapPathSegmentsToPins(paths, separate))
     }
 
     @Test
