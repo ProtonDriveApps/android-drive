@@ -160,6 +160,22 @@ class PhotoMapGeometryTest {
     }
 
     @Test
+    fun `opening camera fits vertical pins below the date overlay`() {
+        val north = MapPoint(0.5, 0.3)
+        val south = MapPoint(0.5, 0.7)
+        val height = 380.0
+        val tileSize = 256.0
+        val camera = fitMapCamera(
+            listOf(north, south), width = 300.0, height = height, tileSize = tileSize,
+            padding = 44.0, topPadding = 119.0,
+        )
+        val worldSize = camera.worldSize(tileSize)
+
+        assertEquals(119.0, height / 2 + (north.y - camera.center.y) * worldSize, 1e-9)
+        assertEquals(height - 44.0, height / 2 + (south.y - camera.center.y) * worldSize, 1e-9)
+    }
+
+    @Test
     fun `nearly identical locations stay grouped at maximum zoom`() {
         val north = requireNotNull(mapPoint(0.000001, 0.0))
         val south = requireNotNull(mapPoint(-0.000001, 0.0))

@@ -199,7 +199,10 @@
     <string name="photos_map_last_month">Last month</string>
     <string name="photos_map_last_year">Last year</string>
     <string name="photos_map_all_time">All time</string>
-    <string name="photos_map_custom_dates">Custom %1$s – %2$s</string>
+    <string name="photos_map_custom_dates">%1$s – %2$s</string>
+    <string name="photos_map_default_centre">Default map centre</string>
+    <string name="photos_map_choose_default_centre">Move the map until the place you want is under the centre marker.</string>
+    <string name="photos_map_default_centre_save_error">Couldn’t save the default map centre.</string>
     <string name="photos_map_start_date">Start date</string>
     <string name="photos_map_end_date">End date</string>
     <string name="photos_map_start_calendar">Choose start date on calendar</string>

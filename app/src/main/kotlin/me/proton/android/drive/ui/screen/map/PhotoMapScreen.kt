@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -48,11 +49,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -122,28 +122,28 @@ internal fun PhotoMapScreen(
     val showDatePicker by viewModel.datePickerOpen.collectAsStateWithLifecycle()
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.refreshRelativeDates() }
     val thumbnailRequests = remember(state.range) { mutableStateMapOf<Any, ThumbnailVO>() }
-    var camera by rememberSaveable(stateSaver = MapCameraSaver) { mutableStateOf(MapCamera.World) }
-    var autoFit by rememberSaveable { mutableStateOf(true) }
+    val viewportState by viewModel.viewportState.collectAsStateWithLifecycle()
+    val camera = viewportState.camera
+    val cameraReady = camera != null
     var viewport by remember { mutableStateOf(IntSize.Zero) }
-    var selectedKey by rememberSaveable { mutableStateOf<String?>(null) }
-    var selectedZoom by rememberSaveable { mutableStateOf(MIN_ZOOM) }
-    val selectedPhotos = remember(photos, selectedKey, selectedZoom) {
-        val key = selectedKey ?: return@remember emptyList()
-        clusterMapPins(photos, selectedZoom, LocatedMapPhoto::point)
-            .firstOrNull { group -> group.photos.any { it.key == key } }
-            ?.photos.orEmpty()
+    var overlayHeight by remember { mutableIntStateOf(0) }
+    val selectedPin = viewportState.selectedPin
+    val selectedPhotos = remember(photos, selectedPin) {
+        selectedPin?.let { selection ->
+            clusterMapPins(photos, selection.zoom, LocatedMapPhoto::point)
+                .firstOrNull { group -> group.photos.any { it.id == selection.photoId } }
+                ?.photos
+        }.orEmpty()
     }
 
     val tileSize = with(LocalDensity.current) { MapTileSize.toPx().toDouble() }
     val fitPadding = with(LocalDensity.current) { 44.dp.toPx().toDouble() }
-    LaunchedEffect(photos, viewport, tileSize, autoFit) {
-        if (autoFit && viewport != IntSize.Zero && photos.isNotEmpty()) {
-            camera = fitMapCamera(
-                photos.map(LocatedMapPhoto::point),
-                viewport.width.toDouble(),
-                viewport.height.toDouble(),
-                tileSize,
-                fitPadding,
+    val markerHeight = with(LocalDensity.current) { (MAP_PIN_DP.dp + MapPinTipHeight).toPx().toDouble() }
+    val topPadding = maxOf(fitPadding, overlayHeight + markerHeight)
+    LaunchedEffect(state.content, viewport, tileSize, fitPadding, topPadding, overlayHeight, cameraReady) {
+        if (overlayHeight > 0) {
+            viewModel.fitOpeningPhotos(
+                state.content, viewport.width.toDouble(), viewport.height.toDouble(), tileSize, fitPadding, topPadding,
             )
         }
     }
@@ -151,40 +151,36 @@ internal fun PhotoMapScreen(
     val paths = remember(photos, showPath, viewModel.zone) {
         if (showPath) dailyMapPathSegments(photos, viewModel.zone, LocatedMapPhoto::captureSeconds) else emptyList()
     }
-    val dismissPin = { selectedKey = null }
-    BackHandler(selectedPhotos.isNotEmpty(), onBack = dismissPin)
+    BackHandler(selectedPhotos.isNotEmpty(), onBack = viewModel::dismissPin)
 
     Column(modifier.fillMaxSize().background(ProtonTheme.colors.backgroundNorm)) {
         Box(Modifier.weight(1f).fillMaxWidth().onSizeChanged { viewport = it }) {
-            PhotoMapViewport(
-                camera = camera,
-                viewport = viewport,
-                photos = photos,
-                paths = paths,
-                thumbnailRequests = thumbnailRequests,
-                tileStore = viewModel.tiles,
-                onTransform = { pan, anchor, zoom ->
-                    autoFit = false
-                    camera = camera.move(
-                        pan.x.toDouble(), pan.y.toDouble(), anchor.x.toDouble(), anchor.y.toDouble(), zoom, tileSize,
-                    )
-                },
-                onSelectPin = { pin ->
-                    autoFit = false
-                    selectedKey = pin.photos.first().key
-                    selectedZoom = clusterZoom(camera.zoom)
-                    // The second pane changes the map's height. Keeping the pin as
-                    // the camera center puts it in the middle of the remaining map.
-                    camera = camera.copy(center = pin.point)
-                },
-                modifier = Modifier.fillMaxSize(),
-            )
+            if (camera != null) {
+                PhotoMapViewport(
+                    camera = camera,
+                    viewport = viewport,
+                    photos = photos,
+                    paths = paths,
+                    thumbnailRequests = thumbnailRequests,
+                    tileStore = viewModel.tiles,
+                    onTransform = { pan, anchor, zoom ->
+                        viewModel.updateCamera {
+                            it.move(
+                                pan.x.toDouble(), pan.y.toDouble(), anchor.x.toDouble(), anchor.y.toDouble(),
+                                zoom, tileSize,
+                            )
+                        }
+                    },
+                    onSelectPin = { pin -> viewModel.selectPin(pin, clusterZoom(camera.zoom)) },
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
             Column(
-                modifier = Modifier.align(Alignment.TopCenter).padding(8.dp),
+                modifier = Modifier.align(Alignment.TopCenter).onSizeChanged { overlayHeight = it.height }.padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                PhotoMapDateLabel(state.dateSelection)
+                PhotoMapDateLabel(state.dateSelection, onClick = { viewModel.setDatePickerOpen(true) })
                 PhotoMapStatus(
                     content = state.content,
                     thumbnailRequests = thumbnailRequests,
@@ -198,7 +194,7 @@ internal fun PhotoMapScreen(
                 photos = selectedPhotos,
                 zone = viewModel.zone,
                 thumbnailRequests = thumbnailRequests,
-                onClose = dismissPin,
+                onClose = viewModel::dismissPin,
                 onOpenPhoto = onOpenPhoto,
                 modifier = Modifier.fillMaxWidth().weight(1f),
             )
@@ -218,11 +214,19 @@ internal fun PhotoMapScreen(
             onConfirm = { selection ->
                 viewModel.setDatePickerOpen(false)
                 if (selection != state.dateSelection) {
-                    dismissPin()
-                    autoFit = true
                     viewModel.selectDates(selection)
                 }
             },
+        )
+    }
+
+    viewportState.centerPicker?.let { picker ->
+        PhotoMapCenterPicker(
+            picker = picker,
+            tileStore = viewModel.tiles,
+            onMove = viewModel::moveCenterPicker,
+            onDismiss = viewModel::closeCenterPicker,
+            onSave = viewModel::saveDefaultCenter,
         )
     }
 }
@@ -245,6 +249,17 @@ internal fun PhotoMapMenu(viewModel: PhotoMapViewModel) {
                     viewModel.setDatePickerOpen(true)
                 },
             )
+            if (viewModel.albumId == null) {
+                val viewportState by viewModel.viewportState.collectAsStateWithLifecycle()
+                DropdownMenuItem(
+                    text = { Text(stringResource(I18N.string.photos_map_default_centre)) },
+                    enabled = viewportState.camera != null,
+                    onClick = {
+                        expanded = false
+                        viewModel.openCenterPicker()
+                    },
+                )
+            }
             DropdownMenuItem(
                 text = {
                     Text(stringResource(if (showPaths) I18N.string.photos_map_hide_path else I18N.string.photos_map_show_path))
@@ -259,12 +274,9 @@ internal fun PhotoMapMenu(viewModel: PhotoMapViewModel) {
 }
 
 @Composable
-private fun PhotoMapDateLabel(selection: MapDateSelection) {
+private fun PhotoMapDateLabel(selection: MapDateSelection, onClick: () -> Unit) {
     val label = when (selection) {
-        is MapDateSelection.Preset -> {
-            if (selection.preset == MapDatePreset.ALL_TIME) return
-            stringResource(selection.preset.label)
-        }
+        is MapDateSelection.Preset -> stringResource(selection.preset.label)
         is MapDateSelection.Custom -> {
             val locale = LocalConfiguration.current.locales[0]
             val formatter = remember(locale) { DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale) }
@@ -276,16 +288,24 @@ private fun PhotoMapDateLabel(selection: MapDateSelection) {
         }
     }
     Surface(
+        onClick = onClick,
         shape = RoundedCornerShape(8.dp),
         color = ProtonTheme.colors.backgroundNorm,
         shadowElevation = 2.dp,
     ) {
-        Text(
-            text = label,
+        Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            color = ProtonTheme.colors.textNorm,
-            style = MaterialTheme.typography.bodySmall,
-        )
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(label, color = ProtonTheme.colors.textNorm, style = MaterialTheme.typography.bodySmall)
+            Icon(
+                painter = painterResource(CorePresentation.drawable.ic_proton_chevron_down),
+                contentDescription = null,
+                modifier = Modifier.size(14.dp),
+                tint = ProtonTheme.colors.textNorm,
+            )
+        }
     }
 }
 
@@ -401,9 +421,3 @@ private fun MapPhotosCard(
 }
 
 private val LocatedMapPhoto.key: String get() = "${id.shareId.id}/${id.id}"
-
-
-private val MapCameraSaver = listSaver<MapCamera, Double>(
-    save = { listOf(it.center.x, it.center.y, it.zoom) },
-    restore = { MapCamera(MapPoint(it[0], it[1]), it[2]) },
-)

@@ -306,7 +306,7 @@ private fun Modifier.mapControlBackground() =
     clip(RoundedCornerShape(6.dp)).background(ProtonTheme.colors.backgroundNorm)
 
 internal val MapTileSize = MAP_TILE_DP.dp
-private val MapPinTipHeight = 7.dp
+internal val MapPinTipHeight = 7.dp
 
 private sealed interface TileImage {
     data object Loading : TileImage

@@ -53,6 +53,7 @@ internal data class MapDateRange(val start: LocalDate, val end: LocalDate) {
 @Serializable
 internal data class MapPoint(val x: Double, val y: Double)
 
+@Serializable
 internal data class MapCamera(val center: MapPoint, val zoom: Double) {
     fun worldSize(tileSize: Double): Double = tileSize * 2.0.pow(zoom)
 
@@ -108,6 +109,7 @@ internal fun fitMapCamera(
     height: Double,
     tileSize: Double,
     padding: Double,
+    topPadding: Double = padding,
 ): MapCamera {
     if (points.isEmpty()) return MapCamera.World
     val x = points.map(MapPoint::x).sorted()
@@ -120,10 +122,12 @@ internal fun fitMapCamera(
     val top = points.minOf(MapPoint::y)
     val bottom = points.maxOf(MapPoint::y)
     val horizontalZoom = log2((width - 2 * padding).coerceAtLeast(1.0) / (tileSize * (right - left)))
-    val verticalZoom = log2((height - 2 * padding).coerceAtLeast(1.0) / (tileSize * (bottom - top)))
+    val verticalZoom = log2((height - topPadding - padding).coerceAtLeast(1.0) / (tileSize * (bottom - top)))
+    val zoom = minOf(horizontalZoom, verticalZoom, 14.0).coerceAtLeast(MIN_ZOOM)
+    val verticalOffset = (topPadding - padding) / (2 * tileSize * 2.0.pow(zoom))
     return MapCamera(
-        center = MapPoint(wrapWorld((left + right) / 2), (top + bottom) / 2),
-        zoom = minOf(horizontalZoom, verticalZoom, 14.0).coerceAtLeast(MIN_ZOOM),
+        center = MapPoint(wrapWorld((left + right) / 2), ((top + bottom) / 2 - verticalOffset).coerceIn(0.0, 1.0)),
+        zoom = zoom,
     )
 }
 

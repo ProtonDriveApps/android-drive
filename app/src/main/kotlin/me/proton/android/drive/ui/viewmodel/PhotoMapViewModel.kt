@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.ui.viewmodel
 
+import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.conflate
@@ -44,19 +46,25 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.TimeSource
 import me.proton.android.drive.extension.thumbnailVO
+import me.proton.android.drive.ui.screen.map.MapCamera
 import me.proton.android.drive.ui.screen.map.MapDatePreset
 import me.proton.android.drive.ui.screen.map.MapDateRange
 import me.proton.android.drive.ui.screen.map.MapDateSelection
+import me.proton.android.drive.ui.screen.map.MapPin
 import me.proton.android.drive.ui.screen.map.MapPoint
 import me.proton.android.drive.ui.screen.map.PhotoMapTiles
+import me.proton.android.drive.ui.screen.map.fitMapCamera
 import me.proton.android.drive.ui.screen.map.mapPoint
+import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.drive.base.data.api.Dto
+import me.proton.core.drive.base.data.datastore.GetUserDataStore
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.firstErrorDomainOrNull
@@ -128,6 +136,20 @@ internal data class PhotoMapState(
     val content: PhotoMapContent,
 )
 
+internal data class PhotoMapCenterPickerState(
+    val camera: MapCamera,
+    val saving: Boolean = false,
+    val saveFailed: Boolean = false,
+)
+
+internal data class SelectedMapPin(val photoId: FileId, val zoom: Double)
+
+internal data class PhotoMapViewportState(
+    val camera: MapCamera?,
+    val selectedPin: SelectedMapPin? = null,
+    val centerPicker: PhotoMapCenterPickerState? = null,
+)
+
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 internal class PhotoMapViewModel @Inject constructor(
@@ -146,6 +168,8 @@ internal class PhotoMapViewModel @Inject constructor(
     private val locationCache: PhotoMapLocationCache,
     private val sha256: Sha256,
     private val photosClientProvider: ProtonPhotosClientProvider,
+    private val getUserDataStore: GetUserDataStore,
+    private val keyStoreCrypto: KeyStoreCrypto,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     val albumId = savedStateHandle.get<String>(AlbumViewModel.ALBUM_ID)?.let { id ->
         AlbumId(ShareId(userId, requireNotNull(savedStateHandle[AlbumViewModel.SHARE_ID])), id)
@@ -161,6 +185,9 @@ internal class PhotoMapViewModel @Inject constructor(
     private val loading = PhotoMapContent(loading = true)
     private val initialSelection = dateSelection.value
     private var verifiedAlbumDates: AlbumDates? = null
+    private var fitOpeningCamera = true
+    private val _viewportState = MutableStateFlow(PhotoMapViewportState(if (albumId == null) null else MapCamera.World))
+    val viewportState = _viewportState.asStateFlow()
 
     val state = combine(dateSelection, retry) { selection, _ -> selection }
         .flatMapLatest { selection ->
@@ -180,7 +207,95 @@ internal class PhotoMapViewModel @Inject constructor(
             PhotoMapState(initialSelection, initialSelection.range(LocalDate.now(zone)), loading),
         )
 
+    init {
+        if (albumId == null) viewModelScope.launch {
+            val saved = coRunCatchingException(Dispatchers.IO) {
+                getUserDataStore(userId).data.first()[GetUserDataStore.Keys.photoMapDefaultCentre]?.let {
+                    Json.decodeFromString<MapCamera>(keyStoreCrypto.decrypt(it))
+                }
+            }.getOrNull()
+            if (saved != null) fitOpeningCamera = false
+            _viewportState.update { it.copy(camera = saved ?: MapCamera.World) }
+        }
+    }
+
+    fun fitOpeningPhotos(
+        content: PhotoMapContent,
+        width: Double,
+        height: Double,
+        tileSize: Double,
+        padding: Double,
+        topPadding: Double,
+    ) {
+        if (!fitOpeningCamera || viewportState.value.camera == null || width <= 0 || height <= 0) return
+        if (content.loading && (albumId == null || content.photos.isEmpty())) return
+        if (content.photos.isEmpty() && content.hasError) return
+        fitOpeningCamera = albumId != null && (content.loading || content.hasError)
+        val camera = fitMapCamera(content.photos.map(LocatedMapPhoto::point), width, height, tileSize, padding, topPadding)
+        _viewportState.update { it.copy(camera = camera) }
+    }
+
+    fun updateCamera(transform: (MapCamera) -> MapCamera) {
+        val current = viewportState.value.camera ?: return
+        fitOpeningCamera = false
+        _viewportState.update { it.copy(camera = transform(current)) }
+    }
+
+    fun selectPin(pin: MapPin<LocatedMapPhoto>, zoom: Double) {
+        val current = viewportState.value.camera ?: return
+        fitOpeningCamera = false
+        // Keep the pin in the middle of the map when the card opens.
+        _viewportState.update {
+            it.copy(camera = current.copy(center = pin.point), selectedPin = SelectedMapPin(pin.photos.first().id, zoom))
+        }
+    }
+
+    fun dismissPin() {
+        _viewportState.update { it.copy(selectedPin = null) }
+    }
+
+    fun openCenterPicker() {
+        val current = viewportState.value.camera ?: return
+        if (albumId == null) _viewportState.update { it.copy(centerPicker = PhotoMapCenterPickerState(current)) }
+    }
+
+    fun closeCenterPicker() {
+        if (viewportState.value.centerPicker?.saving != true) _viewportState.update { it.copy(centerPicker = null) }
+    }
+
+    fun moveCenterPicker(transform: (MapCamera) -> MapCamera) {
+        val picker = viewportState.value.centerPicker ?: return
+        if (!picker.saving) {
+            val moved = picker.copy(camera = transform(picker.camera), saveFailed = false)
+            _viewportState.update { it.copy(centerPicker = moved) }
+        }
+    }
+
+    fun saveDefaultCenter() {
+        val picker = viewportState.value.centerPicker ?: return
+        if (picker.saving) return
+        _viewportState.update { it.copy(centerPicker = picker.copy(saving = true, saveFailed = false)) }
+        viewModelScope.launch {
+            val result = coRunCatchingException(Dispatchers.IO) {
+                val plain = Json.encodeToString(picker.camera)
+                val encrypted = keyStoreCrypto.encrypt(plain)
+                check(encrypted != plain)
+                getUserDataStore(userId).edit { preferences ->
+                    preferences[GetUserDataStore.Keys.photoMapDefaultCentre] = encrypted
+                }
+            }
+            if (result.isSuccess) {
+                fitOpeningCamera = false
+                _viewportState.value = PhotoMapViewportState(camera = picker.camera)
+            } else {
+                _viewportState.update { it.copy(centerPicker = picker.copy(saveFailed = true)) }
+            }
+        }
+    }
+
     fun selectDates(selection: MapDateSelection) {
+        fitOpeningCamera = false
+        dismissPin()
         savedStateHandle[DATE_SELECTION] = selection
     }
 
@@ -190,7 +305,10 @@ internal class PhotoMapViewModel @Inject constructor(
     }
 
     fun refreshRelativeDates() {
-        if (state.value.range != dateSelection.value.range(LocalDate.now(zone))) retry()
+        if (state.value.range != dateSelection.value.range(LocalDate.now(zone))) {
+            fitOpeningCamera = false
+            retry()
+        }
     }
 
     fun togglePaths() {

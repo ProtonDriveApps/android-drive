@@ -75,6 +75,7 @@ class GetUserDataStore @Inject constructor(
         private const val KEY_NEW_EDITOR_PERMISSIONS_FIRST_SHOWN = "new_editor_permissions_first_shown"
         private const val KEY_BLACK_FRIDAY_2026_FREE_PROMO_LAST_SHOWN = "black_friday_2026_free_last_shown"
         private const val KEY_BLACK_FRIDAY_2026_UPGRADE_PROMO_LAST_SHOWN = "black_friday_2026_upgrade_last_shown"
+        private const val KEY_PHOTO_MAP_DEFAULT_CENTRE = "photo_map_default_centre"
     }
 
     data object Keys {
@@ -92,5 +93,6 @@ class GetUserDataStore @Inject constructor(
         val blackFriday2026UpgradePromoLastShown get() = longPreferencesKey(
             KEY_BLACK_FRIDAY_2026_UPGRADE_PROMO_LAST_SHOWN
         )
+        val photoMapDefaultCentre get() = stringPreferencesKey(KEY_PHOTO_MAP_DEFAULT_CENTRE)
     }
 }
