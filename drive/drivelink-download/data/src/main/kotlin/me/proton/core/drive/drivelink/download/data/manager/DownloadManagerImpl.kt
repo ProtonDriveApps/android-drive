@@ -45,6 +45,7 @@ import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -119,6 +120,7 @@ class DownloadManagerImpl @Inject constructor(
     private val downloadErrorManager: DownloadErrorManager,
     private val isLinkOrAnyAncestorTrashed: IsLinkOrAnyAncestorTrashed,
     private val downloadSdkManager: DownloadSdkManager,
+    private val itemLifecycle: ItemLifecycle,
 ) : DownloadManager, DownloadManager.FileDownloader, PipelineManager.TaskProvider<DownloadFileTask> {
     private var userId: UserId? = null
     private val runningTasks = MutableStateFlow(emptySet<DownloadFileTask>())
@@ -190,7 +192,13 @@ class DownloadManagerImpl @Inject constructor(
 
     override suspend fun cancelAll(userId: UserId) {
         pipelineManager.stopPipelines(immediately = true)
+        val downloadFileLinks = DownloadFileLink.State.entries.flatMap { state ->
+            downloadFileRepository.getAllWithState(userId, state)
+        }
         downloadFileRepository.deleteAll(userId)
+        downloadFileLinks.forEach { downloadFileLink ->
+            downloadFileLink.fileId.logFinished(ItemLifecycle.Outcome.CANCELLED)
+        }
         downloadParentLinkRepository.deleteAll(userId)
     }
 
@@ -262,13 +270,16 @@ class DownloadManagerImpl @Inject constructor(
         downloadSdkManager.close(task.downloadFileLink.revisionUid)
         runningTasks.value -= task
         downloadFileRepository.delete(task.downloadFileLink.id)
+        task.downloadFileLink.fileId.logFinished(ItemLifecycle.Outcome.SUCCEEDED)
     }
 
     private suspend fun taskCompletedWithException(task: DownloadFileTask, throwable: Throwable) {
         throwable.log(task.downloadFileLink.fileId.logTag, "taskCompleted pipelineId=${task.pipelineId}")
         setDownloadState(task.downloadFileLink.fileId, DownloadState.Error)
-        downloadErrorManager.post(task.downloadFileLink.fileId, throwable)
+        // Error handlers may cancel the file (e.g. when it no longer exists); once the task is no
+        // longer running, that cannot stop this pipeline while it finishes the failed task
         runningTasks.value -= task
+        downloadErrorManager.post(task.downloadFileLink.fileId, throwable)
 
         if (task.downloadFileLink.retryable && throwable.isRetryable && task.downloadFileLink.numberOfRetries < configurationProvider.maxApiAutoRetries) {
             downloadFileRepository.updateStateToFailed(task.downloadFileLink.id)
@@ -276,8 +287,12 @@ class DownloadManagerImpl @Inject constructor(
         } else {
             downloadFileCleanup(task.downloadFileLink.volumeId, task.downloadFileLink.fileId)
             downloadFileRepository.delete(task.downloadFileLink.id)
+            task.downloadFileLink.fileId.logFinished(ItemLifecycle.Outcome.FAILED)
         }
     }
+
+    private fun FileId.logFinished(outcome: ItemLifecycle.Outcome) =
+        itemLifecycle.finished(ItemLifecycle.Flow.DOWNLOAD, id, outcome)
 
     @JvmName("downloadDriveLink")
     private suspend fun DriveLink.download(
@@ -329,6 +344,7 @@ class DownloadManagerImpl @Inject constructor(
                 volumeType = driveLink.volumeType,
             )
         )
+        itemLifecycle.accepted(ItemLifecycle.Flow.DOWNLOAD, driveLink.id.id)
     }
 
     private suspend fun downloadFolder(
@@ -508,13 +524,16 @@ class DownloadManagerImpl @Inject constructor(
         shouldCleanup = isCancelledByStop,
     ) {
         downloadFileRepository.delete(downloadFileId)
+        // A stopped task always finishes here, even if its record is already gone (a deleted
+        // link removes it along with the link).
+        true
     }
 
     private suspend fun cancelFileDownloadInternal(
         volumeId: VolumeId,
         fileId: FileId,
         shouldCleanup: Boolean,
-        deleteFromRepository: suspend () -> Unit,
+        deleteFromRepository: suspend () -> Boolean,
     ) = coRunCatching(NonCancellable) {
         runningTasks.value.firstOrNull(fileId)?.let { task ->
             cancelingFiles.value += volumeId to fileId
@@ -525,7 +544,11 @@ class DownloadManagerImpl @Inject constructor(
         if (shouldCleanup) {
             downloadFileCleanup(volumeId, fileId)
         }
-        deleteFromRepository()
+        // Callers cancel files that may not be downloading (a deleted link, an offline toggle):
+        // such a cancel finishes a download only if one was recorded.
+        if (deleteFromRepository()) {
+            fileId.logFinished(ItemLifecycle.Outcome.CANCELLED)
+        }
         cancelingFiles.value -= volumeId to fileId
     }
 

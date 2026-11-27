@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
@@ -47,6 +48,7 @@ import me.proton.core.drive.backup.domain.usecase.GetAllBuckets
 import me.proton.core.drive.backup.domain.usecase.GetFoldersFlow
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.extension.toResult
@@ -67,6 +69,7 @@ import me.proton.core.drive.i18n.R as I18N
 @HiltViewModel
 class LibraryFoldersViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
+    @ApplicationScope private val applicationScope: CoroutineScope,
     savedStateHandle: SavedStateHandle,
     getAllBuckets: GetAllBuckets,
     getFoldersFlow: GetFoldersFlow,
@@ -173,7 +176,11 @@ class LibraryFoldersViewModel @Inject constructor(
         navigateToConfirmStopSyncFolder: (FolderId, Int) -> Unit,
     ) = object : LibraryFoldersViewEvent {
         override val onToggleBucket: (Int, Boolean) -> Unit = { id, enable ->
-            viewModelScope.launch {
+            // Onboarding dismisses this screen on "Done", which clears this ViewModel. Enable in the
+            // application scope so that tapping "Done" right after does not cancel it. Disabling
+            // navigates, so it stays in the ViewModel scope.
+            val scope = if (enable) applicationScope else viewModelScope
+            scope.launch {
                 coRunCatching {
                     val folderId = photosDriveLink.toResult().getOrThrow().id
                     val backupFolder = BackupFolder(

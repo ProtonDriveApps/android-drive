@@ -28,7 +28,7 @@ fun ProtonErrorException.getDefaultMessage(context: Context): String =
 fun ProtonErrorException.log(
     tag: String,
     message: String? = null,
-    level: LoggerLevel? = LoggerLevel.DEBUG,
+    level: LoggerLevel? = null,
 ): ProtonErrorException = also {
-    level.log(tag, this, message)
+    (level ?: LoggerLevel.DEBUG).log(tag, this, message)
 }

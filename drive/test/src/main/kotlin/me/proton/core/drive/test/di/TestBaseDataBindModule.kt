@@ -31,6 +31,7 @@ import me.proton.core.drive.base.data.usecase.IsRetryableImpl
 import me.proton.core.drive.base.data.usecase.LogReportError
 import me.proton.core.drive.base.data.usecase.Sha256Impl
 import me.proton.core.drive.base.domain.formatter.DateTimeFormatter
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.base.domain.provider.BuildConfigFieldsProvider
 import me.proton.core.drive.base.domain.repository.BaseRepository
 import me.proton.core.drive.base.domain.usecase.CopyToClipboard
@@ -41,6 +42,7 @@ import me.proton.core.drive.base.domain.usecase.IsRetryable
 import me.proton.core.drive.base.domain.usecase.ReportError
 import me.proton.core.drive.base.domain.usecase.Sha256
 import me.proton.core.drive.test.TestBuildConfigFieldsProvider
+import me.proton.core.drive.test.log.TestItemLifecycle
 import me.proton.core.drive.test.usecase.TestGetInternalStorageInfo
 import me.proton.core.drive.test.usecase.TestGetMemoryInfo
 import javax.inject.Singleton
@@ -63,6 +65,10 @@ interface TestBaseDataBindModule {
     @Binds
     @Singleton
     fun bindsSha256Impl(impl: Sha256Impl): Sha256
+
+    @Binds
+    @Singleton
+    fun bindsItemLifecycle(impl: TestItemLifecycle): ItemLifecycle
 
     @Binds
     @Singleton

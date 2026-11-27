@@ -32,7 +32,7 @@ fun CryptoException.getDefaultMessage(context: Context): String = message?.let {
 fun CryptoException.log(
     tag: String,
     message: String? = null,
-    level: LoggerLevel? = LoggerLevel.DEBUG,
+    level: LoggerLevel? = null,
 ): CryptoException = also {
-    level.log(tag, this, message)
+    (level ?: LoggerLevel.DEBUG).log(tag, this, message)
 }

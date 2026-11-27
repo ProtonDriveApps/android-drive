@@ -34,6 +34,7 @@ import me.proton.core.drive.backup.data.manager.BackupManagerImpl
 import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_FOLDER_ID
 import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_SHARE_ID
 import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_USER_ID
+import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.usecase.FindDuplicates
 import me.proton.core.drive.backup.domain.usecase.HandleBackupError
@@ -41,12 +42,15 @@ import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
+import me.proton.core.drive.base.domain.api.ProtonApiCode.NOT_EXISTS
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.network.domain.ApiException
+import me.proton.core.network.domain.hasProtonErrorCode
 
 @HiltWorker
 class BackupFindDuplicatesWorker @AssistedInject constructor(
@@ -83,14 +87,23 @@ class BackupFindDuplicatesWorker @AssistedInject constructor(
             } else {
                 error.log(
                     tag = BACKUP,
-                    message = "Cannot find duplicates for: ${folderId.id} retryable $retryable, max retries reached $canRetry"
+                    message = "Cannot find duplicates for: ${folderId.id} retryable $retryable, max retries reached ${!canRetry}"
                 )
-                handleBackupError(folderId, error.toBackupError(folderId, retryable))
+                handleBackupError(folderId, error.toFindDuplicatesBackupError(retryable))
                 Result.failure()
             }
         }
         return Result.success()
     }
+
+    // Duplicates are looked up in the backup folder (or its photo volume), so not found means the
+    // folder is gone, e.g. the photo volume was deleted or locked
+    private fun Throwable.toFindDuplicatesBackupError(retryable: Boolean): BackupError =
+        if (this is ApiException && hasProtonErrorCode(NOT_EXISTS)) {
+            BackupError.FolderNotFound()
+        } else {
+            toBackupError(folderId, retryable)
+        }
 
     companion object {
         fun getWorkRequest(

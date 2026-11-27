@@ -33,8 +33,10 @@ interface DownloadFileRepository {
         state: DownloadFileLink.State,
     ): DownloadFileLink?
     suspend fun add(downloadFileLink: DownloadFileLink)
-    suspend fun delete(id: Long)
-    suspend fun delete(volumeId: VolumeId, fileId: FileId, revisionId: String)
+    /** Returns whether a download was recorded for [id] and has been removed. */
+    suspend fun delete(id: Long): Boolean
+    /** Returns whether a download was recorded for this revision and has been removed. */
+    suspend fun delete(volumeId: VolumeId, fileId: FileId, revisionId: String): Boolean
     suspend fun deleteAll(userId: UserId)
     suspend fun resetAllState(userId: UserId, state: DownloadFileLink.State)
     fun getCountFlow(userId: UserId): Flow<Int>

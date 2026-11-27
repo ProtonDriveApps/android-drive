@@ -53,15 +53,8 @@ import me.proton.core.drive.share.data.db.ShareEntity
         ),
     ],
     indices = [
-        Index(value = [USER_ID]),
-        Index(value = [VOLUME_ID]),
-        Index(value = [SHARE_ID]),
-        Index(value = [ID]),
-        Index(value = [USER_ID, VOLUME_ID]),
         Index(value = [USER_ID, SHARE_ID, ID]),
-        Index(value = [USER_ID, VOLUME_ID, TAG]),
-        Index(value = [USER_ID, VOLUME_ID, SHARE_ID, TAG]),
-        Index(value = [USER_ID, VOLUME_ID, ID, TAG, CAPTURE_TIME]),
+        Index(value = [USER_ID, VOLUME_ID, TAG, CAPTURE_TIME, ID]),
     ],
 )
 data class TaggedPhotoListingEntity(

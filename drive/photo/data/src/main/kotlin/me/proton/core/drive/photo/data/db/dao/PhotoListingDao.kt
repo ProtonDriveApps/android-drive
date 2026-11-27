@@ -145,7 +145,8 @@ abstract class PhotoListingDao : BaseDao<PhotoListingEntity>() {
                 ple.id = lfpe.file_link_id
             WHERE
                 ple.user_id = :userId AND
-                ple.volume_id = :volumeId AND (
+                ple.volume_id = :volumeId AND
+                ple.capture_time >= COALESCE(:lastCaptureTime, ${Long.MIN_VALUE}) AND (
                     :lastCaptureTime IS NULL OR
                     (
                         ple.capture_time > :lastCaptureTime OR
@@ -176,7 +177,8 @@ abstract class PhotoListingDao : BaseDao<PhotoListingEntity>() {
                 ple.id = lfpe.file_link_id
             WHERE
                 ple.user_id = :userId AND
-                ple.volume_id = :volumeId AND (
+                ple.volume_id = :volumeId AND
+                ple.capture_time <= COALESCE(:lastCaptureTime, ${Long.MAX_VALUE}) AND (
                     :lastCaptureTime IS NULL OR (
                         ple.capture_time < :lastCaptureTime OR
                         (

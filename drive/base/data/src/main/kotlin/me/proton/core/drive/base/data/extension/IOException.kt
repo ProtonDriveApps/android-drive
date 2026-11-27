@@ -32,7 +32,7 @@ fun IOException.getDefaultMessage(context: Context): String = message?.let {
 fun IOException.log(
     tag: String,
     message: String? = null,
-    level: LoggerLevel? = LoggerLevel.DEBUG,
+    level: LoggerLevel? = null,
 ): IOException = also {
-    level.log(tag, this, message)
+    (level ?: LoggerLevel.DEBUG).log(tag, this, message)
 }

@@ -26,5 +26,7 @@ import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewSt
 data class HomeViewState(
     val tabs: List<NavigationTab>,
     val selectedTab: NavigationTab?,
-    val navigationDrawerViewState: NavigationDrawerViewState
+    val navigationDrawerViewState: NavigationDrawerViewState,
+    val isTabTransitionsEnabled: Boolean = false,
+    val tabRoutes: List<String> = emptyList(),
 )

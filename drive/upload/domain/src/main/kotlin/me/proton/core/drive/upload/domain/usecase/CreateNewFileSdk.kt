@@ -49,6 +49,7 @@ import me.proton.core.drive.upload.domain.manager.UploadSdkManager
 import me.proton.drive.sdk.entity.FileUploaderRequest
 import me.proton.drive.sdk.entity.PhotosUploaderRequest
 import java.time.Instant
+import java.time.ZoneOffset
 import javax.inject.Inject
 
 class CreateNewFileSdk @Inject constructor(
@@ -126,7 +127,7 @@ class CreateNewFileSdk @Inject constructor(
                     name = name,
                     mediaType = mimeType,
                     fileSize = size.value,
-                    lastModificationTime = lastModified,
+                    lastModificationTime = lastModified?.atOffset(ZoneOffset.UTC),
                     overrideExistingDraftByOtherClient = false,
                     noWaiting = false,
                 )
@@ -148,7 +149,7 @@ class CreateNewFileSdk @Inject constructor(
                     name = name,
                     mediaType = mimeType,
                     fileSize = size.value,
-                    lastModificationTime = lastModified,
+                    lastModificationTime = lastModified?.atOffset(ZoneOffset.UTC),
                     captureTime = fileCreationDateTime?.toInstant(),
                     mainPhotoUid = null,
                     overrideExistingDraftByOtherClient = false,

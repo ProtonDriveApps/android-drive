@@ -53,9 +53,9 @@ import me.proton.core.drive.photo.data.db.entity.AlbumPhotoListingEntity
         ),
     ],
     indices = [
-        Index(value = [ID]),
-        Index(value = [KEY]),
-        Index(value = [KEY, USER_ID, VOLUME_ID, SHARE_ID, ALBUM_ID, LINK_ID], unique = true)
+        Index(value = [KEY, VOLUME_ID, SHARE_ID, ALBUM_ID]),
+        Index(value = [KEY, USER_ID, VOLUME_ID, SHARE_ID, ALBUM_ID, LINK_ID], unique = true),
+        Index(value = [USER_ID, VOLUME_ID, SHARE_ID, ALBUM_ID, LINK_ID]),
     ],
 )
 data class AlbumPhotoListingRemoteKeyEntity(

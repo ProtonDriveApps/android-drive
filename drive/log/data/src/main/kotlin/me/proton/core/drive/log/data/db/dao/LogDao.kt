@@ -43,17 +43,33 @@ abstract class LogDao : BaseDao<LogEntity>() {
         SELECT * FROM LogEntity WHERE
             user_id = :userId
         ORDER BY creation_time DESC, id DESC
-        LIMIT :limit OFFSET :offset
+        LIMIT :limit
     """)
-    abstract suspend fun getLogs(userId: UserId, limit: Int, offset: Int): List<LogEntity>
+    abstract suspend fun getLogs(userId: UserId, limit: Int): List<LogEntity>
+
+    @Query("""
+        SELECT * FROM LogEntity WHERE
+            user_id = :userId AND
+            creation_time <= :lastCreationTime AND
+            (creation_time < :lastCreationTime OR id < :lastId)
+        ORDER BY creation_time DESC, id DESC
+        LIMIT :limit
+    """)
+    abstract suspend fun getLogsAfter(
+        userId: UserId,
+        lastCreationTime: Long,
+        lastId: Long,
+        limit: Int,
+    ): List<LogEntity>
 
     @Query("""
         DELETE FROM LogEntity WHERE
             user_id = :userId AND
-            id NOT IN (
+            :limit >= 0 AND
+            id IN (
                 SELECT id FROM LogEntity WHERE user_id = :userId
                 ORDER BY creation_time DESC, id DESC
-                LIMIT :limit
+                LIMIT -1 OFFSET :limit
             )
     """)
     abstract suspend fun dropOldRowsToFitLimit(userId: UserId, limit: Int)

@@ -40,17 +40,20 @@ import androidx.paging.compose.itemKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
+import me.proton.core.drive.base.presentation.component.ReportDrawnWhenLoaded
 import me.proton.core.drive.base.presentation.component.list.ListEmpty
 import me.proton.core.drive.base.presentation.component.list.ListError
 import me.proton.core.drive.base.presentation.component.list.ListLoading
 import me.proton.core.drive.base.presentation.effect.HandleListEffect
 import me.proton.core.drive.base.presentation.effect.ListEffect
 import me.proton.core.drive.base.presentation.extension.aroundVisibleItems
+import me.proton.core.drive.base.presentation.extension.fadeInOnAppear
 import me.proton.core.drive.base.presentation.extension.onContent
 import me.proton.core.drive.base.presentation.extension.onEmpty
 import me.proton.core.drive.base.presentation.extension.onError
 import me.proton.core.drive.base.presentation.extension.onLoading
 import me.proton.core.drive.base.presentation.extension.rememberVisibleItems
+import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.shared.presentation.entity.SharedItem
 import me.proton.core.drive.drivelink.shared.presentation.viewevent.SharedViewEvent
@@ -80,6 +83,7 @@ fun Shared(
             }
     }
     listEffect.HandleListEffect(items = items)
+    ReportDrawnWhenLoaded(isLoading = viewState.listContentState is ListContentState.Loading)
     viewState.listContentState
         .onEmpty { state ->
             SharedEmpty(
@@ -89,7 +93,7 @@ fun Shared(
                 actionResId = null,
                 isRefreshEnabled = viewState.isRefreshEnabled,
                 isRefreshing = viewState.listContentState.isRefreshing,
-                modifier = modifier,
+                modifier = modifier.fadeInOnAppear(),
                 onAction = {},
                 onRefresh = viewEvent.onRefresh,
                 headerContent = headerContent,
@@ -107,7 +111,7 @@ fun Shared(
                 actionResId = state.actionResId,
                 isRefreshEnabled = viewState.isRefreshEnabled,
                 isRefreshing = viewState.listContentState.isRefreshing,
-                modifier = modifier,
+                modifier = modifier.fadeInOnAppear(),
                 onAction = viewEvent.onErrorAction,
                 onRefresh = viewEvent.onRefresh,
                 headerContent = headerContent,
@@ -119,7 +123,7 @@ fun Shared(
                 driveLinksFlow = driveLinksFlow,
                 isRefreshEnabled = viewState.isRefreshEnabled,
                 isRefreshing = viewState.listContentState.isRefreshing,
-                modifier = modifier,
+                modifier = modifier.fadeInOnAppear(),
                 onDriveLink = viewEvent.onDriveLink,
                 onScroll = viewEvent.onScroll,
                 onRefresh = viewEvent.onRefresh,

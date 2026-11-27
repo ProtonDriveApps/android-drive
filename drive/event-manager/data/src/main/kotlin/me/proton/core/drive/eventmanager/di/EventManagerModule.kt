@@ -30,7 +30,9 @@ import me.proton.core.drive.eventmanager.LinkEventListener
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.eventmanager.repository.VolumeConfigRepository
 import me.proton.core.drive.eventmanager.repository.VolumeConfigRepositoryImpl
+import me.proton.core.drive.eventmanager.usecase.LinkNotFoundHandlerImpl
 import me.proton.core.drive.eventmanager.usecase.UpdateEventActionImpl
+import me.proton.core.drive.link.domain.handler.LinkNotFoundHandler
 import me.proton.core.eventmanager.domain.EventListener
 import me.proton.core.label.data.LabelEventListener
 import me.proton.core.notification.data.NotificationEventListener
@@ -83,4 +85,12 @@ interface EventManagerBindsModule {
     @Binds
     @Singleton
     fun bindsVolumeConfigRepository(impl: VolumeConfigRepositoryImpl): VolumeConfigRepository
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+interface LinkNotFoundModule {
+    @Binds
+    @Singleton
+    fun bindsLinkNotFoundHandler(impl: LinkNotFoundHandlerImpl): LinkNotFoundHandler
 }

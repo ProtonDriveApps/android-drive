@@ -31,12 +31,15 @@ import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.entity.ParentId
+import me.proton.core.drive.link.domain.handler.LinkNotFoundHandler
+import me.proton.core.drive.link.domain.handler.onNotExists
 import me.proton.core.drive.link.domain.repository.LinkRepository
 import javax.inject.Inject
 
 class GetLink @Inject constructor(
     private val hasLink: HasLink,
     private val linkRepository: LinkRepository,
+    private val linkNotFoundHandler: LinkNotFoundHandler,
 ) {
 
     operator fun invoke(
@@ -98,7 +101,9 @@ class GetLink @Inject constructor(
     ) =
         refresh.transform { shouldRefresh ->
             if (shouldRefresh) {
-                fetcher<Link> { linkRepository.fetchLink(linkId) }
+                fetcher<Link> {
+                    linkNotFoundHandler.onNotExists(linkId) { linkRepository.fetchLink(linkId) }
+                }
             }
             emitAll(linkRepository.getLinkFlow(linkId))
         }

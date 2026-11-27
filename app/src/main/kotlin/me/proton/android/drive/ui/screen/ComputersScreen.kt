@@ -38,7 +38,9 @@ import me.proton.android.drive.ui.viewmodel.ComputersViewModel
 import me.proton.android.drive.ui.viewstate.ComputersViewState
 import me.proton.android.drive.ui.viewstate.HomeScaffoldState
 import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
+import me.proton.core.drive.base.presentation.component.ReportDrawnWhenLoaded
 import me.proton.core.drive.base.presentation.extension.conditional
+import me.proton.core.drive.base.presentation.extension.fadeInOnAppear
 import me.proton.core.drive.base.presentation.extension.onContent
 import me.proton.core.drive.base.presentation.extension.onEmpty
 import me.proton.core.drive.base.presentation.extension.onError
@@ -130,6 +132,7 @@ fun Computers(
     onMoreOptions: (Device) -> Unit,
     onRenderThumbnail: (Device) -> Unit,
 ) {
+    ReportDrawnWhenLoaded(isLoading = listContentState is ListContentState.Loading)
     val scrollState = rememberScrollState()
     Box(
         modifier = modifier
@@ -148,6 +151,7 @@ fun Computers(
                     imageResId = state.imageResId,
                     titleResId = state.titleId,
                     descriptionResId = state.descriptionResId,
+                    modifier = Modifier.fadeInOnAppear(),
                 )
             }
             .onError { state ->
@@ -155,6 +159,7 @@ fun Computers(
                     errorMessage = state.message,
                     actionResId = state.actionResId,
                     onAction = onError,
+                    modifier = Modifier.fadeInOnAppear(),
                 )
             }
             .onContent {
@@ -165,6 +170,7 @@ fun Computers(
                     onRenderThumbnail = onRenderThumbnail,
                     modifier = Modifier
                         .testTag(ComputersTestTag.content)
+                        .fadeInOnAppear(),
                 )
             }
     }

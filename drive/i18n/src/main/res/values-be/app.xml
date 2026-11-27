@@ -161,7 +161,7 @@
   <string name="notification_content_text_backup_failed_permission">Адсутнічаюць дазволы</string>
   <string name="notification_content_text_backup_failed_connectivity">Няма падключэння да інтэрнэту</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Чаканне Wi-Fi</string>
-  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">This network might charge for data</string>
+  <string name="notification_content_text_backup_failed_connectivity_unconfirmed">Гэта сетка можа спаганяць з вас грашовыя сродкі за даныя</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Рэзервовая копія забаронена</string>
   <string name="notification_content_text_backup_failed_folder_not_found">Папка рэзервовага капіявання больш не існуе</string>
   <string name="notification_content_text_backup_paused_disabled">Рэзервовае капіяванне было адключана</string>

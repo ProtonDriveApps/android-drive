@@ -54,13 +54,9 @@ import me.proton.core.drive.share.data.db.ShareEntity
         ),
     ],
     indices = [
-        Index(value = [USER_ID]),
-        Index(value = [VOLUME_ID]),
-        Index(value = [SHARE_ID]),
-        Index(value = [ALBUM_ID]),
-        Index(value = [ID]),
-        Index(value = [USER_ID, VOLUME_ID]),
-        Index(value = [USER_ID, VOLUME_ID, SHARE_ID, ALBUM_ID]),
+        Index(value = [USER_ID, SHARE_ID, ID]),
+        Index(value = [USER_ID, VOLUME_ID, ALBUM_ID, ID]),
+        Index(value = [USER_ID, ALBUM_ID, SHARE_ID, ID]),
     ],
 )
 data class AlbumPhotoListingEntity(

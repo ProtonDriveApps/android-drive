@@ -35,6 +35,7 @@ driveModule(
     implementation(libs.core.key)
     
     testImplementation(project(":drive:volume:domain"))
+    testImplementation(project(":drive:test"))
 
     androidTestImplementation(project(":drive:volume:domain"))
 }

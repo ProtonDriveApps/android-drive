@@ -34,6 +34,7 @@ import me.proton.core.drive.backup.domain.usecase.MarkAsFailed
 import me.proton.core.drive.backup.domain.usecase.StopBackup
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.extension.firstErrorDomainOrNull
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
@@ -57,6 +58,7 @@ class BackupUploadErrorHandler @Inject constructor(
     private val markAsFailed: MarkAsFailed,
     private val backupPermissionsManager: BackupPermissionsManager,
     private val stopBackup: StopBackup,
+    private val itemLifecycle: ItemLifecycle,
 ) : UploadErrorHandler {
     override suspend fun onError(uploadError: UploadErrorManager.Error) {
         coRunCatching {
@@ -133,6 +135,11 @@ class BackupUploadErrorHandler @Inject constructor(
             CoreLogger.i(BACKUP, "Deleting file not found: $uriString")
             val folderId = uploadFileLink.parentLinkId
             deleteFile(folderId, uriString).onSuccess {
+                itemLifecycle.finished(
+                    flow = ItemLifecycle.Flow.BACKUP,
+                    id = itemLifecycle.backupKey(uriString),
+                    outcome = ItemLifecycle.Outcome.SOURCE_GONE,
+                )
                 backupManager.updateNotification(folderId)
             }.onFailure { error ->
                 error.log(BACKUP, "Cannot delete file: $uriString")

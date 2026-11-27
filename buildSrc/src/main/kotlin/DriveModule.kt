@@ -143,6 +143,10 @@ fun Project.driveModule(
         configureJvmTarget()
     }
 
+    if (extensions.findByType<LibraryExtension>() != null) {
+        configureMutationTesting()
+    }
+
     if (showkase) {
         extensions.findByType<KspExtension>()?.arg("skipPrivatePreviews", "true")
     }
@@ -157,8 +161,8 @@ fun Project.driveModule(
             targetSdk = Config.targetSdk
             testInstrumentationRunner = Config.testInstrumentationRunner
             // The drive SDK exposes a "crypto" flavor dimension (go/rust) that this
-            // project doesn't declare, so pick the "go" variant by default.
-            missingDimensionStrategy("crypto", "go")
+            // project doesn't declare, so pick the "rust" variant.
+            missingDimensionStrategy("crypto", "rust")
         }
 
         sourceSets {

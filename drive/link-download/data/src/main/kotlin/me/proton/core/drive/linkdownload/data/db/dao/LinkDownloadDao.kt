@@ -133,17 +133,24 @@ interface LinkDownloadDao : LinkDao {
         SELECT
             LinkDownloadStateEntity.state
         FROM
-            LinkEntity
+            AlbumPhotoListingEntity
+        INNER JOIN LinkEntity ON
+            LinkEntity.user_id = AlbumPhotoListingEntity.user_id AND
+            LinkEntity.share_id = AlbumPhotoListingEntity.share_id AND
+            LinkEntity.id = AlbumPhotoListingEntity.id
+        LEFT JOIN LinkFilePropertiesEntity ON
+            LinkFilePropertiesEntity.file_user_id = LinkEntity.user_id AND
+            LinkFilePropertiesEntity.file_share_id = LinkEntity.share_id AND
+            LinkFilePropertiesEntity.file_link_id = LinkEntity.id
         LEFT JOIN LinkDownloadStateEntity ON
             LinkDownloadStateEntity.user_id = LinkEntity.user_id AND
-            LinkDownloadStateEntity.link_id = LinkEntity.id
+            LinkDownloadStateEntity.share_id = LinkEntity.share_id AND
+            LinkDownloadStateEntity.link_id = LinkEntity.id AND
+            LinkDownloadStateEntity.revision_id = LinkFilePropertiesEntity.revision_id
         ${LinkTrashDao.LINK_JOIN_STATEMENT}
-        INNER JOIN AlbumPhotoListingEntity ON
-            AlbumPhotoListingEntity.user_id = LinkEntity.user_id AND
-            AlbumPhotoListingEntity.id = LinkEntity.id AND
-            AlbumPhotoListingEntity.album_id = :albumId
         WHERE
-            LinkEntity.user_id = :userId AND
+            AlbumPhotoListingEntity.user_id = :userId AND
+            AlbumPhotoListingEntity.album_id = :albumId AND
             ${LinkTrashDao.NOT_TRASHED_CONDITION}
         LIMIT :limit OFFSET :offset
     """)

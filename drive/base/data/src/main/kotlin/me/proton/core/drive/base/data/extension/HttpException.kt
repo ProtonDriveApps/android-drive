@@ -18,6 +18,7 @@
 package me.proton.core.drive.base.data.extension
 
 import android.content.Context
+import me.proton.core.drive.base.data.entity.LoggerLevel
 import retrofit2.HttpException
 import me.proton.core.drive.i18n.R as I18N
 
@@ -26,6 +27,10 @@ fun HttpException.getDefaultMessage(context: Context): String = when (code()) {
     else -> this.message()
 }
 
-fun HttpException.log(tag: String, message: String = this.message.orEmpty()): HttpException = also {
-    code().httpCodeLoggerLevel().log(tag, this, message)
+fun HttpException.log(
+    tag: String,
+    message: String? = null,
+    level: LoggerLevel? = null,
+): HttpException = also {
+    (level ?: code().httpCodeLoggerLevel()).log(tag, this, message ?: this.message.orEmpty())
 }

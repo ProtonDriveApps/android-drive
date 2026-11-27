@@ -41,4 +41,6 @@ driveModule(
     implementation(project(":drive:event-manager:domain"))
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.retrofit)
+
+    testImplementation(project(":drive:test"))
 }

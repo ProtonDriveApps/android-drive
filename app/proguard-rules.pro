@@ -29,3 +29,5 @@
 -dontwarn com.google.protobuf.**
 -keep class proton.sdk.** { *; }
 -keep class proton.drive.sdk.** { *; }
+
+-keep class me.proton.core.paymentiap.presentation.ui.BillingIAPFragment { <init>(); }

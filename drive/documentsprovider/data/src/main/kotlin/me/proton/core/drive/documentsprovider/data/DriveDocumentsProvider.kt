@@ -50,7 +50,6 @@ import me.proton.core.drive.documentsprovider.data.extension.asCursor
 import me.proton.core.drive.documentsprovider.data.extension.encode
 import me.proton.core.drive.documentsprovider.data.extension.toDocumentId
 import me.proton.core.drive.documentsprovider.domain.entity.DocumentId
-import me.proton.core.drive.documentsprovider.domain.usecase.CreateDocument
 import me.proton.core.drive.documentsprovider.domain.usecase.GetDocumentThumbnail
 import me.proton.core.drive.documentsprovider.domain.usecase.GetDocumentsProviderRoots
 import me.proton.core.drive.documentsprovider.domain.usecase.OpenDocument
@@ -168,9 +167,8 @@ class DriveDocumentsProvider : DocumentsProvider() {
             }
     }
 
-    override fun createDocument(parentDocumentId: String?, mimeType: String?, displayName: String?): String = runBlocking {
-        injections.createDocument(parentDocumentId.toDocumentId(), mimeType, displayName).encode()
-    }
+    override fun createDocument(parentDocumentId: String?, mimeType: String?, displayName: String?): String =
+        throw UnsupportedOperationException("Creating documents is not supported")
 
     override fun openDocument(
         documentId: String?,
@@ -251,7 +249,6 @@ class DriveDocumentsProvider : DocumentsProvider() {
         val withDriveLinkFolder: WithDriveLinkFolder
         // endregion
         val getDocumentsProviderRoots: GetDocumentsProviderRoots
-        val createDocument: CreateDocument
         val openDocument: OpenDocument
         val getDocumentThumbnail: GetDocumentThumbnail
         val getDecryptedDriveLinks: GetPagedDriveLinksList

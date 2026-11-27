@@ -18,10 +18,17 @@
 
 package me.proton.android.drive.ui.navigation.internal
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph
 import androidx.navigation.NavGraphBuilder
@@ -54,6 +61,8 @@ fun DriveNavHost(
     startDestination: String,
     modifier: Modifier = Modifier,
     route: String? = null,
+    enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = DefaultEnterTransition,
+    exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = DefaultExitTransition,
     builder: NavGraphBuilder.() -> Unit,
 ) {
     DriveNavHost(
@@ -61,7 +70,9 @@ fun DriveNavHost(
         remember(route, startDestination, builder) {
             navController.createGraph(startDestination, route, builder)
         },
-        modifier
+        modifier,
+        enterTransition,
+        exitTransition,
     )
 }
 
@@ -85,9 +96,17 @@ fun DriveNavHost(
     navController: NavHostController,
     graph: NavGraph,
     modifier: Modifier = Modifier,
+    enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = DefaultEnterTransition,
+    exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = DefaultExitTransition,
 ) {
 
-    NavHost(navController = navController, graph = graph, modifier = modifier)
+    NavHost(
+        navController = navController,
+        graph = graph,
+        modifier = modifier,
+        enterTransition = enterTransition,
+        exitTransition = exitTransition,
+    )
 
     val modalBottomSheetNavigator = navController.navigatorProvider.get<Navigator<out NavDestination>>(
         ModalBottomSheetNavigator.NAME
@@ -95,3 +114,11 @@ fun DriveNavHost(
 
     ModalBottomSheetHost(modalBottomSheetNavigator)
 }
+
+private val DefaultEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
+    fadeIn(tween(DEFAULT_FADE_DURATION_MS))
+}
+private val DefaultExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
+    fadeOut(tween(DEFAULT_FADE_DURATION_MS))
+}
+private const val DEFAULT_FADE_DURATION_MS = 700

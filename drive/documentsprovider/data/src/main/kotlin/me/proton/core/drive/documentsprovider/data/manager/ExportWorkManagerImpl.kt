@@ -25,6 +25,7 @@ import androidx.work.await
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.base.domain.util.coRunCatchingException
 import me.proton.core.drive.documentsprovider.data.worker.ExportToDestinationUriWorker
@@ -33,6 +34,7 @@ import me.proton.core.drive.documentsprovider.domain.manager.ExportWorkManager
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.link.selection.domain.usecase.SelectLinks
+import me.proton.core.util.kotlin.CoreLogger
 import java.util.concurrent.Executor
 import javax.inject.Inject
 
@@ -47,6 +49,7 @@ class ExportWorkManagerImpl @Inject constructor(
     private val UserId.uniqueExportWorkName: String get() = "export=$id"
 
     override fun exportTo(fileId: FileId, destinationUri: Uri) {
+        CoreLogger.d(LogTag.DOCUMENTS_PROVIDER, "Enqueuing export to destination for ${fileId.id.logId()}")
         workManager.enqueueUniqueWork(
             fileId.uniqueExportWorkName,
             ExistingWorkPolicy.KEEP,

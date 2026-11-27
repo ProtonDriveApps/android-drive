@@ -43,16 +43,17 @@ fun BackupPermissions(
         permissions = viewState.permissions,
         onPermissionsResult = viewEvent.onPermissionResult,
     )
-    LaunchedEffect(permissionsState.allPermissionsGranted) {
-        viewEvent.onPermissionsChanged(
-            if (permissionsState.allPermissionsGranted) {
-                BackupPermissions.Granted()
-            } else if (permissionsState.permissions.any { it.status.isGranted }) {
-                BackupPermissions.Granted(partial = true)
-            }else {
-                BackupPermissions.Denied(permissionsState.shouldShowRationale)
-            }
-        )
+    val backupPermissions = if (permissionsState.allPermissionsGranted) {
+        BackupPermissions.Granted()
+    } else if (permissionsState.permissions.any { it.status.isGranted }) {
+        BackupPermissions.Granted(partial = true)
+    } else {
+        BackupPermissions.Denied(permissionsState.shouldShowRationale)
+    }
+    // Keyed on the state and not on allPermissionsGranted, which stays false when access to
+    // selected photos only is granted.
+    LaunchedEffect(backupPermissions) {
+        viewEvent.onPermissionsChanged(backupPermissions)
     }
     LaunchedEffect(viewState, LocalContext.current) {
         viewState.effect
@@ -63,7 +64,7 @@ fun BackupPermissions(
             }
             .launchIn(this)
     }
-    if (viewState.shouldRequestNotificationPermission && permissionsState.allPermissionsGranted) {
+    if (viewState.shouldRequestNotificationPermission && backupPermissions is BackupPermissions.Granted) {
         NotificationPermission(
             shouldShowRationale = true,
             navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale

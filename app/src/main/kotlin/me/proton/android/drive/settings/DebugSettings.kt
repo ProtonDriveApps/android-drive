@@ -113,6 +113,8 @@ class DebugSettings(
         key = prefsLogToFileEnabled,
         default = buildConfig.logToFileInDebugEnabled,
     )
+    // Debug and alpha builds only: the invariant check after e2e runs reads these lines.
+    override val itemLifecycleLogEnabled: Boolean = true
     override var allowBackupDeletedFilesEnabled by Delegate(
         dataStore = context.dataStore,
         key = prefsAllowBackupDeletedFilesEnabled,

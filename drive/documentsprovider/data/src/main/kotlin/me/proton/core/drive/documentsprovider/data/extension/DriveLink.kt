@@ -33,17 +33,7 @@ internal fun DriveLink.addTo(cursor: MatrixCursor.RowBuilder) {
     val flags = DocumentsContract.Document.FLAG_SUPPORTS_DELETE
         .add {
             DocumentsContract.Document.FLAG_SUPPORTS_RENAME
-        }.add {
-            DocumentsContract.Document.FLAG_SUPPORTS_MOVE
-        }.addIfElse(
-            condition = this is Folder,
-            matched = {
-                DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE
-            },
-            unmatched = {
-                DocumentsContract.Document.FLAG_SUPPORTS_WRITE
-            }
-        ).addIf(this is DriveLink.File && hasThumbnail) {
+        }.addIf(this is DriveLink.File && hasThumbnail) {
             DocumentsContract.Document.FLAG_SUPPORTS_THUMBNAIL
         }
 

@@ -36,6 +36,7 @@ import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.extension.getOrNull
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.util.coRunCatching
@@ -76,6 +77,7 @@ class UploadCleanupWorker @AssistedInject constructor(
     private val announceUploadEvent: AnnounceUploadEvent,
     private val uploadSdkManager: UploadSdkManager,
     private val fileProvider: FileProvider,
+    private val itemLifecycle: ItemLifecycle,
     configurationProvider: ConfigurationProvider,
     workerRuns: WorkerRuns,
 ) : UploadCoroutineWorker(
@@ -125,6 +127,11 @@ class UploadCleanupWorker @AssistedInject constructor(
                 shouldShow = uploadFileLink.shouldAnnounceEvent,
                 reason = reason,
             )
+        )
+        itemLifecycle.finished(
+            flow = ItemLifecycle.Flow.UPLOAD,
+            id = uploadFileLink.id.toString(),
+            outcome = if (isCancelled) ItemLifecycle.Outcome.CANCELLED else ItemLifecycle.Outcome.FAILED,
         )
         uploadSdkManager.cancel(uploadFileLink.id)
         uploadFileLink.uriString?.let { uriResolver.release(it) }

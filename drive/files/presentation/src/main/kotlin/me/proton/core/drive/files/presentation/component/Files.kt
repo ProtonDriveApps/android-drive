@@ -17,6 +17,13 @@
  */
 package me.proton.core.drive.files.presentation.component
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -31,7 +38,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -53,12 +62,16 @@ import kotlinx.coroutines.flow.onEach
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
 import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.base.presentation.component.ReportDrawnWhenLoaded
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.base.presentation.effect.ListEffect
+import me.proton.core.drive.base.presentation.extension.SuppressContentFadeIn
+import me.proton.core.drive.base.presentation.extension.fadeInOnInsert
 import me.proton.core.drive.base.presentation.extension.onContent
 import me.proton.core.drive.base.presentation.extension.onEmpty
 import me.proton.core.drive.base.presentation.extension.onError
 import me.proton.core.drive.base.presentation.extension.onLoading
+import me.proton.core.drive.base.presentation.extension.withContentFadeInSuppressed
 import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.files.presentation.component.files.FilesGridContent
@@ -71,6 +84,7 @@ import me.proton.core.drive.files.presentation.component.files.FilesListHeader
 import me.proton.core.drive.files.presentation.component.files.FilesListItem
 import me.proton.core.drive.files.presentation.component.files.FilesListLoading
 import me.proton.core.drive.files.presentation.component.files.FilesSectionHeader
+import me.proton.core.drive.files.presentation.component.files.rememberKeyGridRowsByPosition
 import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.files.presentation.extension.LayoutType
 import me.proton.core.drive.files.presentation.extension.driveLinkSemantics
@@ -101,6 +115,7 @@ fun Files(
     val uploadFileLinkList by rememberFlowWithLifecycle(flow = uploadingFileLinks)
         .collectAsState(initial = emptyList())
     val lazyColumnItems = driveLinks.toLazyColumnItems(onLoadState = viewEvent.onLoadState)
+    ReportDrawnWhenLoaded(isLoading = viewState.listContentState is ListContentState.Loading)
     Column(modifier) {
         if (showTopAppBar) {
             TopAppBar(
@@ -110,10 +125,35 @@ fun Files(
             )
             tabs()
         }
-        if (viewState.isGrid) {
-            lazyColumnItems.DisplayAsGrid(viewState, viewEvent, uploadFileLinkList, getTransferProgress, scrollToId, onScrollCompleted, highlightedId)
-        } else {
-            lazyColumnItems.DisplayAsList(viewState, viewEvent, uploadFileLinkList, getTransferProgress, scrollToId, onScrollCompleted, highlightedId)
+        // Only fade after the user toggles the layout. Other changes, such as the stored layout
+        // arriving after the first frame, switch instantly.
+        var isLayoutToggledByUser by remember { mutableStateOf(false) }
+        val layoutViewEvent = remember(viewEvent) {
+            object : FilesViewEvent by viewEvent {
+                override val onToggleLayout: () -> Unit = {
+                    isLayoutToggledByUser = true
+                    viewEvent.onToggleLayout()
+                }
+            }
+        }
+        LaunchedEffect(viewState.isGrid) { isLayoutToggledByUser = false }
+        AnimatedContent(
+            targetState = viewState.isGrid,
+            transitionSpec = {
+                val transform = if (isLayoutToggledByUser) {
+                    fadeIn(tween()) togetherWith fadeOut(tween())
+                } else {
+                    EnterTransition.None togetherWith ExitTransition.None
+                }
+                transform using null
+            },
+            label = "FilesLayout",
+        ) { isGrid ->
+            if (isGrid) {
+                lazyColumnItems.DisplayAsGrid(viewState, layoutViewEvent, uploadFileLinkList, getTransferProgress, scrollToId, onScrollCompleted, highlightedId)
+            } else {
+                lazyColumnItems.DisplayAsList(viewState, layoutViewEvent, uploadFileLinkList, getTransferProgress, scrollToId, onScrollCompleted, highlightedId)
+            }
         }
     }
 }
@@ -144,6 +184,7 @@ private inline fun ListContent(
     uploadFileLinkList: List<UploadFileLink>,
     lazyListState: LazyListState,
     verticalArrangement : Arrangement.Vertical = Arrangement.Top,
+    isContentFadeInSuppressed: Boolean = false,
     crossinline content: LazyListScope.() -> Unit,
 ) {
     val modifier = if (viewState.listContentState is ListContentState.Content) {
@@ -151,51 +192,56 @@ private inline fun ListContent(
     } else {
         Modifier
     }
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        state = lazyListState,
-        verticalArrangement = verticalArrangement,
-    ) {
-        itemsIndexed(uploadFileLinkList, key = { _, uploadFileLink -> uploadFileLink.id }) { index, uploadFileLink ->
-            UploadItem(viewState, viewEvent, index, uploadFileLink)
-        }
-        viewState.listContentState
-            .onLoading(::FilesListLoading)
-            .onEmpty { state ->
-                FilesListEmpty(
-                    imageResId = state.imageResId,
-                    titleResId = state.titleId,
-                    descriptionResId = state.descriptionResId,
-                    actionResId = state.actionResId,
-                    onAction = viewEvent.onAddFiles
-                )
+    SuppressContentFadeIn(isSuppressed = isContentFadeInSuppressed) {
+        LazyColumn(
+            modifier = modifier.fillMaxSize(),
+            state = lazyListState,
+            verticalArrangement = verticalArrangement,
+        ) {
+            itemsIndexed(
+                items = uploadFileLinkList,
+                key = { _, uploadFileLink -> uploadFileLink.id },
+            ) { index, uploadFileLink ->
+                UploadItem(viewState, viewEvent, index, uploadFileLink)
             }
-            .onError { state ->
-                FilesListError(
-                    message = state.message,
-                    actionResId = state.actionResId,
-                    onAction = viewEvent.onErrorAction,
-                )
-            }
-            .onContent {
-                if (viewState.showHeader) {
+            viewState.listContentState
+                .onLoading(::FilesListLoading)
+                .onEmpty { state ->
+                    FilesListEmpty(
+                        imageResId = state.imageResId,
+                        titleResId = state.titleId,
+                        descriptionResId = state.descriptionResId,
+                        actionResId = state.actionResId,
+                        onAction = viewEvent.onAddFiles
+                    )
+                }
+                .onError { state ->
+                    FilesListError(
+                        message = state.message,
+                        actionResId = state.actionResId,
+                        onAction = viewEvent.onErrorAction,
+                    )
+                }
+                .onContent {
+                    if (viewState.showHeader) {
+                        item {
+                            FilesListHeader(
+                                sortingViewState = viewState.sorting.toSortingViewState(),
+                                isDisplayingGridView = viewState.isGrid,
+                                onSorting = { viewEvent.onSorting(viewState.sorting) },
+                                onToggleLayout = viewEvent.onToggleLayout,
+                            )
+                        }
+                    }
+                    content()
                     item {
-                        FilesListHeader(
-                            sortingViewState = viewState.sorting.toSortingViewState(),
-                            isDisplayingGridView = viewState.isGrid,
-                            onSorting = { viewEvent.onSorting(viewState.sorting) },
-                            onToggleLayout = viewEvent.onToggleLayout,
+                        FilesListFooter(
+                            listContentAppendingState = viewState.listContentAppendingState,
+                            onErrorAction = viewEvent.onErrorAction
                         )
                     }
                 }
-                content()
-                item {
-                    FilesListFooter(
-                        listContentAppendingState = viewState.listContentAppendingState,
-                        onErrorAction = viewEvent.onErrorAction
-                    )
-                }
-            }
+        }
     }
 }
 
@@ -211,6 +257,8 @@ private fun LazyColumnItems.DisplayAsGrid(
 ) {
     val selectedDriveLinks by rememberFlowWithLifecycle(flow = viewState.selected)
         .collectAsState(initial = emptySet())
+    val keyRowsByPosition = rememberKeyGridRowsByPosition()
+    var isScrollingToItem by remember { mutableStateOf(false) }
     BoxWithConstraints {
         val itemsPerRow = floor(maxWidth / GridItemWidth).roundToInt().coerceAtLeast(1)
         val lazyListState = this@DisplayAsGrid.rememberLazyListState()
@@ -220,6 +268,7 @@ private fun LazyColumnItems.DisplayAsGrid(
             viewState = viewState,
             uploadFileLinkList = uploadFileLinkList,
             onScrollCompleted = onScrollCompleted,
+            onScrollingToItem = { isScrolling -> isScrollingToItem = isScrolling },
             toLazyListIndex = { itemIndex -> itemIndex / itemsPerRow },
         )
         ListContent(
@@ -227,9 +276,14 @@ private fun LazyColumnItems.DisplayAsGrid(
             viewEvent = viewEvent,
             uploadFileLinkList = uploadFileLinkList,
             lazyListState = lazyListState,
-            verticalArrangement = Arrangement.spacedBy(ExtraSmallSpacing)
+            verticalArrangement = Arrangement.spacedBy(ExtraSmallSpacing),
+            isContentFadeInSuppressed = isScrollingToItem,
         ) {
-            FilesGridContent(this@DisplayAsGrid, itemsPerRow) { driveLink: DriveLink ->
+            FilesGridContent(
+                driveLinks = this@DisplayAsGrid,
+                itemsPerRow = itemsPerRow,
+                keyRowsByPosition = keyRowsByPosition,
+            ) { driveLink: DriveLink ->
                 val selected = selectedDriveLinks.contains(driveLink.id)
                 FilesGridItem(
                     link = driveLink,
@@ -267,15 +321,23 @@ private fun LazyColumnItems.DisplayAsList(
     val selectedDriveLinks by rememberFlowWithLifecycle(flow = viewState.selected)
         .collectAsState(initial = emptySet())
     val lazyListState = this@DisplayAsList.rememberLazyListState()
+    var isScrollingToItem by remember { mutableStateOf(false) }
     ScrollToEffect(
         scrollToId = scrollToId,
         lazyListState = lazyListState,
         viewState = viewState,
         uploadFileLinkList = uploadFileLinkList,
         onScrollCompleted = onScrollCompleted,
+        onScrollingToItem = { isScrolling -> isScrollingToItem = isScrolling },
         toLazyListIndex = { itemIndex -> itemIndex },
     )
-    ListContent(viewState, viewEvent, uploadFileLinkList, lazyListState) {
+    ListContent(
+        viewState = viewState,
+        viewEvent = viewEvent,
+        uploadFileLinkList = uploadFileLinkList,
+        lazyListState = lazyListState,
+        isContentFadeInSuppressed = isScrollingToItem,
+    ) {
         FilesListContent(this@DisplayAsList) { driveLink: DriveLink ->
             val selected = selectedDriveLinks.contains(driveLink.id)
             FilesListItem(
@@ -291,7 +353,8 @@ private fun LazyColumnItems.DisplayAsList(
                 isSelected = selected,
                 inMultiselect = selected || selectedDriveLinks.isNotEmpty(),
                 isHighlighted = driveLink.id == highlightedId,
-                modifier = Modifier.driveLinkSemantics(driveLink, LayoutType.List, driveLink.id == highlightedId),
+                modifier = fadeInOnInsert()
+                    .driveLinkSemantics(driveLink, LayoutType.List, driveLink.id == highlightedId),
                 onRenderThumbnail = viewEvent.onRenderThumbnail,
             )
         }
@@ -305,6 +368,7 @@ private fun LazyColumnItems.ScrollToEffect(
     viewState: FilesViewState,
     uploadFileLinkList: List<UploadFileLink>,
     onScrollCompleted: () -> Unit,
+    onScrollingToItem: (Boolean) -> Unit,
     toLazyListIndex: (itemIndex: Int) -> Int,
 ) {
     LaunchedEffect(scrollToId) {
@@ -320,7 +384,9 @@ private fun LazyColumnItems.ScrollToEffect(
             .let { itemIndex ->
                 val uploadOffset = uploadFileLinkList.size
                 val headerOffset = if (viewState.showHeader && viewState.listContentState is ListContentState.Content) 1 else 0
-                lazyListState.animateScrollToItem(toLazyListIndex(itemIndex) + uploadOffset + headerOffset)
+                withContentFadeInSuppressed(setSuppressed = onScrollingToItem) {
+                    lazyListState.animateScrollToItem(toLazyListIndex(itemIndex) + uploadOffset + headerOffset)
+                }
                 onScrollCompleted()
             }
     }

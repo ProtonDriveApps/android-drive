@@ -32,7 +32,7 @@ fun SecurityException.getDefaultMessage(context: Context): String = message?.let
 fun SecurityException.log(
     tag: String,
     message: String? = null,
-    level: LoggerLevel? = LoggerLevel.DEBUG,
+    level: LoggerLevel? = null,
 ): SecurityException = also {
-    level.log(tag, this, message)
+    (level ?: LoggerLevel.DEBUG).log(tag, this, message)
 }

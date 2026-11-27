@@ -31,6 +31,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.paging.compose.itemKey
@@ -38,6 +39,9 @@ import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
 import me.proton.core.drive.base.presentation.component.list.ListEmpty
 import me.proton.core.drive.base.presentation.component.list.ListError
 import me.proton.core.drive.base.presentation.component.list.ListLoading
+import me.proton.core.drive.base.presentation.extension.LocalContentFadeIn
+import me.proton.core.drive.base.presentation.extension.fadeInOnAppear
+import me.proton.core.drive.base.presentation.extension.fadeInOnInsert
 import me.proton.core.drive.base.presentation.theme.DriveTheme
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.files.presentation.component.LazyColumnItems
@@ -67,7 +71,9 @@ fun LazyListScope.FilesListEmpty(
             descriptionResId = descriptionResId,
             actionResId = actionResId,
             onAction = onAction,
-            modifier = modifier.fillParentMaxSize()
+            modifier = modifier
+                .fillParentMaxSize()
+                .fadeInOnAppear(),
         )
     }
 }
@@ -82,10 +88,21 @@ fun LazyListScope.FilesListError(
         ListError(
             message = message,
             actionResId = actionResId,
-            modifier = modifier.fillParentMaxSize(),
+            modifier = modifier
+                .fillParentMaxSize()
+                .fadeInOnAppear(),
             onAction = onAction
         )
     }
+}
+
+fun filesGridRowKey(row: Int): String = "files_grid_row_$row"
+
+@Composable
+fun rememberKeyGridRowsByPosition(): Boolean {
+    val isContentFadeInEnabled = LocalContentFadeIn.current
+    val wasContentFadeInEnabledAtStart = remember { isContentFadeInEnabled }
+    return wasContentFadeInEnabledAtStart && isContentFadeInEnabled
 }
 
 fun LazyListScope.FilesListContent(
@@ -113,12 +130,16 @@ fun LazyListScope.FilesListContent(
 fun LazyListScope.FilesGridContent(
     driveLinks: LazyColumnItems,
     itemsPerRow: Int,
+    keyRowsByPosition: Boolean = false,
     onItemsIndexed: @Composable RowScope.(DriveLink) -> Unit,
 ) {
     require(itemsPerRow > 0) { "itemsPerRow must be > 0, value passed $itemsPerRow" }
-    items(ceil(driveLinks.size.toFloat() / itemsPerRow).toInt()) { row ->
+    items(
+        count = ceil(driveLinks.size.toFloat() / itemsPerRow).toInt(),
+        key = if (keyRowsByPosition) { row -> filesGridRowKey(row) } else null,
+    ) { row ->
         Row(
-            modifier = Modifier
+            modifier = fadeInOnInsert()
                 .fillMaxWidth()
                 .padding(horizontal = ExtraSmallSpacing),
             horizontalArrangement = Arrangement.spacedBy(ExtraSmallSpacing),

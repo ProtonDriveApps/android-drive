@@ -57,6 +57,7 @@ import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.extension.require
@@ -88,6 +89,7 @@ import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.usecase.GetOldestActiveVolume
 import me.proton.core.drive.volume.domain.usecase.HasPhotoVolume
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
 
@@ -221,7 +223,11 @@ class FileOrFolderOptionsViewModel @Inject constructor(
                             deselectLinks()
                         }
                         is Option.Download -> option.build { filename ->
-                            showCreateDocumentPicker(filename) { handleActivityNotFound() }
+                            CoreLogger.d(
+                                VIEW_MODEL,
+                                "Showing create document picker for ${driveLink.id.id.logId()}",
+                            )
+                            showCreateDocumentPicker(filename) { handleActivityNotFound(driveLink.id) }
                             deselectLinks()
                         }
                         is Option.ManageAccess -> option.build(runAction) { linkId ->
@@ -428,12 +434,18 @@ class FileOrFolderOptionsViewModel @Inject constructor(
         }
     }
 
-    fun onCreateDocumentResult(fileId: FileId, documentUri: Uri) {
+    fun onCreateDocumentResult(fileId: FileId, documentUri: Uri?) {
+        CoreLogger.d(
+            VIEW_MODEL,
+            "Create document result for ${fileId.id.logId()}, has destination: ${documentUri != null}",
+        )
+        documentUri ?: return
         exportTo(fileId = fileId, destinationUri = documentUri)
         dismiss?.invoke()
     }
 
-    private fun handleActivityNotFound() {
+    private fun handleActivityNotFound(linkId: LinkId) {
+        CoreLogger.w(VIEW_MODEL, "No activity found to create document for ${linkId.id.logId()}")
         this.dismiss?.invoke()
         notifyActivityNotFound(userId, I18N.string.operation_create_document)
     }

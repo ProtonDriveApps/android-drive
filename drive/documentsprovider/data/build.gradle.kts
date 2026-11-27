@@ -37,4 +37,6 @@ driveModule(
     implementation(project(":drive:trash:domain"))
     implementation(libs.core.account)
     implementation(libs.androidx.paging.runtime.ktx)
+
+    testImplementation(testFixtures(project(":drive:files:presentation")))
 }

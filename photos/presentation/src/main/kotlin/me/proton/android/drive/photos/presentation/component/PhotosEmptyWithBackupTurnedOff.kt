@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -46,6 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import me.proton.android.drive.photos.presentation.R
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.ExtraLargeCornerRadius
@@ -68,10 +70,15 @@ import me.proton.core.presentation.R as CorePresentation
 @Composable
 fun PhotosEmptyWithBackupTurnedOff(
     modifier: Modifier = Modifier,
+    loadImageSynchronously: Boolean = false,
     onEnable: () -> Unit,
 ) {
     when (LocalConfiguration.current.orientation) {
-        Configuration.ORIENTATION_PORTRAIT -> PhotosEmptyWithBackupTurnedOffSingleColumn(modifier, onEnable)
+        Configuration.ORIENTATION_PORTRAIT -> PhotosEmptyWithBackupTurnedOffSingleColumn(
+            modifier = modifier,
+            loadImageSynchronously = loadImageSynchronously,
+            onEnable = onEnable,
+        )
         else -> PhotosEmptyWithBackupTurnedOffTwoColumns(modifier, onEnable)
     }
 }
@@ -79,6 +86,7 @@ fun PhotosEmptyWithBackupTurnedOff(
 @Composable
 private fun PhotosEmptyWithBackupTurnedOffSingleColumn(
     modifier: Modifier = Modifier,
+    loadImageSynchronously: Boolean = false,
     onEnable: () -> Unit,
 ) {
     Column(modifier.fillMaxSize()) {
@@ -90,10 +98,9 @@ private fun PhotosEmptyWithBackupTurnedOffSingleColumn(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.img_photos_welcome),
-                contentDescription = null,
-                modifier = Modifier.padding(top = MediumSpacing)
+            WelcomeImage(
+                loadSynchronously = loadImageSynchronously,
+                modifier = Modifier.padding(top = MediumSpacing),
             )
             Title()
             SingleColumnDetails()
@@ -101,6 +108,28 @@ private fun PhotosEmptyWithBackupTurnedOffSingleColumn(
         TurnOnBackupButton(
             modifier = Modifier.padding(vertical = MediumSpacing),
             onClick = onEnable,
+        )
+    }
+}
+
+@Composable
+private fun WelcomeImage(
+    loadSynchronously: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    if (loadSynchronously) {
+        Image(
+            painter = painterResource(id = R.drawable.img_photos_welcome),
+            contentDescription = null,
+            modifier = modifier,
+        )
+    } else {
+        AsyncImage(
+            model = R.drawable.img_photos_welcome,
+            contentDescription = null,
+            modifier = modifier
+                .widthIn(max = WelcomeImageMaxWidth)
+                .aspectRatio(WelcomeImageAspectRatio),
         )
     }
 }
@@ -245,6 +274,8 @@ private fun TurnOnBackupButton(
 }
 
 private val ButtonMinWidth = 300.dp
+private val WelcomeImageMaxWidth = 320.dp
+private val WelcomeImageAspectRatio = 16f / 9f
 
 @Composable
 private fun Section(
@@ -290,7 +321,7 @@ private fun Section(
 fun PhotosPermissionsPreview() {
     DriveTheme {
         Surface {
-            PhotosEmptyWithBackupTurnedOff(onEnable = {})
+            PhotosEmptyWithBackupTurnedOff(loadImageSynchronously = true, onEnable = {})
         }
     }
 }
@@ -300,7 +331,7 @@ fun PhotosPermissionsPreview() {
 fun PhotosPermissionsPreviewLandscape() {
     DriveTheme {
         Surface {
-            PhotosEmptyWithBackupTurnedOff(onEnable = {})
+            PhotosEmptyWithBackupTurnedOff(loadImageSynchronously = true, onEnable = {})
         }
     }
 }

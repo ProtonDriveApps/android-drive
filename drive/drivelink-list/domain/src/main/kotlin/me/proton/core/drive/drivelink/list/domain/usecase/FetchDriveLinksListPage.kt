@@ -24,6 +24,8 @@ import me.proton.core.drive.drivelink.paged.domain.entity.LinksPage
 import me.proton.core.drive.folder.domain.repository.FolderRepository
 import me.proton.core.drive.folder.domain.usecase.GetAllFolderChildren
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.isNotExists
+import me.proton.core.drive.link.domain.handler.LinkNotFoundHandler
 import me.proton.core.drive.sorting.domain.entity.By
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import javax.inject.Inject
@@ -31,6 +33,7 @@ import javax.inject.Inject
 class FetchDriveLinksListPage @Inject constructor(
     private val folderRepository: FolderRepository,
     private val getAllFolderChildren: GetAllFolderChildren,
+    private val linkNotFoundHandler: LinkNotFoundHandler,
 ) {
 
     @Suppress("UseIfInsteadOfWhen")
@@ -46,6 +49,9 @@ class FetchDriveLinksListPage @Inject constructor(
                 refresh = true,
             ).map { links -> LinksPage(links, EMPTY_SAVE_ACTION) }
             else -> folderRepository.fetchFolderChildren(folderId, page, pageSize, sorting.toFolderSorting())
+                .onFailure { error ->
+                    if (error.isNotExists) linkNotFoundHandler.onLinkNotFound(folderId)
+                }
                 .map { (links, saveAction) ->
                     LinksPage(links, saveAction)
                 }

@@ -41,5 +41,7 @@ driveModule(
     implementation(libs.coil.compose)
 
     androidTestImplementation(testFixtures(project(":drive:files:presentation")))
+    testImplementation(libs.androidx.compose.ui.test.junit)
+    testImplementation(libs.androidx.compose.uiTestManifest)
 }
 

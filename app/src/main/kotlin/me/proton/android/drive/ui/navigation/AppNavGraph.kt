@@ -1002,7 +1002,6 @@ internal fun NavGraphBuilder.addHome(
         }
     }
     HomeScreen(
-        userId,
         homeNavController,
         deepLinkBaseUrl,
         startDestination,

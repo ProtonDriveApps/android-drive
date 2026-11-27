@@ -31,6 +31,7 @@ import me.proton.core.domain.arch.onSuccess
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.extension.onFailure
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.base.domain.log.LogTag.TRASH
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
@@ -49,10 +50,12 @@ import javax.inject.Singleton
 class TrashManagerImpl @Inject constructor(
     private val workManager: WorkManager,
     private val linkTrashRepository: LinkTrashRepository,
+    private val itemLifecycle: ItemLifecycle,
 ) : TrashManager {
 
     override suspend fun trash(userId: UserId, volumeId: VolumeId, linkIds: List<LinkId>) =
         linkTrashRepository.insertWork(linkIds).onSuccess { workId ->
+            logAccepted(ItemLifecycle.Flow.TRASH, linkIds, workId)
             workManager.enqueue(
                 TrashFileNodesWorker.getWorkRequest(
                     userId = userId,
@@ -66,6 +69,7 @@ class TrashManagerImpl @Inject constructor(
 
     override suspend fun restore(userId: UserId, volumeId: VolumeId, linkIds: List<LinkId>) =
         linkTrashRepository.insertWork(linkIds).onSuccess { workId ->
+            logAccepted(ItemLifecycle.Flow.RESTORE, linkIds, workId)
             workManager.enqueue(
                 RestoreFileNodesWorker.getWorkRequest(
                     userId = userId,
@@ -79,6 +83,7 @@ class TrashManagerImpl @Inject constructor(
 
     override suspend fun delete(userId: UserId, volumeId: VolumeId, linkIds: List<LinkId>) =
         linkTrashRepository.insertWork(linkIds).onSuccess { workId ->
+            logAccepted(ItemLifecycle.Flow.DELETE, linkIds, workId)
             workManager.enqueue(
                 PermanentlyDeleteFileNodesWorker.getWorkRequest(
                     userId = userId,
@@ -92,6 +97,9 @@ class TrashManagerImpl @Inject constructor(
 
     @Suppress("EnqueueWork")
     override suspend fun emptyTrash(userId: UserId, volumeId: VolumeId) {
+        // Keyed by user: the work chain is unique per user, so a request made before the chain ends
+        // joins it, and the last worker of the chain logs the end.
+        itemLifecycle.accepted(ItemLifecycle.Flow.EMPTY_TRASH, userId.id)
         workManager.beginUniqueWork(
             userId.uniqueEmptyTrashWorkName,
             ExistingWorkPolicy.KEEP,
@@ -117,6 +125,9 @@ class TrashManagerImpl @Inject constructor(
                     }
                 }
             }
+
+    private fun logAccepted(flow: ItemLifecycle.Flow, linkIds: List<LinkId>, workId: String) =
+        linkIds.forEach { linkId -> itemLifecycle.accepted(flow, linkId.id, workId) }
 
     private val UserId.uniqueEmptyTrashWorkName: String get() = "EMPTY_TRASH_$id"
 }

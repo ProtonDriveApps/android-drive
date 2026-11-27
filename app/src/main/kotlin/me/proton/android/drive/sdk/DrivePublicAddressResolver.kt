@@ -31,12 +31,14 @@ class DrivePublicAddressResolver @Inject constructor(
 ) : PublicAddressResolver {
     override suspend fun getAddressPublicKeys(
         emailAddress: String,
-    ): List<ByteArray> = getPublicAddressInfo(
-        userId = userId,
-        email = emailAddress,
-        unverified = true,
-    ).getOrThrow()?.publicKeys(unverified = true)?.publicKeyRing()?.keys.orEmpty()
-        .map { publicKey ->
-            publicKey.key.toByteArray()
-        }
+    ): List<ByteArray> = mappingCoreErrors {
+        getPublicAddressInfo(
+            userId = userId,
+            email = emailAddress,
+            unverified = true,
+        ).getOrThrow()?.publicKeys(unverified = true)?.publicKeyRing()?.keys.orEmpty()
+            .map { publicKey ->
+                publicKey.key.toByteArray()
+            }
+    }
 }

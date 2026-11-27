@@ -16,7 +16,9 @@ app/variables.env
 .claude/*
 !.claude/skills/
 !.claude/hooks/
-.claude/hooks/__pycache__/
+!.claude/rules/
+!.claude/agents/
+__pycache__/
 # Shared hook config; personal settings and secrets go in the ignored .claude/settings.local.json.
 !.claude/settings.json
 

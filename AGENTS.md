@@ -13,9 +13,11 @@ described there.
 
 ## Before opening an MR
 
-Every MR is preceded by a code review and a security review by fresh-context subagents, judged
-against the change's requirements: run the [pre-mr-review](.claude/skills/pre-mr-review/SKILL.md)
-skill on the committed branch and include its summary in the MR description.
+Every MR is preceded by a code review and a security review by fresh-context, read-only subagents,
+judged against the change's requirements, with each finding independently verified before it is
+fixed ([.claude/rules/code-review.md](.claude/rules/code-review.md)): run the
+[pre-mr-review](.claude/skills/pre-mr-review/SKILL.md) skill on the committed branch and include its
+summary in the MR description.
 
 Agents never merge MRs; a developer merges in GitLab after CI and human review.
 
@@ -27,10 +29,17 @@ guards against accidents, not deliberate evasion (its docstring lists what it do
 needs `python3`; CI, Flanders and human review remain the real gates. Its tests run locally, not in
 CI: `python3 -m unittest discover -s .claude/hooks`.
 
-Flanders does not start on its own, and it does not review draft MRs. Once the MR is out of draft,
-ask for its review with an MR comment `@sa-devex-Flanders review please` or by requesting a review
-from `sa-devex-Flanders`. Ask again after pushing fixes for its comments: a new commit resets its
-approval.
+Flanders does not start on its own, and it does not review draft MRs. The first time you ask,
+when you open a non-draft MR or mark a draft ready, request a review from `sa-devex-Flanders`.
+After that, ask with an MR comment `@sa-devex-Flanders review please`, without touching the
+reviewer assignment: after pushing more commits (a new commit resets its approval), and when it
+has not responded after about 10 minutes. Never use both triggers at once: they race and Flanders
+then sometimes does nothing.
+
+After the review, agents publish with the [publish-mr](.claude/skills/publish-mr/SKILL.md) skill:
+push, open a non-draft MR, request Flanders' review, verify its comments, fix the valid ones and
+reply on every thread, then, once Flanders and the pipeline pass, tell the developer in the session
+that the MR is ready for human review and merging.
 
 ## Build & test commands
 
@@ -55,6 +64,15 @@ Android app, Gradle + Kotlin DSL, ~200 modules. `dev` is the default product fla
 
 ./gradlew :app:connectedDevDebugAndroidTest                        # instrumented tests on a device
 ./gradlew :app:pixel2api30DevDebugAndroidTest                      # ...on the declared managed device
+
+# Baseline profile: device on API 34+ or rooted (below that, Macrobenchmark reinstalls the app to reset
+# compilation, which logs it out), dev app logged in on the environment the build targets, with a
+# default home tab that has content. Without leaveApksInstalledAfterRun the task uninstalls the app.
+TEST_ENV_DOMAIN=proton.me ./gradlew :app:generateBaselineProfile \
+    -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true  # regenerates app/src/main/generated/baselineProfiles
+TEST_ENV_DOMAIN=proton.me ./gradlew :baselineprofile:connectedDevBenchmarkReleaseAndroidTest \
+    -Pandroid.testInstrumentationRunnerArguments.class=me.proton.android.drive.baselineprofile.StartupBenchmark \
+    -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true  # cold start with and without the profile
 ```
 
 Local config (both git-ignored): `local.properties` needs `sdk.dir`. Optional `private.properties`
@@ -65,8 +83,9 @@ settings, permissions and any secrets go in the git-ignored `.claude/settings.lo
 
 Proton Core modules are pulled in by the `include-core-build` settings plugin, not vendored here.
 The Drive SDK (`me.proton.drive:sdk`) is an external artifact; set `me.proton.drive.sdk.path` in
-`gradle.properties` to substitute a local composite build. `dev`/`alpha` resolve the `-rust` crypto
-SDK variant, `beta`/`prod` the Go one — this is forced per-variant in `app/build.gradle.kts`.
+`gradle.properties` to substitute a local composite build. All modules and flavors use the rust
+crypto SDK variant: the `-rust` artifact version in `gradle/libs.versions.toml`, and the `rust`
+`crypto` flavor of a local composite build.
 
 ## Conventions
 
@@ -95,8 +114,11 @@ and committing it.
 - **[release-announce](.claude/skills/release-announce/SKILL.md)** — Slack
   release announcement for `candidate`, copied to the clipboard.
 - **[pre-mr-review](.claude/skills/pre-mr-review/SKILL.md)** — fresh-context
-  code and security review against the requirements before opening any MR
-  (enforced by a hook).
+  code and security review, finding verification and fixes, at most 5 rounds,
+  after implementing and before opening any MR (enforced by a hook).
+- **[publish-mr](.claude/skills/publish-mr/SKILL.md)** — after pre-mr-review:
+  push, open the MR, handle Flanders' review (at most 5 rounds), check the
+  pipeline and announce the MR ready for human review. Never merges.
 
 ## Logging & privacy (privacy-critical)
 

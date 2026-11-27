@@ -19,6 +19,7 @@
 package me.proton.core.drive.backup.domain.usecase
 
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -26,10 +27,16 @@ import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class MarkAsFailed @Inject constructor(
-    private val repository: BackupFileRepository
+    private val repository: BackupFileRepository,
+    private val itemLifecycle: ItemLifecycle,
 ) {
     suspend operator fun invoke(folderId: FolderId, uriString: String) = coRunCatching {
         CoreLogger.i(BACKUP, "Mark as failed: $uriString")
         repository.markAsFailed(folderId, uriString)
+        itemLifecycle.finished(
+            flow = ItemLifecycle.Flow.BACKUP,
+            id = itemLifecycle.backupKey(uriString),
+            outcome = ItemLifecycle.Outcome.FAILED,
+        )
     }
 }

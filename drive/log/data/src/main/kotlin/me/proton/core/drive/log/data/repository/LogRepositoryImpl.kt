@@ -21,9 +21,10 @@ package me.proton.core.drive.log.data.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.function.processPagedList
+import me.proton.core.drive.base.domain.function.processPagedKeyList
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.log.data.db.LogDatabase
+import me.proton.core.drive.log.data.db.entity.LogEntity
 import me.proton.core.drive.log.data.db.entity.LogLevelEntity
 import me.proton.core.drive.log.data.db.entity.LogOriginEntity
 import me.proton.core.drive.log.data.extension.toLog
@@ -56,10 +57,14 @@ class LogRepositoryImpl @Inject constructor(
     }
 
     override suspend fun processAllLogs(userId: UserId, block: suspend (List<Log>) -> Unit) = db.inTransaction {
-        processPagedList(
+        processPagedKeyList<LogEntity>(
             pageSize = configurationProvider.dbPageSize,
-            page = { fromIndex, count ->
-                db.logDao.getLogs(userId, count, fromIndex)
+            page = { last, count ->
+                if (last == null) {
+                    db.logDao.getLogs(userId, count)
+                } else {
+                    db.logDao.getLogsAfter(userId, last.creationTime, last.id, count)
+                }
             },
             block = { logEntities ->
                 block(

@@ -29,7 +29,7 @@
             "2 persons added"
     -->
   <plurals name="share_via_invitations_person_added">
-    <item quantity="other">%1$d명 추가됨</item>
+    <item quantity="other">%1$d persons added</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -37,7 +37,7 @@
             "2 persons cannot be invited"
     -->
   <plurals name="share_via_invitations_person_added_error">
-    <item quantity="other">%1$d명의 사용자를 초대할 수 없습니다</item>
+    <item quantity="other">%1$d persons cannot be invited</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -45,7 +45,7 @@
             "Sharing with 2 persons"
     -->
   <plurals name="share_via_invitations_sharing_with">
-    <item quantity="other">%1$d명과 공유</item>
+    <item quantity="other">Sharing with %1$d persons</item>
   </plurals>
   <string name="common_permission_owner">소유자</string>
   <string name="common_permission_admin">관리자</string>

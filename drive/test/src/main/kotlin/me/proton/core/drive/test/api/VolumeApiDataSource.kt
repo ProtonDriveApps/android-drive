@@ -23,6 +23,10 @@ import me.proton.core.drive.volume.data.api.response.GetShareUrlsResponse
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 
+fun MockWebServer.getVolume(block: RequestContext.() -> MockResponse) = routing {
+    get("/drive/volumes/{enc_volumeId}", block)
+}
+
 fun MockWebServer.getShareUrls(block: RequestContext.() -> MockResponse) = routing {
     get("/drive/volumes/{enc_volumeId}/urls", block)
 }

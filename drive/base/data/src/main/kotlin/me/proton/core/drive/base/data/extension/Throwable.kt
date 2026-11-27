@@ -73,6 +73,11 @@ fun Throwable.getDefaultMessage(
     }
 }
 
+/**
+ * Logs at [level], or when it is null at the level the logger for this exception type picks (for
+ * example DEBUG for an [IOException] or a [CancellationException]), so each type logger must treat
+ * a null level as its own default.
+ */
 fun Throwable.log(
     tag: String,
     message: String? = null,

@@ -22,6 +22,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.drive.base.data.formatter.DateTimeFormatterImpl
+import me.proton.core.drive.base.data.log.ItemLifecycleImpl
 import me.proton.core.drive.base.data.repository.BaseRepositoryImpl
 import me.proton.core.drive.base.data.usecase.CopyToClipboardImpl
 import me.proton.core.drive.base.data.usecase.DeviceInfoImpl
@@ -31,6 +32,7 @@ import me.proton.core.drive.base.data.usecase.IsRetryableImpl
 import me.proton.core.drive.base.data.usecase.LogReportError
 import me.proton.core.drive.base.data.usecase.Sha256Impl
 import me.proton.core.drive.base.domain.formatter.DateTimeFormatter
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.base.domain.repository.BaseRepository
 import me.proton.core.drive.base.domain.usecase.CopyToClipboard
 import me.proton.core.drive.base.domain.usecase.DeviceInfo
@@ -56,6 +58,10 @@ interface BaseBindModule {
     @Binds
     @Singleton
     fun bindsSha256Impl(impl: Sha256Impl): Sha256
+
+    @Binds
+    @Singleton
+    fun bindsItemLifecycleImpl(impl: ItemLifecycleImpl): ItemLifecycle
 
     @Binds
     @Singleton

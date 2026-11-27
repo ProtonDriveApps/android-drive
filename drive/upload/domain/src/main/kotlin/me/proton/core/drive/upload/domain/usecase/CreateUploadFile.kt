@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.upload.domain.usecase
 
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FolderContext
 import me.proton.core.drive.link.domain.entity.NodeContext
@@ -36,6 +37,7 @@ class CreateUploadFile @Inject constructor(
     private val getUploadFileSize: GetUploadFileSize,
     private val getUploadFileLastModified: GetUploadFileLastModified,
     private val getUploadFileUriInfo: GetUploadFileUriInfo,
+    private val itemLifecycle: ItemLifecycle,
 ) {
     suspend operator fun invoke(
         parentFolderContext: FolderContext,
@@ -59,7 +61,7 @@ class CreateUploadFile @Inject constructor(
                 priority = priority,
                 shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
             )
-        )
+        ).also { uploadFileLink -> uploadFileLink.logAccepted() }
     }
 
     suspend operator fun invoke(
@@ -95,9 +97,11 @@ class CreateUploadFile @Inject constructor(
                     shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
                 )
             }
-        )
+        ).onEach { uploadFileLink -> uploadFileLink.logAccepted() }
     }
 
+    private fun UploadFileLink.logAccepted() =
+        itemLifecycle.accepted(ItemLifecycle.Flow.UPLOAD, id.toString())
 
     private fun NodeContext.requireKnownVolumeType() =
         require(volumeType != Volume.Type.UNKNOWN) {

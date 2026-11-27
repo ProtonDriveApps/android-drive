@@ -36,6 +36,7 @@ import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.getLong
 import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.base.domain.log.LogTag.NOTIFICATION
 import me.proton.core.drive.base.domain.log.LogTag.UPLOAD
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -85,6 +86,7 @@ class UploadWorkManagerImpl @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val removeUploadFileAndAnnounceCancelled: RemoveUploadFileAndAnnounceCancelled,
     private val removeAllUploadFileLinks: RemoveAllUploadFileLinks,
+    private val itemLifecycle: ItemLifecycle,
 ) : UploadWorkManager {
 
     override suspend fun upload(
@@ -167,12 +169,15 @@ class UploadWorkManagerImpl @Inject constructor(
         workManager.cancelAllWorkByTag(id.uniqueUploadWorkName).await()
         CoreLogger.i(uploadFileLink.logTag(), "Cleaning")
         removeUploadFileAndAnnounceCancelled(uploadFileLink).getOrThrow()
+        logCancelled(listOf(uploadFileLink))
     }
 
     override suspend fun cancelAll(userId: UserId) = withContext(Job() + Dispatchers.IO) {
         workManager.cancelUniqueWork(userId.uniqueUploadEventWorkName).await()
         workManager.cancelAllByTag(userId.uniqueUploadBulkTag)
+        val unprocessed = getUploadFileLinks(userId).unprocessed()
         removeAllUploadFileLinks(userId, UploadState.UNPROCESSED)
+        logCancelled(unprocessed)
         getUploadFileLinks(userId).forEach { uploadFileLink ->
             cancel(uploadFileLink)
         }
@@ -193,7 +198,9 @@ class UploadWorkManagerImpl @Inject constructor(
 
     override suspend fun cancelAllByVolume(userId: UserId, volumeId: VolumeId) {
         workManager.cancelAllByTag(userId.uniqueUploadBulkTag)
+        val unprocessed = getUploadFileLinks(userId, volumeId).unprocessed()
         removeAllUploadFileLinks(userId, volumeId, UploadState.UNPROCESSED)
+        logCancelled(unprocessed)
         getUploadFileLinks(userId, volumeId).forEach { uploadFileLink ->
             cancel(uploadFileLink)
         }
@@ -201,17 +208,33 @@ class UploadWorkManagerImpl @Inject constructor(
 
     override suspend fun cancelAllByFolder(userId: UserId, folderId: FolderId) {
         workManager.cancelUniqueWork(folderId.uniqueUploadBulkWorkName).await()
+        val unprocessed = getUploadFileLinks(userId, folderId).unprocessed()
         removeAllUploadFileLinks(userId, folderId, UploadState.UNPROCESSED)
+        logCancelled(unprocessed)
         getUploadFileLinks(userId, folderId).forEach { uploadFileLink ->
             cancel(uploadFileLink)
         }
     }
 
     override suspend fun cancelAllByFolderAndUris(folderId: FolderId, uriStrings: List<String>) {
+        val unprocessed = getUploadFileLinks(folderId, uriStrings).unprocessed()
         removeAllUploadFileLinks(folderId, uriStrings, UploadState.UNPROCESSED)
+        logCancelled(unprocessed)
         getUploadFileLinks(folderId, uriStrings).forEach { uploadFileLink ->
             cancel(uploadFileLink)
         }
+    }
+
+    private fun List<UploadFileLink>.unprocessed() = filter { uploadFileLink ->
+        uploadFileLink.state == UploadState.UNPROCESSED
+    }
+
+    private fun logCancelled(uploadFileLinks: List<UploadFileLink>) = uploadFileLinks.forEach { uploadFileLink ->
+        itemLifecycle.finished(
+            flow = ItemLifecycle.Flow.UPLOAD,
+            id = uploadFileLink.id.toString(),
+            outcome = ItemLifecycle.Outcome.CANCELLED,
+        )
     }
 
     override fun getProgressFlow(uploadFileLink: UploadFileLink): Flow<Percentage>? {

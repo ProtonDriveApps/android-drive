@@ -105,9 +105,7 @@ fun FileOrFolderOptions(
         is DriveLink.File -> {
             val createDocumentLauncher = rememberCreateDocumentLauncher(
                 onDocumentCreated = { documentUri ->
-                    documentUri?.let {
-                        viewModel.onCreateDocumentResult(driveLink.id, documentUri)
-                    }
+                    viewModel.onCreateDocumentResult(driveLink.id, documentUri)
                 },
                 mimeType = driveLink.mimeType,
             )

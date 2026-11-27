@@ -38,6 +38,8 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.rootFolderId
+import me.proton.core.drive.link.domain.handler.LinkNotFoundHandler
+import me.proton.core.drive.link.domain.handler.onNotExists
 import me.proton.core.drive.link.domain.repository.LinkRepository
 import me.proton.core.drive.link.domain.usecase.HasLink
 import me.proton.core.drive.share.crypto.domain.usecase.GetOrCreateMainShare
@@ -54,6 +56,7 @@ class GetDriveLink @Inject constructor(
     private val updateDriveLinkDisplayName: UpdateDriveLinkDisplayName,
     private val updateSharePermissions: UpdateSharePermissions,
     private val updateShareUserDisplayName: UpdateShareUserDisplayName,
+    private val linkNotFoundHandler: LinkNotFoundHandler,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(
@@ -121,7 +124,9 @@ class GetDriveLink @Inject constructor(
         refresh: Flow<Boolean> = hasLink(linkId).map { hasLink -> !hasLink },
     ): Flow<DataResult<DriveLink>> = refresh.transform { shouldRefresh ->
         if (shouldRefresh) {
-            fetcher<DriveLink> { linkRepository.fetchLink(linkId) }
+            fetcher<DriveLink> {
+                linkNotFoundHandler.onNotExists(linkId) { linkRepository.fetchLink(linkId) }
+            }
         }
         emitAll(
             driveLinkRepository.getDriveLink(linkId)

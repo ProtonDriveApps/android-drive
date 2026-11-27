@@ -29,7 +29,7 @@
             "2 persons added"
     -->
   <plurals name="share_via_invitations_person_added">
-    <item quantity="one">1 osoba pridaná</item>
+    <item quantity="one">%1$d osoba pridaná</item>
     <item quantity="few">%1$d osoby pridané</item>
     <item quantity="many">%1$d osôb pridaných</item>
     <item quantity="other">%1$d osôb pridaných</item>
@@ -40,7 +40,7 @@
             "2 persons cannot be invited"
     -->
   <plurals name="share_via_invitations_person_added_error">
-    <item quantity="one">1 osoba nemôže byť pozvaná</item>
+    <item quantity="one">%1$d osoba nemôže byť pozvaná</item>
     <item quantity="few">%1$d osoby nemôžu byť pozvané</item>
     <item quantity="many">%1$d osôb nemôže byť pozvaných</item>
     <item quantity="other">%1$d osôb nemôže byť pozvaných</item>
@@ -51,7 +51,7 @@
             "Sharing with 2 persons"
     -->
   <plurals name="share_via_invitations_sharing_with">
-    <item quantity="one">Zdieľanie s 1 osobou</item>
+    <item quantity="one">Zdieľanie s %1$d osobou</item>
     <item quantity="few">Zdieľanie s %1$d osobami</item>
     <item quantity="many">Zdieľanie s %1$d osobami</item>
     <item quantity="other">Zdieľanie s %1$d osobami</item>

@@ -41,13 +41,16 @@ import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.domain.entity.FastScrollAnchor
 import me.proton.core.drive.base.presentation.component.IllustratedMessage
+import me.proton.core.drive.base.presentation.component.ReportDrawnWhenLoaded
 import me.proton.core.drive.base.presentation.component.list.ListEmpty
 import me.proton.core.drive.base.presentation.effect.HandleListEffect
 import me.proton.core.drive.base.presentation.effect.ListEffect
+import me.proton.core.drive.base.presentation.extension.fadeInOnAppear
 import me.proton.core.drive.base.presentation.extension.onContent
 import me.proton.core.drive.base.presentation.extension.onEmpty
 import me.proton.core.drive.base.presentation.extension.onError
 import me.proton.core.drive.base.presentation.extension.onLoading
+import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.entity.PhotoTag
@@ -73,6 +76,10 @@ fun Photos(
             }
     }
     listEffect.HandleListEffect(items = items)
+    ReportDrawnWhenLoaded(
+        isLoading = viewState.backupStatusViewState == null ||
+            viewState.listContentState is ListContentState.Loading,
+    )
     Column {
         if (viewState.shouldShowFilters) {
             PhotosFilter(viewState.filters, viewEvent.onFilterSelected)
@@ -89,7 +96,8 @@ fun Photos(
                             EmptyPhotoTag(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .weight(1f),
+                                    .weight(1f)
+                                    .fadeInOnAppear(),
                                 emptyPhotoTagState = emptyPhotoTagState,
                             )
                         } else {
@@ -98,7 +106,7 @@ fun Photos(
                                 viewState = viewState.backupStatusViewState,
                                 showPhotosStateBanner = viewState.showPhotosStateBanner,
                                 showStorageBanner = viewState.showStorageBanner,
-                                modifier = modifier,
+                                modifier = modifier.fadeInOnAppear(),
                                 onEnable = viewEvent.onEnable,
                                 onPermissions = viewEvent.onPermissions,
                                 onRetry = viewEvent.onRetry,
@@ -115,7 +123,7 @@ fun Photos(
                         }
                     } else {
                         PhotosEmptyWithBackupTurnedOff(
-                            modifier = modifier,
+                            modifier = modifier.fadeInOnAppear(),
                             onEnable = viewEvent.onEnable,
                         )
                     }
@@ -136,7 +144,7 @@ fun Photos(
                         PhotosError(
                             message = state.message,
                             actionResId = state.actionResId,
-                            modifier = modifier,
+                            modifier = modifier.fadeInOnAppear(),
                             onAction = viewEvent.onErrorAction,
                         )
                     }
@@ -148,7 +156,9 @@ fun Photos(
                         viewState = viewState.backupStatusViewState,
                         showPhotosStateBanner = viewState.showPhotosStateBanner,
                         showStorageBanner = viewState.showStorageBanner,
-                        modifier = modifier.testTag(PhotosTestTag.content),
+                        modifier = modifier
+                            .testTag(PhotosTestTag.content)
+                            .fadeInOnAppear(),
                         inMultiselect = viewState.inMultiselect,
                         isFastScrollEnabled = viewState.isFastScrollEnabled,
                         isSeparatorSelectionEnabled = viewState.isSeparatorSelectionEnabled,

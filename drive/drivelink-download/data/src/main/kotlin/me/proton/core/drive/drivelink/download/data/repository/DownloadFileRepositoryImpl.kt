@@ -77,17 +77,17 @@ class DownloadFileRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun delete(id: Long) =
-        dao.delete(id)
+    override suspend fun delete(id: Long): Boolean =
+        dao.delete(id) > 0
 
-    override suspend fun delete(volumeId: VolumeId, fileId: FileId, revisionId: String) =
+    override suspend fun delete(volumeId: VolumeId, fileId: FileId, revisionId: String): Boolean =
         dao.delete(
             userId = fileId.userId,
             volumeId = volumeId.id,
             shareId = fileId.shareId.id,
             fileId = fileId.id,
             revisionId = revisionId,
-        )
+        ) > 0
 
     override suspend fun deleteAll(userId: UserId) =
         dao.deleteAll(userId)

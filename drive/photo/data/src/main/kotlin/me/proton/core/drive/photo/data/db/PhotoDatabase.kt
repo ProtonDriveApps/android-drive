@@ -556,5 +556,77 @@ interface PhotoDatabase : Database {
                 """.trimIndent())
             }
         }
+
+        val MIGRATION_9 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                listOf(
+                    "index_PhotoListingEntity_user_id",
+                    "index_PhotoListingEntity_volume_id",
+                    "index_PhotoListingEntity_share_id",
+                    "index_PhotoListingEntity_id",
+                    "index_PhotoListingEntity_user_id_volume_id",
+                    "index_PhotoListingEntity_user_id_volume_id_share_id",
+                    "index_PhotoListingEntity_user_id_volume_id_share_id_id",
+                    "index_RelatedPhotoEntity_user_id",
+                    "index_RelatedPhotoEntity_volume_id",
+                    "index_RelatedPhotoEntity_share_id",
+                    "index_RelatedPhotoEntity_id",
+                    "index_RelatedPhotoEntity_user_id_volume_id_share_id",
+                    "index_TaggedPhotoListingEntity_user_id",
+                    "index_TaggedPhotoListingEntity_volume_id",
+                    "index_TaggedPhotoListingEntity_share_id",
+                    "index_TaggedPhotoListingEntity_id",
+                    "index_TaggedPhotoListingEntity_user_id_volume_id",
+                    "index_TaggedPhotoListingEntity_user_id_volume_id_tag",
+                    "index_TaggedPhotoListingEntity_user_id_volume_id_share_id_tag",
+                    "index_TaggedPhotoListingEntity_user_id_volume_id_id_tag_capture_time",
+                    "index_TaggedRelatedPhotoEntity_user_id",
+                    "index_TaggedRelatedPhotoEntity_volume_id",
+                    "index_TaggedRelatedPhotoEntity_share_id",
+                    "index_TaggedRelatedPhotoEntity_id",
+                    "index_TaggedRelatedPhotoEntity_user_id_volume_id_share_id",
+                    "index_TaggedRelatedPhotoEntity_user_id_volume_id_main_photo_link_id",
+                    "index_AlbumPhotoListingEntity_user_id",
+                    "index_AlbumPhotoListingEntity_volume_id",
+                    "index_AlbumPhotoListingEntity_share_id",
+                    "index_AlbumPhotoListingEntity_album_id",
+                    "index_AlbumPhotoListingEntity_id",
+                    "index_AlbumPhotoListingEntity_user_id_volume_id",
+                    "index_AlbumPhotoListingEntity_user_id_volume_id_share_id",
+                    "index_AlbumPhotoListingEntity_user_id_volume_id_share_id_album_id",
+                    "index_AlbumRelatedPhotoEntity_user_id",
+                    "index_AlbumRelatedPhotoEntity_volume_id",
+                    "index_AlbumRelatedPhotoEntity_share_id",
+                    "index_AlbumRelatedPhotoEntity_id",
+                    "index_AlbumRelatedPhotoEntity_user_id_volume_id_share_id",
+                ).forEach { index ->
+                    database.execSQL("DROP INDEX IF EXISTS `$index`")
+                }
+                database.execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_TaggedPhotoListingEntity_user_id_volume_id_tag_capture_time_id` ON `TaggedPhotoListingEntity` (`user_id`, `volume_id`, `tag`, `capture_time`, `id`)
+                """.trimIndent())
+                database.execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_TaggedRelatedPhotoEntity_user_id_volume_id_main_photo_link_id_share_id_tag` ON `TaggedRelatedPhotoEntity` (`user_id`, `volume_id`, `main_photo_link_id`, `share_id`, `tag`)
+                """.trimIndent())
+                database.execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_AlbumPhotoListingEntity_user_id_share_id_id` ON `AlbumPhotoListingEntity` (`user_id`, `share_id`, `id`)
+                """.trimIndent())
+                database.execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_AlbumPhotoListingEntity_user_id_volume_id_album_id_id` ON `AlbumPhotoListingEntity` (`user_id`, `volume_id`, `album_id`, `id`)
+                """.trimIndent())
+                database.execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_AlbumPhotoListingEntity_user_id_album_id_share_id_id` ON `AlbumPhotoListingEntity` (`user_id`, `album_id`, `share_id`, `id`)
+                """.trimIndent())
+            }
+        }
+
+        val MIGRATION_10 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("DROP INDEX IF EXISTS `index_TagsMigrationFileEntity_user_id_volume_id`")
+                database.execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_TagsMigrationFileEntity_user_id_volume_id_state_capture_time` ON `TagsMigrationFileEntity` (`user_id`, `volume_id`, `state`, `capture_time`)
+                """.trimIndent())
+            }
+        }
     }
 }

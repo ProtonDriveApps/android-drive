@@ -34,11 +34,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -50,14 +52,14 @@ import androidx.navigation.NavHostController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.android.drive.ui.navigation.HomeNavGraph
 import me.proton.android.drive.ui.navigation.PagerType
-import me.proton.android.drive.ui.navigation.Screen
+import me.proton.android.drive.ui.navigation.rememberNavigateToHomeTab
+import me.proton.android.drive.ui.navigation.rememberPopHomeTabToRoot
 import me.proton.android.drive.ui.provider.setLocalSnackbarPadding
 import me.proton.android.drive.ui.viewevent.HomeViewEvent
 import me.proton.android.drive.ui.viewmodel.HomeViewModel
 import me.proton.android.drive.ui.viewstate.HomeViewState
 import me.proton.android.drive.ui.viewstate.rememberHomeScaffoldState
 import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.presentation.component.BottomNavigation
 import me.proton.core.drive.base.presentation.component.BottomNavigationHeight
 import me.proton.core.drive.base.presentation.component.DeferredCircularProgressIndicator
@@ -66,7 +68,9 @@ import me.proton.core.drive.base.presentation.component.ModalBottomSheetViewStat
 import me.proton.core.drive.base.presentation.component.ProtonSnackbarHost
 import me.proton.core.drive.base.presentation.component.ProtonSnackbarHostState
 import me.proton.core.drive.base.presentation.component.ProtonSnackbarType
+import me.proton.core.drive.base.presentation.component.ProvideContentDrawnGate
 import me.proton.core.drive.base.presentation.component.RunOnFirstLifecycleStateLaunchedEffect
+import me.proton.core.drive.base.presentation.extension.LocalContentFadeIn
 import me.proton.core.drive.device.domain.entity.DeviceId
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
@@ -82,7 +86,6 @@ import me.proton.drive.android.settings.domain.entity.WhatsNewKey
 @ExperimentalAnimationApi
 @ExperimentalCoroutinesApi
 fun HomeScreen(
-    userId: UserId,
     homeNavController: NavHostController,
     deepLinkBaseUrl: String,
     startDestination: String,
@@ -131,16 +134,14 @@ fun HomeScreen(
         }
     }
     val viewState by homeViewModel.viewState.collectAsStateWithLifecycle(initialValue = null)
+    val navigateToHomeTab = rememberNavigateToHomeTab(homeNavController)
+    val popHomeTabToRoot = rememberPopHomeTabToRoot(homeNavController)
     val viewEvent = remember(homeViewModel) {
         homeViewModel.viewEvent(
             navigateToSigningOut = navigateToSigningOut,
             navigateToTrash = navigateToTrash,
-            navigateToTab = { route ->
-                homeNavController.navigate(route) {
-                    popUpTo(Screen.Photos.route) { inclusive = route == Screen.Photos(userId) }
-                    launchSingleTop = true
-                }
-            },
+            navigateToTab = navigateToHomeTab,
+            navigateToTabRoot = popHomeTabToRoot,
             navigateToOffline = navigateToOffline,
             navigateToSettings = navigateToSettings,
             navigateToBugReport = navigateToBugReport,
@@ -234,6 +235,10 @@ internal fun Home(
         viewState = remember { ModalBottomSheetViewState() },
     ) {
         var beforeActionGesturesEnabled by remember { mutableStateOf(drawerGesturesEnabled) }
+        val currentIsTabTransitionsEnabled by rememberUpdatedState(viewState.isTabTransitionsEnabled)
+        val currentTabRoutes by rememberUpdatedState(viewState.tabRoutes)
+        val isTabTransitionsEnabled = remember { { currentIsTabTransitionsEnabled } }
+        val tabRoutes = remember { { currentTabRoutes } }
         val snackbarHostState = remember(homeScaffoldState.snackbarHostState) {
             ProtonSnackbarHostState(
                 homeScaffoldState.snackbarHostState,
@@ -307,31 +312,37 @@ internal fun Home(
                 Box(Modifier
                     .padding(contentPadding)
                 ) {
-                    HomeNavGraph(
-                        homeNavController,
-                        deepLinkBaseUrl,
-                        arguments,
-                        startDestination,
-                        homeScaffoldState,
-                        navigateToPreview,
-                        navigateToPreviewWithTag,
-                        navigateToSorting,
-                        navigateToFileOrFolderOptions,
-                        navigateToMultipleFileOrFolderOptions,
-                        navigateToParentFolderOptions,
-                        navigateToPhotosPermissionRationale,
-                        navigateToPhotosIssues,
-                        navigateToPhotosUpsell,
-                        navigateToBackupSettings,
-                        navigateToEnableBackupDialog,
-                        navigateToComputerOptions,
-                        navigateToNotificationPermissionRationale,
-                        navigateToUserInvitation,
-                        navigateToCreateNewAlbum,
-                        navigateToAlbum,
-                        navigateToBlackFriday2026Promo,
-                        navigateToUpsellPromo,
-                    )
+                    ProvideContentDrawnGate {
+                        CompositionLocalProvider(LocalContentFadeIn provides viewState.isTabTransitionsEnabled) {
+                            HomeNavGraph(
+                                homeNavController,
+                                deepLinkBaseUrl,
+                                arguments,
+                                startDestination,
+                                homeScaffoldState,
+                                navigateToPreview,
+                                navigateToPreviewWithTag,
+                                navigateToSorting,
+                                navigateToFileOrFolderOptions,
+                                navigateToMultipleFileOrFolderOptions,
+                                navigateToParentFolderOptions,
+                                navigateToPhotosPermissionRationale,
+                                navigateToPhotosIssues,
+                                navigateToPhotosUpsell,
+                                navigateToBackupSettings,
+                                navigateToEnableBackupDialog,
+                                navigateToComputerOptions,
+                                navigateToNotificationPermissionRationale,
+                                navigateToUserInvitation,
+                                navigateToCreateNewAlbum,
+                                navigateToAlbum,
+                                navigateToBlackFriday2026Promo,
+                                navigateToUpsellPromo,
+                                isTabTransitionsEnabled = isTabTransitionsEnabled,
+                                tabRoutes = tabRoutes,
+                            )
+                        }
+                    }
                 }
             }
         }

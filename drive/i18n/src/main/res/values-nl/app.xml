@@ -66,7 +66,7 @@
         Example:
             "For your security, the tap was blocked because another app is displaying over Proton Drive. Close any floating windows or screen filters and try again."
     -->
-  <string name="upload_to_obscured_touch_blocked">For your security, the tap was blocked because another app is displaying over %1$s. Close any floating windows or screen filters and try again.</string>
+  <string name="upload_to_obscured_touch_blocked">Voor uw veiligheid is de tik geblokkeerd omdat er een andere app over %1$s heen wordt weergegeven. Sluit eventuele zwevende vensters of schermfilters en probeer het opnieuw.</string>
   <!--
         Variable %1$s is an application name
         Example:

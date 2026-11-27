@@ -221,7 +221,8 @@ abstract class TaggedPhotoListingDao : BaseDao<TaggedPhotoListingEntity>() {
             WHERE
                 TaggedPhotoListingEntity.user_id = :userId AND
                 TaggedPhotoListingEntity.volume_id = :volumeId AND
-                TaggedPhotoListingEntity.tag = :tag AND (
+                TaggedPhotoListingEntity.tag = :tag AND
+                TaggedPhotoListingEntity.capture_time >= COALESCE(:lastCaptureTime, ${Long.MIN_VALUE}) AND (
                     :lastCaptureTime IS NULL OR (
                         TaggedPhotoListingEntity.capture_time > :lastCaptureTime OR
                         (
@@ -238,7 +239,8 @@ abstract class TaggedPhotoListingDao : BaseDao<TaggedPhotoListingEntity>() {
             WHERE
                 user_id = :userId AND
                 volume_id = :volumeId AND
-                tag = :tag AND (
+                tag = :tag AND
+                capture_time >= COALESCE(:lastCaptureTime, ${Long.MIN_VALUE}) AND (
                     :lastCaptureTime IS NULL OR (
                         capture_time > :lastCaptureTime OR
                         (
@@ -259,7 +261,8 @@ abstract class TaggedPhotoListingDao : BaseDao<TaggedPhotoListingEntity>() {
             WHERE
                 TaggedPhotoListingEntity.user_id = :userId AND
                 TaggedPhotoListingEntity.volume_id = :volumeId AND
-                TaggedPhotoListingEntity.tag = :tag AND (
+                TaggedPhotoListingEntity.tag = :tag AND
+                TaggedPhotoListingEntity.capture_time <= COALESCE(:lastCaptureTime, ${Long.MAX_VALUE}) AND (
                     :lastCaptureTime IS NULL OR (
                         TaggedPhotoListingEntity.capture_time < :lastCaptureTime OR
                         (
@@ -276,7 +279,8 @@ abstract class TaggedPhotoListingDao : BaseDao<TaggedPhotoListingEntity>() {
             WHERE
                 user_id = :userId AND
                 volume_id = :volumeId AND
-                tag = :tag AND (
+                tag = :tag AND
+                capture_time <= COALESCE(:lastCaptureTime, ${Long.MAX_VALUE}) AND (
                     :lastCaptureTime IS NULL OR (
                         capture_time < :lastCaptureTime OR
                         (

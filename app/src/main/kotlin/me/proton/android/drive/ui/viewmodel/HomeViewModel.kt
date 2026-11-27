@@ -31,10 +31,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
@@ -52,6 +54,7 @@ import me.proton.android.drive.usecase.GetDynamicHomeTabsFlow
 import me.proton.android.drive.usecase.ShouldShowOverlay
 import me.proton.android.payment.purchase.usecase.GetPaymentStatus
 import me.proton.core.domain.entity.SessionUserId
+import me.proton.core.drive.base.domain.extension.combine
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -60,6 +63,9 @@ import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.base.domain.util.coRunCatchingException
 import me.proton.core.drive.base.presentation.component.NavigationTab
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidTabTransitions
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewEvent
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewState
@@ -90,6 +96,7 @@ class HomeViewModel @Inject constructor(
     private val getPaymentStatus: GetPaymentStatus,
     private val configurationProvider: ConfigurationProvider,
     private val blackFriday2026OfferCache: BlackFriday2026OfferCache,
+    getFeatureFlagFlow: GetFeatureFlagFlow,
 ) : ViewModel(), NotificationDotViewModel, UserViewModel by UserViewModel(savedStateHandle) {
     private var navigateToTab: ((route: String) -> Unit)? = null
 
@@ -138,6 +145,11 @@ class HomeViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
+    private val isTabTransitionsEnabled: Flow<Boolean> =
+        getFeatureFlagFlow(driveAndroidTabTransitions(userId))
+            .map { featureFlag -> featureFlag.state == FeatureFlag.State.ENABLED }
+            .distinctUntilChanged()
+
     val viewState: Flow<HomeViewState> =
         combine(
             userManager.observeUser(SessionUserId(userId.id)),
@@ -145,7 +157,8 @@ class HomeViewModel @Inject constructor(
             tabs.filter { tabs -> tabs.isNotEmpty() },
             isPaymentEnabled,
             blackFriday2026OfferCache.availableOffer(userId),
-        ) { user, selectedScreen, tabs, isPaymentEnabled, blackFriday2026Offer ->
+            isTabTransitionsEnabled,
+        ) { user, selectedScreen, tabs, isPaymentEnabled, blackFriday2026Offer, isTabTransitionsEnabled ->
             handleInvalidDestination(selectedScreen, tabs)
             getViewState(
                 user = user,
@@ -153,6 +166,7 @@ class HomeViewModel @Inject constructor(
                 tabs = tabs,
                 showSubscription = user != null && isPaymentEnabled,
                 isBlackFriday2026OfferAvailable = blackFriday2026Offer != null,
+                isTabTransitionsEnabled = isTabTransitionsEnabled,
             )
         }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
@@ -160,6 +174,7 @@ class HomeViewModel @Inject constructor(
         navigateToSigningOut: () -> Unit,
         navigateToTrash: () -> Unit,
         navigateToTab: (route: String) -> Unit,
+        navigateToTabRoot: () -> Unit,
         navigateToOffline: () -> Unit,
         navigateToSettings: () -> Unit,
         navigateToBugReport: () -> Unit,
@@ -170,7 +185,14 @@ class HomeViewModel @Inject constructor(
         navigateToBlackFriday2026Promo: () -> Unit,
         navigateToAppPromo: () -> Unit,
     ): HomeViewEvent = object : HomeViewEvent {
-        override val onTab = { tab: NavigationTab -> navigateToTab(tab.screen(userId)) }
+        override val onTab = { tab: NavigationTab ->
+            val screen = tab.screen
+            if (screen.route == currentDestination.value) {
+                navigateToTabRoot()
+            } else {
+                navigateToTab(screen(userId))
+            }
+        }
         override val onFirstLaunch: (NavigationTab?) -> Unit = { navigationTab ->
             viewModelScope.launch {
                 try {
@@ -249,6 +271,7 @@ class HomeViewModel @Inject constructor(
         tabs: Map<out HomeTab, NavigationTab>,
         showSubscription: Boolean,
         isBlackFriday2026OfferAvailable: Boolean,
+        isTabTransitionsEnabled: Boolean,
     ) =
         HomeViewState(
             tabs = tabs.values.toList(),
@@ -262,7 +285,9 @@ class HomeViewModel @Inject constructor(
                 showGetFreeStorage = user?.let { canGetMoreFreeStorage(user) } ?: false,
                 showSubscription = showSubscription,
                 specialOffer = blackFriday2026SpecialOffer.takeIf { isBlackFriday2026OfferAvailable },
-            )
+            ),
+            isTabTransitionsEnabled = isTabTransitionsEnabled,
+            tabRoutes = tabs.keys.map { screen -> screen.route },
         )
 
     private val blackFriday2026SpecialOffer = SpecialOffer(

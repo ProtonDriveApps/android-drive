@@ -24,16 +24,23 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.transformLatest
@@ -153,15 +160,51 @@ fun <T : Any> ((fromIndex: Int, count: Int) -> Flow<Result<List<T>>>).asPagingSo
             }
             .stateIn(scope, SharingStarted.Eagerly, null)
 
-        private val fromIndex = MutableStateFlow<Int?>(null)
+        private inner class Window(val index: Int) {
+            private val job = SupervisorJob(scope.coroutineContext[Job])
+            private val isClosed = MutableStateFlow(false)
 
-        private val observableList: StateFlow<Result<List<T>>?> = fromIndex
+            val list: SharedFlow<Result<List<T>>> = this@asPagingSource(index, observablePageSize)
+                .onCompletion { isClosed.value = true }
+                .shareIn(CoroutineScope(scope.coroutineContext + job), SharingStarted.Lazily, replay = 1)
+
+            val hasFailed: Boolean get() = list.replayCache.firstOrNull()?.isFailure == true
+
+            init {
+                job.invokeOnCompletion { isClosed.value = true }
+            }
+
+            suspend fun firstOrNull(): Result<List<T>>? = list.replayCache.firstOrNull() ?: merge(
+                list,
+                isClosed.filter { closed -> closed }.map { null },
+            ).first()
+
+            fun close() {
+                job.cancel()
+            }
+        }
+
+        private val windowLock = Any()
+        private val currentWindow = MutableStateFlow<Window?>(null)
+
+        private fun windowFor(index: Int): Window = synchronized(windowLock) {
+            currentWindow.value?.takeIf { window -> window.index == index && !window.hasFailed }
+                ?: Window(index).also { window ->
+                    currentWindow.value?.close()
+                    currentWindow.value = window
+                }
+        }
+
+        private suspend fun loadWindow(index: Int): Result<List<T>>? =
+            windowFor(index).firstOrNull()
+                ?: if (invalid) null else this@asPagingSource(index, observablePageSize).first()
+
+        private val observableList: StateFlow<Result<List<T>>?> = currentWindow
             .takeWhile { invalid.not() }
-            .distinctUntilChanged()
             .filterNotNull()
-            .transformLatest { fromIndex ->
+            .transformLatest { window ->
                 emitAll(
-                    this@asPagingSource(fromIndex, observablePageSize)
+                    window.list
                         .takeWhile { invalid.not() }
                         .distinctUntilChanged()
                         .mapWithPrevious { previous, current ->
@@ -198,9 +241,8 @@ fun <T : Any> ((fromIndex: Int, count: Int) -> Flow<Result<List<T>>>).asPagingSo
             val pageKey = params.getPageKey(items)
             val pageRange = rangeFromPage(pageKey, params.loadSize, items)
             val currentIndex = findIndexForRange(pageRange, observablePageSize, items)
-            fromIndex.value = currentIndex
             return try {
-                val pageList = this@asPagingSource(currentIndex, observablePageSize).first()
+                val pageList = (loadWindow(currentIndex) ?: return LoadResult.Invalid())
                     .onFailure { error ->
                         error.log(LogTag.PAGING, "load (key=$pageKey) from flow failed")
                         return LoadResult.Error(error.cause ?: error)

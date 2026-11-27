@@ -23,8 +23,8 @@
             "5 items sent to trash"
     -->
   <plurals name="trash_operation_successful_format">
-    <item quantity="one">1 element enviat a la paperera</item>
-    <item quantity="other">%1$d elements enviats a la paperera</item>
+    <item quantity="one">S\'ha enviat %1$d element a la paperera</item>
+    <item quantity="other">S\'han enviat %1$d elements a la paperera</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -32,8 +32,8 @@
             "5 items restored"
     -->
   <plurals name="trash_restore_operation_successful_format">
-    <item quantity="one">1 element restaurat</item>
-    <item quantity="other">%d elements restaurats</item>
+    <item quantity="one">S\'ha restaurat %1$d element</item>
+    <item quantity="other">S\'han restaurat %1$d elements</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -41,8 +41,8 @@
             "5 items deleted permanently"
     -->
   <plurals name="trash_delete_operation_successful_format">
-    <item quantity="one">1 element suprimit permanentment</item>
-    <item quantity="other">%d elements suprimits permanentment</item>
+    <item quantity="one">S\'ha eliminat permanentment %1$d element</item>
+    <item quantity="other">S\'han eliminat permanentment %1$d elements</item>
   </plurals>
   <string name="trash_empty_operation_successful">Paperera buida</string>
   <string name="trash_error_occurred_sending_to_trash">S\'ha produït un error en intentar enviar un o més fitxers a la paperera.</string>

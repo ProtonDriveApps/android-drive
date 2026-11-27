@@ -36,6 +36,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.extension.getOrNull
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
@@ -87,6 +88,7 @@ class UploadFileSdkWorker @AssistedInject constructor(
     private val incrementAttempts: IncrementAttempts,
     private val cleanupWorkers: CleanupWorkers,
     private val networkTypeProviders: @JvmSuppressWildcards Map<NetworkTypeProviderType, NetworkTypeProvider>,
+    private val itemLifecycle: ItemLifecycle,
     configurationProvider: ConfigurationProvider,
     workerRuns: WorkerRuns,
 ) : UploadCoroutineWorker(
@@ -137,6 +139,11 @@ class UploadFileSdkWorker @AssistedInject constructor(
             },
             onSuccess = {
                 CoreLogger.i(uploadFileLink.logTag(), "Upload via sdk succeed")
+                itemLifecycle.finished(
+                    flow = ItemLifecycle.Flow.UPLOAD,
+                    id = uploadFileLink.id.toString(),
+                    outcome = ItemLifecycle.Outcome.SUCCEEDED,
+                )
                 Result.success(getSizeData(uploadFileLink.size?.value ?: 0))
             }
         )

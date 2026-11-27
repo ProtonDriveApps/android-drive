@@ -35,6 +35,7 @@ import me.proton.android.drive.extension.log
 import me.proton.android.drive.photos.domain.entity.PhotoBackupState
 import me.proton.android.drive.photos.domain.usecase.EnablePhotosBackup
 import me.proton.android.drive.photos.domain.usecase.GetPhotosDriveLink
+import me.proton.android.drive.photos.presentation.extension.allowsBackup
 import me.proton.android.drive.photos.presentation.viewevent.BackupPermissionsViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.BackupPermissionsEffect
 import me.proton.android.drive.photos.presentation.viewstate.BackupPermissionsViewState
@@ -83,8 +84,7 @@ class OnboardingViewModel @Inject constructor(
         override val onPermissionsChanged = backupPermissionsManager::onPermissionChanged
 
         override val onPermissionResult = { result: Map<String, Boolean> ->
-            val allPermissionsGranted = result.values.all { it }
-            if (allPermissionsGranted) {
+            if (result.allowsBackup()) {
                 nextStep?.invoke()
             } else {
                 dismiss?.invoke()

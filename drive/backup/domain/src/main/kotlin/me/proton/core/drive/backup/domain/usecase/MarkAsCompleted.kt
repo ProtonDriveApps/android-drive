@@ -19,14 +19,21 @@
 package me.proton.core.drive.backup.domain.usecase
 
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FolderId
 import javax.inject.Inject
 
 class MarkAsCompleted @Inject constructor(
-    private val repository: BackupFileRepository
+    private val repository: BackupFileRepository,
+    private val itemLifecycle: ItemLifecycle,
 ) {
     suspend operator fun invoke(folderId: FolderId, uriString: String) = coRunCatching {
         repository.markAsCompleted(folderId, uriString)
+        itemLifecycle.finished(
+            flow = ItemLifecycle.Flow.BACKUP,
+            id = itemLifecycle.backupKey(uriString),
+            outcome = ItemLifecycle.Outcome.SUCCEEDED,
+        )
     }
 }

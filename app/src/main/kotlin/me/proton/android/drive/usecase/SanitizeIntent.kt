@@ -31,14 +31,14 @@ import me.proton.core.drive.i18n.R as I18N
 class SanitizeIntent @Inject constructor(
     @ApplicationContext private val appContext: Context,
 ) {
-    private val component = ComponentName(appContext, MainActivity::class.java)
+    private val mainActivityComponent = ComponentName(appContext, MainActivity::class.java)
 
     operator fun invoke(intent: Intent): Intent = when (intent.action) {
         Intent.ACTION_VIEW -> intent.data
             ?.takeIf { uri -> uri.isOwnDeepLink }
-            ?.let { uri -> Intent(Intent.ACTION_VIEW, uri).setComponent(component) }
+            ?.let { uri -> Intent(Intent.ACTION_VIEW, uri).setComponent(mainActivityComponent) }
         Intent.ACTION_SEND -> Intent(Intent.ACTION_SEND).apply {
-            setComponent(component)
+            setComponent(mainActivityComponent)
             type = intent.type
             clipData = intent.clipData
             getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)?.let { uri ->
@@ -46,7 +46,7 @@ class SanitizeIntent @Inject constructor(
             }
         }
         Intent.ACTION_SEND_MULTIPLE -> Intent(Intent.ACTION_SEND_MULTIPLE).apply {
-            setComponent(component)
+            setComponent(mainActivityComponent)
             type = intent.type
             clipData = intent.clipData
             getParcelableArrayListExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)?.let { uris ->
@@ -55,7 +55,7 @@ class SanitizeIntent @Inject constructor(
         }
         else -> null
     }
-        .let { sanitized -> sanitized ?: Intent.makeMainActivity(component) }
+        .let { sanitized -> sanitized ?: Intent.makeMainActivity(mainActivityComponent) }
         .apply {
             flags = intent.flags
             intent.getStringExtra(EXTRA_NOTIFICATION_ID)?.let { notificationId ->

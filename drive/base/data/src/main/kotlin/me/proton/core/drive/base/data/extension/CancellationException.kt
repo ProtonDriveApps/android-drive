@@ -28,7 +28,7 @@ fun CancellationException.getDefaultMessage(context: Context): String =
 fun CancellationException.log(
     tag: String,
     message: String? = null,
-    level: LoggerLevel? = LoggerLevel.DEBUG,
+    level: LoggerLevel? = null,
 ): CancellationException = also {
-    level.log(tag, this, message)
+    (level ?: LoggerLevel.DEBUG).log(tag, this, message)
 }

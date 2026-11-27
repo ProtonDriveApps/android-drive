@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import me.proton.android.drive.extension.log
+import me.proton.android.drive.photos.domain.usecase.DisablePhotosBackupIfVolumeInactive
 import me.proton.android.drive.photos.domain.usecase.RescanOnMediaStoreUpdate
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.presentation.observe
@@ -55,6 +56,7 @@ import me.proton.core.drive.backup.domain.usecase.CheckAvailableSpace
 import me.proton.core.drive.backup.domain.usecase.MarkOrphanedEnqueuedFilesAsFailed
 import me.proton.core.drive.backup.domain.usecase.HasFolders
 import me.proton.core.drive.backup.domain.usecase.ObserveConfigurationChanges
+import me.proton.core.drive.backup.domain.usecase.ObserveFolderNotFound
 import me.proton.core.drive.backup.domain.usecase.SchedulePeriodicSync
 import me.proton.core.drive.backup.domain.usecase.StartBackupAfterErrorResolved
 import me.proton.core.drive.backup.domain.usecase.StopBackupAfterPermissionsLost
@@ -151,6 +153,12 @@ class BackupInitializer : Initializer<Unit> {
 
                     announceFolderStatus(userId).launchIn(scope)
 
+                    observeFolderNotFound(userId).onEach { folderId ->
+                        disablePhotosBackupIfVolumeInactive(folderId).onFailure { error ->
+                            error.log(BACKUP, "Cannot check the volume of a backup folder not found")
+                        }
+                    }.launchIn(scope)
+
                     rescanOnMediaStoreUpdate(userId).onFailure { error ->
                         error.log(BACKUP, "Cannot observe media store updates")
                     }
@@ -211,6 +219,8 @@ class BackupInitializer : Initializer<Unit> {
         val syncStaleFolders: SyncStaleFolders
         val markOrphanedEnqueuedFilesAsFailed: MarkOrphanedEnqueuedFilesAsFailed
         val announceFolderStatus: AnnounceFolderStatus
+        val observeFolderNotFound: ObserveFolderNotFound
+        val disablePhotosBackupIfVolumeInactive: DisablePhotosBackupIfVolumeInactive
         val workManager: WorkManager
     }
 }

@@ -31,6 +31,7 @@ import me.proton.android.drive.BuildConfig
 import me.proton.android.drive.log.ApiExceptionProcessor
 import me.proton.android.drive.log.PiiScrubber
 import me.proton.android.drive.log.ProtonDriveSdkExceptionProcessor
+import me.proton.android.drive.log.SlowDatabaseOperationProcessor
 import me.proton.core.usersettings.domain.UsersSettingsHandler
 import me.proton.core.util.android.sentry.TimberLoggerIntegration
 import me.proton.core.util.android.sentry.project.AccountSentryHubBuilder
@@ -68,6 +69,7 @@ class SentryInitializer : Initializer<Unit> {
             )
             options.addEventProcessor(ApiExceptionProcessor())
             options.addEventProcessor(ProtonDriveSdkExceptionProcessor())
+            options.addEventProcessor(SlowDatabaseOperationProcessor())
         }
 
         entryPoint.accountSentryHubBuilder().invoke(

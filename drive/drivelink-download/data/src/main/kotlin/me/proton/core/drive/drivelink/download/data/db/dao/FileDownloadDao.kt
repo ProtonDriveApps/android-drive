@@ -93,7 +93,7 @@ abstract class FileDownloadDao : BaseDao<FileDownloadEntity>() {
     @Query("""
         DELETE FROM FileDownloadEntity WHERE id = :id
     """)
-    abstract suspend fun delete(id: Long)
+    abstract suspend fun delete(id: Long): Int
 
     @Query("""
         DELETE FROM FileDownloadEntity WHERE
@@ -109,7 +109,7 @@ abstract class FileDownloadDao : BaseDao<FileDownloadEntity>() {
         shareId: String,
         fileId: String,
         revisionId: String,
-    )
+    ): Int
 
     @Query("""
         DELETE FROM FileDownloadEntity WHERE user_id = :userId

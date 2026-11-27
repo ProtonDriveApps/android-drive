@@ -31,25 +31,29 @@ import me.proton.core.drive.volume.domain.entity.VolumeId
 class TestDownloadFileRepository : DownloadFileRepository {
 
     val links = mutableListOf<DownloadFileLink>()
+    val failedIds = mutableListOf<Long>()
+
+    var nextIdle: DownloadFileLink? = null
 
     override suspend fun getNextIdleAndUpdate(
         userId: UserId,
         networkTypes: Set<NetworkType>,
         state: DownloadFileLink.State
-    ): DownloadFileLink? = null
+    ): DownloadFileLink? = nextIdle.also { nextIdle = null }
 
     override suspend fun add(downloadFileLink: DownloadFileLink) {
         links.add(downloadFileLink)
     }
 
-    override suspend fun delete(id: Long) {
-    }
+    override suspend fun delete(id: Long): Boolean =
+        links.removeAll { link -> link.id == id }
 
     override suspend fun delete(
         volumeId: VolumeId,
         fileId: FileId,
         revisionId: String
-    ) {
+    ): Boolean = links.removeAll { link ->
+        link.volumeId == volumeId && link.fileId == fileId && link.revisionId == revisionId
     }
 
     override suspend fun deleteAll(userId: UserId) {
@@ -75,13 +79,14 @@ class TestDownloadFileRepository : DownloadFileRepository {
     ): Boolean = false
 
     override suspend fun updateStateToFailed(id: Long, runAt: Long) {
+        failedIds.add(id)
     }
 
     override suspend fun getAllWithState(
         userId: UserId,
         state: DownloadFileLink.State
     ): List<DownloadFileLink> =
-        links
+        links.filter { link -> link.state == state }
 
     override suspend fun resetStateAndIncreaseRetries(
         id: Long,

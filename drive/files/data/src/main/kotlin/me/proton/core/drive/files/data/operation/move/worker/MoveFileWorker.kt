@@ -41,6 +41,7 @@ import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.extension.onProtonHttpException
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -71,6 +72,7 @@ class MoveFileWorker @AssistedInject constructor(
     private val changeParent: ChangeParent,
     private val getSelectedDriveLinks: GetSelectedDriveLinks,
     private val deselectLinks: DeselectLinks,
+    private val itemLifecycle: ItemLifecycle,
 ) : CoroutineWorker(appContext, params) {
 
     private val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)))
@@ -90,6 +92,7 @@ class MoveFileWorker @AssistedInject constructor(
                 message = applicationContext.getString(I18N.string.file_operation_error_occurred_moving_file),
                 type = BroadcastMessage.Type.ERROR
             )
+            driveLinks.forEach { driveLink -> driveLink.logFinished(ItemLifecycle.Outcome.FAILED) }
             deselectLinks(selectionId).onFailure { error ->
                 error.log(LogTag.MOVE, "Failed to deselect links")
             }
@@ -101,8 +104,10 @@ class MoveFileWorker @AssistedInject constructor(
                 changeParent(driveLink.id, parentId)
                     .onSuccess {
                         succeeded.add(driveLink)
+                        driveLink.logFinished(ItemLifecycle.Outcome.SUCCEEDED)
                     }
                     .onFailure { error ->
+                        driveLink.logFinished(ItemLifecycle.Outcome.FAILED)
                         if (!error.handledFileAlreadyExists()) {
                             error.log(LogTag.MOVE, "An error occurred while moving the file")
                             broadcastMessages(
@@ -144,6 +149,9 @@ class MoveFileWorker @AssistedInject constructor(
         }
         return@supervisorScope Result.success()
     }
+
+    private fun DriveLink.logFinished(outcome: ItemLifecycle.Outcome) =
+        itemLifecycle.finished(ItemLifecycle.Flow.MOVE, id.id, outcome)
 
     private val List<DriveLink>.message: String get() = when (size) {
         1 -> applicationContext.getString(

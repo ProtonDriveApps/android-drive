@@ -22,6 +22,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.files.data.operation.move.worker.MoveFileWorker
 import me.proton.core.drive.files.domain.operation.FileOperationManager
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -35,12 +36,16 @@ import javax.inject.Singleton
 class FileOperationManagerImpl @Inject constructor(
     private val workManager: WorkManager,
     private val selectLinks: SelectLinks,
+    private val itemLifecycle: ItemLifecycle,
 ) : FileOperationManager {
 
     private val String.uniqueMoveWorkName: String get() = "moving=$this"
 
     override suspend fun changeParent(userId: UserId, linkIds: List<LinkId>, parentId: ParentId, allowUndo: Boolean) {
         val selectionId = selectLinks(linkIds).getOrThrow()
+        linkIds.forEach { linkId ->
+            itemLifecycle.accepted(ItemLifecycle.Flow.MOVE, linkId.id, selectionId.id)
+        }
         workManager.enqueueUniqueWork(
             selectionId.id.uniqueMoveWorkName,
             ExistingWorkPolicy.KEEP,

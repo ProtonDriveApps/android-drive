@@ -50,6 +50,9 @@ driveModule(
     implementation(libs.bundles.accompanist)
     implementation(libs.retrofit)
     runtimeOnly(libs.androidx.compose.material)
+
+    testImplementation(libs.androidx.compose.ui.test.junit)
+    testImplementation(libs.androidx.compose.uiTestManifest)
 }
 
 configureJacoco()

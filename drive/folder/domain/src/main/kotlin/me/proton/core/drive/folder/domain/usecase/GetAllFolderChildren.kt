@@ -17,31 +17,29 @@
  */
 package me.proton.core.drive.folder.domain.usecase
 
-import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.extension.getOrNull
-import me.proton.core.drive.base.domain.extension.onProtonHttpException
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.folder.domain.repository.FolderRepository
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.extension.isNotExists
+import me.proton.core.drive.link.domain.handler.LinkNotFoundHandler
 import javax.inject.Inject
 
 class GetAllFolderChildren @Inject constructor(
     private val folderRepository: FolderRepository,
     private val configurationProvider: ConfigurationProvider,
+    private val linkNotFoundHandler: LinkNotFoundHandler,
 ) {
     suspend operator fun invoke(
         folderId: FolderId,
         refresh: Boolean? = null,
     ): Result<List<Link>> = coRunCatching {
         val shouldRefresh = refresh ?: !folderRepository.hasFolderChildren(folderId)
-        if (shouldRefresh) {
-            folderRepository
-                .fetchAllFolderChildren(folderId)
-                .recoverNotExists { emptyList() }
-                .getOrThrow()
+        if (shouldRefresh && !refreshChildren(folderId)) {
+            return@coRunCatching emptyList()
         }
         getAllChildren(folderId).getOrThrow()
     }
@@ -52,11 +50,8 @@ class GetAllFolderChildren @Inject constructor(
         block: suspend (List<Link>) -> Unit,
     ) = coRunCatching {
         val shouldRefresh = refresh ?: !folderRepository.hasFolderChildren(folderId)
-        if (shouldRefresh) {
-            folderRepository
-                .fetchAllFolderChildren(folderId)
-                .recoverNotExists { emptyList() }
-                .getOrThrow()
+        if (shouldRefresh && !refreshChildren(folderId)) {
+            return@coRunCatching
         }
         withFolderChildren(folderId) { children ->
             block(children)
@@ -94,15 +89,21 @@ class GetAllFolderChildren @Inject constructor(
         } while (loaded == count)
     }
 
-    private inline fun <T> Result<T>.recoverNotExists(
-        fallback: () -> T,
-    ): Result<T> = recoverCatching { error ->
-        error.onProtonHttpException { protonData ->
-            if (protonData.code == ProtonApiCode.NOT_EXISTS) {
-                fallback()
-            } else {
-                null
+    /**
+     * Returns false when the folder no longer exists on the backend: its cached copy and children
+     * are stale, so they are removed locally and must not be returned.
+     */
+    private suspend fun refreshChildren(folderId: FolderId): Boolean =
+        folderRepository
+            .fetchAllFolderChildren(folderId)
+            .map { true }
+            .recoverCatching { error ->
+                if (error.isNotExists) {
+                    linkNotFoundHandler.onLinkNotFound(folderId)
+                    false
+                } else {
+                    throw error
+                }
             }
-        } ?: throw error
-    }
+            .getOrThrow()
 }

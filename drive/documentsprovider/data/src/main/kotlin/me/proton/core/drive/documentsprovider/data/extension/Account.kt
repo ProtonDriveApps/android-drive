@@ -31,10 +31,7 @@ internal fun Account.addTo(context: Context, cursor: MatrixCursor.RowBuilder) {
     cursor.add(DocumentsContract.Root.COLUMN_ICON, context.icon)
     cursor.add(DocumentsContract.Root.COLUMN_TITLE, context.applicationName)
     cursor.add(DocumentsContract.Root.COLUMN_SUMMARY, email)
-    cursor.add(
-        DocumentsContract.Root.COLUMN_FLAGS,
-        DocumentsContract.Root.FLAG_SUPPORTS_CREATE,
-    )
+    cursor.add(DocumentsContract.Root.COLUMN_FLAGS, 0)
     cursor.add(
         DocumentsContract.Root.COLUMN_DOCUMENT_ID,
         DocumentId(userId, null).encode()

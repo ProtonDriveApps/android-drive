@@ -29,7 +29,7 @@
             "2 persons added"
     -->
   <plurals name="share_via_invitations_person_added">
-    <item quantity="one">1 persoon toegevoegd</item>
+    <item quantity="one">%1$d persoon toegevoegd</item>
     <item quantity="other">%1$d personen toegevoegd</item>
   </plurals>
   <!--
@@ -38,7 +38,7 @@
             "2 persons cannot be invited"
     -->
   <plurals name="share_via_invitations_person_added_error">
-    <item quantity="one">1 persoon kan niet worden uitgenodigd</item>
+    <item quantity="one">%1$d persoon kan niet worden uitgenodigd</item>
     <item quantity="other">%1$d personen kunnen niet worden uitgenodigd</item>
   </plurals>
   <!--
@@ -47,8 +47,8 @@
             "Sharing with 2 persons"
     -->
   <plurals name="share_via_invitations_sharing_with">
-    <item quantity="one">Delen met 1 persoon</item>
-    <item quantity="other">Delen met %1$d personen</item>
+    <item quantity="one">Gedeeld met %1$d persoon</item>
+    <item quantity="other">Gedeeld met %1$d personen</item>
   </plurals>
   <string name="common_permission_owner">Eigenaar</string>
   <string name="common_permission_admin">Beheerder</string>

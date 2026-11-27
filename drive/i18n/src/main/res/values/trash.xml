@@ -26,7 +26,7 @@
             "5 items sent to trash"
     -->
     <plurals name="trash_operation_successful_format">
-        <item quantity="one">1 item sent to trash</item>
+        <item quantity="one">%1$d item sent to trash</item>
         <item quantity="other">%1$d items sent to trash</item>
     </plurals>
     <!--
@@ -35,8 +35,8 @@
             "5 items restored"
     -->
     <plurals name="trash_restore_operation_successful_format">
-        <item quantity="one">1 item restored</item>
-        <item quantity="other">%d items restored</item>
+        <item quantity="one">%1$d item restored</item>
+        <item quantity="other">%1$d items restored</item>
     </plurals>
     <!--
         Variable %1$d is a number
@@ -44,8 +44,8 @@
             "5 items deleted permanently"
     -->
     <plurals name="trash_delete_operation_successful_format">
-        <item quantity="one">1 item deleted permanently</item>
-        <item quantity="other">%d items deleted permanently</item>
+        <item quantity="one">%1$d item deleted permanently</item>
+        <item quantity="other">%1$d items deleted permanently</item>
     </plurals>
     <string name="trash_empty_operation_successful">Trash emptied</string>
     <string name="trash_error_occurred_sending_to_trash">An error occurred while trying to send your file(s) to the trash</string>

@@ -30,10 +30,6 @@ internal fun UploadFileLink.addTo(cursor: MatrixCursor.RowBuilder) {
     val flags = DocumentsContract.Document.FLAG_SUPPORTS_DELETE
         .add {
             DocumentsContract.Document.FLAG_SUPPORTS_RENAME
-        }.add {
-            DocumentsContract.Document.FLAG_SUPPORTS_MOVE
-        }.add {
-            DocumentsContract.Document.FLAG_SUPPORTS_WRITE
         }.addIf(mimeType.startsWith("image/")) {
             DocumentsContract.Document.FLAG_SUPPORTS_THUMBNAIL
         }

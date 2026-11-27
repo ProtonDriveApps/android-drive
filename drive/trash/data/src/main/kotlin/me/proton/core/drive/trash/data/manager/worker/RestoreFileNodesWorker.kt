@@ -31,6 +31,7 @@ import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
@@ -55,13 +56,15 @@ class RestoreFileNodesWorker @AssistedInject constructor(
     private val linkTrashRepository: LinkTrashRepository,
     private val broadcastMessages: BroadcastMessages,
     private val updateEventAction: UpdateEventAction,
+    itemLifecycle: ItemLifecycle,
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
-) : AbstractMultiResponseCoroutineWorker(linkTrashRepository, appContext, params) {
+) : AbstractMultiResponseCoroutineWorker(linkTrashRepository, itemLifecycle, appContext, params) {
 
     private val userId = UserId(inputData.getString(KEY_USER_ID) ?: "")
     private val volumeId = VolumeId(inputData.getString(KEY_VOLUME_ID) ?: "")
     override val workId = inputData.getString(KEY_WORK_ID) ?: ""
+    override val lifecycleFlow = ItemLifecycle.Flow.RESTORE
 
     override suspend fun executeCall(links: List<Link>): Map<LinkId, DataResult<Unit>> =
         updateEventAction(userId, volumeId) {

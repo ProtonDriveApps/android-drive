@@ -107,12 +107,32 @@ object PiiScrubber {
     private val CONTENT_URI = Regex("""content://[^\s"')]+""")
     private val STORAGE_PATH = Regex("""/(?:storage/emulated/\d+|sdcard|mnt/sdcard)/[^\s"')]+""")
 
+    private val WRAPPED_SECRET =
+        Regex("""\b((?:SessionId|ProtonPaymentToken|GooglePurchaseToken)\((?:id|value)=)[^)\s,]++""")
+
+    private val PAYMENT_ASSIGNMENT =
+        Regex("""\b((?:paymentOrderId|purchaseToken|orderId|customerId)\s*+[=:]\s*+)[^,\s)]++""")
+
+    private val PAYMENT_JSON_FIELD = Regex(
+        """(['"](?:purchaseToken|token|Token|PaymentToken|orderId|""" +
+            """obfuscatedAccountId|obfuscatedProfileId|customerID|CustomerID)['"]\s*:\s*)(['"])[^'"]*+\2"""
+    )
+
+    private val PAYMENT_TOKEN_PATH = Regex("""(/payments/v[0-9]++/tokens/)[^\s/?#"')]++""")
+
+    private val GOOGLE_ORDER_ID = Regex("""\bGPA\.[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{5}(?:\.\.[0-9]++)?""")
+
     /** Redact PII / secrets from a free-text string. Safe to call on any log line. */
     fun scrubText(text: String): String =
         text
             .replace(SENSITIVE_HEADER) { "${it.groupValues[1]}${it.groupValues[2]}$REDACTED" }
             .replace(JWT, REDACTED)
             .replace(BEARER, "Bearer $REDACTED")
+            .replace(WRAPPED_SECRET) { "${it.groupValues[1]}$REDACTED" }
+            .replace(PAYMENT_ASSIGNMENT) { "${it.groupValues[1]}$REDACTED" }
+            .replace(PAYMENT_JSON_FIELD) { "${it.groupValues[1]}${it.groupValues[2]}$REDACTED${it.groupValues[2]}" }
+            .replace(GOOGLE_ORDER_ID, REDACTED)
+            .replace(PAYMENT_TOKEN_PATH) { "${it.groupValues[1]}$REDACTED" }
             .replace(URL_TOKEN) { "${it.groupValues[1]}$REDACTED" }
             .replace(PERSONAL_FIELD) { "${it.groupValues[1]}${it.groupValues[2]}$REDACTED${it.groupValues[2]}" }
             .replace(LABEL_PATH_FIELD) { "${it.groupValues[1]}${it.groupValues[2]}$REDACTED${it.groupValues[2]}" }

@@ -27,11 +27,25 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("kotlin-parcelize")
     kotlin("android")
+    id("androidx.baselineprofile")
     id("me.proton.core.gradle-plugins.environment-config") version "1.3.0"
 }
 
 base {
     archivesName.set(Config.archivesBaseName)
+}
+
+baselineProfile {
+    mergeIntoMain = true
+    saveInSrc = true
+    automaticGenerationDuringBuild = false
+    dexLayoutOptimization = true
+
+    variants {
+        create("devRelease") {
+            from(project(":baselineprofile"))
+        }
+    }
 }
 
 tasks.register("getArchivesName") {
@@ -67,6 +81,7 @@ driveModule(
     implementation(libs.androidx.dataStore.preferences)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.webkit)
     implementation(libs.bundles.accompanist)
     implementation(libs.bundles.core)
@@ -75,6 +90,7 @@ driveModule(
     implementation(libs.lottie.compose)
     implementation(libs.material)
     implementation(libs.okhttp)
+    implementation(libs.retrofit)
     implementation(libs.okhttpLoggingInterceptor)
     implementation(libs.sentry)
     implementation(libs.timber)
@@ -92,10 +108,11 @@ driveModule(
     testImplementation(project(":drive:test"))
     testImplementation(testFixtures(project(":app-ui-settings")))
     testImplementation(testFixtures(project(":drive:feature-flag:domain")))
+    testImplementation(libs.androidx.compose.ui.test.junit)
+    testImplementation(libs.androidx.compose.uiTestManifest)
     androidTestImplementation(libs.androidx.navigation.compose)
     androidTestImplementation(libs.androidx.test.espresso.contrib)
     androidTestImplementation(libs.bundles.core.test)
-    androidTestImplementation(libs.core.payment.iap)
     androidTestImplementation(libs.fusion)
     androidTestImplementation(libs.okhttpLoggingInterceptor)
     androidTestImplementation(project(":drive:backup:data"))
@@ -124,14 +141,10 @@ val privateProperties = Properties().apply {
 val lastAlpha = tags.countSubstrings("${Config.versionName}-alpha")
 val lastBeta = tags.countSubstrings("${Config.versionName}-beta")
 
-// Drive SDK: enable rust per flavor (uncomment to enable).
-val driveSdkRustFlavors = setOf(
-    "dev",
-    "alpha",
-    //"beta",
-    //"prod",
-)
-val driveSdkRustVersion = "${libs.versions.drive.sdk.get()}-rust"
+// A plain Drive SDK version is the Go crypto build; every flavor must use the rust one.
+check(libs.versions.drive.sdk.get().endsWith("-rust")) {
+    "drive-sdk in gradle/libs.versions.toml must be a \"-rust\" version, got ${libs.versions.drive.sdk.get()}"
+}
 
 android {
     namespace = "me.proton.android.drive"
@@ -239,13 +252,6 @@ android {
         create("prod") {
             versionCode = (versionCodeFromGitCommitCount * 10) + 1
         }
-        driveSdkRustFlavors.forEach { flavor ->
-            getByName(flavor) {
-                buildConfigField("String", "SDK_VERSION_NAME", "\"$driveSdkRustVersion\"")
-                // Rust crypto flavor when the SDK is a local composite build.
-                missingDimensionStrategy("crypto", "rust")
-            }
-        }
     }
 
     buildFeatures {
@@ -272,23 +278,6 @@ android {
 
     androidResources {
         generateLocaleConfig = true
-    }
-}
-
-// Force the "-rust" SDK version on rust flavors, Maven artifact only.
-androidComponents {
-    onVariants { variant ->
-        if (driveSdkRustFlavors.any { variant.name.startsWith(it) }) {
-            configurations
-                .matching { it.name.startsWith(variant.name) }
-                .configureEach {
-                    resolutionStrategy.eachDependency {
-                        if (requested.group == "me.proton.drive" && requested.name == "sdk") {
-                            useVersion(driveSdkRustVersion)
-                        }
-                    }
-                }
-        }
     }
 }
 

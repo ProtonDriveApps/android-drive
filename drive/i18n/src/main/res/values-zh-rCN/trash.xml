@@ -23,7 +23,7 @@
             "5 items sent to trash"
     -->
   <plurals name="trash_operation_successful_format">
-    <item quantity="other">%1$d 个项目已移动至回收站</item>
+    <item quantity="other">%1$d items sent to trash</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -31,7 +31,7 @@
             "5 items restored"
     -->
   <plurals name="trash_restore_operation_successful_format">
-    <item quantity="other">%d 个项目已恢复</item>
+    <item quantity="other">%1$d items restored</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -39,7 +39,7 @@
             "5 items deleted permanently"
     -->
   <plurals name="trash_delete_operation_successful_format">
-    <item quantity="other">%d 个项目已永久删除</item>
+    <item quantity="other">%1$d items deleted permanently</item>
   </plurals>
   <string name="trash_empty_operation_successful">已清空回收站</string>
   <string name="trash_error_occurred_sending_to_trash">在尝试将您的文件发送到回收站时发生错误</string>

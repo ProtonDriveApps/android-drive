@@ -56,6 +56,24 @@ suspend fun <T> pagedKeyList(
     return items
 }
 
+suspend fun <T> processPagedKeyList(
+    pageSize: Int,
+    page: suspend (last: T?, count: Int) -> List<T>,
+    block: suspend (List<T>) -> Unit,
+) {
+    require(pageSize > 0) {
+        "pageSize should be strictly positive"
+    }
+    var loaded: Int
+    var lastItem: T? = null
+    do {
+        val pageItems = page(lastItem, pageSize)
+        lastItem = pageItems.lastOrNull()
+        loaded = pageItems.size
+        block(pageItems)
+    } while (loaded == pageSize)
+}
+
 suspend fun <T> processPagedList(
     pageSize: Int,
     page: suspend (fromIndex: Int, count: Int) -> List<T>,

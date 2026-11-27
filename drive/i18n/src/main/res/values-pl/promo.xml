@@ -18,19 +18,19 @@
   -->
 <resources>
   <!-- tag(q1campaign) -->
-  <string name="promo_storage_title">1 TB storage: 200x current plan</string>
+  <string name="promo_storage_title">1 TB przestrzeni dyskowej: 200-krotność obecnego planu</string>
   <!-- tag(q1campaign) -->
-  <string name="promo_claim_offer_button">Claim offer</string>
+  <string name="promo_claim_offer_button">Skorzystaj z oferty</string>
   <!-- tag(q1campaign)
         Variable %1$s is price per month
         Example:
             "only $6.99"
     -->
-  <string name="promo_offer_per_month_details">only %1$s</string>
+  <string name="promo_offer_per_month_details">Tylko %1$s</string>
   <!-- tag(q4campaign2026) Side menu item and badge title for the Black Friday 2026 promo -->
   <string name="promo_black_friday_2026_special_offer_title">Black Friday</string>
   <!-- tag(q4campaign2026) Content description of the header image, which shows the discount, the campaign name and its tagline -->
-  <string name="promo_black_friday_2026_header_description">Black Friday, zniżka 50%. Największa wyprzedaż roku</string>
+  <string name="promo_black_friday_2026_header_description" formatted="false">Black Friday, zniżka 50%. Największa wyprzedaż roku</string>
   <!-- tag(q4campaign2026) Column title in the plan comparison table: the free plan -->
   <string name="promo_black_friday_2026_free_column_title">Free</string>
   <!-- tag(q4campaign2026) Column title in the plan comparison table: Drive Plus -->

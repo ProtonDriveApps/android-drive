@@ -25,6 +25,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
@@ -69,6 +70,7 @@ object DownloadModule {
         downloadErrorManager: DownloadErrorManager,
         isLinkOrAnyAncestorTrashed: IsLinkOrAnyAncestorTrashed,
         downloadSdkManager: DownloadSdkManager,
+        itemLifecycle: ItemLifecycle,
     ): DownloadManager = DownloadManagerImpl(
         appContext = appContext,
         PipelineManagerImpl(configurationProvider.downloadsInParallel, LogTag.DOWNLOAD),
@@ -88,6 +90,7 @@ object DownloadModule {
         downloadErrorManager,
         isLinkOrAnyAncestorTrashed,
         downloadSdkManager,
+        itemLifecycle,
     )
 
     @Provides

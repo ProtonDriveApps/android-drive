@@ -64,6 +64,7 @@ sealed class FeatureFlagId(open val userId: UserId, open val id: String) {
         const val DRIVE_ANDROID_BLACK_FRIDAY_2026 = "DriveAndroidBlackFriday2026"
         const val DRIVE_ANDROID_BLACK_FRIDAY_2026_UPGRADE = "DriveAndroidBlackFriday2026Upgrade"
         const val DRIVE_ANDROID_BLACK_FRIDAY_UPGRADE_OPT_OUT = "DriveAndroidBlackFridayUpgradeOptOut"
+        const val DRIVE_ANDROID_TAB_TRANSITIONS = "DriveAndroidTabTransitions"
 
         internal var developments : List<String> = listOf(
         )
@@ -106,5 +107,6 @@ sealed class FeatureFlagId(open val userId: UserId, open val id: String) {
         fun driveAndroidBlackFriday2026(userId: UserId) = Unleash(userId, DRIVE_ANDROID_BLACK_FRIDAY_2026)
         fun driveAndroidBlackFriday2026Upgrade(userId: UserId) = Unleash(userId, DRIVE_ANDROID_BLACK_FRIDAY_2026_UPGRADE)
         fun driveAndroidBlackFridayUpgradeOptOut(userId: UserId) = Legacy(userId, DRIVE_ANDROID_BLACK_FRIDAY_UPGRADE_OPT_OUT)
+        fun driveAndroidTabTransitions(userId: UserId) = Unleash(userId, DRIVE_ANDROID_TAB_TRANSITIONS)
     }
 }

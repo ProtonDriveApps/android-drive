@@ -175,5 +175,18 @@ interface DriveLinkPhotoDatabase : Database {
                 database.dropTable("TaggedPhotoListingRemoteKeyEntity")
             }
         }
+
+        val MIGRATION_5 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("DROP INDEX IF EXISTS `index_AlbumPhotoListingRemoteKeyEntity_id`")
+                database.execSQL("DROP INDEX IF EXISTS `index_AlbumPhotoListingRemoteKeyEntity_key`")
+                database.execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_AlbumPhotoListingRemoteKeyEntity_key_volume_id_share_id_album_id` ON `AlbumPhotoListingRemoteKeyEntity` (`key`, `volume_id`, `share_id`, `album_id`)
+                """.trimIndent())
+                database.execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_AlbumPhotoListingRemoteKeyEntity_user_id_volume_id_share_id_album_id_link_id` ON `AlbumPhotoListingRemoteKeyEntity` (`user_id`, `volume_id`, `share_id`, `album_id`, `link_id`)
+                """.trimIndent())
+            }
+        }
     }
 }

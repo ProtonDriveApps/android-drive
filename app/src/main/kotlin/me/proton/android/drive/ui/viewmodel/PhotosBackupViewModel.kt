@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -47,6 +48,7 @@ import me.proton.android.drive.ui.viewstate.PhotosBackupViewState
 import me.proton.android.drive.ui.viewstate.TagsMigrationProgressState
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.backup.domain.entity.BackupNetworkType
+import me.proton.core.drive.base.domain.coroutines.ApplicationScope
 import me.proton.core.drive.base.domain.exception.DriveException
 import me.proton.core.drive.base.domain.extension.firstSuccessOrError
 import me.proton.core.drive.base.domain.extension.toResult
@@ -73,6 +75,7 @@ import me.proton.core.drive.i18n.R as I18N
 @OptIn(ExperimentalCoroutinesApi::class)
 class PhotosBackupViewModel @Inject constructor(
     @param:ApplicationContext private val appContext: Context,
+    @param:ApplicationScope private val applicationScope: CoroutineScope,
     savedStateHandle: SavedStateHandle,
     isPhotosEnabled: IsPhotosEnabled,
     getPhotosConfiguration: GetPhotosConfiguration,
@@ -179,7 +182,9 @@ class PhotosBackupViewModel @Inject constructor(
 
     fun viewEvent(): PhotosBackupViewEvent = object : PhotosBackupViewEvent {
         override val onToggleBackup = {
-            viewModelScope.launch {
+            // Onboarding dismisses this screen on "Done", which clears this ViewModel. Toggle in the
+            // application scope so that tapping "Done" right after the toggle does not cancel it.
+            applicationScope.launch {
                 coRunCatching {
                     val photoRootId = getPhotosDriveLink(userId)
                         .firstSuccessOrError().toResult().getOrThrow().id

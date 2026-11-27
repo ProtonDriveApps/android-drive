@@ -36,13 +36,17 @@ class DisablePhotosBackup @Inject constructor(
     private val backupManager: BackupManager,
     private val announceEvent: AnnounceEvent,
 ) {
+    /** @param announceStopped false when the backup was already announced as stopped with [state] */
     suspend operator fun invoke(
         folderId: FolderId,
         state: Event.Backup.BackupState = PAUSED_DISABLED,
+        announceStopped: Boolean = true,
     ) = coRunCatching {
         CoreLogger.i(LogTag.BACKUP, "Disabling photos backup for ${folderId.id.logId()}: $state")
         backupManager.stop(folderId)
-        announceEvent(folderId.userId, Event.BackupStopped(folderId, state))
+        if (announceStopped) {
+            announceEvent(folderId.userId, Event.BackupStopped(folderId, state))
+        }
         clearPhotosBackup(folderId).getOrThrow()
         announceEvent(folderId.userId, Event.BackupDisabled(folderId))
         PhotoBackupState.Disabled

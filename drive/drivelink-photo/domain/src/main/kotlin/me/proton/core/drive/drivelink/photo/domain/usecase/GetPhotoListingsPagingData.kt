@@ -27,6 +27,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.transformLatest
+import kotlinx.coroutines.flow.withIndex
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -51,8 +52,9 @@ class GetPhotoListingsPagingData @Inject constructor(
         transform: suspend (PhotoListing) -> T,
     ): Flow<PagingData<T>> =
         photoRepository.getPhotoListingCount(userId, volumeId, tag)
-            .debounce(300)
-            .transformLatest { count ->
+            .withIndex()
+            .debounce { (index, _) -> if (index == 0) 0L else COUNT_DEBOUNCE_MILLIS }
+            .transformLatest { (_, count) ->
                 if (count == 0) emit(pagingDataLoading())
                 try {
                     val items = loadAllPages(userId, volumeId, tag, transform)
@@ -118,5 +120,9 @@ class GetPhotoListingsPagingData @Inject constructor(
             lastPhotoListing = page.lastOrNull()
         }
         return result
+    }
+
+    private companion object {
+        const val COUNT_DEBOUNCE_MILLIS = 300L
     }
 }

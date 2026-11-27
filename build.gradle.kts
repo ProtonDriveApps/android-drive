@@ -104,3 +104,14 @@ plugins {
     alias(libs.plugins.proton.detekt)
     alias(libs.plugins.paparazzi) apply false
 }
+
+// The Proton detekt plugin enables autoCorrect, which makes every detekt run rewrite source files.
+// Detekt only reports here; formatting changes go through review like any other change.
+// The plugin configures the detekt tasks in afterEvaluate, so this has to run after it.
+afterEvaluate {
+    subprojects {
+        tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+            autoCorrect = false
+        }
+    }
+}

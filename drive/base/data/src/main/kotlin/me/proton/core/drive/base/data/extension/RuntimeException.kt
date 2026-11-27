@@ -28,12 +28,12 @@ fun RuntimeException.getDefaultMessage(context: Context): String =
 fun RuntimeException.log(
     tag: String,
     message: String? = null,
-    level: LoggerLevel? = LoggerLevel.ERROR,
+    level: LoggerLevel? = null,
 ): RuntimeException = also {
     val runtimeCause = cause
-    if (level == LoggerLevel.ERROR && runtimeCause is ApiException) {
-        runtimeCause.loggerLevel()
-    } else {
-        level
+    when {
+        level != null && level != LoggerLevel.ERROR -> level
+        runtimeCause is ApiException -> runtimeCause.loggerLevel()
+        else -> LoggerLevel.ERROR
     }.log(tag, this, message)
 }

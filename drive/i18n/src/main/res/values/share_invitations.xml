@@ -29,7 +29,7 @@
             "2 persons added"
     -->
     <plurals name="share_via_invitations_person_added">
-        <item quantity="one">1 person added</item>
+        <item quantity="one">%1$d person added</item>
         <item quantity="other">%1$d persons added</item>
     </plurals>
     <!--
@@ -38,7 +38,7 @@
             "2 persons cannot be invited"
     -->
     <plurals name="share_via_invitations_person_added_error">
-        <item quantity="one">1 person cannot be invited</item>
+        <item quantity="one">%1$d person cannot be invited</item>
         <item quantity="other">%1$d persons cannot be invited</item>
     </plurals>
     <!--
@@ -47,7 +47,7 @@
             "Sharing with 2 persons"
     -->
     <plurals name="share_via_invitations_sharing_with">
-        <item quantity="one">Sharing with 1 person</item>
+        <item quantity="one">Sharing with %1$d person</item>
         <item quantity="other">Sharing with %1$d persons</item>
     </plurals>
 

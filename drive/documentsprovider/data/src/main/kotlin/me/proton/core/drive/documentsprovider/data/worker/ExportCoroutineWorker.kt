@@ -29,6 +29,7 @@ import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.documentsprovider.data.worker.WorkerKeys.KEY_USER_ID
@@ -38,6 +39,7 @@ import me.proton.core.drive.drivelink.download.domain.extension.throwable
 import me.proton.core.drive.drivelink.download.domain.usecase.GetFile
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
+import me.proton.core.util.kotlin.CoreLogger
 import me.proton.core.drive.i18n.R as I18N
 
 abstract class ExportCoroutineWorker(
@@ -54,8 +56,10 @@ abstract class ExportCoroutineWorker(
     protected abstract val destination: Event.RecentlyAccessed.FilesDownloaded.Destination
 
     override suspend fun doWork(): Result {
+        CoreLogger.d(LogTag.DOCUMENTS_PROVIDER, "Export ${downloadId.logId()} started, attempt $runAttemptCount")
         showInfo(applicationContext.getString(I18N.string.common_in_app_notification_download_started))
         val driveLinks = getDriveLinks()
+        CoreLogger.d(LogTag.DOCUMENTS_PROVIDER, "Export ${downloadId.logId()} has ${driveLinks.size} file(s)")
         val succeeded = mutableListOf<DriveLink>()
         driveLinks.forEach { driveLink ->
             getFile(driveLink, false)

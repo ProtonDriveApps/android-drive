@@ -26,6 +26,7 @@ import me.proton.core.drive.link.domain.usecase.ValidateLinkName
 import me.proton.drive.sdk.entity.FolderNode
 import me.proton.drive.sdk.entity.NodeUid
 import java.time.Instant
+import java.time.ZoneOffset
 import javax.inject.Inject
 
 class CreateFolderSdk @Inject constructor(
@@ -49,7 +50,7 @@ class CreateFolderSdk @Inject constructor(
                 .createFolder(
                     parentFolderUid = parentFolderUid,
                     name = validatedName,
-                    lastModificationTime = modificationTime,
+                    lastModificationTime = modificationTime?.atOffset(ZoneOffset.UTC),
                 )
 
             validatedName to folderNode

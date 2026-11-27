@@ -43,5 +43,5 @@
   <string name="manage_access_change_access_to_viewer_description">"Dopo aver modificato il tuo livello di accesso a “%1$s” come solo visualizzazione, non potrai più condividerlo. Il proprietario o un editore con diritti di condivisione potrà ripristinare il tuo accesso in modalità modifica. Non puoi annullare questa modifica autonomamente."</string>
   <string name="manage_access_change_access_to_viewer_action">Modifica il mio accesso</string>
   <string name="manage_access_new_editor_permissions_title">Nuove autorizzazioni editor</string>
-  <string name="manage_access_new_editor_permissions_description">Editors can now manage sharing and invite others. You can turn it off anytime.</string>
+  <string name="manage_access_new_editor_permissions_description">Gli editor ora possono gestire la condivisione e invitare altri utenti. Puoi disattivare questa opzione in qualsiasi momento.</string>
 </resources>

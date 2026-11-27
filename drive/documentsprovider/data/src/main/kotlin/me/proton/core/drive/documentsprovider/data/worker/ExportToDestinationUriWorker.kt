@@ -29,6 +29,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
+import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
@@ -36,6 +37,7 @@ import me.proton.core.drive.base.domain.extension.firstSuccessOrError
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.documentsprovider.data.extension.exportTo
@@ -51,6 +53,7 @@ import me.proton.core.drive.drivelink.download.domain.usecase.GetFile
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.util.kotlin.CoreLogger
 
 @HiltWorker
 class ExportToDestinationUriWorker @AssistedInject constructor(
@@ -77,7 +80,11 @@ class ExportToDestinationUriWorker @AssistedInject constructor(
             getDriveLink(fileId, failOnDecryptionError = false)
                 .firstSuccessOrError()
                 .onFailure { error ->
-                    if (!error.isRetryable) {
+                    if (error.isRetryable) {
+                        val message = "Cannot get drive link ${fileId.id.logId()} (retryable error), export skipped"
+                        error.cause?.log(LogTag.DOCUMENTS_PROVIDER, message, LoggerLevel.DEBUG)
+                            ?: CoreLogger.d(LogTag.DOCUMENTS_PROVIDER, message)
+                    } else {
                         error.log(LogTag.DOCUMENTS_PROVIDER)
                         showError()
                     }

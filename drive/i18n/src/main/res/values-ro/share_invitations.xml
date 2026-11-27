@@ -29,7 +29,7 @@
             "2 persons added"
     -->
   <plurals name="share_via_invitations_person_added">
-    <item quantity="one">Persoane adăugate: 1</item>
+    <item quantity="one">Persoane adăugate: %1$d</item>
     <item quantity="few">Persoane adăugate: %1$d</item>
     <item quantity="other">Persoane adăugate: %1$d</item>
   </plurals>
@@ -39,7 +39,7 @@
             "2 persons cannot be invited"
     -->
   <plurals name="share_via_invitations_person_added_error">
-    <item quantity="one">O persoană nu poate fi invitată</item>
+    <item quantity="one">Persoane care nu pot fi invitate: %1$d</item>
     <item quantity="few">Persoane care nu pot fi invitate: %1$d</item>
     <item quantity="other">Persoane care nu pot fi invitate: %1$d</item>
   </plurals>
@@ -49,7 +49,7 @@
             "Sharing with 2 persons"
     -->
   <plurals name="share_via_invitations_sharing_with">
-    <item quantity="one">Partajare cu o persoană</item>
+    <item quantity="one">Partajare cu %1$d persoană</item>
     <item quantity="few">Partajare cu %1$d persoane</item>
     <item quantity="other">Partajare cu %1$d de persoane</item>
   </plurals>

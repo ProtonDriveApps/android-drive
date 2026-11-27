@@ -28,6 +28,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.workmanager.addTags
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.i18n.R
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
@@ -36,6 +37,7 @@ import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_USER_ID
 @HiltWorker
 class EmptyTrashSuccessWorker @AssistedInject constructor(
     private val broadcastMessages: BroadcastMessages,
+    private val itemLifecycle: ItemLifecycle,
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
 ) : CoroutineWorker(appContext, params) {
@@ -47,6 +49,9 @@ class EmptyTrashSuccessWorker @AssistedInject constructor(
             message = applicationContext.getString(R.string.trash_empty_operation_successful),
             type = BroadcastMessage.Type.SUCCESS,
         )
+        // Logged by the last worker of the chain: until it ends, the unique work is still pending
+        // and a new empty-trash request joins it.
+        itemLifecycle.finished(ItemLifecycle.Flow.EMPTY_TRASH, userId.id, ItemLifecycle.Outcome.SUCCEEDED)
         return Result.success()
     }
 

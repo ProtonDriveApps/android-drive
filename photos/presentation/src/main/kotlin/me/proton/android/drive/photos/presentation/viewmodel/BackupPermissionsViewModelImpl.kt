@@ -18,9 +18,7 @@
 
 package me.proton.android.drive.photos.presentation.viewmodel
 
-import android.Manifest
 import android.content.Context
-import android.os.Build
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -35,6 +33,7 @@ import me.proton.android.drive.photos.data.extension.getDefaultMessage
 import me.proton.android.drive.photos.domain.entity.PhotoBackupState
 import me.proton.android.drive.photos.domain.usecase.IsPhotosEnabled
 import me.proton.android.drive.photos.domain.usecase.TogglePhotosBackup
+import me.proton.android.drive.photos.presentation.extension.allowsBackup
 import me.proton.android.drive.photos.presentation.viewevent.BackupPermissionsViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.BackupPermissionsEffect
 import me.proton.android.drive.photos.presentation.viewstate.BackupPermissionsViewState
@@ -90,7 +89,7 @@ class BackupPermissionsViewModelImpl @Inject constructor(
         override val onPermissionsChanged = backupPermissionsManager::onPermissionChanged
 
         override val onPermissionResult = { result: Map<String, Boolean> ->
-            if (result.hasAllPermissions() || result.hasPartialPermissions()) {
+            if (result.allowsBackup()) {
                 toggleBackup()
             } else {
                 navigateToPhotosPermissionRationale()
@@ -99,12 +98,6 @@ class BackupPermissionsViewModelImpl @Inject constructor(
     }.also {
         this.navigateToPhotosPermissionRationale = navigateToPhotosPermissionRationale
     }
-
-    private fun Map<String, Boolean>.hasAllPermissions() = values.all { it }
-
-    private fun Map<String, Boolean>.hasPartialPermissions(
-    ) = Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
-            && this[Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED] == true
 
     override fun toggleBackup(folderId: FolderId, onSuccess: suspend (PhotoBackupState) -> Unit) {
         success = onSuccess

@@ -80,6 +80,7 @@ interface ConfigurationProvider {
     val maxBlockedAttempts: Int get() = 15
     val uploadMaxRetries: Long get() = 5
     val logToFileInDebugEnabled: Boolean get() = true
+    val itemLifecycleLogEnabled: Boolean get() = false
     val allowBackupDeletedFilesEnabled: Boolean get() = false
     val scanBackupPageSize: Int get() = 100
     val backupDefaultBucketName: List<String> get() = listOf("Camera", "Kamera")

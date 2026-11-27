@@ -17,28 +17,19 @@
  */
 package me.proton.core.drive.documentsprovider.domain.usecase
 
-import android.net.Uri
 import android.os.CancellationSignal
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.ParcelFileDescriptor
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.logId
-import me.proton.core.drive.base.domain.usecase.GetCacheFolder
 import me.proton.core.drive.base.domain.usecase.ReportError
 import me.proton.core.drive.documentsprovider.domain.entity.DocumentId
 import me.proton.core.drive.drivelink.download.domain.extension.throwable
 import me.proton.core.drive.drivelink.download.domain.usecase.GetFile
-import me.proton.core.drive.drivelink.upload.domain.usecase.UploadAlreadyCreatedFiles
-import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
-import me.proton.core.drive.linkupload.domain.extension.parentLinkId
-import me.proton.core.drive.linkupload.domain.extension.userId
-import me.proton.core.drive.linkupload.domain.extension.volumeId
-import me.proton.core.drive.upload.domain.usecase.CancelUploadFile
 import me.proton.core.util.kotlin.CoreLogger
 import java.io.File
 import java.io.FileNotFoundException
@@ -48,13 +39,8 @@ import javax.inject.Singleton
 
 @Singleton
 class OpenDocument @Inject constructor(
-    private val withUploadFileLink: WithUploadFileLink,
     private val withDriveLinkFile: WithDriveLinkFile,
-    private val withDriveLinkFolder: WithDriveLinkFolder,
     private val getFile: GetFile,
-    private val getCacheFolder: GetCacheFolder,
-    private val cancelUploadFile: CancelUploadFile,
-    private val uploadFiles: UploadAlreadyCreatedFiles,
     private val reportError: ReportError,
 ) {
 
@@ -68,56 +54,17 @@ class OpenDocument @Inject constructor(
         documentId: DocumentId,
         mode: String?,
         signal: CancellationSignal?,
-    ): ParcelFileDescriptor =
-        openUploadFileLink(documentId, mode, signal) ?: openDriveLinkFile(documentId, mode, signal)
-
-    @Suppress("UNUSED_PARAMETER")
-    private suspend fun openUploadFileLink(
-        documentId: DocumentId,
-        mode: String?,
-        signal: CancellationSignal?,
-    ): ParcelFileDescriptor? =
-        withUploadFileLink(documentId) { userId, uploadFileLink ->
-            if (mode == null || mode.contains("w").not()) {
-                throw UnsupportedOperationException("$mode is not supported, only 'w' for upload file node")
-            }
-            val file = uploadFileLink.cacheFolder()
-            ParcelFileDescriptor.open(
-                file,
-                ParcelFileDescriptor.MODE_WRITE_ONLY,
-                handlerThread
-            ) { exception ->
-                if (exception != null) {
-                    runBlocking { cancelUploadFile(uploadFileLink) }
-                } else runBlocking {
-                    withDriveLinkFolder(DocumentId(userId, uploadFileLink.parentLinkId)) { _, driveLink ->
-                        uploadFiles(
-                            folder = driveLink,
-                            uploadFiles = listOf(uploadFileLink to Uri.fromFile(file).toString()),
-                            shouldDeleteSource = true,
-                        )
-                    }
-                }
-            }
+    ): ParcelFileDescriptor {
+        if (mode != "r") {
+            throw UnsupportedOperationException("$mode is not supported, only 'r'")
         }
-
-    private suspend fun UploadFileLink.cacheFolder() =
-        File(getCacheFolder(userId, volumeId.id, "upload_$id"), "tmp")
-            .apply {
-                if (!exists()) {
-                    createNewFile()
-                }
-            }
+        return openDriveLinkFile(documentId, signal)
+    }
 
     private suspend fun openDriveLinkFile(
         documentId: DocumentId,
-        mode: String?,
         signal: CancellationSignal?,
     ): ParcelFileDescriptor = withDriveLinkFile(documentId) { _, driveLink ->
-        if (mode == null || mode.contains("r").not()) {
-            throw UnsupportedOperationException("$mode is not supported, only 'r'")
-        }
-
         val state = mutexMap.getOrPut(documentId) { Mutex() }.withLock {
             getFile(driveLink, checkSignature = false).first { state ->
                 when (state) {

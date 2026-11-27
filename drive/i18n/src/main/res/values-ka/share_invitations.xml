@@ -29,8 +29,8 @@
             "2 persons added"
     -->
   <plurals name="share_via_invitations_person_added">
-    <item quantity="one">დამატებულია 1 პირი</item>
-    <item quantity="other">დამატებულია %1$d პირი</item>
+    <item quantity="one">%1$d person added</item>
+    <item quantity="other">%1$d persons added</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -38,8 +38,8 @@
             "2 persons cannot be invited"
     -->
   <plurals name="share_via_invitations_person_added_error">
-    <item quantity="one">1 პირის მოწვევა შეუძლებელია</item>
-    <item quantity="other">%1$d პირის მოწვევა შეუძლებელია</item>
+    <item quantity="one">%1$d person cannot be invited</item>
+    <item quantity="other">%1$d persons cannot be invited</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -47,8 +47,8 @@
             "Sharing with 2 persons"
     -->
   <plurals name="share_via_invitations_sharing_with">
-    <item quantity="one">უზიარებთ 1 პირს</item>
-    <item quantity="other">უზიარებთ %1$d პირს</item>
+    <item quantity="one">Sharing with %1$d person</item>
+    <item quantity="other">Sharing with %1$d persons</item>
   </plurals>
   <string name="common_permission_owner">მფლობელი</string>
   <string name="common_permission_admin">ადმინისტრატორი</string>

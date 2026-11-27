@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.transformLatest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.onSuccess
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.eventmanager.usecase.HandleOnDeleteEvent
@@ -62,6 +63,7 @@ class StubbedTrashManager @Inject constructor(
     private val handleOnDeleteEvent: HandleOnDeleteEvent,
     private val getMainShare: GetMainShare,
     private val getActiveVolumes: GetActiveVolumes,
+    private val itemLifecycle: ItemLifecycle,
 ) : TrashManager {
     private val context by lazy { ApplicationProvider.getApplicationContext<Context>() }
 
@@ -86,6 +88,7 @@ class StubbedTrashManager @Inject constructor(
                     linkRepository = linkRepository,
                     handleOnDeleteEvent = handleOnDeleteEvent,
                     getActiveVolumes = getActiveVolumes,
+                    itemLifecycle = itemLifecycle,
                     appContext = appContext,
                     params = workerParameters,
                 )
@@ -114,6 +117,7 @@ class StubbedTrashManager @Inject constructor(
                     linkTrashRepository = linkTrashRepository,
                     broadcastMessages = broadcastMessages,
                     updateEventAction = updateEventAction,
+                    itemLifecycle = itemLifecycle,
                     appContext = appContext,
                     params = workerParameters,
                 )
@@ -145,6 +149,7 @@ class StubbedTrashManager @Inject constructor(
                     broadcastMessages = broadcastMessages,
                     updateEventAction = updateEventAction,
                     linkTrashRepository = linkTrashRepository,
+                    itemLifecycle = itemLifecycle,
                     appContext = appContext,
                     params = workerParameters,
                 )
@@ -169,6 +174,7 @@ class StubbedTrashManager @Inject constructor(
                     workerClassName: String,
                     workerParameters: WorkerParameters,
                 ) = EmptyTrashWorker(
+                    itemLifecycle = itemLifecycle,
                     appContext = appContext,
                     params = workerParameters,
                     driveTrashRepository = driveTrashRepository,
@@ -191,6 +197,7 @@ class StubbedTrashManager @Inject constructor(
                         workerClassName: String,
                         workerParameters: WorkerParameters,
                     ) = EmptyTrashSuccessWorker(
+                        itemLifecycle = itemLifecycle,
                         appContext = appContext,
                         params = workerParameters,
                         broadcastMessages = broadcastMessages,

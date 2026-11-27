@@ -32,6 +32,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
@@ -51,6 +52,7 @@ class EmptyTrashWorker @AssistedInject constructor(
     private val broadcastMessages: BroadcastMessages,
     private val updateEventAction: UpdateEventAction,
     private val getMainShare: GetMainShare,
+    private val itemLifecycle: ItemLifecycle,
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
 ) : CoroutineWorker(appContext, params) {
@@ -68,6 +70,7 @@ class EmptyTrashWorker @AssistedInject constructor(
             Result.success()
         } catch (e: Exception) {
             e.log(LogTag.TRASH)
+            itemLifecycle.finished(ItemLifecycle.Flow.EMPTY_TRASH, userId.id, ItemLifecycle.Outcome.FAILED)
             broadcastMessages(
                 userId = userId,
                 message = applicationContext.getString(I18N.string.trash_error_occurred_emptying_trash),

@@ -21,6 +21,8 @@ package me.proton.android.drive.provider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import me.proton.android.drive.sdk.CoreSdkHttpClient
+import me.proton.android.drive.sdk.CoreUserAddressResolver
 import me.proton.android.drive.sdk.DriveMetricCallback
 import me.proton.android.drive.sdk.DrivePublicAddressResolver
 import me.proton.android.drive.sdk.SdkMetricsNotifier
@@ -44,7 +46,7 @@ import me.proton.core.drive.key.domain.usecase.GetPublicAddressInfo
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.user.domain.repository.UserAddressRepository
 import me.proton.core.util.kotlin.CoreLogger
-import me.proton.drive.sdk.CoreUserAddressResolver
+import me.proton.drive.sdk.ClientHost
 import me.proton.drive.sdk.ProtonDriveClient
 import me.proton.drive.sdk.ProtonDriveSdk
 import me.proton.drive.sdk.entity.ClientCreateRequest
@@ -104,8 +106,19 @@ class AppProtonDriveClientProvider @Inject constructor(
         }
         ProtonDriveSdk.protonDriveClientCreate(
             coroutineScope = coroutineScope,
-            userId = userId,
-            apiProvider = apiProvider,
+            host = ClientHost(
+                userId = userId.id,
+                httpClient = CoreSdkHttpClient(userId, apiProvider),
+                userAddressResolver = CoreUserAddressResolver(
+                    userId = userId,
+                    cryptoContext = cryptoContext,
+                    userAddressRepository = userAddressRepository,
+                ),
+                publicAddressResolver = DrivePublicAddressResolver(
+                    userId = userId,
+                    getPublicAddressInfo = getPublicAddressInfo,
+                ),
+            ),
             request = ClientCreateRequest(
                 baseUrl = "${configurationProvider.baseUrl}/",
                 loggerProvider = getOrCreateSdkLoggerProvider().getOrThrow(),
@@ -114,15 +127,6 @@ class AppProtonDriveClientProvider @Inject constructor(
                     tag = LogTag.DRIVE_SDK,
                     message = "Failed to get or create client Uid",
                 )
-            ),
-            userAddressResolver = CoreUserAddressResolver(
-                userId = userId,
-                cryptoContext = cryptoContext,
-                userAddressRepository = userAddressRepository,
-            ),
-            publicAddressResolver = DrivePublicAddressResolver(
-                userId = userId,
-                getPublicAddressInfo = getPublicAddressInfo,
             ),
             metricCallback = DriveMetricCallback(
                 sdkMetricsNotifier = sdkMetricsNotifier,

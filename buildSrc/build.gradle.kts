@@ -24,6 +24,9 @@ dependencies {
     implementation(libs.gradle.plugin.android)
     implementation(libs.gradle.plugin.kotlin)
     implementation(libs.gradle.plugin.ksp)
+    // Needs AGP from google(), so it goes on the buildSrc classpath rather than in a plugins block.
+    implementation(libs.gradle.plugin.pitest)
+    implementation(libs.gradle.plugin.baselineprofile)
     implementation("com.squareup:javapoet:1.13.0") // https://github.com/google/dagger/issues/3068#issuecomment-999118496
 }
 

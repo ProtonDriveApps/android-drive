@@ -20,218 +20,167 @@ package me.proton.core.drive.base.data.db
 
 import android.app.ActivityManager
 import android.database.Cursor
+import android.database.CursorWrapper
+import android.database.sqlite.SQLiteTransactionListener
+import android.os.CancellationSignal
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.SupportSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteStatement
-import me.proton.core.drive.base.data.entity.LoggerLevel
-import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.extension.logMemoryInfo
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.util.kotlin.CoreLogger
-import kotlin.system.measureNanoTime
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.nanoseconds
 
 class LoggingOpenHelperFactory<T : RoomDatabase>(
     private val activityManager: ActivityManager,
     private val delegate: SupportSQLiteOpenHelper.Factory,
     private val clazz: Class<T>,
-    private val slowThreshold: Duration = 20.milliseconds,
-    private val captureStackForSlow: Duration = 300.milliseconds,
+    private val thresholds: SlowDatabaseThresholds = SlowDatabaseThresholds(),
 ) : SupportSQLiteOpenHelper.Factory {
 
     override fun create(configuration: SupportSQLiteOpenHelper.Configuration): SupportSQLiteOpenHelper {
         val default = delegate.create(configuration)
-        val loggingDatabase = {
-            LoggingDatabase(
-                activityManager = activityManager,
-                delegate = default.readableDatabase,
-                clazz = clazz,
-                slowThreshold = slowThreshold,
-                captureStackForSlow = captureStackForSlow,
-            )
-        }
+        val monitor = SlowDatabaseMonitor(
+            database = clazz.simpleName,
+            thresholds = thresholds,
+            report = { exception ->
+                CoreLogger.e(
+                    tag = "${LogTag.DATABASE}[${clazz.simpleName}]",
+                    e = exception,
+                    message = "${exception.message} (${activityManager.logMemoryInfo})",
+                )
+            },
+        )
         return object : SupportSQLiteOpenHelper by default {
             override val readableDatabase: SupportSQLiteDatabase
-                get() = loggingDatabase.invoke()
+                get() = MonitoredDatabase(default.readableDatabase, monitor)
 
             override val writableDatabase: SupportSQLiteDatabase
-                get() = loggingDatabase.invoke()
+                get() = MonitoredDatabase(default.writableDatabase, monitor)
         }
     }
 }
 
-private class SlowQueryException(
-    message: String? = null,
-    cause: Throwable? = null,
-) : RuntimeException(message, cause)
-
-private class LoggingDatabase<T : RoomDatabase>(
-    private val activityManager: ActivityManager,
+internal class MonitoredDatabase(
     private val delegate: SupportSQLiteDatabase,
-    private val slowThreshold: Duration,
-    private val captureStackForSlow: Duration,
-    private val clazz: Class<T>,
+    private val monitor: SlowDatabaseMonitor,
 ) : SupportSQLiteDatabase by delegate {
 
-    private val Duration.shouldLog: Boolean get() = this > slowThreshold
-    private val Duration.throwable: Throwable? get() = takeIf {
-        this > captureStackForSlow && captureStackForSlow > Duration.ZERO
-    }?.let {
-        SlowQueryException("Slow DB query detected (${activityManager.logMemoryInfo}).").apply {
-            stackTrace = Thread.currentThread().stackTrace
+    override fun query(query: String): Cursor =
+        monitoredQuery(query) { delegate.query(query) }
+
+    override fun query(query: String, bindArgs: Array<out Any?>): Cursor =
+        monitoredQuery(query) { delegate.query(query, bindArgs) }
+
+    override fun query(query: SupportSQLiteQuery): Cursor =
+        monitoredQuery(query.sql) { delegate.query(query) }
+
+    override fun query(query: SupportSQLiteQuery, cancellationSignal: CancellationSignal?): Cursor =
+        monitoredQuery(query.sql) { delegate.query(query, cancellationSignal) }
+
+    override fun execSQL(sql: String) =
+        monitor.statement(sql) { delegate.execSQL(sql) }
+
+    override fun execSQL(sql: String, bindArgs: Array<out Any?>) =
+        monitor.statement(sql) { delegate.execSQL(sql, bindArgs) }
+
+    override fun compileStatement(sql: String): SupportSQLiteStatement =
+        MonitoredStatement(delegate.compileStatement(sql), sql, monitor)
+
+    override fun beginTransaction() =
+        monitor.beginTransaction(isWrite = true) { delegate.beginTransaction() }
+
+    override fun beginTransactionNonExclusive() =
+        monitor.beginTransaction(isWrite = true) { delegate.beginTransactionNonExclusive() }
+
+    override fun beginTransactionReadOnly() =
+        monitor.beginTransaction(isWrite = false) { delegate.beginTransactionReadOnly() }
+
+    override fun beginTransactionWithListener(transactionListener: SQLiteTransactionListener) =
+        monitor.beginTransaction(isWrite = true) { delegate.beginTransactionWithListener(transactionListener) }
+
+    override fun beginTransactionWithListenerNonExclusive(transactionListener: SQLiteTransactionListener) =
+        monitor.beginTransaction(isWrite = true) {
+            delegate.beginTransactionWithListenerNonExclusive(transactionListener)
         }
-    }
-    private fun Duration.log(message: String) {
-        if (shouldLog) {
-            val tag = "${LogTag.DATABASE}[${clazz.simpleName}]"
-            throwable?.log(
-                tag = tag,
-                message = message,
-                level = LoggerLevel.WARNING,
-            ) ?: CoreLogger.v(
-                tag = tag,
-                message = message + "\n${activityManager.logMemoryInfo}",
-            )
+
+    override fun beginTransactionWithListenerReadOnly(transactionListener: SQLiteTransactionListener) =
+        monitor.beginTransaction(isWrite = false) {
+            delegate.beginTransactionWithListenerReadOnly(transactionListener)
         }
-    }
 
-    override fun query(query: String): Cursor {
-        val cursor: Cursor
-        measureNanoTime { cursor = delegate.query(query) }
-            .nanoseconds
-            .apply {
-                log("SQL query took $inWholeMilliseconds ms, $query")
-            }
-        return cursor
-    }
+    override fun endTransaction() =
+        monitor.endTransaction { delegate.endTransaction() }
 
-    override fun query(query: String, bindArgs: Array<out Any?>): Cursor {
-        val cursor: Cursor
-        measureNanoTime { cursor = delegate.query(query, bindArgs) }
-            .nanoseconds
-            .apply {
-                val argsPreview = bindArgs.joinToString(prefix = "[", postfix = "]")
-                log("SQL query took $inWholeMilliseconds ms, $query, args=$argsPreview")
-            }
-        return cursor
+    private fun monitoredQuery(sql: String, block: () -> Cursor): Cursor {
+        monitor.onQueryStarted(sql)
+        val isMainThread = monitor.isMainThread()
+        val start = monitor.nanoTime()
+        val cursor = try {
+            block()
+        } catch (error: Throwable) {
+            monitor.onRead(sql, monitor.nanoTime() - start, isMainThread)
+            throw error
+        }
+        return MonitoredCursor(cursor, sql, monitor, monitor.nanoTime() - start, isMainThread)
     }
-
-    override fun query(query: SupportSQLiteQuery): Cursor {
-        val sql = try { query.sql } catch (_: Exception) { "<unknown>" }
-        val cursor: Cursor
-        measureNanoTime { cursor = delegate.query(query) }
-            .nanoseconds
-            .apply {
-                log("SQL query (SupportSQLiteQuery) took $inWholeMilliseconds ms, $sql")
-            }
-        return cursor
-    }
-
-    override fun execSQL(sql: String) {
-        measureNanoTime { delegate.execSQL(sql) }
-            .nanoseconds
-            .apply {
-                log("execSQL took $inWholeMilliseconds ms, $sql")
-            }
-    }
-
-    override fun execSQL(sql: String, bindArgs: Array<out Any?>) {
-        measureNanoTime { delegate.execSQL(sql, bindArgs) }
-            .nanoseconds
-            .apply {
-                val argsPreview = bindArgs.joinToString(prefix = "[", postfix = "]")
-                log("execSQL took $inWholeMilliseconds ms, $sql, args=$argsPreview")
-            }
-    }
-
-    override fun compileStatement(sql: String): SupportSQLiteStatement = LoggingStatement(
-        activityManager = activityManager,
-        delegate = delegate.compileStatement(sql),
-        clazz = clazz,
-        sqlPreview = sql,
-        slowThreshold = slowThreshold,
-        captureStackForSlow = captureStackForSlow,
-    )
 }
 
-private class LoggingStatement<T : RoomDatabase>(
-    private val activityManager: ActivityManager,
+private class MonitoredStatement(
     private val delegate: SupportSQLiteStatement,
-    private val clazz: Class<T>,
-    private val sqlPreview: String,
-    private val slowThreshold: Duration,
-    private val captureStackForSlow: Duration,
+    private val sql: String,
+    private val monitor: SlowDatabaseMonitor,
 ) : SupportSQLiteStatement by delegate {
-    private val Duration.shouldLog: Boolean get() = this > slowThreshold
-    private val Duration.throwable: Throwable? get() = takeIf {
-        this > captureStackForSlow && captureStackForSlow > Duration.ZERO
-    }?.let {
-        SlowQueryException("Slow DB query detected (${activityManager.logMemoryInfo}).").apply {
-            stackTrace = Thread.currentThread().stackTrace
+
+    override fun execute() = monitor.statement(sql) { delegate.execute() }
+
+    override fun executeInsert(): Long = monitor.statement(sql) { delegate.executeInsert() }
+
+    override fun executeUpdateDelete(): Int = monitor.statement(sql) { delegate.executeUpdateDelete() }
+
+    override fun simpleQueryForLong(): Long = monitor.read(sql) { delegate.simpleQueryForLong() }
+
+    override fun simpleQueryForString(): String? = monitor.read(sql) { delegate.simpleQueryForString() }
+}
+
+private class MonitoredCursor(
+    delegate: Cursor,
+    private val sql: String,
+    private val monitor: SlowDatabaseMonitor,
+    private var elapsedNanos: Long,
+    private val isMainThread: Boolean,
+) : CursorWrapper(delegate) {
+    private var reported = false
+
+    override fun getCount(): Int = timed { super.getCount() }
+
+    override fun move(offset: Int): Boolean = timed { super.move(offset) }
+
+    override fun moveToPosition(position: Int): Boolean = timed { super.moveToPosition(position) }
+
+    override fun moveToFirst(): Boolean = timed { super.moveToFirst() }
+
+    override fun moveToLast(): Boolean = timed { super.moveToLast() }
+
+    override fun moveToNext(): Boolean = timed { super.moveToNext() }
+
+    override fun moveToPrevious(): Boolean = timed { super.moveToPrevious() }
+
+    override fun close() {
+        super.close()
+        if (!reported) {
+            reported = true
+            monitor.onRead(sql, elapsedNanos, isMainThread)
         }
     }
-    private fun Duration.log(message: String) {
-        if (shouldLog) {
-            val tag = "${LogTag.DATABASE}[${clazz.simpleName}]"
-            throwable?.log(
-                tag = tag,
-                message = message,
-            ) ?: CoreLogger.d(
-                tag = tag,
-                message = message + "\n${activityManager.logMemoryInfo}",
-            )
+
+    private inline fun <R> timed(block: () -> R): R {
+        val start = monitor.nanoTime()
+        try {
+            return block()
+        } finally {
+            elapsedNanos += monitor.nanoTime() - start
         }
-    }
-
-    override fun executeInsert(): Long {
-        val res: Long
-        measureNanoTime { res = delegate.executeInsert() }
-            .nanoseconds
-            .apply {
-                log("Statement.executeInsert took $inWholeMilliseconds ms, $sqlPreview")
-            }
-        return res
-    }
-
-    override fun executeUpdateDelete(): Int {
-        val res: Int
-        measureNanoTime { res = delegate.executeUpdateDelete() }
-            .nanoseconds
-            .apply {
-                log("Statement.executeUpdateDelete took $inWholeMilliseconds ms, $sqlPreview")
-            }
-        return res
-    }
-
-    override fun execute() {
-        measureNanoTime { delegate.execute() }
-            .nanoseconds
-            .apply {
-                log("Statement.execute took $inWholeMilliseconds ms, $sqlPreview")
-            }
-    }
-
-    override fun simpleQueryForLong(): Long {
-        val res: Long
-        measureNanoTime { res = delegate.simpleQueryForLong() }
-            .nanoseconds
-            .apply {
-                log("Statement.simpleQueryForLong took $inWholeMilliseconds ms, $sqlPreview")
-            }
-        return res
-    }
-
-    override fun simpleQueryForString(): String {
-        val res: String
-        measureNanoTime { res = delegate.simpleQueryForString() ?: "" }
-            .nanoseconds
-            .apply {
-                log("Statement.simpleQueryForString took $inWholeMilliseconds ms, $sqlPreview")
-            }
-        return res
     }
 }

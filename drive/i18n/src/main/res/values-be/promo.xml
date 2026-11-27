@@ -30,7 +30,7 @@
   <!-- tag(q4campaign2026) Side menu item and badge title for the Black Friday 2026 promo -->
   <string name="promo_black_friday_2026_special_offer_title">Чорная пятніца</string>
   <!-- tag(q4campaign2026) Content description of the header image, which shows the discount, the campaign name and its tagline -->
-  <string name="promo_black_friday_2026_header_description">Чорная пятніца, 50% скідка. Найбуйнейшы распродаж года</string>
+  <string name="promo_black_friday_2026_header_description" formatted="false">Чорная пятніца, 50% скідка. Найбуйнейшы распродаж года</string>
   <!-- tag(q4campaign2026) Column title in the plan comparison table: the free plan -->
   <string name="promo_black_friday_2026_free_column_title">Free</string>
   <!-- tag(q4campaign2026) Column title in the plan comparison table: Drive Plus -->

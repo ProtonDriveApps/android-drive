@@ -19,8 +19,10 @@
 package me.proton.android.drive.ui.navigation
 
 import android.os.Bundle
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -34,6 +36,8 @@ import me.proton.android.drive.ui.navigation.animation.defaultEnterSlideTransiti
 import me.proton.android.drive.ui.navigation.animation.defaultExitSlideTransition
 import me.proton.android.drive.ui.navigation.animation.defaultPopEnterSlideTransition
 import me.proton.android.drive.ui.navigation.animation.defaultPopExitSlideTransition
+import me.proton.android.drive.ui.navigation.animation.tabEnterTransition
+import me.proton.android.drive.ui.navigation.animation.tabExitTransition
 import me.proton.android.drive.ui.navigation.internal.DriveNavHost
 import me.proton.android.drive.ui.screen.ComputersScreen
 import me.proton.android.drive.ui.screen.FilesScreen
@@ -80,9 +84,13 @@ fun HomeNavGraph(
     navigateToAlbum: (AlbumId) -> Unit,
     navigateToBlackFriday2026Promo: () -> Unit,
     navigateToUpsellPromo: () -> Unit,
+    isTabTransitionsEnabled: () -> Boolean = { false },
+    tabRoutes: () -> List<String> = { emptyList() },
 ) = DriveNavHost(
     navController = homeNavController,
-    startDestination = startDestination
+    startDestination = startDestination,
+    enterTransition = tabEnterTransition { if (isTabTransitionsEnabled()) tabRoutes() else emptyList() },
+    exitTransition = tabExitTransition { if (isTabTransitionsEnabled()) tabRoutes() else emptyList() },
 ) {
     addFiles(
         homeNavController,
@@ -96,6 +104,7 @@ fun HomeNavGraph(
         navigateToParentFolderOptions,
         navigateToBlackFriday2026Promo,
         navigateToUpsellPromo,
+        isTabTransitionsEnabled = isTabTransitionsEnabled,
     )
     addPhotos(
         homeNavController,
@@ -163,6 +172,7 @@ fun HomeNavGraph(
         navigateToComputerOptions,
         navigateToBlackFriday2026Promo,
         navigateToUpsellPromo,
+        isTabTransitionsEnabled = isTabTransitionsEnabled,
     )
     addSharedTabs(
         navController = homeNavController,
@@ -181,6 +191,7 @@ fun HomeNavGraph(
         navigateToUserInvitation = navigateToUserInvitation,
         navigateToBlackFriday2026Promo,
         navigateToUpsellPromo,
+        isTabTransitionsEnabled = isTabTransitionsEnabled,
     )
 }
 
@@ -198,20 +209,25 @@ fun NavGraphBuilder.addFiles(
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
     navigateToBlackFriday2026Promo: () -> Unit,
     navigateToUpsellPromo: () -> Unit,
+    isTabTransitionsEnabled: () -> Boolean = { false },
 ) = composable(
     route = Screen.Files.route,
     enterTransition = defaultEnterSlideTransition {
-        targetState.get<String>(Screen.Files.FOLDER_ID) != null &&
+        allowsFolderSlide(isTabTransitionsEnabled) &&
+                targetState.get<String>(Screen.Files.FOLDER_ID) != null &&
                 initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
     },
     exitTransition = defaultExitSlideTransition {
-        initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
+        allowsFolderSlide(isTabTransitionsEnabled) &&
+                initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
     },
     popEnterTransition = defaultPopEnterSlideTransition {
-        initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
+        allowsFolderSlide(isTabTransitionsEnabled) &&
+                initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
     },
     popExitTransition = defaultPopExitSlideTransition {
-        initialState.get<String>(Screen.Files.FOLDER_ID) != null &&
+        allowsFolderSlide(isTabTransitionsEnabled) &&
+                initialState.get<String>(Screen.Files.FOLDER_ID) != null &&
                 initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
     },
     arguments = listOf(
@@ -393,20 +409,25 @@ fun NavGraphBuilder.addComputers(
     navigateToComputerOptions: (deviceId: DeviceId) -> Unit,
     navigateToBlackFriday2026Promo: () -> Unit,
     navigateToUpsellPromo: () -> Unit,
+    isTabTransitionsEnabled: () -> Boolean = { false },
 ) = composable(
     route = Screen.Computers.route,
     enterTransition = defaultEnterSlideTransition {
-        targetState.get<String>(Screen.Files.FOLDER_ID) != null &&
+        allowsFolderSlide(isTabTransitionsEnabled) &&
+                targetState.get<String>(Screen.Files.FOLDER_ID) != null &&
                 initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
     },
     exitTransition = defaultExitSlideTransition {
-        initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
+        allowsFolderSlide(isTabTransitionsEnabled) &&
+                initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
     },
     popEnterTransition = defaultPopEnterSlideTransition {
-        initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
+        allowsFolderSlide(isTabTransitionsEnabled) &&
+                initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
     },
     popExitTransition = defaultPopExitSlideTransition {
-        initialState.get<String>(Screen.Files.FOLDER_ID) != null &&
+        allowsFolderSlide(isTabTransitionsEnabled) &&
+                initialState.get<String>(Screen.Files.FOLDER_ID) != null &&
                 initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
     },
     arguments = listOf(
@@ -535,20 +556,25 @@ fun NavGraphBuilder.addSharedTabs(
     navigateToUserInvitation: (Boolean) -> Unit,
     navigateToBlackFriday2026Promo: () -> Unit,
     navigateToUpsellPromo: () -> Unit,
+    isTabTransitionsEnabled: () -> Boolean = { false },
 ) = composable(
     route = Screen.SharedTabs.route,
     enterTransition = defaultEnterSlideTransition {
-        targetState.get<String>(Screen.Files.FOLDER_ID) != null &&
+        allowsFolderSlide(isTabTransitionsEnabled) &&
+                targetState.get<String>(Screen.Files.FOLDER_ID) != null &&
                 initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
     },
     exitTransition = defaultExitSlideTransition {
-        initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
+        allowsFolderSlide(isTabTransitionsEnabled) &&
+                initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
     },
     popEnterTransition = defaultPopEnterSlideTransition {
-        initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
+        allowsFolderSlide(isTabTransitionsEnabled) &&
+                initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
     },
     popExitTransition = defaultPopExitSlideTransition {
-        initialState.get<String>(Screen.Files.FOLDER_ID) != null &&
+        allowsFolderSlide(isTabTransitionsEnabled) &&
+                initialState.get<String>(Screen.Files.FOLDER_ID) != null &&
                 initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
     },
     arguments = listOf(
@@ -630,3 +656,17 @@ fun NavGraphBuilder.addSharedTabs(
         }
     }
 }
+
+internal fun isFolderSlideAllowed(
+    isTabTransitionsEnabled: Boolean,
+    initialRoute: String?,
+    targetRoute: String?,
+): Boolean = !isTabTransitionsEnabled || initialRoute == targetRoute
+
+private fun AnimatedContentTransitionScope<NavBackStackEntry>.allowsFolderSlide(
+    isTabTransitionsEnabled: () -> Boolean,
+): Boolean = isFolderSlideAllowed(
+    isTabTransitionsEnabled = isTabTransitionsEnabled(),
+    initialRoute = initialState.destination.route,
+    targetRoute = targetState.destination.route,
+)

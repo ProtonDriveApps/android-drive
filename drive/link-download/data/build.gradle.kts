@@ -27,6 +27,7 @@ android {
 driveModule(
     hilt = true,
     serialization = true,
+    socialTest = true,
     room = true,
 ) {
     api(project(":drive:link:data"))
@@ -34,5 +35,6 @@ driveModule(
     api(project(":drive:photo:data"))
 
     implementation(project(":drive:link-trash:data"))
+    testImplementation(project(":drive:db-test"))
 }
 

@@ -28,6 +28,7 @@ import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.toTimestampMs
 import me.proton.core.drive.base.domain.extension.availableSpace
 import me.proton.core.drive.base.domain.extension.bytes
+import me.proton.core.drive.base.domain.log.ItemLifecycle
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.GetInternalStorageInfo
@@ -58,6 +59,7 @@ class UploadFolder @Inject constructor(
     private val getUploadFileLinksCount: GetUploadFileLinksCount,
     private val getUser: GetUser,
     private val markAsEnqueued: MarkAsEnqueued,
+    private val itemLifecycle: ItemLifecycle,
 ) {
 
     suspend operator fun invoke(
@@ -114,6 +116,9 @@ class UploadFolder @Inject constructor(
                 .toUploadFileDescriptionsByPriority()
             val driveLinkFolder: DriveLink.Folder =
                 getDriveLink(userId, folderId).mapSuccessValueOrNull().filterNotNull().first()
+            files.forEach { backupFile ->
+                itemLifecycle.accepted(ItemLifecycle.Flow.BACKUP, itemLifecycle.backupKey(backupFile.uriString))
+            }
             uris.forEach { (priority, uploadFileDescriptions) ->
                 uploadFiles(
                     folder = driveLinkFolder,
